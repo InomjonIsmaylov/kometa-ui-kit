@@ -18,6 +18,7 @@ npm start                         # ng serve demo, port 4200 (also .claude/launc
 npm test                          # ng test (vitest + jsdom); library only, the demo has no specs
 npx ng test kometa-ui --watch=false --include='**/kometa-button.spec.ts'   # one spec file
 npx ng build demo                 # production build of the demo
+npm run pack:lib                  # build the library and pack dist/kometa-ui into a .tgz to inspect
 ```
 
 Pin `jsdom@^28` and `vitest@^4`. Newer majors (jsdom 30, vitest 5) fail 8 specs, e.g. `k-time.spec.ts` focus behaviour.
@@ -31,7 +32,8 @@ Pin `jsdom@^28` and `vitest@^4`. Newer majors (jsdom 30, vitest 5) fail 8 specs,
 - No PrimeNG (removed 2026-11-11). `provideKometaUi()` (`lib/provide-kometa-ui.ts`) is empty, kept so app configs need no change. `k-tray` listens to `KometaConfirmationService` (`confirm({ header, message, acceptLabel, rejectLabel, acceptButtonProps, accept, reject })`). Outputs: `k-button` `(clicked)`, `k-drawer` `(opened)` / `(closing)` / `(kometaSheetClosed)`.
 - **SCSS everywhere.** Styles files are `.scss` and `inlineStyleLanguage` is `scss`; the one exception is `styles/kometa-theme.css`, a Tailwind v4 `@theme` file that Tailwind must read as plain CSS. Tests compile inline styles through Sass too, which drops quotes in attribute selectors (`[data-surface=glass]`), so specs that regex-match component CSS must accept both forms. Specs read a component's CSS from `ɵcmp.styles` with `%NS%` stripped (`var(--%NS%x)` → `var(--x)`), never from the page's `<style>` tags: the test document is shared across spec files, so those tags come and go with other fixtures and made specs flaky.
 - **CSS layer order is a contract:** the consuming app's stylesheet must `@use 'kometa-ui/styles/layers'` first (`@layer theme, base, legacy, components, utilities;`, matching `KOMETA_LAYER_ORDER`). Sass forbids a bare `@layer` statement before `@use`, hence the file. The demo's `styles.scss` does this.
-- Styles and fonts ship as library assets (`ng-package.json` `assets: ["styles/**/*"]`) and are used by consumers as `@use 'kometa-ui/styles/<name>'`.
+- Styles and fonts ship as library assets (`ng-package.json` `assets: ["styles/**/*"]`) and are used by consumers as `@use 'kometa-ui/styles/<name>'`. The package `exports` map `./styles/*` (a `sass` condition adds `.scss`), so `@use` without an extension and `kometa-theme.css` both resolve; checked with a throwaway app built against the packed tarball.
+- **Publishing**: npm package `kometa-ui`, published from `dist/kometa-ui` by `.github/workflows/publish.yml` when a `v<version>` tag matching `projects/kometa-ui/package.json` is pushed (npm trusted publishing, provenance). Bump that version, never the root `package.json` (private).
 - `lib/test-setup.ts` stubs `matchMedia` and `ResizeObserver` for jsdom; it is wired in `angular.json` as the test `setupFiles`.
 
 ## Known gaps
