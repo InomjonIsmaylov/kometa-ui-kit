@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Click's or Payme's own mark, verbatim from `docs/brand/integrations/` — never redrawn or recoloured.
+ * Click's or Payme's own mark, verbatim from the vendor's brand kit — never redrawn or recoloured.
  *
  * Always on a small white plate: Payme's "me" block is black and vanishes on a dark surface, and
  * either mark vanishes on its own brand-filled button (`a.primary.click`, the console's `.brand`
@@ -12,12 +12,10 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  *
  * `provider` takes the wire's `'Click' | 'Payme'` as well as the vendor console's lower-case ids.
  *
- * Telegram, Google and Instagram are gradient art (several kB each), so they are NOT inlined: they
- * are static files, `brand/*.svg` (from mening's `web/projects/shared/brand`, not shipped by this kit), copied to `brand/` by every app's `assets`
- * and loaded by a relative `<img>`, which honours each app's `<base href>`. Inlining them would
- * put their bytes in every chunk that imports this component — `app-vendor-page` has no room.
- * The files are generated from `docs/brand/integrations/` and are the same art as `:shared`'s
- * `ic_provider_*` drawables (blur filters dropped; see `docs/claude/web.md`, lane H).
+ * Telegram, Google and Instagram are gradient art (several kB each), so they are NOT inlined: the app
+ * ships them as static files, `brand/*.svg` (not part of this kit), loaded by a relative `<img>` that
+ * honours the app's `<base href>`. Inlining them would put their bytes in every chunk that imports
+ * this component.
  */
 @Component({
   selector: 'k-provider-logo',

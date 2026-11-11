@@ -1,6 +1,7 @@
 # kometa-ui
 
-Kometa's Angular component library, extracted from `mening/web/projects/shared/ui`.
+Kometa's Angular 22 component library: standalone, OnPush components themed by CSS custom properties.
+Docs and live examples: https://inomjonismaylov.github.io/kometa-ui-kit/
 
 ```ts
 // app.config.ts
@@ -14,4 +15,4 @@ providers: [provideKometaUi()]
 @use 'kometa-ui/styles/base';
 ```
 
-Peers: Angular 22. No PrimeNG. Build `npm run build`, test `npm test`.
+Peers: Angular 22. MIT licensed; the bundled fonts are under the SIL OFL 1.1 (`styles/fonts/OFL.txt`).

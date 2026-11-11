@@ -1,59 +1,46 @@
-# KometaUiKit
+# Kometa UI
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.6.
+A dense, warm UI kit for Angular 22: standalone, OnPush components, light and dark from one set of
+CSS custom properties, no third-party UI dependency.
 
-## Development server
+**[Live demo and docs](https://inomjonismaylov.github.io/kometa-ui-kit/)**
 
-To start a local development server, run:
+## Use it
 
-```bash
-ng serve
+```ts
+// app.config.ts
+import { provideKometaUi } from 'kometa-ui';
+
+export const appConfig = { providers: [provideKometaUi()] };
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```scss
+// styles.scss: the layer order must come first
+@use 'kometa-ui/styles/layers';
+@use 'kometa-ui/styles/base';
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
+```html
+<k-button label="Save" (clicked)="save()" />
 ```
 
-## Building
+Components use the `k-` prefix (`<k-button>`, `<k-drawer>`, `button[k-halo]`) and read their colours
+from tokens such as `--amber`, `--bg` and `--text`, so overriding a token on any element restyles
+everything inside it.
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Develop
 
 ```bash
-ng test
+npm install
+npm start          # demo at http://localhost:4200
+npm test           # library specs (vitest)
+npm run build      # library into dist/kometa-ui
 ```
 
-## Running end-to-end tests
+The repo holds two projects: `projects/kometa-ui` (the library) and `projects/demo` (the docs site,
+which imports the library from source). Every push to `main` deploys the demo to GitHub Pages.
 
-For end-to-end (e2e) testing, run:
+## License
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+[MIT](LICENSE). The bundled Manrope and Syne fonts are under the
+[SIL Open Font License 1.1](projects/kometa-ui/styles/fonts/OFL.txt).
