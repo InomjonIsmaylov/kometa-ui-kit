@@ -1,19 +1,19 @@
 import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { KometaCode } from './kometa-code';
-import { KometaConfirm } from './kometa-confirm';
-import { KometaDrawer } from './kometa-drawer';
-import { KometaLink } from './kometa-link';
-import { KometaMenu } from './kometa-menu';
-import { KometaMeter } from './kometa-meter';
-import { KometaPop } from './kometa-pop';
-import { KometaReveal } from './kometa-reveal';
-import { KometaSlots } from './kometa-slots';
-import { KometaStepper } from './kometa-stepper';
-import { KometaTable } from './kometa-table';
-import { KometaToggle } from './kometa-toggle';
-import { KometaUpload } from './kometa-upload';
-import { KometaWords } from './kometa-words';
+import { KometaCode } from 'kometa-ui/code';
+import { KometaConfirm } from 'kometa-ui/confirm';
+import { KometaDrawer } from 'kometa-ui/drawer';
+import { KometaLink } from 'kometa-ui/link';
+import { KometaMenu } from 'kometa-ui/menu';
+import { KometaMeter } from 'kometa-ui/meter';
+import { KometaPop } from 'kometa-ui/pop';
+import { KometaReveal } from 'kometa-ui/reveal';
+import { KometaSlots } from 'kometa-ui/slots';
+import { KometaStepper } from 'kometa-ui/stepper';
+import { KometaTable } from 'kometa-ui/table';
+import { KometaToggle } from 'kometa-ui/toggle';
+import { KometaUpload } from 'kometa-ui/upload';
+import { KometaWords } from 'kometa-ui/words';
 
 // A bare attribute (`<k-table striped>`) arrives as '' and must read as true; "false" must read as false.
 const cases: [Type<unknown>, string[]][] = [

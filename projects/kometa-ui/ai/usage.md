@@ -29,7 +29,10 @@ Tailwind v4: also `@import 'kometa-ui/styles/kometa-theme.css';` to map the toke
 
 ## Using components
 
-- Import every class from the package root, never a deep path: `import { KometaButton, KometaDrawer } from 'kometa-ui';`
+- Import each class from its entry point, `kometa-ui/<name>` (the file name without `kometa-`):
+  `import { KometaButton } from 'kometa-ui/button'; import { KometaDrawer } from 'kometa-ui/drawer';`.
+  `from 'kometa-ui'` re-exports them all and works, but it puts every kit component any lazy route uses into the
+  app's initial chunk.
   then list them in the standalone component's `imports: [...]`.
 - Find the class for a selector in `components.md` (`<k-button>` is `KometaButton`, `button[k-halo]` is `KometaHalo`).
 - Inputs are signal inputs: bind them with `[label]="x"` or a static `label="Save"`. Boolean inputs take a bare attribute: `<k-button outlined fluid />`.
@@ -73,5 +76,5 @@ Tailwind v4: also `@import 'kometa-ui/styles/kometa-theme.css';` to map the toke
 ## Do not
 
 - Do not install PrimeNG, Angular Material or another UI kit to fill a gap; check `components.md` first.
-- Do not import from `kometa-ui/lib/...` or `kometa-ui/src/...`; only `'kometa-ui'` and `kometa-ui/styles/*` are public.
+- Do not import from `kometa-ui/lib/...` or `kometa-ui/src/...`; `'kometa-ui'`, `kometa-ui/<entry>` and `kometa-ui/styles/*` are public.
 - Do not skip `@use 'kometa-ui/styles/layers'` or move it below another `@use`.

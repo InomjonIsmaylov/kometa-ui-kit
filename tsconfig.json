@@ -8,7 +8,8 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "paths": {
-      "kometa-ui": ["./projects/kometa-ui/src/public-api.ts"]
+      "kometa-ui": ["./projects/kometa-ui/src/public-api.ts"],
+      "kometa-ui/*": ["./projects/kometa-ui/*/index.ts"]
     },
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,

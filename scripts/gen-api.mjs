@@ -13,6 +13,7 @@ const program = ts.createProgram(cfg.fileNames, cfg.options);
 const checker = program.getTypeChecker();
 const KINDS = new Set(['input', 'model', 'output']);
 const out = {};
+const entryOf = {}; // class -> its entry point, for the demo's import line
 const docs = []; // one entry per component/directive, in source order
 
 const docOf = (name) => {
@@ -21,9 +22,11 @@ const docOf = (name) => {
 };
 
 for (const sf of program.getSourceFiles()) {
-  if (!sf.fileName.includes('/kometa-ui/src/lib/') || sf.fileName.endsWith('.spec.ts')) continue;
+  // One folder per entry point: projects/kometa-ui/<entry>/<file>.ts, not its index.ts or specs.
+  if (!/\/projects\/kometa-ui\/(?!src\/)[\w-]+\/[\w-]+\.ts$/.test(sf.fileName) || /\/index\.ts$|\.spec\.ts$/.test(sf.fileName)) continue;
   ts.forEachChild(sf, function visit(node) {
     if (ts.isClassDeclaration(node) && node.name) {
+      entryOf[node.name.text] = `kometa-ui/${sf.fileName.split('/').at(-2)}`;
       const members = [];
       for (const m of node.members) {
         if (!ts.isPropertyDeclaration(m) || !m.initializer || !ts.isCallExpression(m.initializer)) continue;
@@ -50,6 +53,7 @@ for (const sf of program.getSourceFiles()) {
   });
 }
 writeFileSync(resolve(root, 'projects/demo/src/app/api.json'), JSON.stringify(out, null, 1) + '\n');
+writeFileSync(resolve(root, 'projects/demo/src/app/entries.json'), JSON.stringify(entryOf, null, 1) + '\n');
 console.log(`api.json: ${Object.keys(out).length} classes`);
 
 const cell = (s) => (s ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');

@@ -28,6 +28,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "projects/kometa-ui/tsconfig.spec.json",
+            "include": ["**/*.spec.ts", "../*/*.spec.ts"],
             "setupFiles": [
               "projects/kometa-ui/src/lib/test-setup.ts"
             ]

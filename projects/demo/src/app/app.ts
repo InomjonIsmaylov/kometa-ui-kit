@@ -23,6 +23,7 @@ import { DashboardScreen, USES as dashboardUses } from './screens/dashboard/dash
 import { SettingsScreen, USES as settingsUses } from './screens/settings/settings';
 import { SCREEN_FILES } from './screens/sources';
 import apiMeta from './api.json';
+import entries from './entries.json';
 
 /** The part of Angular's compiled component metadata the API tables read. */
 interface ApiDef { inputs: Record<string, unknown>; outputs: Record<string, string>; selectors: string[][] }
@@ -238,7 +239,14 @@ export const appConfig: ApplicationConfig = {
 };`;
   protected readonly importLine = computed(() => {
     const api = this.apis[this.current().id];
-    return api ? `import { ${Object.keys(api).join(', ')} } from 'kometa-ui';` : null;
+    if (!api) return null;
+    // One import per entry point: importing kometa-ui/<entry> keeps unused components out of a chunk.
+    const by = new Map<string, string[]>();
+    for (const n of Object.keys(api)) {
+      const mod = (entries as Record<string, string>)[n] ?? 'kometa-ui';
+      by.set(mod, [...(by.get(mod) ?? []), n]);
+    }
+    return [...by].map(([mod, names]) => `import { ${names.join(', ')} } from '${mod}';`).join('\n');
   });
   /** Inputs, two-way models and outputs, read from Angular's own component metadata, so the tables cannot go stale. */
   protected readonly api = computed(() => Object.entries(this.apis[this.current().id] ?? {}).flatMap(([name, type]) => {

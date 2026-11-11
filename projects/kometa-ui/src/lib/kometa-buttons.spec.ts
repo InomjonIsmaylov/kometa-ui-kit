@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { KometaErase } from './kometa-erase';
-import { KometaHalo } from './kometa-halo';
-import { KometaPair } from './kometa-pair';
-import { KometaWord } from './kometa-word';
+import { KometaErase } from 'kometa-ui/erase';
+import { KometaHalo } from 'kometa-ui/halo';
+import { KometaPair } from 'kometa-ui/pair';
+import { KometaWord } from 'kometa-ui/word';
 
 @Component({
   imports: [KometaWord, KometaErase, KometaHalo, KometaPair],
