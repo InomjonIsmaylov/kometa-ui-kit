@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Directive, ElementRef, Injectable, OnDestroy, effect, inject, input } from '@angular/core';
+import { KometaAnimation, injectKometaMotion, kometaAnimationName } from './kometa-motion';
 
 let nextId = 0;
 
@@ -9,12 +10,11 @@ const CSS = `
   border: 1px solid var(--glass-line, rgba(244, 239, 230, .14)); border-left: 2px solid var(--display-ink, var(--text, #f4efe6)); border-radius: var(--tip-radius, 4px 12px 12px 4px);
   background: var(--tip-bg, var(--glass-drawer, var(--bg, #1c1a16))); color: var(--text, #e8e2d6); backdrop-filter: blur(14px);
   box-shadow: 0 10px 26px rgba(0, 0, 0, .4); font-size: var(--tip-font-size, 13px); line-height: 1.35; pointer-events: none; overflow: visible;
-  transition: opacity 140ms ease, translate 240ms var(--ease-spring, ease);
+  animation: var(--k-anim, k-m-scale) var(--k-motion-dur, 240ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
 }
-@starting-style { .kometa-tip:popover-open { opacity: 0; translate: -6px 0; } }
 .kometa-tip b { display: block; color: var(--display-ink, var(--text, #f4efe6)); font-weight: 600; overflow-wrap: anywhere; }
 .kometa-tip span { display: block; margin-top: 1px; color: var(--muted, #8e8678); font-size: 12.5px; overflow-wrap: anywhere; }
-@media (prefers-reduced-motion: reduce) { .kometa-tip { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .kometa-tip { animation: none; } }
 `;
 
 /** The one tooltip element, in the browser's top layer so no drawer, table or modal clips or covers it. */
@@ -30,8 +30,10 @@ export class KometaTipHost {
     return !!this.owner || Date.now() - this.lastHide < 400;
   }
 
-  show(host: HTMLElement, title: string, sub: string | null | undefined): void {
+  show(host: HTMLElement, title: string, sub: string | null | undefined, animation?: string): void {
     const el = this.element();
+    const anim = kometaAnimationName(animation);
+    if (anim) el.style.setProperty('--k-anim', anim); else el.style.removeProperty('--k-anim');
     this.release();
     this.owner = host;
     const id = el.id;
@@ -141,12 +143,15 @@ export class KometaTip implements OnDestroy {
   readonly kometaTipSub = input<string | null | undefined>('');
   /** Milliseconds of hover before the tip shows (none when moving between neighbours). */
   readonly kometaTipDelay = input(380);
+  /** The motion it appears with: a preset from KOMETA_ANIMATIONS or your own keyframes name. */
+  readonly kometaTipAnimation = input<KometaAnimation | ''>('');
 
   private readonly host = inject(KometaTipHost);
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private timer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
+    injectKometaMotion();
     // The words may change while the tip is up (a sort arrow turning over): follow them, or go if they went.
     effect(() => {
       const text = this.kometaTip();
@@ -188,6 +193,6 @@ export class KometaTip implements OnDestroy {
   private show(): void {
     const text = this.kometaTip();
     if (!text) return;
-    this.host.show(this.el, text, this.kometaTipSub());
+    this.host.show(this.el, text, this.kometaTipSub(), this.kometaTipAnimation());
   }
 }

@@ -23,6 +23,7 @@ export * from './lib/kometa-link';
 export * from './lib/kometa-marks';
 export * from './lib/kometa-menu';
 export * from './lib/kometa-meter';
+export * from './lib/kometa-motion';
 export * from './lib/kometa-multi';
 export * from './lib/kometa-note';
 export * from './lib/kometa-notes';

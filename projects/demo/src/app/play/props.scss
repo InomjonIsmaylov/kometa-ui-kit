@@ -1,0 +1,19 @@
+:host { display: block; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--card); }
+.pp { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(220px, 1fr); }
+@media (max-width: 760px) { .pp { grid-template-columns: minmax(0, 1fr); } }
+.pp-stage {
+  display: grid; place-items: center; min-height: 220px; padding: 28px; overflow: auto;
+  background-image: radial-gradient(color-mix(in srgb, var(--text) 10%, transparent) 1px, transparent 1px); background-size: 18px 18px;
+}
+.pp-controls {
+  display: grid; align-content: start; gap: 10px; max-height: 420px; padding: 16px; overflow: auto;
+  border-left: 1px solid var(--border);
+}
+@media (max-width: 760px) { .pp-controls { border-left: 0; border-top: 1px solid var(--border); } }
+.pp-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pp-bool { display: flex; align-items: center; gap: 10px; }
+code { color: var(--muted); font-size: 12.5px; }
+.pp-foot { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--border); }
+.pp-code { flex: 1 1 260px; min-width: 0; margin: 0; overflow-x: auto; font: 12.5px/1.6 var(--font-mono, ui-monospace, monospace); }
+.pp-code ::ng-deep .line { display: block; }
+.pp-acts { display: flex; gap: 8px; }

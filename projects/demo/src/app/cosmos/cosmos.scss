@@ -1,0 +1,103 @@
+.cz {
+  width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; overflow: hidden;
+  color: #ece6da; background:
+    radial-gradient(1200px 600px at 15% 0%, rgba(110, 80, 220, .28), transparent 60%),
+    radial-gradient(900px 500px at 90% 100%, rgba(255, 170, 60, .18), transparent 60%),
+    #07060c;
+  &::backdrop { background: #07060c; }
+  &[open] { animation: cz-in 380ms cubic-bezier(.22, 1, .36, 1); }
+}
+/* A fixed far field of tiny stars behind everything. */
+.cz::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .7;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, #fff, transparent), radial-gradient(1px 1px at 72% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 38% 64%, #fff, transparent), radial-gradient(1px 1px at 88% 48%, #fff, transparent),
+    radial-gradient(1px 1px at 22% 86%, #fff, transparent), radial-gradient(1px 1px at 56% 32%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 64% 80%, #fff, transparent), radial-gradient(1px 1px at 5% 50%, #fff, transparent);
+  background-size: 420px 420px;
+}
+@keyframes cz-in { from { opacity: 0; scale: 1.04; } }
+
+.cz-field {
+  position: relative; height: 100%; overflow-y: auto; box-sizing: border-box; padding: 0 28px 120px;
+  transition: scale 420ms cubic-bezier(.6, 0, .9, .4), opacity 420ms ease, filter 420ms ease;
+  &.warp { scale: 5; opacity: 0; filter: blur(6px); }
+}
+
+.cz-head {
+  position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+  margin: 0 -28px 8px; padding: 18px 28px; background: linear-gradient(#07060c 60%, transparent);
+  h2 { margin: 0 auto 0 0; font: 700 22px var(--font-display, sans-serif); letter-spacing: -.02em; }
+}
+.cz-mark { color: #ffb347; text-shadow: 0 0 12px #ffb347; }
+.cz-q {
+  width: min(320px, 100%); padding: 10px 16px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px;
+  background: rgba(255, 255, 255, .06); color: inherit; font: 14px var(--font-sans, sans-serif);
+  &:focus { outline: 2px solid #ffb347; outline-offset: 1px; }
+}
+.cz-count { color: rgba(236, 230, 218, .55); font: 12px var(--font-mono, monospace); }
+.cz-close {
+  width: 38px; height: 38px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 50%; background: none; color: inherit; font-size: 15px; cursor: pointer;
+  &:hover, &:focus-visible { border-color: #ffb347; outline: none; }
+}
+
+.cz-sky { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px 36px; }
+.cz-cluster {
+  --c: hsl(var(--hue) 90% 72%);
+  h3 {
+    margin: 0 0 4px; color: var(--c); font: 700 12px var(--font-sans, sans-serif); letter-spacing: .14em; text-transform: uppercase;
+    small { margin-left: 6px; color: rgba(236, 230, 218, .45); font-weight: 500; letter-spacing: 0; }
+  }
+}
+.cz-plot { position: relative; }
+.cz-lines {
+  position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
+  polyline { fill: none; stroke: var(--c); stroke-opacity: .28; stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+}
+
+.cz-star {
+  position: absolute; display: flex; flex-direction: column; align-items: center; gap: 5px; translate: -50% -50%;
+  color: rgba(236, 230, 218, .82); text-decoration: none; font-size: 12.5px; white-space: nowrap; outline: none;
+  transition: opacity 200ms ease, color 200ms ease;
+  .cz-dot {
+    width: var(--s); height: var(--s); border-radius: 50%; background: #fff;
+    box-shadow: 0 0 6px 1px var(--c), 0 0 18px 2px color-mix(in srgb, var(--c) 50%, transparent);
+    animation: cz-twinkle 4s ease-in-out infinite var(--d);
+    transition: scale 260ms cubic-bezier(.34, 1.56, .64, 1);
+  }
+  &:hover, &:focus-visible { color: #fff; .cz-dot { scale: 1.9; } }
+  &:focus-visible .cz-name { outline: 1px solid var(--c); outline-offset: 3px; border-radius: 4px; }
+  &[aria-current] {
+    color: #ffb347; font-weight: 700;
+    .cz-dot { background: #ffb347; box-shadow: 0 0 0 4px rgba(255, 179, 71, .25), 0 0 22px 4px #ffb347; }
+  }
+  &.dim { opacity: .14; }
+}
+@keyframes cz-twinkle { 50% { opacity: .45; scale: .8; } }
+
+.cz-card {
+  position: fixed; right: 24px; bottom: 24px; z-index: 3; display: grid; gap: 4px; width: min(320px, calc(100vw - 48px)); box-sizing: border-box;
+  padding: 16px 18px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 18px;
+  background: rgba(20, 18, 30, .82); backdrop-filter: blur(14px); box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
+  animation: cz-card 260ms cubic-bezier(.22, 1, .36, 1);
+  small { color: #ffb347; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  b { font: 700 18px var(--font-display, sans-serif); }
+  p { margin: 0; color: rgba(236, 230, 218, .7); font-size: 13px; line-height: 1.5; }
+}
+/* The live component takes the app's own theme tokens, on a card of its own. */
+.cz-live {
+  display: grid; place-items: center; margin-top: 10px; padding: 18px; overflow: hidden; border-radius: 12px;
+  background: var(--bg); color: var(--text);
+}
+@keyframes cz-card { from { opacity: 0; translate: 0 10px; } }
+
+@media (max-width: 640px) {
+  .cz-field { padding: 0 16px 140px; }
+  .cz-head { margin: 0 -16px 8px; padding: 14px 16px; }
+  .cz-card { right: 12px; left: 12px; bottom: 12px; width: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cz[open], .cz-card, .cz-star .cz-dot { animation: none; }
+  .cz-field { transition: none; }
+}

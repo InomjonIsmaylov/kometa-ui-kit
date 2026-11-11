@@ -4,6 +4,8 @@ import {
   afterNextRender, computed, contentChild, effect, inject, booleanAttribute, input, model, output, signal, untracked, viewChild,
 } from '@angular/core';
 
+import { KometaMotion } from './kometa-motion';
+
 let nextDrawerToken = 0;
 
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -28,6 +30,7 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
  */
 @Component({
   selector: 'k-drawer',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
@@ -56,12 +59,12 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
     @keyframes kd-leave-bottom { to { transform: translateY(calc(100% + 24px)); } }
     @keyframes kd-back-in { from { opacity: 0; } }
     @keyframes kd-back-out { to { opacity: 0; } }
-    :where(dialog.kdrawer-right[open]) { animation: kd-enter-right var(--drawer-dur, 480ms) var(--drawer-ease, ease); }
-    :where(dialog.kdrawer-left[open]) { animation: kd-enter-left var(--drawer-dur, 480ms) var(--drawer-ease, ease); }
-    :where(dialog.kdrawer-bottom[open]) { animation: kd-enter-bottom var(--drawer-dur, 480ms) var(--drawer-ease, ease); }
-    :where(dialog.kdrawer-right.kdrawer-leaving) { animation: kd-leave-right var(--drawer-dur, 480ms) cubic-bezier(.32, 0, .22, 1) forwards; }
-    :where(dialog.kdrawer-left.kdrawer-leaving) { animation: kd-leave-left var(--drawer-dur, 480ms) cubic-bezier(.32, 0, .22, 1) forwards; }
-    :where(dialog.kdrawer-bottom.kdrawer-leaving) { animation: kd-leave-bottom var(--drawer-dur, 480ms) cubic-bezier(.32, 0, .22, 1) forwards; }
+    :where(dialog.kdrawer-right[open]) { animation: var(--k-anim, kd-enter-right) var(--drawer-dur, 480ms) var(--drawer-ease, ease); }
+    :where(dialog.kdrawer-left[open]) { animation: var(--k-anim, kd-enter-left) var(--drawer-dur, 480ms) var(--drawer-ease, ease); }
+    :where(dialog.kdrawer-bottom[open]) { animation: var(--k-anim, kd-enter-bottom) var(--drawer-dur, 480ms) var(--drawer-ease, ease); }
+    :where(dialog.kdrawer-right.kdrawer-leaving) { animation: var(--k-anim-out, kd-leave-right) var(--drawer-dur, 480ms) cubic-bezier(.32, 0, .22, 1) var(--k-anim-dir, normal) forwards; }
+    :where(dialog.kdrawer-left.kdrawer-leaving) { animation: var(--k-anim-out, kd-leave-left) var(--drawer-dur, 480ms) cubic-bezier(.32, 0, .22, 1) var(--k-anim-dir, normal) forwards; }
+    :where(dialog.kdrawer-bottom.kdrawer-leaving) { animation: var(--k-anim-out, kd-leave-bottom) var(--drawer-dur, 480ms) cubic-bezier(.32, 0, .22, 1) var(--k-anim-dir, normal) forwards; }
     :where(dialog.kdrawer[open])::backdrop { animation: kd-back-in 240ms ease; }
     :where(dialog.kdrawer.kdrawer-leaving)::backdrop { animation: kd-back-out 240ms ease forwards; }
     @media (prefers-reduced-motion: reduce) {
@@ -74,7 +77,7 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
       <dialog #dlg class="kdrawer" [class.kdrawer-right]="position() === 'right'" [class.kdrawer-left]="position() === 'left'"
               [class.kdrawer-bottom]="position() === 'bottom'" [class.kdrawer-leaving]="leaving()" [class]="styleClass()"
               [attr.role]="headless() ? 'presentation' : 'dialog'" [attr.aria-label]="ariaLabel() || null"
-              [style.width]="style()?.width ?? null" (cancel)="onCancel($event)" (click)="onBackdrop($event)">
+              [style]="motion.vars()" [style.width]="style()?.width ?? null" (cancel)="onCancel($event)" (click)="onBackdrop($event)">
         <div class="kdrawer-content">
           @if (headless(); as tpl) {
             <ng-container [ngTemplateOutlet]="tpl" />
@@ -87,6 +90,8 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
   `,
 })
 export class KometaDrawer implements OnDestroy {
+  /** In place of the slide from its edge: a preset from KOMETA_ANIMATIONS or your own keyframes name, played in and reversed out. */
+  protected readonly motion = inject(KometaMotion);
   readonly visible = model(false);
   readonly position = input<'right' | 'bottom' | 'left'>('right');
   readonly dismissible = input(true, { transform: booleanAttribute });
@@ -169,13 +174,16 @@ export class KometaDrawer implements OnDestroy {
   private afterLeave(): void {
     if (this.leaveSent) return;
     const el = this.dlg()?.nativeElement;
-    const sliding = el?.getAnimations?.().some((a) => ((a as CSSAnimation).animationName ?? '').includes('leave')) ?? false;
+    // The leave is the side's kd-leave-* slide, or the chosen motion reversed (--k-anim-out).
+    const out = el ? getComputedStyle(el).getPropertyValue('--k-anim-out').trim() : '';
+    const isLeave = (name: string) => name.toLowerCase().includes('leave') || (!!out && name === out);
+    const sliding = el?.getAnimations?.().some((a) => isLeave((a as CSSAnimation).animationName ?? '')) ?? false;
     if (!sliding || !el) {
       this.finishLeave();
       return;
     }
     const finish = (event?: AnimationEvent) => {
-      if (event && (event.target !== el || !event.animationName.toLowerCase().includes('leave'))) return;
+      if (event && (event.target !== el || !isLeave(event.animationName))) return;
       el.removeEventListener('animationend', finish);
       this.finishLeave();
     };

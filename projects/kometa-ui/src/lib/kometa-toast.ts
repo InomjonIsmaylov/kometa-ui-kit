@@ -1,3 +1,4 @@
+import { KometaMotion } from './kometa-motion';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, input, output, signal, viewChild,
 } from '@angular/core';
@@ -26,6 +27,7 @@ const RESUME_MS = 1500;
  */
 @Component({
   selector: 'k-toast',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .thread {
@@ -42,6 +44,9 @@ const RESUME_MS = 1500;
       pointer-events: auto; cursor: pointer; animation: k-ts-in 520ms var(--ease-spring, ease) backwards;
     }
     .t.out { animation: k-ts-out 300ms ease forwards; }
+    /* animation set: the chosen keyframes in, and the same ones reversed out */
+    .t.m { animation: var(--k-anim) var(--k-motion-dur, 520ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards; }
+    .t.m.out { animation: var(--k-anim-out) 300ms ease var(--k-anim-dir) forwards; }
     .bar { flex: none; align-self: stretch; width: 3px; border-radius: 2px; background: var(--blue, currentColor); }
     .t.success .bar { background: var(--green, currentColor); }
     .t.error .bar { background: var(--red); }
@@ -55,12 +60,12 @@ const RESUME_MS = 1500;
     @keyframes k-ts-in { from { opacity: 0; transform: translateY(14px); } }
     @keyframes k-ts-out { to { opacity: 0; transform: translateY(6px) scale(.97); } }
     @keyframes k-ts-drain { to { transform: scaleX(0); } }
-    @media (prefers-reduced-motion: reduce) { .t, .t.out { animation: none; } .t.out { opacity: 0; } .drain { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .t, .t.out, .t.m, .t.m.out { animation: none; } .t.out { opacity: 0; } .drain { animation: none; } }
   `,
   template: `
-    <div #thread class="thread" [class.top]="position() === 'top'" popover="manual" aria-live="polite">
+    <div #thread class="thread" [style]="motion.vars()" [class.top]="position() === 'top'" popover="manual" aria-live="polite">
       @for (it of items(); track it.id) {
-        <div class="t" [class]="'t ' + it.kind" [class.out]="leaving().has(it.id)" [class.hold]="held().has(it.id)"
+        <div class="t" [class]="'t ' + it.kind" [class.m]="!!motion.animation()" [class.out]="leaving().has(it.id)" [class.hold]="held().has(it.id)"
              [attr.role]="it.kind === 'error' ? 'alert' : 'status'" (pointerenter)="hold(it.id)" (pointerleave)="release(it.id)" (click)="leave(it.id)">
           <span class="bar"></span>
           <span class="text">{{ it.text }}</span>
@@ -71,6 +76,8 @@ const RESUME_MS = 1500;
   `,
 })
 export class KometaToast {
+  /** The motion toasts arrive with (and leave with, reversed): a preset from KOMETA_ANIMATIONS or your own keyframes name. */
+  protected readonly motion = inject(KometaMotion);
   readonly items = input.required<KometaToastItem[]>();
   readonly dismiss = output<number>();
   /** Which edge the thread stacks from. */

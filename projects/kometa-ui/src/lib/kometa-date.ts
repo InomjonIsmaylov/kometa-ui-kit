@@ -1,3 +1,4 @@
+import { KometaMotion } from './kometa-motion';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Injector, OnInit, afterNextRender, booleanAttribute, computed, effect, inject, input, model, signal, viewChild,
 } from '@angular/core';
@@ -43,6 +44,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-date',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet],
   host: {
@@ -72,9 +74,8 @@ let nextId = 0;
       inset: auto; width: var(--date-pop-width, 296px); max-width: calc(100vw - 16px); margin: 0; padding: 12px;
       border: 1px solid var(--glass-line); border-radius: var(--date-pop-radius, 18px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
-      transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
+      animation: var(--k-anim, k-m-drop) var(--k-motion-dur, 320ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
     }
-    @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
     .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
     .head b { font-family: var(--font-display, inherit); font-size: 15px; font-weight: 600; color: var(--display-ink, var(--text)); }
     .nav {
@@ -97,7 +98,7 @@ let nextId = 0;
     .d.today::after { content: ''; position: absolute; left: 50%; bottom: 5px; width: 12px; height: 1px; margin-left: -6px; background: var(--display-ink, var(--text)); }
     .d.mid { background: var(--amber-tint, var(--glass-line)); border-radius: 0; }
     .d:disabled { opacity: .3; cursor: default; }
-    @media (prefers-reduced-motion: reduce) { .btn::after, .pop, .d { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .btn::after, .pop, .d { transition: none; } .pop { animation: none; } }
   `,
   template: `
     <ng-template #panel>
@@ -126,7 +127,7 @@ let nextId = 0;
               [attr.aria-label]="ariaLabel() || null" [attr.aria-expanded]="open()" [attr.aria-controls]="id" (click)="toggle()">
         <span class="fig" [class.empty]="!hasValue()">{{ shown() }}</span>
       </button>
-      <div #pop class="pop" popover="manual" role="dialog" [id]="id" [attr.aria-label]="ariaLabel() || null"
+      <div #pop class="pop" popover="manual" [style]="motion.vars()" role="dialog" [id]="id" [attr.aria-label]="ariaLabel() || null"
            [style.left.px]="x()" [style.top.px]="y()" (keydown)="onKey($event)">
         @if (open()) { <ng-container [ngTemplateOutlet]="panel" /> }
       </div>
@@ -134,6 +135,8 @@ let nextId = 0;
   `,
 })
 export class KometaDate implements OnInit {
+  /** The open motion: a preset from KOMETA_ANIMATIONS or your own keyframes name (see KometaMotion). */
+  protected readonly motion = inject(KometaMotion);
   protected readonly id = `kometa-date-${nextId++}`;
   readonly value = model<Date | null>(null);
   readonly min = input<Date | null>(null);

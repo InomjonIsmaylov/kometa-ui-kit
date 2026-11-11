@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, Type, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip,
+  KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaBanner, KometaButton, KometaCheck, KometaChip,
   KometaCode, KometaConfirm, KometaConfirmationService, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField,
   KometaFilm, KometaFilmDay, KometaFold, KometaFoldBody, KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint,
   KometaLink, KometaMarkDay, KometaMarks, KometaMenu, KometaMeter, KometaMulti, KometaNote, KometaNotes, KometaNumber,
@@ -12,8 +12,11 @@ import {
   KometaTime, KometaTip, KometaToast, KometaToastItem, KometaToggle, KometaTrail, KometaTray, KometaUpload, KometaWait,
   KometaWord, KometaWordOption, KometaWords, ProviderLogo, ThemePreference, ThemeService, dateAt,
 } from 'kometa-ui';
+import { Cosmos } from './cosmos/cosmos';
 import { DocSection, Docs } from './docs';
 import { Home } from './home/home';
+import { Playground } from './play/playground';
+import { PLAY, PropsPanel } from './play/props';
 import { BookingScreen, USES as bookingUses } from './screens/booking/booking';
 import { ClientsScreen, USES as clientsUses } from './screens/clients/clients';
 import { DashboardScreen, USES as dashboardUses } from './screens/dashboard/dashboard';
@@ -33,8 +36,8 @@ function picture(from: string, to: string, text: string): string {
 
 @Component({
   imports: [
-    BookingScreen, ClientsScreen, DashboardScreen, DocSection, FormsModule, Home, SettingsScreen,
-    KometaAccordion, KometaAccordionItem, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
+    BookingScreen, ClientsScreen, Cosmos, DashboardScreen, DocSection, FormsModule, Home, Playground, PropsPanel, SettingsScreen,
+    KometaAccordion, KometaAccordionItem, KometaActions, KometaAnimate, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
     KometaConfirm, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField, KometaFilm, KometaFold, KometaFoldBody,
     KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint, KometaLink, KometaMarks, KometaMenu, KometaMeter,
     KometaMulti, KometaNote, KometaNotes, KometaNumber, KometaPager, KometaPair, KometaPerson, KometaPhotos, KometaPicker,
@@ -56,10 +59,12 @@ export class App {
   protected readonly nav: { label: string; items: { id: string; label: string; about: string }[] }[] = [
     { label: 'Overview', items: [
       { id: 'home', label: 'Welcome', about: 'Kometa UI for Angular.' },
+      { id: 'playground', label: 'Playground', about: 'Write a template, a class and some CSS, and watch them run. Everything in kometa-ui is in scope.' },
     ] },
     { label: 'Guides', items: [
       { id: 'start', label: 'Getting started', about: 'Install the kit, load its styles and use your first component.' },
       { id: 'theming', label: 'Theming', about: 'Colours and type are CSS custom properties: override them anywhere.' },
+      { id: 'motion', label: 'Motion', about: 'Built-in and custom animations, on overlays and on any element.' },
     ] },
     { label: 'Screens', items: [
       { id: 'booking', label: 'Booking flow', about: 'A client books a haircut on a phone: service, day, time, details, done.' },
@@ -153,6 +158,7 @@ export class App {
   ];
   /** What each page documents: the import line and the API tables are made from these. */
   private readonly apis: Record<string, Record<string, Type<unknown>>> = {
+    motion: { KometaAnimate },
     field: { KometaField }, search: { KometaSearch }, notes: { KometaNotes }, code: { KometaCode }, digits: { KometaDigits },
     number: { KometaNumber }, stepper: { KometaStepper }, select: { KometaSelect }, multi: { KometaMulti }, menu: { KometaMenu },
     suggest: { KometaSuggest },
@@ -178,10 +184,12 @@ export class App {
     booking: bookingUses, dashboard: dashboardUses, clients: clientsUses, settings: settingsUses,
   };
   protected readonly componentCount = Object.keys(this.apis).length;
+  /** The props panel of this page, for the components that have one. */
+  protected readonly play = computed(() => PLAY[this.current().id]);
   /** The welcome page fills the window; screens drop the page outline to get the width. */
   protected readonly layout = computed(() => {
     const id = this.current().id;
-    return id === 'home' ? 'home' : id in this.screenUses ? 'wide' : 'docs';
+    return id === 'home' ? 'home' : id in this.screenUses || id === 'playground' ? 'wide' : 'docs';
   });
   protected labelOf(id: string): string {
     return this.pages.find((p) => p.id === id)?.label ?? id;
@@ -190,12 +198,6 @@ export class App {
   protected readonly current = computed(() => this.pages.find((p) => p.id === this.hash().split('/')[0]) ?? this.pages[0]);
   protected readonly prev = computed(() => this.pages[this.pages.indexOf(this.current()) - 1]);
   protected readonly next = computed(() => this.pages[this.pages.indexOf(this.current()) + 1]);
-  protected readonly menuOpen = signal(false);
-  protected readonly filter = signal('');
-  protected readonly filtered = computed(() => {
-    const q = this.filter().trim().toLowerCase();
-    return this.nav.map((g) => ({ ...g, items: g.items.filter((p) => p.label.toLowerCase().includes(q)) })).filter((g) => g.items.length);
-  });
   protected readonly docs = inject(Docs);
   protected readonly active = signal('');
   protected readonly group = computed(() => this.nav.find((g) => g.items.includes(this.current()))?.label);
@@ -237,7 +239,6 @@ export const appConfig: ApplicationConfig = {
   protected hashChanged(): void {
     const page = this.current().id;
     this.hash.set(location.hash.slice(1));
-    this.menuOpen.set(false);
     if (page !== this.current().id) this.docs.page.set(this.current().id);
     this.revealSection();
   }
@@ -255,6 +256,7 @@ export const appConfig: ApplicationConfig = {
 
   // Command palette: Ctrl+K or / opens it, arrows move, Enter goes.
   private readonly palette = viewChild<ElementRef<HTMLDialogElement>>('palette');
+  private readonly cosmos = viewChild.required(Cosmos);
   protected readonly q = signal('');
   protected readonly hit = signal(0);
   protected readonly results = computed(() => {
@@ -269,6 +271,10 @@ export const appConfig: ApplicationConfig = {
     if ((e.key === 'k' && (e.ctrlKey || e.metaKey)) || (e.key === '/' && !typing)) {
       e.preventDefault();
       this.openPalette();
+    }
+    else if (e.key.toLowerCase() === 'm' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey && !document.querySelector('dialog[open]')) {
+      e.preventDefault();
+      this.cosmos().open();
     }
   }
 
@@ -490,6 +496,38 @@ export const appConfig: ApplicationConfig = {
   // #endregion
   // #region fold/parts
   protected readonly bare = signal(false);
+  // #endregion
+
+  // #region pop/animation select/animation multi/animation date/animation time/animation actions/animation note/animation tip/animation toast/animation tray/animation drawer/animation
+  /** Every built-in motion, the component's own (empty) and a custom pair of keyframes from styles.scss. */
+  protected readonly animations = [
+    { label: 'default', value: '' },
+    ...KOMETA_ANIMATIONS.map((a) => ({ label: a, value: a })),
+    { label: 'custom: swoosh', value: 'demo-swoosh-in demo-swoosh-out' },
+  ];
+  protected readonly anim = signal('');
+  // #endregion
+  // #region toast/animation
+  protected readonly animToasts = signal<KometaToastItem[]>([]);
+  protected animToast(): void {
+    this.animToasts.update((t) => [...t, { id: ++this.toastId, kind: 'success', text: `Arrived with ${this.anim() || 'its own motion'}.`, life: 3000 }]);
+  }
+  protected dropAnimToast(id: number): void {
+    this.animToasts.update((t) => t.filter((x) => x.id !== id));
+  }
+  // #endregion
+  // #region drawer/animation
+  protected readonly animDrawer = signal(false);
+  // #endregion
+  // #region motion/presets
+  protected readonly presets = KOMETA_ANIMATIONS.filter((a) => a !== 'none');
+  // #endregion
+  // #region motion/view
+  protected readonly feed = ['Aziz booked a beard trim', 'Malika left five stars', 'Payment of 120 000 received', 'Timur moved to 15:30',
+    'New client: Dilnoza', 'Saturday is almost full', 'Rustam asked for a refund', 'Shop rating is now 4.9'];
+  // #endregion
+  // #region motion/custom
+  protected readonly swoosh = signal(false);
   // #endregion
 
   protected setTheme(next: ThemePreference): void {

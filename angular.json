@@ -87,6 +87,7 @@
             "styles": [
               "projects/demo/src/styles.scss"
             ],
+            "allowedCommonJsDependencies": ["ts-interface-checker", "lines-and-columns", "@jridgewell/resolve-uri"],
             "inlineStyleLanguage": "scss"
           },
           "configurations": {

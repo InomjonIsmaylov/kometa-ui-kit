@@ -1,3 +1,4 @@
+import { KometaMotion } from './kometa-motion';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, booleanAttribute, computed, effect, inject, input, model, signal, viewChild,
 } from '@angular/core';
@@ -24,6 +25,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-select',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.pill]': 'pill()',
@@ -64,9 +66,8 @@ let nextId = 0;
       inset: auto; margin: 0; padding: 6px; min-width: 160px; max-width: calc(100vw - 16px); max-height: var(--select-max-height, 300px); overflow: auto;
       border: 1px solid var(--glass-line); border-radius: var(--select-radius, 16px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
-      transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
+      animation: var(--k-anim, k-m-drop) var(--k-motion-dur, 320ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
     }
-    @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
     .gh { padding: 8px 12px 4px; color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
     .opt {
       display: block; padding: 9px 12px; border-radius: var(--select-opt-radius, 10px); color: var(--text); font-size: var(--select-font-size, 15px); cursor: pointer;
@@ -76,7 +77,7 @@ let nextId = 0;
     .opt:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
     .opt[aria-selected='true'] { color: var(--display-ink, var(--text)); box-shadow: inset 2px 0 0 var(--display-ink, var(--text)); }
     @media (pointer: coarse) { .opt { padding: 12px; } }
-    @media (prefers-reduced-motion: reduce) { .btn::after, .chev, .pop, .opt { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .btn::after, .chev, .pop, .opt { transition: none; } .pop { animation: none; } }
   `,
   template: `
     <button #btn class="btn" type="button" aria-haspopup="listbox" [id]="btnId()" [disabled]="disabled()"
@@ -87,7 +88,7 @@ let nextId = 0;
       </span>
       <i class="chev" aria-hidden="true"></i>
     </button>
-    <div #pop class="pop" popover="manual" [id]="id" [style.left.px]="x()" [style.top.px]="y()" [style.min-width.px]="w()" (keydown)="onKey($event)">
+    <div #pop class="pop" popover="manual" [style]="motion.vars()" [id]="id" [style.left.px]="x()" [style.top.px]="y()" [style.min-width.px]="w()" (keydown)="onKey($event)">
       @if (open()) {
         <div role="listbox" [attr.aria-label]="ariaLabel() || null" [attr.aria-labelledby]="ariaLabelledBy() || null">
           @if (emptyLabel() && !hasOptions()) { <div class="gh">{{ emptyLabel() }}</div> }
@@ -105,6 +106,8 @@ let nextId = 0;
   `,
 })
 export class KometaSelect {
+  /** The open motion: a preset from KOMETA_ANIMATIONS or your own keyframes name (see KometaMotion). */
+  protected readonly motion = inject(KometaMotion);
   protected readonly id = `kometa-select-${nextId++}`;
   readonly options = input<readonly unknown[] | null | undefined>([]);
   readonly optionLabel = input('label');

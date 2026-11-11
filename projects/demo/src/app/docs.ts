@@ -7,6 +7,7 @@ import source from './app.html' with { loader: 'text' };
 // @ts-ignore: the build reads it as text; TypeScript would resolve it as the module itself.
 import tsSource from './app.ts' with { loader: 'text' };
 import scssSource from './app.scss' with { loader: 'text' };
+import globalScss from '../styles.scss' with { loader: 'text' };
 
 /** Cuts the inner markup of every `<app-doc id="x">` out of the template, keyed `page/x` by the `@case` above it. */
 export function parseSource(html: string): Map<string, string> {
@@ -20,12 +21,17 @@ export function parseSource(html: string): Map<string, string> {
   return snippets;
 }
 
-/** Cuts every `// #region page/id` … `// #endregion` block out of a TS or SCSS file; repeated keys join in order. */
+/**
+ * Cuts every `// #region page/id` … `// #endregion` block out of a TS or SCSS file; repeated keys join in order.
+ * One region can serve several examples: `// #region pop/animation select/animation`.
+ */
 export function parseRegions(text: string): Map<string, string> {
   const regions = new Map<string, string>();
-  for (const m of text.matchAll(/\/\/ #region ([\w-]+\/[\w-]+)\r?\n([\s\S]*?)\r?\n\s*\/\/ #endregion/g)) {
-    const prev = regions.get(m[1]);
-    regions.set(m[1], (prev ? prev + '\n\n' : '') + dedent(m[2]));
+  for (const m of text.matchAll(/\/\/ #region ((?:[\w-]+\/[\w-]+ ?)+)\r?\n([\s\S]*?)\r?\n\s*\/\/ #endregion/g)) {
+    for (const key of m[1].trim().split(' ')) {
+      const prev = regions.get(key);
+      regions.set(key, (prev ? prev + '\n\n' : '') + dedent(m[2]));
+    }
   }
   return regions;
 }
@@ -70,7 +76,7 @@ export class Docs {
   readonly page = signal('');
   private readonly snippets = parseSource(source);
   private readonly ts = parseRegions(tsSource as unknown as string);
-  private readonly scss = parseRegions(scssSource);
+  private readonly scss = parseRegions(globalScss + '\n' + scssSource);
   private readonly entries = signal<DocEntry[]>([]);
   /** The sections on screen, in page order, for the "On this page" list. */
   readonly sections = computed(() => [...this.entries()].sort((a, b) =>

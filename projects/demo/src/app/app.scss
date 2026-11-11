@@ -39,7 +39,42 @@ kbd {
   padding: 2px 6px; border: 1px solid var(--border2); border-bottom-width: 2px; border-radius: 6px; background: var(--bg);
   color: var(--text2); font: 11px var(--font-mono);
 }
-.menu-toggle { display: none; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; background: none; color: var(--text); font-size: 18px; cursor: pointer; }
+// The map button: a little orbit, the word and its key.
+.map-trigger {
+  display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--card); color: var(--text); font: 600 13px var(--font-sans); cursor: pointer;
+  &:hover, &:focus-visible { border-color: var(--amber); outline: none; }
+  kbd { padding: 1px 6px; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font: 11px var(--font-mono); }
+}
+.map-orbit {
+  position: relative; flex: none; width: 16px; height: 16px; border: 1px solid color-mix(in srgb, var(--amber) 60%, transparent); border-radius: 50%;
+  &::after {
+    content: ''; position: absolute; top: -3px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%;
+    background: var(--amber); box-shadow: 0 0 8px var(--amber); transform-origin: 2.5px 10.5px; animation: orbit 3.2s linear infinite;
+  }
+}
+@keyframes orbit { to { rotate: 1turn; } }
+
+// The dock: previous, where you are (opens the map), next.
+.dock {
+  position: fixed; left: 50%; bottom: 16px; z-index: 19; translate: -50% 0; display: flex; align-items: center; gap: 4px; padding: 5px;
+  border: 1px solid var(--border); border-radius: 999px; background: color-mix(in srgb, var(--card) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(1.4); box-shadow: 0 14px 40px rgba(0, 0, 0, .35);
+}
+.dock-step {
+  display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; color: var(--text2); font-size: 22px; line-height: 1; text-decoration: none;
+  &:is(a):hover, &:is(a):focus-visible { background: var(--input); color: var(--amber-ink); outline: none; }
+}
+.dock-map {
+  display: flex; align-items: center; gap: 10px; min-width: 170px; max-width: 46vw; padding: 6px 18px 6px 12px; border: 0; border-radius: 999px;
+  background: var(--input); color: var(--text); font: 600 14px var(--font-sans); text-align: left; cursor: pointer;
+  &:hover, &:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+}
+.dock-where {
+  display: grid; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  small { color: var(--amber-ink); font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+}
+@media (prefers-reduced-motion: reduce) { .map-orbit::after { animation: none; } }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
 // A live line of the last thing an example did, bottom left, out of the way.
@@ -79,28 +114,7 @@ kbd {
 @keyframes palette-in { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
 
 // ---------------------------------------------------------------- Layout
-.layout { display: grid; grid-template-columns: 272px minmax(0, 1fr) 232px; }
-
-.sidebar {
-  position: sticky; top: var(--top); height: calc(100dvh - var(--top)); box-sizing: border-box; overflow-y: auto;
-  padding: 20px 16px 48px; border-right: 1px solid var(--border); scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
-
-  .filter {
-    width: 100%; box-sizing: border-box; margin-bottom: 8px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px;
-    background: var(--input); color: var(--text); font: 14px var(--font-sans);
-
-    &:focus { outline: 2px solid var(--amber); outline-offset: -1px; }
-  }
-  h2 { margin: 24px 10px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
-  ul { list-style: none; margin: 0; padding: 0; }
-  a {
-    display: block; padding: 7px 10px; border-radius: 8px; color: var(--text2); text-decoration: none; font-size: 14px;
-    transition: background .15s, color .15s;
-  }
-  a:hover { background: var(--card); color: var(--text); }
-  a[aria-current] { background: var(--card); color: var(--amber-ink); font-weight: 700; box-shadow: inset 2px 0 0 var(--amber); }
-  .none { margin: 8px 10px; color: var(--muted); font-size: 13px; }
-}
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 232px; max-width: 1240px; margin: 0 auto; }
 
 main { width: 100%; max-width: 920px; box-sizing: border-box; margin: 0 auto; padding: 40px 40px 96px; }
 
@@ -114,7 +128,7 @@ main { width: 100%; max-width: 920px; box-sizing: border-box; margin: 0 auto; pa
 
 // Screens get the outline's column, and more width for the page itself.
 .layout[data-layout=wide] {
-  grid-template-columns: 272px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr); max-width: none;
 
   main { max-width: 1240px; }
   .toc { display: none; }
@@ -206,10 +220,10 @@ k-frame img { display: block; width: 100%; height: auto; }
 
 // ---------------------------------------------------------------- Narrow screens
 @media (max-width: 1279px) {
-  .layout { grid-template-columns: 272px minmax(0, 1fr); }
+  .layout { grid-template-columns: minmax(0, 1fr); }
   // Screens get the outline's column, and more width for the page itself.
 .layout[data-layout=wide] {
-  grid-template-columns: 272px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr); max-width: none;
 
   main { max-width: 1240px; }
   .toc { display: none; }
@@ -230,7 +244,9 @@ k-frame img { display: block; width: 100%; height: auto; }
 .toc { display: none; }
 }
 @media (max-width: 767px) {
-  .menu-toggle { display: block; }
+  .map-word, .map-trigger kbd { display: none; }
+  .map-trigger { padding: 7px 10px; }
+  .ticker { bottom: 76px; }
   .top-links, .search-word, .search-trigger kbd { display: none; }
   .search-trigger { min-width: 0; padding: 7px 10px; }
   .topbar { gap: 10px; }
@@ -239,8 +255,6 @@ k-frame img { display: block; width: 100%; height: auto; }
   .palette-list li { grid-template-columns: 1fr; gap: 2px; }
   .topbar { padding: 0 16px; }
   .layout { grid-template-columns: minmax(0, 1fr); }
-  .sidebar { display: none; position: fixed; inset: var(--top) 0 0; z-index: 15; height: auto; background: var(--bg); border-right: 0; }
-  .sidebar.open { display: block; }
   main { padding: 24px 16px 96px; }
   .page-head h1 { font-size: 28px; }
 }
@@ -693,4 +707,20 @@ k-frame img { display: block; width: 100%; height: auto; }
   span { font: 14px var(--font-mono); }
 }
 .ic-share-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 600; }
+// #endregion
+
+// #region motion/presets
+.mo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+.mo-tile {
+  aspect-ratio: 4 / 3; border: 1px solid var(--border); border-radius: 14px; cursor: pointer;
+  background: radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--amber) 22%, transparent), transparent 70%), var(--card);
+  color: var(--text); font: inherit; font-weight: 600;
+  &:hover { border-color: var(--amber); }
+}
+// #endregion
+// #region motion/view
+.mo-feed {
+  display: grid; gap: 8px; margin: 0; padding: 0; list-style: none;
+  li { padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+}
 // #endregion

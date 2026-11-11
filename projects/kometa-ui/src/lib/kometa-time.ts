@@ -1,3 +1,4 @@
+import { KometaMotion } from './kometa-motion';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, booleanAttribute, computed, effect, forwardRef, inject, input, signal, viewChild,
 } from '@angular/core';
@@ -20,6 +21,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-time',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => KometaTime), multi: true }],
   host: {
@@ -48,9 +50,8 @@ let nextId = 0;
       overflow-y: auto; overscroll-behavior: contain;
       border: 1px solid var(--glass-line); border-radius: 18px; color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(24px) saturate(1.2); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
-      transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
+      animation: var(--k-anim, k-m-drop) var(--k-motion-dur, 320ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
     }
-    @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
     .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
     .t {
       height: 38px; border: 0; border-radius: 10px; background: none; color: var(--text);
@@ -65,14 +66,14 @@ let nextId = 0;
       text-decoration: underline; text-decoration-color: var(--glass-line); text-underline-offset: 4px; cursor: pointer;
     }
     .clear:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-    @media (prefers-reduced-motion: reduce) { .btn::after, .pop, .t { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .btn::after, .pop, .t { transition: none; } .pop { animation: none; } }
   `,
   template: `
     <button #btn class="btn" type="button" aria-haspopup="dialog" [id]="inputId() || null" [disabled]="isDisabled()"
             [attr.aria-label]="ariaLabel() || null" [attr.aria-expanded]="open()" [attr.aria-controls]="id" (click)="toggle()">
       <span class="fig" [class.empty]="!value()">{{ shown() }}</span>
     </button>
-    <div #pop class="pop" popover="manual" role="dialog" [id]="id" [attr.aria-label]="ariaLabel() || null"
+    <div #pop class="pop" popover="manual" [style]="motion.vars()" role="dialog" [id]="id" [attr.aria-label]="ariaLabel() || null"
          [style.left.px]="x()" [style.top.px]="y()" (keydown)="onKey($event)">
       @if (open()) {
         <div class="grid" role="group">
@@ -88,6 +89,8 @@ let nextId = 0;
   `,
 })
 export class KometaTime implements ControlValueAccessor {
+  /** The open motion: a preset from KOMETA_ANIMATIONS or your own keyframes name (see KometaMotion). */
+  protected readonly motion = inject(KometaMotion);
   protected readonly id = `kometa-time-${nextId++}`;
   readonly step = input(15);
   readonly ariaLabel = input('');

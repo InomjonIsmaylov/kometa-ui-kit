@@ -1,3 +1,4 @@
+import { KometaMotion } from './kometa-motion';
 import {
   ChangeDetectionStrategy, Component, TemplateRef, DestroyRef, ElementRef, Injector, afterNextRender, booleanAttribute, effect, inject, input, model, output, signal, viewChild,
 } from '@angular/core';
@@ -25,6 +26,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-suggest',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   imports: [KometaPerson, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -40,23 +42,22 @@ let nextId = 0;
       min-width: 240px; max-width: calc(100vw - 16px); max-height: min(var(--suggest-max-height, 320px), calc(100vh - 16px));
       border: 1px solid var(--glass-line); border-radius: var(--suggest-radius, 18px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(24px) saturate(1.2); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
-      transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
+      animation: var(--k-anim, k-m-drop) var(--k-motion-dur, 320ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
     }
-    @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
     .opt {
       display: flex; width: 100%; align-items: center; min-height: var(--suggest-row-height, 52px); padding: 0 10px; border: 0; border-radius: 12px;
       background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
     }
     .opt + .opt { margin-top: 2px; }
     .opt:hover, .opt.on { background: var(--glass-line); }
-    @media (prefers-reduced-motion: reduce) { .pop { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .pop { transition: none; animation: none; } }
   `,
   template: `
     <input #field type="text" autocomplete="off" role="combobox" aria-autocomplete="list" [id]="inputId() || null" [placeholder]="placeholder()"
            [attr.aria-label]="ariaLabel() || null" [attr.aria-expanded]="open()" [attr.aria-controls]="id"
            [attr.aria-activedescendant]="open() && active() >= 0 ? id + '-' + active() : null" [value]="value()" [readOnly]="readonly()" [disabled]="disabled()"
            (input)="onInput($any($event.target).value)" (keydown)="onKey($event)" />
-    <div #pop class="pop" popover="manual" role="listbox" [id]="id" [style.left.px]="x()" [style.top.px]="y()" [style.width.px]="w()">
+    <div #pop class="pop" popover="manual" [style]="motion.vars()" role="listbox" [id]="id" [style.left.px]="x()" [style.top.px]="y()" [style.width.px]="w()">
       @if (open()) {
         @for (s of suggestions(); track $index) {
           <button type="button" class="opt" role="option" tabindex="-1" [id]="id + '-' + $index" [class.on]="$index === active()"
@@ -73,6 +74,8 @@ let nextId = 0;
   `,
 })
 export class KometaSuggest {
+  /** The open motion: a preset from KOMETA_ANIMATIONS or your own keyframes name (see KometaMotion). */
+  protected readonly motion = inject(KometaMotion);
   protected readonly id = `kometa-suggest-${nextId++}`;
   readonly value = model('');
   readonly suggestions = input<KometaSuggestion[]>([]);

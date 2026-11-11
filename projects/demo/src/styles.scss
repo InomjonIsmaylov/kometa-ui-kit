@@ -2,3 +2,14 @@
 @use '../../kometa-ui/styles/base';
 
 body { background: var(--bg); color: var(--text); margin: 0; }
+
+// #region motion/custom
+// Global, so the name stays as written: a component stylesheet would rename these keyframes.
+@keyframes demo-swoosh-in {
+  from { opacity: 0; transform: translateX(60%) rotate(-8deg) scale(.9); transform-origin: bottom right; }
+  60% { opacity: 1; }
+}
+@keyframes demo-swoosh-out {
+  to { opacity: 0; transform: translateY(30%) rotate(6deg) scale(.85); transform-origin: bottom right; }
+}
+// #endregion

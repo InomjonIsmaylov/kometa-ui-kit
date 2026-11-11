@@ -25,6 +25,8 @@ export class KometaConfirmationService {
   }
 }
 
+import { KometaMotion } from './kometa-motion';
+
 let nextId = 0;
 
 /**
@@ -42,6 +44,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-tray',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: contents; }
@@ -57,6 +60,9 @@ let nextId = 0;
        invisible below the page and gives every screen a page scroll of its own. */
     dialog:not([open]) { translate: 0 24px; opacity: 0; display: none; }
     @starting-style { dialog[open] { translate: 0 24px; opacity: 0; } }
+    /* animation set: it plays over the rise; the way out runs while the display transition still holds the box */
+    dialog.m[open] { animation: var(--k-anim) var(--k-motion-dur, 420ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards; }
+    dialog.m:not([open]) { animation: var(--k-anim-out) 300ms ease var(--k-anim-dir) forwards; }
     dialog::backdrop { transition: opacity 280ms ease, display 280ms allow-discrete, overlay 280ms allow-discrete; }
     @media (max-width: 639px) {
       dialog { width: auto; max-width: 560px; margin: auto 10px 10px; }
@@ -78,10 +84,10 @@ let nextId = 0;
     .go.danger:hover { background: color-mix(in srgb, var(--error) 14%, transparent); }
     .stay { background: transparent; color: var(--text); border-color: var(--glass-line, var(--border)); }
     .stay:hover { border-color: var(--text); }
-    @media (prefers-reduced-motion: reduce) { dialog, dialog::backdrop, button { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { dialog, dialog::backdrop, button { transition: none; } dialog.m { animation: none !important; } }
   `,
   template: `
-    <dialog #dlg class="k-tray" role="alertdialog" [attr.aria-labelledby]="id" (cancel)="onCancel($event)" (click)="onBackdrop($event)">
+    <dialog #dlg class="k-tray" [class.m]="!!motion.animation()" [style]="motion.vars()" role="alertdialog" [attr.aria-labelledby]="id" (cancel)="onCancel($event)" (click)="onBackdrop($event)">
       @if (ask(); as c) {
         <h2 #head [id]="id" tabindex="-1">{{ c.header || c.message }}</h2>
         @if (c.header && c.message) { <p>{{ c.message }}</p> }
@@ -94,6 +100,8 @@ let nextId = 0;
   `,
 })
 export class KometaTray {
+  /** The motion the card arrives with (and leaves with, reversed): a preset from KOMETA_ANIMATIONS or your own keyframes name. */
+  protected readonly motion = inject(KometaMotion);
   /** `false` keeps the question open when the dark area is clicked (Escape and the quiet answer still reject). */
   readonly backdropClose = input(true);
   protected readonly id = `kometa-tray-${nextId++}`;

@@ -1,3 +1,4 @@
+import { KometaMotion } from './kometa-motion';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, booleanAttribute, computed, effect, inject, input, model, signal, viewChild,
 } from '@angular/core';
@@ -21,6 +22,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-multi',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.pill]': 'pill()',
@@ -71,9 +73,8 @@ let nextId = 0;
       inset: auto; margin: 0; padding: 6px; min-width: 180px; max-width: calc(100vw - 16px); max-height: var(--multi-pop-max-height, 300px); overflow: auto;
       border: 1px solid var(--glass-line); border-radius: var(--multi-pop-radius, 16px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
-      transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
+      animation: var(--k-anim, k-m-drop) var(--k-motion-dur, 320ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
     }
-    @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
     .opt {
       display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; color: var(--text); font-size: 15px; cursor: pointer;
       overflow-wrap: anywhere; transition: background 160ms ease;
@@ -83,7 +84,7 @@ let nextId = 0;
     .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; }
     .none { margin: 0; padding: 8px 12px; color: var(--muted); font-size: 13.5px; }
     @media (pointer: coarse) { .opt { padding: 12px; } }
-    @media (prefers-reduced-motion: reduce) { .field::after, .chev, .pop, .opt { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .field::after, .chev, .pop, .opt { transition: none; } .pop { animation: none; } }
   `,
   template: `
     @if (pill()) {
@@ -106,7 +107,7 @@ let nextId = 0;
                (input)="onInput($event)" (focus)="show()" (keydown)="onKey($event)" />
       </div>
     }
-    <div #pop class="pop" popover="manual" [style.left.px]="x()" [style.top.px]="y()" [style.min-width.px]="w()">
+    <div #pop class="pop" popover="manual" [style]="motion.vars()" [style.left.px]="x()" [style.top.px]="y()" [style.min-width.px]="w()">
       @if (open()) {
         <div role="listbox" aria-multiselectable="true" [id]="id" [attr.aria-label]="ariaLabel() || null">
           @for (it of shown(); track it.i; let n = $index) {
@@ -123,6 +124,8 @@ let nextId = 0;
   `,
 })
 export class KometaMulti {
+  /** The open motion: a preset from KOMETA_ANIMATIONS or your own keyframes name (see KometaMotion). */
+  protected readonly motion = inject(KometaMotion);
   protected readonly id = `kometa-multi-${nextId++}`;
   readonly options = input<readonly unknown[] | null | undefined>([]);
   readonly optionLabel = input('label');

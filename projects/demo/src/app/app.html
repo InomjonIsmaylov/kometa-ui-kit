@@ -1,14 +1,14 @@
 <header class="topbar">
-  @if (layout() !== 'home') {
-    <button type="button" class="menu-toggle" [attr.aria-expanded]="menuOpen()" aria-controls="sidebar"
-            (click)="menuOpen.set(!menuOpen())">☰<span class="sr">Components</span></button>
-  }
   <a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"></span>Kometa<span class="brand-ui">UI</span></a>
   <nav class="top-links" aria-label="Sections">
     <a href="#start" [attr.aria-current]="group() === 'Guides' ? 'page' : null">Guides</a>
     <a href="#button" [attr.aria-current]="layout() === 'docs' && group() !== 'Guides' ? 'page' : null">Components</a>
-    <a href="#booking" [attr.aria-current]="layout() === 'wide' ? 'page' : null">Screens</a>
+    <a href="#booking" [attr.aria-current]="layout() === 'wide' && current().id !== 'playground' ? 'page' : null">Screens</a>
+    <a href="#playground" [attr.aria-current]="current().id === 'playground' ? 'page' : null">Playground</a>
   </nav>
+  <button type="button" class="map-trigger" (click)="cosmos.open()" aria-label="Open the map of the docs">
+    <span class="map-orbit" aria-hidden="true"></span><span class="map-word">Map</span><kbd>M</kbd>
+  </button>
   <button type="button" class="search-trigger" (click)="openPalette()" aria-label="Search the docs">
     <span aria-hidden="true">⌕</span><span class="search-word">Search</span><kbd>Ctrl K</kbd>
   </button>
@@ -20,22 +20,6 @@
   <app-home [count]="componentCount" [screens]="screens" />
 } @else {
 <div class="layout" [attr.data-layout]="layout()">
-  <nav id="sidebar" class="sidebar" [class.open]="menuOpen()" aria-label="Components">
-    <input type="search" class="filter" placeholder="Filter pages" aria-label="Filter pages"
-           [value]="filter()" (input)="filter.set($any($event.target).value)" />
-    @for (g of filtered(); track g.label) {
-      @if (g.label !== 'Overview') {
-        <h2>{{ g.label }}</h2>
-        <ul>
-          @for (p of g.items; track p.id) {
-            <li><a [href]="'#' + p.id" [attr.aria-current]="current().id === p.id ? 'page' : null">{{ p.label }}</a></li>
-          }
-        </ul>
-      }
-    } @empty {
-      <p class="none">Nothing matches “{{ filter() }}”.</p>
-    }
-  </nav>
 
   <main>
     <header class="page-head">
@@ -47,8 +31,14 @@
     @if (importLine(); as line) {
       <app-doc id="import" heading="Import" [demo]="false" [code]="line" lang="ts" />
     }
+    @if (play(); as p) {
+      <app-doc id="props" heading="Try it" about="Change any input and watch the component follow; the code under it is what you would write." [code]="null">
+        <app-props [config]="p" />
+      </app-doc>
+    }
 
     @switch (current().id) {
+      @case ('playground') { <app-playground /> }
       <!-- ============================================================ Guides -->
       @case ('start') {
         <app-doc id="install" heading="Install" about="Add the package to an Angular 22 app. It has no other runtime dependency." [demo]="false" lang="sh"
@@ -61,6 +51,50 @@
                  [code]="provideCode" />
         <app-doc id="first" heading="Your first component" about="Every component is standalone: import it and use it. This button is live.">
           <k-button label="Say hello" (clicked)="log.set('Hello from Kometa')" />
+        </app-doc>
+      }
+      @case ('motion') {
+        <app-doc id="presets" heading="Presets" about="Ten built-in motions. Each tile plays its own on load; click one to play it again.">
+          <div class="mo-grid">
+            @for (p of presets; track p) {
+              <button type="button" class="mo-tile" [kAnimate]="p" [kAnimateDelay]="$index * 70" #tile="kAnimate" (click)="tile.replay()">{{ p }}</button>
+            }
+          </div>
+        </app-doc>
+        <app-doc id="components" heading="On a component" about="Every overlay takes an animation input: pop, select, multi, date, time, actions, note, toast, tray and drawer, and kometaTipAnimation on a tip.">
+          <div class="row">
+            <k-button label="Flip" severity="secondary" (clicked)="flipPop.toggle($event)" />
+            <k-button label="Spring" severity="secondary" (clicked)="springPop.toggle($event)" />
+            <k-button label="Blur" severity="secondary" (clicked)="blurPop.toggle($event)" />
+          </div>
+          <k-pop #flipPop ariaLabel="Flip" [width]="220" animation="flip"><p class="pad">Flipped down from the top edge.</p></k-pop>
+          <k-pop #springPop ariaLabel="Spring" [width]="220" animation="spring"><p class="pad">Bounced in.</p></k-pop>
+          <k-pop #blurPop ariaLabel="Blur" [width]="220" animation="blur"><p class="pad">Out of focus, then sharp.</p></k-pop>
+        </app-doc>
+        <app-doc id="view" heading="On scroll" about="kAnimateOn=view waits until the element scrolls into sight; a delay per row staggers a list.">
+          <ul class="mo-feed">
+            @for (f of feed; track f) {
+              <li kAnimate="left" kAnimateOn="view" [kAnimateDelay]="$index * 80">{{ f }}</li>
+            }
+          </ul>
+        </app-doc>
+        <app-doc id="custom" heading="Your own keyframes" about="Name global keyframes: one for the way in, an optional second for the way out. Write them in a global stylesheet, as component styles rename keyframes.">
+          <div class="row"><k-button label="Swoosh" severity="secondary" (clicked)="swoosh.set(true)" /></div>
+          <k-drawer [(visible)]="swoosh" ariaLabel="Swoosh" animation="demo-swoosh-in demo-swoosh-out">
+            <div class="pad"><h3>Swoosh</h3><p>Swung in from the side by keyframes of this app's own.</p></div>
+          </k-drawer>
+        </app-doc>
+        <app-doc id="app-wide" heading="App-wide" about="Set --k-anim to a keyframes name (k-m-zoom is the zoom preset) and every overlay inside follows, unless it sets its own.">
+          <div class="row" style="--k-anim: k-m-zoom">
+            <k-select [options]="cities" [(value)]="city" placeholder="City" ariaLabel="Zoomed city" />
+            <k-date [(value)]="day" ariaLabel="Zoomed day" />
+          </div>
+        </app-doc>
+        <app-doc id="timing" heading="Timing" about="--k-motion-dur, --k-motion-ease and --k-motion-distance tune any motion: here a slow, long rise.">
+          <div class="row" style="--k-motion-dur: 1200ms; --k-motion-ease: cubic-bezier(.16, 1, .3, 1); --k-motion-distance: 40px">
+            <k-button label="Slow pop" severity="secondary" (clicked)="slowPop.toggle($event)" />
+            <k-pop #slowPop ariaLabel="Slow" [width]="220" animation="rise"><p class="pad">Taking its time.</p></k-pop>
+          </div>
         </app-doc>
       }
       @case ('theming') {
@@ -276,6 +310,9 @@
           <k-select [options]="cities" [(value)]="city" placeholder="City" ariaLabel="City" />
           <p class="out">City: {{ city() }}</p>
         </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-select [options]="cities" [(value)]="city" placeholder="City" ariaLabel="Animated city" [animation]="anim()" /></div>
+        </app-doc>
         <app-doc id="in-context" heading="In context" about="Two pill selects filter a team list by branch and role.">
           <div class="ic-team">
             <div class="row">
@@ -303,6 +340,9 @@
         <app-doc id="basic" heading="Basic" about="Pick several; each choice shows as a chip with an optional colour dot.">
           <k-multi [options]="serviceOptions" [(value)]="services" optionDot="dot" placeholder="Services" ariaLabel="Services" />
           <p class="out">Services: {{ services().join(', ') || '—' }}</p>
+        </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-multi [options]="serviceOptions" [(value)]="services" optionDot="dot" placeholder="Services" ariaLabel="Animated services" [animation]="anim()" /></div>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Services for one visit: each choice adds its time and price to the button.">
           <div class="ic-order">
@@ -545,6 +585,9 @@
           <k-date [(value)]="day" ariaLabel="Day" />
           <p class="out">Day: {{ day()?.toDateString() ?? '—' }}</p>
         </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-date [(value)]="day" ariaLabel="Animated day" [animation]="anim()" /></div>
+        </app-doc>
         <app-doc id="in-context" heading="In context" about="A request for days off: the range counts the days, and past dates cannot be picked.">
           <div class="ic-leave">
             <k-person name="Dilnoza Karimova" meta="Stylist · Chilonzor" />
@@ -589,6 +632,9 @@
         <app-doc id="basic" heading="Basic" about="A time of day; works with ngModel and reactive forms.">
           <k-time [(ngModel)]="time" clearable ariaLabel="Start time" />
           <p class="out">Time: {{ time()?.toTimeString()?.slice(0, 5) ?? '—' }}</p>
+        </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-time [(ngModel)]="time" ariaLabel="Animated time" [animation]="anim()" /></div>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Opening hours: a toggle per day, and two times when it is open.">
           <div class="ic-hours">
@@ -806,6 +852,9 @@
         <app-doc id="basic" heading="Basic" about="A list of actions behind one button; items can be disabled, dangerous or badged.">
           <k-actions [items]="actions" label="Visit actions" />
         </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-actions [items]="actions" label="Animated actions" [animation]="anim()" /></div>
+        </app-doc>
         <app-doc id="in-context" heading="In context" about="A visit queue with an actions menu per row; each action updates that row's tag.">
           <div class="ic-queue">
             @for (v of queue(); track v.id) {
@@ -889,6 +938,9 @@
             <k-button label="Ask (danger)" severity="danger" outlined (clicked)="ask(true)" />
             <k-button label="Ask (plain)" severity="secondary" (clicked)="ask(false)" />
           </div>
+        </app-doc>
+        <app-doc id="animation" heading="Animation" about="The app-wide k-tray takes animation too; this page sets it on the one at the bottom of the app.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Ask" severity="secondary" (clicked)="ask(false)" /></div>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Blocking a client from their card: the tray asks first, and the card follows the answer.">
           <div class="ic-block">
@@ -1232,6 +1284,12 @@
             <div class="pad"><h3>Bottom sheet</h3><p>Slides up from the bottom.</p></div>
           </k-drawer>
         </app-doc>
+        <app-doc id="animation" heading="Animation" about="In place of the slide from its edge: the drawer plays the motion in, and reversed on the way out.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Open drawer" severity="secondary" (clicked)="animDrawer.set(true)" /></div>
+          <k-drawer [(visible)]="animDrawer" ariaLabel="Animated drawer" [animation]="anim()">
+            <div class="pad"><h3>Animated drawer</h3><p>In with the chosen motion, out with it reversed.</p></div>
+          </k-drawer>
+        </app-doc>
         <app-doc id="in-context" heading="In context" about="A cart drawer: remove services with a halo, and book from the bottom with the running total.">
           <div class="row"><k-button severity="secondary" (clicked)="bagOpen.set(true)">Your visit · {{ bag().length }}</k-button></div>
           <k-drawer [(visible)]="bagOpen" ariaLabel="Your visit">
@@ -1280,6 +1338,10 @@
           <div class="row"><k-button label="Pop" severity="secondary" (clicked)="pop.toggle($event)" /></div>
           <k-pop #pop ariaLabel="Shop" [width]="240"><p class="pad">A small panel hung off the button.</p></k-pop>
         </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Pop" severity="secondary" (clicked)="animPop.toggle($event)" /></div>
+          <k-pop #animPop ariaLabel="Animated pop" [width]="240" [animation]="anim()"><p class="pad">Arrives with “{{ anim() || 'drop' }}”.</p></k-pop>
+        </app-doc>
         <app-doc id="in-context" heading="In context" about="A shop switcher: the button names the current shop, and the pop lists the others.">
           <div class="row"><k-button severity="secondary" icon="▾" iconPos="right" (clicked)="shopPop.toggle($event)">{{ shop().name }}</k-button></div>
           <k-pop #shopPop ariaLabel="Choose a shop" [width]="300">
@@ -1304,6 +1366,9 @@
       @case ('tip') {
         <app-doc id="basic" heading="Basic" about="A tooltip directive with an optional second line.">
           <p><button k-word quiet kometaTip="A tooltip" kometaTipSub="With a second line">Hover me</button></p>
+        </app-doc>
+        <app-doc id="animation" heading="Animation" about="kometaTipAnimation picks the motion of the tip.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><button k-word quiet kometaTip="A tooltip" kometaTipSub="Hover or focus me" [kometaTipAnimation]="anim()">Hover me</button></div>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="A week of visits as bars: each bar's tip gives the count and the takings.">
           <div class="ic-load">
@@ -1350,6 +1415,9 @@
       @case ('note') {
         <app-doc id="basic" heading="Basic" about="A small info button next to a word.">
           <p>Revenue <k-note label="About revenue">Takings for the period, before payouts.</k-note></p>
+        </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><p>Revenue <k-note label="About revenue" [animation]="anim()">Takings for the period, before payouts.</k-note></p></div>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Dashboard figures: each label carries a note on how it is counted, and a tag compares it with last week.">
           <div class="ic-kpi">
@@ -1462,6 +1530,10 @@
             <k-button label="Warn" size="small" severity="secondary" (clicked)="toast('warn')" />
             <k-button label="Error" size="small" severity="danger" (clicked)="toast('error')" />
           </div>
+        </app-doc>
+        <app-doc id="animation" heading="Animation" about="Toasts arrive with the chosen motion and leave with it reversed.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Show toast" size="small" severity="secondary" (clicked)="animToast()" /></div>
+          <k-toast [items]="animToasts()" (dismiss)="dropAnimToast($event)" position="top" [animation]="anim()" />
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Quick actions on a visit, each answered by a toast in the app-wide stack.">
           <div class="ic-quick">
@@ -1856,7 +1928,22 @@
   </div>
 </dialog>
 
+@if (layout() !== 'home') {
+  <nav class="dock" aria-label="Page">
+    @if (prev(); as p) { <a class="dock-step" [href]="'#' + p.id" [attr.aria-label]="'Previous: ' + p.label" [title]="p.label">‹</a> }
+    @else { <span class="dock-step" aria-hidden="true"></span> }
+    <button type="button" class="dock-map" (click)="cosmos.open()" aria-label="Open the map of the docs">
+      <span class="map-orbit" aria-hidden="true"></span>
+      <span class="dock-where"><small>{{ group() }}</small>{{ current().label }}</span>
+    </button>
+    @if (next(); as n) { <a class="dock-step" [href]="'#' + n.id" [attr.aria-label]="'Next: ' + n.label" [title]="n.label">›</a> }
+    @else { <span class="dock-step" aria-hidden="true"></span> }
+  </nav>
+}
+
+<app-cosmos #cosmos [groups]="nav" [current]="current().id" />
+
 <p class="ticker" aria-live="polite"><span class="ticker-dot" aria-hidden="true"></span>{{ log() }}</p>
 
 <k-toast [items]="toasts()" (dismiss)="dismissToast($event)" />
-<k-tray />
+<k-tray [animation]="anim()" />

@@ -1,3 +1,4 @@
+import { KometaMotion } from './kometa-motion';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, booleanAttribute, effect, inject, input, model, signal, viewChild,
 } from '@angular/core';
@@ -25,6 +26,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-actions',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:resize)': 'close(false)',
@@ -47,9 +49,8 @@ let nextId = 0;
       inset: auto; width: max-content; min-width: var(--actions-min-width, 200px); max-width: calc(100vw - 16px); margin: 0; padding: 4px 0;
       border: 0; border-left: 1px solid var(--display-ink, var(--text)); border-radius: 0;
       background: var(--bg); color: var(--text); box-shadow: 0 10px 28px rgba(0, 0, 0, .35);
-      transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
+      animation: var(--k-anim, k-m-drop) var(--k-motion-dur, 320ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
     }
-    @starting-style { .list:popover-open { opacity: 0; translate: 0 -4px; } }
     .row {
       position: relative; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 16px;
       border: 0; background: none; color: inherit; font: inherit; font-size: 15px; text-align: start; cursor: pointer;
@@ -63,12 +64,12 @@ let nextId = 0;
     .row:disabled { opacity: .4; cursor: not-allowed; }
     .row.danger { color: var(--red); }
     .badge { margin-left: auto; padding: 1px 6px; border: 1px solid currentColor; border-radius: 4px; color: var(--amber-ink, var(--amber)); font-size: 12px; letter-spacing: .06em; }
-    @media (prefers-reduced-motion: reduce) { .more, .list, .row::before { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .more, .list, .row::before { transition: none; } .list { animation: none; } }
   `,
   template: `
     <button #btn class="more" type="button" aria-haspopup="menu" [disabled]="disabled()" [attr.aria-label]="label()"
             [attr.aria-expanded]="open()" [attr.aria-controls]="id" (click)="toggle()"><ng-content>&#8943;</ng-content></button>
-    <div #list class="list" popover="manual" role="menu" [id]="id" [attr.aria-label]="label()"
+    <div #list class="list" popover="manual" [style]="motion.vars()" role="menu" [id]="id" [attr.aria-label]="label()"
          [attr.data-align]="align()" [style.left.px]="x()" [style.top.px]="y()" (keydown)="onKey($event)">
       @if (open()) {
         @for (it of items(); track $index) {
@@ -80,6 +81,8 @@ let nextId = 0;
   `,
 })
 export class KometaActions {
+  /** The open motion: a preset from KOMETA_ANIMATIONS or your own keyframes name (see KometaMotion). */
+  protected readonly motion = inject(KometaMotion);
   protected readonly id = `kometa-actions-${nextId++}`;
   readonly items = input.required<KometaAction[]>();
   /** The button's accessible name, in the caller's language. */

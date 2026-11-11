@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, input, model, signal, viewChild } from '@angular/core';
+import { KometaMotion } from './kometa-motion';
+import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, input, model, signal, viewChild } from '@angular/core';
 
 let nextId = 0;
 
@@ -14,6 +15,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'k-note',
+  hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(pointerenter)': 'onEnter($event)',
@@ -34,10 +36,9 @@ let nextId = 0;
       padding: 8px 12px; border: 0; border-radius: var(--note-radius, 8px);
       background: var(--note-bg, var(--display-ink, var(--text))); color: var(--note-color, var(--bg)); font-size: 13.5px; font-weight: 500; line-height: 1.45;
       overflow-wrap: anywhere; white-space: normal; text-align: left; pointer-events: none;
-      transition: opacity 200ms ease, translate 320ms var(--ease-spring, ease);
+      animation: var(--k-anim, k-m-rise) var(--k-motion-dur, 320ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
     }
-    @starting-style { .tip:popover-open { opacity: 0; translate: 0 4px; } }
-    @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .tip { animation: none; } }
   `,
   template: `
     <button #mk class="mk" type="button" [attr.aria-label]="label() || null" [attr.aria-expanded]="open()"
@@ -46,10 +47,12 @@ let nextId = 0;
         <circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 7.5v.01" />
       </svg>
     </button>
-    <span #tip class="tip" popover="manual" role="tooltip" [id]="id" [style.left.px]="x()" [style.top.px]="y()"><ng-content /></span>
+    <span #tip class="tip" popover="manual" [style]="motion.vars()" role="tooltip" [id]="id" [style.left.px]="x()" [style.top.px]="y()"><ng-content /></span>
   `,
 })
 export class KometaNote {
+  /** The open motion: a preset from KOMETA_ANIMATIONS or your own keyframes name (see KometaMotion). */
+  protected readonly motion = inject(KometaMotion);
   protected readonly id = `kometa-note-${nextId++}`;
   /** The marker's accessible name. */
   readonly label = input('');
