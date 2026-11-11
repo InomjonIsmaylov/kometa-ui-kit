@@ -34,7 +34,7 @@ import {
   `,
   template: `
     <div class="area">
-      <textarea #ta [id]="inputId() || null" [rows]="rows()" [value]="value()" [attr.maxlength]="maxlength()" [placeholder]="placeholder()"
+      <textarea #ta [attr.id]="inputId() || null" [rows]="rows()" [value]="value()" [attr.maxlength]="maxlength()" [placeholder]="placeholder()"
                 [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()" [readOnly]="readonly()" (input)="onInput($event)"></textarea>
     </div>
     @if (counting()) {

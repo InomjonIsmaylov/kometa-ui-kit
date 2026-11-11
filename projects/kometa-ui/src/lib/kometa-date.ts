@@ -67,7 +67,7 @@ let nextId = 0;
     .btn:hover:not(:disabled)::after, .btn[aria-expanded='true']::after, .btn:focus-visible::after { transform: none; opacity: 1; }
     .btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     .btn:disabled { opacity: .4; cursor: not-allowed; }
-    .fig { min-height: 28px; font-family: var(--font-display, inherit); font-size: var(--date-size, 24px); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .fig { white-space: nowrap; min-height: 28px; font-family: var(--font-display, inherit); font-size: var(--date-size, 24px); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
     .fig.empty { color: var(--muted); }
     @media (pointer: coarse) { .btn { min-height: 44px; align-items: center; } }
     .pop {
@@ -133,7 +133,7 @@ let nextId = 0;
     @if (inline()) {
       <div class="inline" (keydown)="onKey($event)"><ng-container [ngTemplateOutlet]="panel" /></div>
     } @else {
-      <button #btn class="btn" type="button" aria-haspopup="dialog" [id]="inputId() || null" [disabled]="disabled()"
+      <button #btn class="btn" type="button" aria-haspopup="dialog" [attr.id]="inputId() || null" [disabled]="disabled()"
               [attr.aria-label]="ariaLabel() || null" [attr.aria-expanded]="open()" [attr.aria-controls]="id" (click)="toggle()">
         <span class="fig" [class.empty]="!hasValue()">{{ shown() }}</span>
       </button>
@@ -176,7 +176,7 @@ export class KometaDate implements OnInit {
   protected readonly shown = computed(() => {
     if (this.range()) {
       const [a, b] = this.rangeValue() ?? [];
-      return a ? (b ? `${this.fmt(a)} – ${this.fmt(b)}` : this.fmt(a)) : this.placeholder();
+      return a ? (b && b.toDateString() !== a.toDateString() ? `${this.fmt(a)} – ${this.fmt(b)}` : this.fmt(a)) : this.placeholder();
     }
     const v = this.value();
     return v ? this.fmt(v) : this.placeholder();

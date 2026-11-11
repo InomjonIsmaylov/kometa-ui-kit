@@ -51,7 +51,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       <button type="button" class="step" tabindex="-1" aria-hidden="true" [disabled]="isDisabled() || readonly() || atMin()" (click)="nudge(-1)">&minus;</button>
     }
     <span class="nfield">
-      <input type="text" inputmode="numeric" autocomplete="off" role="spinbutton" [id]="inputId() || null"
+      <input type="text" inputmode="numeric" autocomplete="off" role="spinbutton" [attr.id]="inputId() || null"
              [attr.aria-label]="ariaLabel() || null" [placeholder]="placeholder()"
              [attr.aria-valuemin]="ariaMin()" [attr.aria-valuemax]="ariaMax()"
              [attr.aria-valuenow]="value()" [attr.aria-invalid]="bad() || null"

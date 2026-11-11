@@ -37,7 +37,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
     @media (prefers-reduced-motion: reduce) { .box::before, svg { transition: none; } }
   `,
   template: `
-    <button class="box" type="button" role="checkbox" [id]="inputId() || null" [disabled]="disabled()" [attr.aria-readonly]="readonly() ? 'true' : null"
+    <button class="box" type="button" role="checkbox" [attr.id]="inputId() || null" [disabled]="disabled()" [attr.aria-readonly]="readonly() ? 'true' : null"
             [attr.aria-checked]="checked()" [attr.aria-label]="ariaLabel() || null" [attr.aria-labelledby]="ariaLabelledBy() || null"
             [attr.aria-invalid]="invalid() ? 'true' : null" (click)="toggle()">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" /></svg>

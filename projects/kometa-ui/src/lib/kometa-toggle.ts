@@ -41,12 +41,18 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
     }
     button[aria-checked='true']::after { transform: scaleX(1); }
     button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+    /* No words: draw a track and knob so the switch is still there. */
+    button.bare { width: 36px; height: 20px; padding: 0; border-radius: 10px; background: var(--border2, var(--muted)); transition: background 220ms; }
+    button.bare::before { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg, #fff); transition: transform 220ms; }
+    button.bare::after { display: none; }
+    button.bare[aria-checked='true'] { background: var(--display-ink, #f4efe6); }
+    button.bare[aria-checked='true']::before { transform: translateX(16px); }
     button:disabled { cursor: default; opacity: .5; }
     @media (pointer: coarse) { button { min-height: 44px; min-width: 44px; } }
     @media (prefers-reduced-motion: reduce) { button, button::after { transition: none; } }
   `,
   template: `
-    <button type="button" role="switch" [attr.aria-checked]="checked() ? 'true' : 'false'"
+    <button type="button" role="switch" [class.bare]="!onLabel() && !offLabel()" [attr.aria-checked]="checked() ? 'true' : 'false'"
             [attr.aria-label]="ariaLabel() || null" [attr.aria-labelledby]="ariaLabelledBy() || null" [attr.aria-describedby]="ariaDescribedBy() || null" [disabled]="disabled()" (click)="checked.set(!checked())">
       {{ checked() ? onLabel() : offLabel() }}
     </button>

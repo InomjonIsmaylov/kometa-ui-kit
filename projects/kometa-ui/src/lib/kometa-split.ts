@@ -16,11 +16,12 @@ export interface KometaSplitSide {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-align]': 'align()' },
   styles: `
-    :host { display: grid; grid-template-columns: 1fr 1fr; gap: var(--split-gap, 16px); }
-    :host > div { min-width: 0; overflow-wrap: anywhere; }
+    :host { display: flex; flex-wrap: wrap; gap: var(--split-gap, 16px); }
+    :host > div { flex: 1 1 max-content; min-width: 0; }
     :host([data-align='center']) { text-align: center; }
     .amount {
       display: block;
+      white-space: nowrap;
       font-family: var(--font-display, 'Syne'), sans-serif;
       font-weight: 700;
       font-size: var(--split-amount-size, 28px);

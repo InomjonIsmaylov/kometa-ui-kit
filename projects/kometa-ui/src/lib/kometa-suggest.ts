@@ -53,7 +53,7 @@ let nextId = 0;
     @media (prefers-reduced-motion: reduce) { .pop { transition: none; animation: none; } }
   `,
   template: `
-    <input #field type="text" autocomplete="off" role="combobox" aria-autocomplete="list" [id]="inputId() || null" [placeholder]="placeholder()"
+    <input #field type="text" autocomplete="off" role="combobox" aria-autocomplete="list" [attr.id]="inputId() || null" [placeholder]="placeholder()"
            [attr.aria-label]="ariaLabel() || null" [attr.aria-expanded]="open()" [attr.aria-controls]="id"
            [attr.aria-activedescendant]="open() && active() >= 0 ? id + '-' + active() : null" [value]="value()" [readOnly]="readonly()" [disabled]="disabled()"
            (input)="onInput($any($event.target).value)" (keydown)="onKey($event)" />

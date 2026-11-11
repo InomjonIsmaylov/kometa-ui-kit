@@ -88,7 +88,7 @@ let nextId = 0;
   `,
   template: `
     @if (pill()) {
-      <button #btn class="btn" type="button" role="combobox" aria-haspopup="listbox" [id]="inputId() || null" [disabled]="disabled()"
+      <button #btn class="btn" type="button" role="combobox" aria-haspopup="listbox" [attr.id]="inputId() || null" [disabled]="disabled()"
               [attr.aria-expanded]="open()" [attr.aria-controls]="id" [attr.aria-activedescendant]="activeId()"
               [attr.aria-label]="ariaLabel() || null" (click)="toggle()" (keydown)="onKey($event)">
         <span class="val" [class.empty]="!value().length">{{ summary() || placeholder() }}</span>
@@ -101,7 +101,7 @@ let nextId = 0;
             {{ it.label }}<span aria-hidden="true">&times;</span>
           </button>
         }
-        <input #entry role="combobox" aria-autocomplete="list" autocomplete="off" [id]="inputId() || null" [disabled]="disabled()"
+        <input #entry role="combobox" aria-autocomplete="list" autocomplete="off" [attr.id]="inputId() || null" [disabled]="disabled()"
                [attr.aria-expanded]="open()" [attr.aria-controls]="id" [attr.aria-activedescendant]="activeId()" [attr.aria-label]="ariaLabel() || null"
                [placeholder]="value().length ? '' : placeholder()" [value]="query()"
                (input)="onInput($event)" (focus)="show()" (keydown)="onKey($event)" />

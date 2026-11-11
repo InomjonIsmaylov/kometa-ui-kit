@@ -69,7 +69,7 @@ let nextId = 0;
     @media (prefers-reduced-motion: reduce) { .btn::after, .pop, .t { transition: none; } .pop { animation: none; } }
   `,
   template: `
-    <button #btn class="btn" type="button" aria-haspopup="dialog" [id]="inputId() || null" [disabled]="isDisabled()"
+    <button #btn class="btn" type="button" aria-haspopup="dialog" [attr.id]="inputId() || null" [disabled]="isDisabled()"
             [attr.aria-label]="ariaLabel() || null" [attr.aria-expanded]="open()" [attr.aria-controls]="id" (click)="toggle()">
       <span class="fig" [class.empty]="!value()">{{ shown() }}</span>
     </button>
