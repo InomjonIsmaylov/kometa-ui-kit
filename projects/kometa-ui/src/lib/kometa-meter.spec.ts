@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { KometaMeter } from './kometa-meter';
 
 @Component({
@@ -89,9 +90,15 @@ describe('KometaMeter', () => {
     const { f, el } = render();
     const m = el.querySelector('[role="meter"]')!;
     expect(m.classList.contains('rolled')).toBe(false);
+    const before = el.querySelector('.fig b');
+    const warn = vi.spyOn(console, 'warn');
     f.componentInstance.value.set(16);
     f.detectChanges();
     expect(m.classList.contains('rolled')).toBe(true);
+    // A fresh <b> replays the CSS roll; NG0956 is Angular's warning for track-by-identity recreating it.
+    expect(el.querySelector('.fig b')).not.toBe(before);
+    expect(warn.mock.calls.flat().join(' ')).not.toContain('NG0956');
+    warn.mockRestore();
   });
 
   it('removes the roll and the tick transition under reduced motion', () => {

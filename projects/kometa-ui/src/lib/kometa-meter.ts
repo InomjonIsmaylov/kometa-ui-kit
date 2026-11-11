@@ -48,7 +48,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, booleanAttribute,
          [attr.aria-valuetext]="text()">
       @if (showFigure()) {
       <p class="fig">
-        @for (v of [clamped()]; track v) {
+        <!-- One-item loop keyed on the value: a new value remounts <b>, so the roll replays.
+             Keyed, not \`track v\`, which Angular flags (NG0956) when it recreates every item. -->
+        @for (v of [clamped()]; track 'fig' + v) {
           <b>{{ v }}</b>
         }<span> / {{ max() }}</span>
       </p>

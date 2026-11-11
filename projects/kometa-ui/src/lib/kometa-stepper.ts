@@ -63,7 +63,9 @@ import type { FormValueControl } from '@angular/forms/signals';
          [attr.aria-valuetext]="unit() ? value() + ' ' + unit() : null"
          [attr.aria-disabled]="disabled() ? 'true' : null" [attr.aria-readonly]="readonly() ? 'true' : null"
          (blur)="touch.emit()" (keydown)="onKeydown($event)">
-        @for (v of [value()]; track v) {
+        <!-- One-item loop keyed on the value: a new value remounts <b>, so the roll replays.
+             Keyed, not \`track v\`, which Angular flags (NG0956) when it recreates every item. -->
+        @for (v of [value()]; track 'fig' + v) {
           <b [class.up]="roll() > 0" [class.down]="roll() < 0">{{ v }}</b>
         }
         @if (unit()) {

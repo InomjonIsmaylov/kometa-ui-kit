@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormField, form, max, min } from '@angular/forms/signals';
+import { vi } from 'vitest';
 import { KometaStepper } from './kometa-stepper';
 
 @Component({
@@ -127,12 +128,18 @@ describe('KometaStepper', () => {
   it('rolls the figure on a change but not on mount', () => {
     const { f, minus, plus, fig } = render();
     expect(fig.querySelector('b')!.className).not.toMatch(/up|down/);
+    const before = fig.querySelector('b');
+    const warn = vi.spyOn(console, 'warn');
     plus.click();
     f.detectChanges();
     expect(fig.querySelector('b')!.classList.contains('up')).toBe(true);
+    // A fresh <b> replays the CSS roll; NG0956 is Angular's warning for track-by-identity recreating it.
+    expect(fig.querySelector('b')).not.toBe(before);
     minus.click();
     f.detectChanges();
     expect(fig.querySelector('b')!.classList.contains('down')).toBe(true);
+    expect(warn.mock.calls.flat().join(' ')).not.toContain('NG0956');
+    warn.mockRestore();
   });
 
   it('removes the roll and the fade under reduced motion', () => {
