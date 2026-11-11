@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Kometa's Angular 22 UI kit (no PrimeNG dependency), extracted from the `mening` project
 (`C:\Users\i_ismaylov\source\personal\mening`, `web/projects/shared/ui` and `web/projects/shared/styles`).
 The `mening` repo still has its own copy; **nothing here is linked back to it**, so a fix in one does not reach the other.
-No git repo yet.
+Git repo on `main` (local only, no remote).
 
 ## Commands
 
