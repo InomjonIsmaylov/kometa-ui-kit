@@ -1,6 +1,6 @@
 {
   "name": "kometa-ui",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Angular 22 UI kit: standalone OnPush components themed by CSS custom properties, light and dark.",
   "keywords": [
     "angular",
