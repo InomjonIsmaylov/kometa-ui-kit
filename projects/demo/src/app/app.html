@@ -1,356 +1,457 @@
-<main>
-  <header class="top">
-    <h1>Kometa UI kit</h1>
-    <kometa-words [options]="[{ value: 'system', label: 'System' }, { value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]"
-                  [value]="theme.preference()" (valueChange)="setTheme($any($event))" ariaLabel="Theme" />
-  </header>
+<header class="topbar">
+  <button type="button" class="menu-toggle" [attr.aria-expanded]="menuOpen()" aria-controls="sidebar"
+          (click)="menuOpen.set(!menuOpen())">☰<span class="sr">Components</span></button>
+  <a class="brand" href="#">Kometa UI</a>
   <p class="log" aria-live="polite">Last event: {{ log() }}</p>
+  <kometa-words [options]="[{ value: 'system', label: 'System' }, { value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]"
+                [value]="theme.preference()" (valueChange)="setTheme($any($event))" ariaLabel="Theme" />
+</header>
 
-  <!-- ============================================================ Actions -->
-  <h2 class="group">Actions</h2>
+<div class="layout">
+  <nav id="sidebar" class="sidebar" [class.open]="menuOpen()" aria-label="Components">
+    @for (g of nav; track g.label) {
+      <h2>{{ g.label }}</h2>
+      <ul>
+        @for (p of g.items; track p.id) {
+          <li><a [href]="'#' + p.id" [attr.aria-current]="current().id === p.id ? 'page' : null">{{ p.label }}</a></li>
+        }
+      </ul>
+    }
+  </nav>
 
-  <section>
-    <h3>Button</h3>
-    <div class="row">
-      <kometa-button label="Primary" (clicked)="clicks.set(clicks() + 1)" />
-      <kometa-button label="Secondary" severity="secondary" />
-      <kometa-button label="Danger" severity="danger" />
-      <kometa-button label="Outlined" outlined />
-      <kometa-button label="Text" text />
-      <kometa-button label="Small" size="small" />
-      <kometa-button label="Loading" loading />
-      <kometa-button label="Disabled" disabled />
-    </div>
-    <kometa-button label="Fluid" fluid />
-    <p>Primary clicked {{ clicks() }} times.</p>
-  </section>
+  <main>
+    <header class="page-head">
+      <h1>{{ current().label }}</h1>
+      <p>{{ current().about }}</p>
+    </header>
 
-  <section>
-    <h3>Word, erase, halo</h3>
-    <div class="row">
-      <button kometa-word (click)="log.set('Word')">Nudge</button>
-      <button kometa-word quiet>Later</button>
-      <button kometa-word lead>Book a visit</button>
-      <button kometa-word lead busy>Saving</button>
-      <button kometa-erase (click)="log.set('Erase')">Delete service</button>
-      <button kometa-halo aria-label="Close">✕</button>
-      <button kometa-halo aria-label="More">⋯</button>
-    </div>
-  </section>
-
-  <section>
-    <h3>Actions menu</h3>
-    <kometa-actions [items]="actions" label="Visit actions" />
-  </section>
-
-  <section>
-    <h3>Pair, confirm, tray</h3>
-    <kometa-pair keep="Keep" confirm="Cancel visit" [busy]="pairBusy()" (kept)="log.set('Pair: kept')" (confirmed)="confirmPair()" />
-    <kometa-confirm [asking]="asking()">
-      <span data-row class="row">Mark paid in cash <button kometa-word (click)="asking.set(true)">Mark</button></span>
-      <span data-question class="row">Sure?
-        <button kometa-word quiet (click)="asking.set(false)">No</button>
-        <button kometa-word (click)="asking.set(false); log.set('Confirm: yes')">Yes</button>
-      </span>
-    </kometa-confirm>
-    <div class="row">
-      <kometa-button label="Ask (danger)" severity="danger" outlined (clicked)="ask(true)" />
-      <kometa-button label="Ask (plain)" severity="secondary" (clicked)="ask(false)" />
-    </div>
-  </section>
-
-  <!-- ============================================================ Status -->
-  <h2 class="group">Status and feedback</h2>
-
-  <section>
-    <h3>Tag</h3>
-    <div class="row">@for (t of tones; track t) { <kometa-tag [tone]="t">{{ t }}</kometa-tag> }</div>
-  </section>
-
-  <section>
-    <h3>Banner</h3>
-    @for (b of banners; track b) { <kometa-banner [tone]="b" dismissible>This is a {{ b }} banner.</kometa-banner> }
-    <kometa-banner tone="info" surface="glass" actionLabel="Retry" (action)="log.set('Banner action')">A glass banner with an action.</kometa-banner>
-  </section>
-
-  <section>
-    <h3>Toast</h3>
-    <div class="row">
-      <kometa-button label="Success" size="small" (clicked)="toast('success')" />
-      <kometa-button label="Info" size="small" severity="secondary" (clicked)="toast('info')" />
-      <kometa-button label="Warn" size="small" severity="secondary" (clicked)="toast('warn')" />
-      <kometa-button label="Error" size="small" severity="danger" (clicked)="toast('error')" />
-    </div>
-    <kometa-toast [items]="toasts()" (dismiss)="dismissToast($event)" />
-  </section>
-
-  <section>
-    <h3>Meter, stars, steps</h3>
-    <kometa-meter [value]="14" [max]="25" label="14 of 25" />
-    <kometa-stars [value]="4" label="4 out of 5" />
-    <kometa-steps [steps]="['Service', 'Time', 'Details', 'Done']" [current]="2" ariaLabel="Booking progress" />
-  </section>
-
-  <section>
-    <h3>Upload</h3>
-    <kometa-upload name="receipt.pdf" sizeLabel="1.2 MB" [progress]="0.45" state="running" statusLabel="45%" />
-    <kometa-upload name="photo.jpg" sizeLabel="820 KB" [progress]="100" state="done" statusLabel="Uploaded" />
-    <kometa-upload name="scan.png" sizeLabel="4.1 MB" state="failed" statusLabel="Too large" actionLabel="Retry" (action)="log.set('Upload retry')" />
-  </section>
-
-  <section>
-    <h3>Wait, skeleton, quiet</h3>
-    <kometa-wait label="Loading visits" />
-    <kometa-skeleton [rows]="3" ariaLabel="Loading list" />
-    <kometa-skeleton shape="card" ariaLabel="Loading card" />
-    <kometa-skeleton shape="line" width="60%" ariaLabel="Loading line" />
-    <kometa-quiet title="No visits yet" hint="Book the first one and it shows up here." />
-  </section>
-
-  <!-- ============================================================ Forms -->
-  <h2 class="group">Form controls</h2>
-
-  <section>
-    <h3>Field</h3>
-    <kometa-field [(value)]="name" label="Name" autocomplete="name" [maxLength]="40" showCount />
-    <kometa-field [(value)]="email" label="Email" type="email" error="Enter a valid email." invalid touched />
-    <kometa-field value="Read only" label="Read only" readonly />
-    <kometa-field value="" label="Small" size="sm" />
-  </section>
-
-  <section>
-    <h3>Search, notes</h3>
-    <kometa-search [(value)]="search" placeholder="Search clients" ariaLabel="Search clients" clearLabel="Clear" />
-    <kometa-notes [(value)]="notes" [maxlength]="200" placeholder="A note for the master" ariaLabel="Note" />
-  </section>
-
-  <section>
-    <h3>Code, digits</h3>
-    <kometa-code [(value)]="code" label="Confirmation code" />
-    <kometa-digits [(value)]="digits" ariaLabel="PIN" />
-    <p>Code: {{ code() || '—' }}, digits: {{ digits() || '—' }}</p>
-  </section>
-
-  <section>
-    <h3>Number, stepper</h3>
-    <kometa-number [(value)]="amount" money suffix="so'm" ariaLabel="Price" />
-    <kometa-number [value]="3" [min]="0" [max]="10" buttons ariaLabel="Count" />
-    <kometa-stepper [(value)]="seats" [min]="1" [max]="6" unit="seats" ariaLabel="Seats" decrementLabel="Fewer" incrementLabel="More" />
-  </section>
-
-  <section>
-    <h3>Select, multi, menu</h3>
-    <kometa-select [options]="cities" [(value)]="city" placeholder="City" ariaLabel="City" />
-    <kometa-select [options]="cities" [(value)]="city" pill prefix="City:" ariaLabel="City pill" />
-    <kometa-multi [options]="serviceOptions" [(value)]="services" optionDot="dot" placeholder="Services" ariaLabel="Services" />
-    <kometa-menu [options]="words" [(value)]="view" label="View" />
-    <p>City: {{ city() }}, services: {{ services().join(', ') || '—' }}, view: {{ view() }}</p>
-  </section>
-
-  <section>
-    <h3>Suggest</h3>
-    <div class="field"><kometa-suggest [(value)]="client" [suggestions]="suggestions()" [delay]="100" placeholder="Type “az”" ariaLabel="Client"
-                    (query)="query($event)" (picked)="log.set('Picked ' + $event.label)" /></div>
-  </section>
-
-  <section>
-    <h3>Toggle, check, tick, chip</h3>
-    <div class="row">
-      <kometa-toggle [(checked)]="on" ariaLabel="Demo toggle" onLabel="On" offLabel="Off" />
-      <kometa-check [(checked)]="checked">Remind me</kometa-check>
-      <kometa-tick [(checked)]="ticked" ariaLabel="Select row" />
-      <kometa-chip [(selected)]="chip">4.5+<span chip-count>12</span></kometa-chip>
-      <kometa-chip [disabled]="true">Disabled</kometa-chip>
-    </div>
-    <p>toggle {{ on() }}, check {{ checked() }}, tick {{ ticked() }}, chip {{ chip() }}</p>
-  </section>
-
-  <section>
-    <h3>Words, rating</h3>
-    <kometa-words [options]="words" [(value)]="view" ariaLabel="View" />
-    <kometa-words [options]="words" [(value)]="view" tabs ariaLabel="View tabs" />
-    <kometa-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Rating" />
-  </section>
-
-  <section>
-    <h3>Picker</h3>
-    <kometa-picker label="Add photos" hint="JPG or PNG" variant="zone" accept="image/*" multiple (picked)="filesPicked($event)" />
-    <kometa-picker label="Attach file" (picked)="filesPicked($event)" />
-    <p>{{ picked() }}</p>
-  </section>
-
-  <!-- ============================================================ Date and time -->
-  <h2 class="group">Date and time</h2>
-
-  <section>
-    <h3>Date</h3>
-    <kometa-date [(value)]="day" ariaLabel="Day" />
-    <kometa-date range [(rangeValue)]="period" ariaLabel="Period" />
-    <kometa-date inline [(value)]="day" ariaLabel="Inline day" />
-    <p>Day: {{ day()?.toDateString() ?? '—' }}</p>
-  </section>
-
-  <section>
-    <h3>Time</h3>
-    <kometa-time [(ngModel)]="time" clearable ariaLabel="Start time" />
-    <p>Time: {{ time()?.toTimeString()?.slice(0, 5) ?? '—' }}</p>
-  </section>
-
-  <section>
-    <h3>Film, slots, marks</h3>
-    <kometa-film [days]="film" [(value)]="filmDay" ariaLabel="Day" />
-    <kometa-slots [slots]="slots" [(value)]="slot" [clearable]="true" ariaLabel="Time slot" />
-    <kometa-marks [days]="marks" />
-    <p>Day {{ filmDay() }}, slot {{ slot() || '—' }}</p>
-  </section>
-
-  <!-- ============================================================ Layout -->
-  <h2 class="group">Layout and content</h2>
-
-  <section>
-    <h3>Heading</h3>
-    <kometa-heading title="Today's visits" [level]="3"><button kometa-word action>See all</button></kometa-heading>
-  </section>
-
-  <section>
-    <h3>Rows</h3>
-    <kometa-rows label="Visit">
-      <kometa-row label="Service">Haircut</kometa-row>
-      <kometa-row label="Time">Mon · 14:00</kometa-row>
-      <kometa-row title="Notifications" meta="SMS and Telegram" tone="amber" button (activated)="log.set('Row activated')"><span rowIcon>🔔</span></kometa-row>
-      <kometa-row title="Disabled" meta="Nothing here" tone="blue" button disabled><span rowIcon>⛔</span></kometa-row>
-    </kometa-rows>
-  </section>
-
-  <section>
-    <h3>Person, provider logo</h3>
-    <div class="row">
-      <kometa-person name="Dilnoza Karimova" meta="Master" />
-      <kometa-person name="Aziz" size="sm" />
-      <kometa-person name="Shop" shape="square" size="lg" [image]="avatar" imageAlt="Shop logo" />
-      <kometa-person name="Bare" bare />
-    </div>
-    <div class="row">
-      <span><kometa-provider-logo provider="Click" /> Click</span>
-      <span><kometa-provider-logo provider="Payme" /> Payme</span>
-    </div>
-  </section>
-
-  <section>
-    <h3>Split, share</h3>
-    <kometa-split [left]="{ amount: '8 400 000', label: 'Cash' }" [right]="{ amount: '1 800 000', label: 'Card' }" />
-    <kometa-share [segments]="share" label="Revenue by service" />
-  </section>
-
-  <section>
-    <h3>Trail</h3>
-    <kometa-trail>
-      <kometa-step time="09:00" gap="32 min">Booked online</kometa-step>
-      <kometa-step time="09:32" gap="5 min">Confirmed by the master</kometa-step>
-      <kometa-step time="09:37">Reminder sent</kometa-step>
-    </kometa-trail>
-  </section>
-
-  <section>
-    <h3>Link</h3>
-    <div class="row"><span>kometa.uz/b/dilnoza</span>
-      <kometa-link text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy booking link" /></div>
-  </section>
-
-  <section>
-    <h3>Frame, reveal</h3>
-    <kometa-frame caption="A framed picture"><img [src]="frame" alt="Sample" /></kometa-frame>
-    <kometa-reveal [before]="before" [after]="after" ariaLabel="Before and after" />
-  </section>
-
-  <!-- ============================================================ Data -->
-  <h2 class="group">Data</h2>
-
-  <section>
-    <h3>Table, sort</h3>
-    <kometa-sort [options]="sortOptions" [key]="sortKey()" [dir]="sortDir()" ariaLabel="Sort" (pick)="sortBy($event)">Sort</kometa-sort>
-    <kometa-table [value]="sorted()" dataKey="id" groupRowsBy="group">
-      <ng-template #header>
-        <tr>
-          <th kometaSortHeader="name" [active]="sortKey()" [dir]="sortDir()" (pick)="sortBy($event)">Name</th>
-          <th kometaSortHeader="price" [active]="sortKey()" [dir]="sortDir()" (pick)="sortBy($event)">Price</th>
-        </tr>
-      </ng-template>
-      <ng-template #groupheader let-row><tr><th colspan="2">{{ row.group }}</th></tr></ng-template>
-      <ng-template #body let-row><tr><td>{{ row.name }}</td><td>{{ row.price }}</td></tr></ng-template>
-      <ng-template #emptymessage><tr><td colspan="2">Nothing yet</td></tr></ng-template>
-    </kometa-table>
-  </section>
-
-  <section>
-    <h3>Pager</h3>
-    <kometa-pager [total]="137" [(page)]="page" [(pageSize)]="pageSize" />
-    <p>Page {{ page() }}, {{ pageSize() }} per page</p>
-  </section>
-
-  <!-- ============================================================ Navigation -->
-  <h2 class="group">Navigation</h2>
-
-  <section>
-    <h3>Tabbar</h3>
-    <kometa-tabbar [tabs]="tabs" [(value)]="tab" ariaLabel="Demo tabs" />
-    <p>Selected: {{ tab() }}</p>
-  </section>
-
-  <!-- ============================================================ Disclosure -->
-  <h2 class="group">Disclosure and hints</h2>
-
-  <section>
-    <h3>Accordion</h3>
-    <kometa-accordion>
-      <kometa-accordion-item heading="What is the lead fee?">12% of a new client's first visit.</kometa-accordion-item>
-      <kometa-accordion-item heading="Is the link paid?">No, the booking link is free.</kometa-accordion-item>
-    </kometa-accordion>
-  </section>
-
-  <section>
-    <h3>Fold</h3>
-    <kometa-fold [(open)]="fold">
-      <span fold-title>Opening hours</span>
-      <span fold-aside class="aside muted">9–18</span>
-      <ng-template><p>Mon–Fri 9:00–18:00, Sat 10:00–15:00.</p></ng-template>
-    </kometa-fold>
-    <button type="button" class="bare" (click)="bare.set(!bare())">Fold mark and body by hand <kometa-fold-mark [open]="bare()" /></button>
-    <kometa-fold-body [open]="bare()"><ng-template><p>The 0fr to 1fr spring, on its own.</p></ng-template></kometa-fold-body>
-  </section>
-
-  <section>
-    <h3>Hint, note, tip</h3>
-    <kometa-hint term="Lead fee">12% of a new client's first visit.</kometa-hint>
-    <p>Revenue <kometa-note label="About revenue">Takings for the period, before payouts.</kometa-note></p>
-    <p><button kometa-word quiet kometaTip="A tooltip" kometaTipSub="With a second line">Hover me</button></p>
-  </section>
-
-  <!-- ============================================================ Overlays -->
-  <h2 class="group">Overlays</h2>
-
-  <section>
-    <h3>Drawer, pop, photos</h3>
-    <div class="row">
-      <kometa-button label="Right drawer" severity="secondary" (clicked)="drawer.set(true)" />
-      <kometa-button label="Bottom sheet" severity="secondary" (clicked)="sheet.set(true)" />
-      <kometa-button label="Pop" severity="secondary" (clicked)="pop.toggle($event)" />
-    </div>
-    <kometa-pop #pop ariaLabel="Shop" [width]="240"><p class="pad">A small panel hung off the button.</p></kometa-pop>
-    <div class="row">
-      @for (p of photos; track p.url; let i = $index) {
-        <button type="button" class="thumb" (click)="openPhoto(i)"><img [src]="p.thumbUrl" [alt]="p.alt" /></button>
+    @switch (current().id) {
+      <!-- ============================================================ Form -->
+      @case ('field') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-field [(value)]="name" label="Name" autocomplete="name" [maxLength]="40" showCount />
+        </section>
+        <section class="card"><h3>Invalid</h3>
+          <kometa-field [(value)]="email" label="Email" type="email" error="Enter a valid email." invalid touched />
+        </section>
+        <section class="card"><h3>Read only and small</h3>
+          <kometa-field value="Read only" label="Read only" readonly />
+          <kometa-field value="" label="Small" size="sm" />
+        </section>
       }
-    </div>
-    <kometa-drawer [(visible)]="drawer" ariaLabel="Demo drawer" (opened)="log.set('Drawer opened')" (closing)="log.set('Drawer closing')">
-      <div class="pad"><h3>Drawer</h3><p>Escape or the dark area closes it.</p>
-        <kometa-button label="Close" (clicked)="drawer.set(false)" /></div>
-    </kometa-drawer>
-    <kometa-drawer [(visible)]="sheet" position="bottom" styleClass="kometa-sheet" ariaLabel="Demo sheet">
-      <div class="pad"><h3>Bottom sheet</h3><p>Slides up from the bottom.</p></div>
-    </kometa-drawer>
-    <kometa-photos [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" ariaLabel="Photos" />
-  </section>
-</main>
+      @case ('search') {
+        <section class="card"><h3>Search</h3>
+          <kometa-search [(value)]="search" placeholder="Search clients" ariaLabel="Search clients" clearLabel="Clear" />
+        </section>
+        <section class="card"><h3>Notes</h3>
+          <kometa-notes [(value)]="notes" [maxlength]="200" placeholder="A note for the master" ariaLabel="Note" />
+        </section>
+      }
+      @case ('code') {
+        <section class="card"><h3>Code</h3>
+          <kometa-code [(value)]="code" label="Confirmation code" />
+        </section>
+        <section class="card"><h3>Digits</h3>
+          <kometa-digits [(value)]="digits" ariaLabel="PIN" />
+        </section>
+        <p class="out">Code: {{ code() || '—' }}, digits: {{ digits() || '—' }}</p>
+      }
+      @case ('number') {
+        <section class="card"><h3>Money</h3>
+          <kometa-number [(value)]="amount" money suffix="so'm" ariaLabel="Price" />
+        </section>
+        <section class="card"><h3>Buttons</h3>
+          <kometa-number [value]="3" [min]="0" [max]="10" buttons ariaLabel="Count" />
+        </section>
+        <section class="card"><h3>Stepper</h3>
+          <kometa-stepper [(value)]="seats" [min]="1" [max]="6" unit="seats" ariaLabel="Seats" decrementLabel="Fewer" incrementLabel="More" />
+        </section>
+      }
+      @case ('select') {
+        <section class="card"><h3>Select</h3>
+          <kometa-select [options]="cities" [(value)]="city" placeholder="City" ariaLabel="City" />
+        </section>
+        <section class="card"><h3>Pill</h3>
+          <kometa-select [options]="cities" [(value)]="city" pill prefix="City:" ariaLabel="City pill" />
+        </section>
+        <section class="card"><h3>Multi</h3>
+          <kometa-multi [options]="serviceOptions" [(value)]="services" optionDot="dot" placeholder="Services" ariaLabel="Services" />
+        </section>
+        <section class="card"><h3>Menu</h3>
+          <kometa-menu [options]="words" [(value)]="view" label="View" />
+        </section>
+        <p class="out">City: {{ city() }}, services: {{ services().join(', ') || '—' }}, view: {{ view() }}</p>
+      }
+      @case ('suggest') {
+        <section class="card"><h3>Basic</h3>
+          <div class="field"><kometa-suggest [(value)]="client" [suggestions]="suggestions()" [delay]="100" placeholder="Type “az”" ariaLabel="Client"
+                          (query)="query($event)" (picked)="log.set('Picked ' + $event.label)" /></div>
+        </section>
+      }
+      @case ('toggle') {
+        <section class="card"><h3>Toggle</h3>
+          <kometa-toggle [(checked)]="on" ariaLabel="Demo toggle" onLabel="On" offLabel="Off" />
+        </section>
+        <section class="card"><h3>Check and tick</h3>
+          <div class="row">
+            <kometa-check [(checked)]="checked">Remind me</kometa-check>
+            <kometa-tick [(checked)]="ticked" ariaLabel="Select row" />
+          </div>
+        </section>
+        <section class="card"><h3>Chip</h3>
+          <div class="row">
+            <kometa-chip [(selected)]="chip">4.5+<span chip-count>12</span></kometa-chip>
+            <kometa-chip [disabled]="true">Disabled</kometa-chip>
+          </div>
+        </section>
+        <p class="out">toggle {{ on() }}, check {{ checked() }}, tick {{ ticked() }}, chip {{ chip() }}</p>
+      }
+      @case ('words') {
+        <section class="card"><h3>Words</h3>
+          <kometa-words [options]="words" [(value)]="view" ariaLabel="View" />
+        </section>
+        <section class="card"><h3>Tabs</h3>
+          <kometa-words [options]="words" [(value)]="view" tabs ariaLabel="View tabs" />
+        </section>
+        <section class="card"><h3>Rating</h3>
+          <kometa-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Rating" />
+        </section>
+      }
+      @case ('picker') {
+        <section class="card"><h3>Zone</h3>
+          <kometa-picker label="Add photos" hint="JPG or PNG" variant="zone" accept="image/*" multiple (picked)="filesPicked($event)" />
+        </section>
+        <section class="card"><h3>Button</h3>
+          <kometa-picker label="Attach file" (picked)="filesPicked($event)" />
+        </section>
+        <p class="out">{{ picked() }}</p>
+      }
 
+      <!-- ============================================================ Date and time -->
+      @case ('date') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-date [(value)]="day" ariaLabel="Day" />
+        </section>
+        <section class="card"><h3>Range</h3>
+          <kometa-date range [(rangeValue)]="period" ariaLabel="Period" />
+        </section>
+        <section class="card"><h3>Inline</h3>
+          <kometa-date inline [(value)]="day" ariaLabel="Inline day" />
+        </section>
+        <p class="out">Day: {{ day()?.toDateString() ?? '—' }}</p>
+      }
+      @case ('time') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-time [(ngModel)]="time" clearable ariaLabel="Start time" />
+        </section>
+        <p class="out">Time: {{ time()?.toTimeString()?.slice(0, 5) ?? '—' }}</p>
+      }
+      @case ('film') {
+        <section class="card"><h3>Film</h3>
+          <kometa-film [days]="film" [(value)]="filmDay" ariaLabel="Day" />
+        </section>
+        <section class="card"><h3>Slots</h3>
+          <kometa-slots [slots]="slots" [(value)]="slot" [clearable]="true" ariaLabel="Time slot" />
+        </section>
+        <section class="card"><h3>Marks</h3>
+          <kometa-marks [days]="marks" />
+        </section>
+        <p class="out">Day {{ filmDay() }}, slot {{ slot() || '—' }}</p>
+      }
+
+      <!-- ============================================================ Button -->
+      @case ('button') {
+        <section class="card"><h3>Severity</h3>
+          <div class="row">
+            <kometa-button label="Primary" (clicked)="clicks.set(clicks() + 1)" />
+            <kometa-button label="Secondary" severity="secondary" />
+            <kometa-button label="Danger" severity="danger" />
+          </div>
+          <p class="out">Primary clicked {{ clicks() }} times.</p>
+        </section>
+        <section class="card"><h3>Variants</h3>
+          <div class="row">
+            <kometa-button label="Outlined" outlined />
+            <kometa-button label="Text" text />
+            <kometa-button label="Small" size="small" />
+          </div>
+        </section>
+        <section class="card"><h3>States</h3>
+          <div class="row">
+            <kometa-button label="Loading" loading />
+            <kometa-button label="Disabled" disabled />
+          </div>
+        </section>
+        <section class="card"><h3>Fluid</h3>
+          <kometa-button label="Fluid" fluid />
+        </section>
+      }
+      @case ('word') {
+        <section class="card"><h3>Word</h3>
+          <div class="row">
+            <button kometa-word (click)="log.set('Word')">Nudge</button>
+            <button kometa-word quiet>Later</button>
+            <button kometa-word lead>Book a visit</button>
+            <button kometa-word lead busy>Saving</button>
+          </div>
+        </section>
+        <section class="card"><h3>Erase</h3>
+          <div class="row"><button kometa-erase (click)="log.set('Erase')">Delete service</button></div>
+        </section>
+        <section class="card"><h3>Halo</h3>
+          <div class="row">
+            <button kometa-halo aria-label="Close">✕</button>
+            <button kometa-halo aria-label="More">⋯</button>
+          </div>
+        </section>
+      }
+      @case ('actions') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-actions [items]="actions" label="Visit actions" />
+        </section>
+      }
+      @case ('confirm') {
+        <section class="card"><h3>Pair</h3>
+          <kometa-pair keep="Keep" confirm="Cancel visit" [busy]="pairBusy()" (kept)="log.set('Pair: kept')" (confirmed)="confirmPair()" />
+        </section>
+        <section class="card"><h3>Inline confirm</h3>
+          <kometa-confirm [asking]="asking()">
+            <span data-row class="row">Mark paid in cash <button kometa-word (click)="asking.set(true)">Mark</button></span>
+            <span data-question class="row">Sure?
+              <button kometa-word quiet (click)="asking.set(false)">No</button>
+              <button kometa-word (click)="asking.set(false); log.set('Confirm: yes')">Yes</button>
+            </span>
+          </kometa-confirm>
+        </section>
+        <section class="card"><h3>Tray</h3>
+          <div class="row">
+            <kometa-button label="Ask (danger)" severity="danger" outlined (clicked)="ask(true)" />
+            <kometa-button label="Ask (plain)" severity="secondary" (clicked)="ask(false)" />
+          </div>
+        </section>
+      }
+
+      <!-- ============================================================ Data -->
+      @case ('table') {
+        <section class="card"><h3>Grouped and sorted</h3>
+          <kometa-sort [options]="sortOptions" [key]="sortKey()" [dir]="sortDir()" ariaLabel="Sort" (pick)="sortBy($event)">Sort</kometa-sort>
+          <kometa-table [value]="sorted()" dataKey="id" groupRowsBy="group">
+            <ng-template #header>
+              <tr>
+                <th kometaSortHeader="name" [active]="sortKey()" [dir]="sortDir()" (pick)="sortBy($event)">Name</th>
+                <th kometaSortHeader="price" [active]="sortKey()" [dir]="sortDir()" (pick)="sortBy($event)">Price</th>
+              </tr>
+            </ng-template>
+            <ng-template #groupheader let-row><tr><th colspan="2">{{ row.group }}</th></tr></ng-template>
+            <ng-template #body let-row><tr><td>{{ row.name }}</td><td>{{ row.price }}</td></tr></ng-template>
+            <ng-template #emptymessage><tr><td colspan="2">Nothing yet</td></tr></ng-template>
+          </kometa-table>
+        </section>
+      }
+      @case ('pager') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-pager [total]="137" [(page)]="page" [(pageSize)]="pageSize" />
+          <p class="out">Page {{ page() }}, {{ pageSize() }} per page</p>
+        </section>
+      }
+      @case ('rows') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-rows label="Visit">
+            <kometa-row label="Service">Haircut</kometa-row>
+            <kometa-row label="Time">Mon · 14:00</kometa-row>
+            <kometa-row title="Notifications" meta="SMS and Telegram" tone="amber" button (activated)="log.set('Row activated')"><span rowIcon>🔔</span></kometa-row>
+            <kometa-row title="Disabled" meta="Nothing here" tone="blue" button disabled><span rowIcon>⛔</span></kometa-row>
+          </kometa-rows>
+        </section>
+      }
+      @case ('trail') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-trail>
+            <kometa-step time="09:00" gap="32 min">Booked online</kometa-step>
+            <kometa-step time="09:32" gap="5 min">Confirmed by the master</kometa-step>
+            <kometa-step time="09:37">Reminder sent</kometa-step>
+          </kometa-trail>
+        </section>
+      }
+      @case ('share') {
+        <section class="card"><h3>Split</h3>
+          <kometa-split [left]="{ amount: '8 400 000', label: 'Cash' }" [right]="{ amount: '1 800 000', label: 'Card' }" />
+        </section>
+        <section class="card"><h3>Share</h3>
+          <kometa-share [segments]="share" label="Revenue by service" />
+        </section>
+      }
+
+      <!-- ============================================================ Panel -->
+      @case ('accordion') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-accordion>
+            <kometa-accordion-item heading="What is the lead fee?">12% of a new client's first visit.</kometa-accordion-item>
+            <kometa-accordion-item heading="Is the link paid?">No, the booking link is free.</kometa-accordion-item>
+          </kometa-accordion>
+        </section>
+      }
+      @case ('fold') {
+        <section class="card"><h3>Fold</h3>
+          <kometa-fold [(open)]="fold">
+            <span fold-title>Opening hours</span>
+            <span fold-aside class="aside muted">9–18</span>
+            <ng-template><p>Mon–Fri 9:00–18:00, Sat 10:00–15:00.</p></ng-template>
+          </kometa-fold>
+        </section>
+        <section class="card"><h3>Mark and body by hand</h3>
+          <button type="button" class="bare" (click)="bare.set(!bare())">Toggle <kometa-fold-mark [open]="bare()" /></button>
+          <kometa-fold-body [open]="bare()"><ng-template><p>The 0fr to 1fr spring, on its own.</p></ng-template></kometa-fold-body>
+        </section>
+      }
+      @case ('heading') {
+        <section class="card"><h3>With action</h3>
+          <kometa-heading title="Today's visits" [level]="3"><button kometa-word action>See all</button></kometa-heading>
+        </section>
+      }
+
+      <!-- ============================================================ Overlay -->
+      @case ('drawer') {
+        <section class="card"><h3>Drawer</h3>
+          <div class="row">
+            <kometa-button label="Right drawer" severity="secondary" (clicked)="drawer.set(true)" />
+            <kometa-button label="Bottom sheet" severity="secondary" (clicked)="sheet.set(true)" />
+          </div>
+          <kometa-drawer [(visible)]="drawer" ariaLabel="Demo drawer" (opened)="log.set('Drawer opened')" (closing)="log.set('Drawer closing')">
+            <div class="pad"><h3>Drawer</h3><p>Escape or the dark area closes it.</p>
+              <kometa-button label="Close" (clicked)="drawer.set(false)" /></div>
+          </kometa-drawer>
+          <kometa-drawer [(visible)]="sheet" position="bottom" styleClass="kometa-sheet" ariaLabel="Demo sheet">
+            <div class="pad"><h3>Bottom sheet</h3><p>Slides up from the bottom.</p></div>
+          </kometa-drawer>
+        </section>
+        <section class="card"><h3>Pop</h3>
+          <div class="row"><kometa-button label="Pop" severity="secondary" (clicked)="pop.toggle($event)" /></div>
+          <kometa-pop #pop ariaLabel="Shop" [width]="240"><p class="pad">A small panel hung off the button.</p></kometa-pop>
+        </section>
+      }
+      @case ('tip') {
+        <section class="card"><h3>Hint</h3>
+          <kometa-hint term="Lead fee">12% of a new client's first visit.</kometa-hint>
+        </section>
+        <section class="card"><h3>Note</h3>
+          <p>Revenue <kometa-note label="About revenue">Takings for the period, before payouts.</kometa-note></p>
+        </section>
+        <section class="card"><h3>Tip</h3>
+          <p><button kometa-word quiet kometaTip="A tooltip" kometaTipSub="With a second line">Hover me</button></p>
+        </section>
+      }
+
+      <!-- ============================================================ Menu -->
+      @case ('tabbar') {
+        <section class="card"><h3>Basic</h3>
+          <kometa-tabbar [tabs]="tabs" [(value)]="tab" ariaLabel="Demo tabs" />
+          <p class="out">Selected: {{ tab() }}</p>
+        </section>
+      }
+
+      <!-- ============================================================ Messages -->
+      @case ('tag') {
+        <section class="card"><h3>Tones</h3>
+          <div class="row">@for (t of tones; track t) { <kometa-tag [tone]="t">{{ t }}</kometa-tag> }</div>
+        </section>
+      }
+      @case ('banner') {
+        <section class="card"><h3>Tones</h3>
+          @for (b of banners; track b) { <kometa-banner [tone]="b" dismissible>This is a {{ b }} banner.</kometa-banner> }
+        </section>
+        <section class="card"><h3>Glass with action</h3>
+          <kometa-banner tone="info" surface="glass" actionLabel="Retry" (action)="log.set('Banner action')">A glass banner with an action.</kometa-banner>
+        </section>
+      }
+      @case ('toast') {
+        <section class="card"><h3>Kinds</h3>
+          <div class="row">
+            <kometa-button label="Success" size="small" (clicked)="toast('success')" />
+            <kometa-button label="Info" size="small" severity="secondary" (clicked)="toast('info')" />
+            <kometa-button label="Warn" size="small" severity="secondary" (clicked)="toast('warn')" />
+            <kometa-button label="Error" size="small" severity="danger" (clicked)="toast('error')" />
+          </div>
+        </section>
+      }
+      @case ('upload') {
+        <section class="card"><h3>States</h3>
+          <kometa-upload name="receipt.pdf" sizeLabel="1.2 MB" [progress]="0.45" state="running" statusLabel="45%" />
+          <kometa-upload name="photo.jpg" sizeLabel="820 KB" [progress]="100" state="done" statusLabel="Uploaded" />
+          <kometa-upload name="scan.png" sizeLabel="4.1 MB" state="failed" statusLabel="Too large" actionLabel="Retry" (action)="log.set('Upload retry')" />
+        </section>
+      }
+
+      <!-- ============================================================ Media -->
+      @case ('photos') {
+        <section class="card"><h3>Gallery</h3>
+          <div class="row">
+            @for (p of photos; track p.url; let i = $index) {
+              <button type="button" class="thumb" (click)="openPhoto(i)"><img [src]="p.thumbUrl" [alt]="p.alt" /></button>
+            }
+          </div>
+          <kometa-photos [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" ariaLabel="Photos" />
+        </section>
+      }
+      @case ('frame') {
+        <section class="card"><h3>Frame</h3>
+          <kometa-frame caption="A framed picture"><img [src]="frame" alt="Sample" /></kometa-frame>
+        </section>
+        <section class="card"><h3>Reveal</h3>
+          <kometa-reveal [before]="before" [after]="after" ariaLabel="Before and after" />
+        </section>
+      }
+      @case ('person') {
+        <section class="card"><h3>Person</h3>
+          <div class="row">
+            <kometa-person name="Dilnoza Karimova" meta="Master" />
+            <kometa-person name="Aziz" size="sm" />
+            <kometa-person name="Shop" shape="square" size="lg" [image]="avatar" imageAlt="Shop logo" />
+            <kometa-person name="Bare" bare />
+          </div>
+        </section>
+        <section class="card"><h3>Provider logo</h3>
+          <div class="row">
+            <span><kometa-provider-logo provider="Click" /> Click</span>
+            <span><kometa-provider-logo provider="Payme" /> Payme</span>
+          </div>
+        </section>
+      }
+
+      <!-- ============================================================ Misc -->
+      @case ('meter') {
+        <section class="card"><h3>Meter</h3>
+          <kometa-meter [value]="14" [max]="25" label="14 of 25" />
+        </section>
+        <section class="card"><h3>Stars</h3>
+          <kometa-stars [value]="4" label="4 out of 5" />
+        </section>
+        <section class="card"><h3>Steps</h3>
+          <kometa-steps [steps]="['Service', 'Time', 'Details', 'Done']" [current]="2" ariaLabel="Booking progress" />
+        </section>
+      }
+      @case ('wait') {
+        <section class="card"><h3>Wait</h3>
+          <kometa-wait label="Loading visits" />
+        </section>
+        <section class="card"><h3>Skeleton</h3>
+          <kometa-skeleton [rows]="3" ariaLabel="Loading list" />
+          <kometa-skeleton shape="card" ariaLabel="Loading card" />
+          <kometa-skeleton shape="line" width="60%" ariaLabel="Loading line" />
+        </section>
+        <section class="card"><h3>Quiet (empty state)</h3>
+          <kometa-quiet title="No visits yet" hint="Book the first one and it shows up here." />
+        </section>
+      }
+      @case ('link') {
+        <section class="card"><h3>Copy link</h3>
+          <div class="row"><span>kometa.uz/b/dilnoza</span>
+            <kometa-link text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy booking link" /></div>
+        </section>
+      }
+    }
+  </main>
+</div>
+
+<kometa-toast [items]="toasts()" (dismiss)="dismissToast($event)" />
 <kometa-tray />

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip,
@@ -41,6 +41,78 @@ export class App {
   protected readonly theme = inject(ThemeService);
   private readonly confirmations = inject(KometaConfirmationService);
   protected readonly themes: ThemePreference[] = ['system', 'dark', 'light'];
+
+  // Showcase navigation: one component page at a time, kept in the URL hash so reload and back work.
+  protected readonly nav: { label: string; items: { id: string; label: string; about: string }[] }[] = [
+    { label: 'Form', items: [
+      { id: 'field', label: 'Field', about: 'Labelled text input with error, count and sizes.' },
+      { id: 'search', label: 'Search & notes', about: 'Search box with clear, and a multi-line note.' },
+      { id: 'code', label: 'Code & digits', about: 'One-time code and PIN entry.' },
+      { id: 'number', label: 'Number & stepper', about: 'Formatted numbers, money and a +/- stepper.' },
+      { id: 'select', label: 'Select & multi', about: 'Single and multiple choice dropdowns, and a menu.' },
+      { id: 'suggest', label: 'Suggest', about: 'Autocomplete over a bare input the host styles.' },
+      { id: 'toggle', label: 'Toggle & check', about: 'Switch, checkbox, row tick and filter chip.' },
+      { id: 'words', label: 'Words & rating', about: 'Segmented choice and a word-labelled rating.' },
+      { id: 'picker', label: 'Picker', about: 'File picker as a drop zone or a button.' },
+    ] },
+    { label: 'Date and time', items: [
+      { id: 'date', label: 'Date', about: 'Date, range and inline calendar.' },
+      { id: 'time', label: 'Time', about: 'Time of day input, works with ngModel.' },
+      { id: 'film', label: 'Film & slots', about: 'Day strip, time slots and week marks.' },
+    ] },
+    { label: 'Button', items: [
+      { id: 'button', label: 'Button', about: 'Severities, variants, sizes and states.' },
+      { id: 'word', label: 'Word, erase, halo', about: 'Text-like, destructive and icon buttons.' },
+      { id: 'actions', label: 'Actions menu', about: 'A button that opens a list of actions.' },
+      { id: 'confirm', label: 'Pair & confirm', about: 'Two-step confirmation, inline or in the tray.' },
+    ] },
+    { label: 'Data', items: [
+      { id: 'table', label: 'Table & sort', about: 'Grouped table with sortable headers.' },
+      { id: 'pager', label: 'Pager', about: 'Page and page size control.' },
+      { id: 'rows', label: 'Rows', about: 'Label/value and clickable list rows.' },
+      { id: 'trail', label: 'Trail', about: 'Timeline of steps with gaps.' },
+      { id: 'share', label: 'Split & share', about: 'Two-way split and a share bar.' },
+    ] },
+    { label: 'Panel', items: [
+      { id: 'accordion', label: 'Accordion', about: 'Stacked questions that open one by one.' },
+      { id: 'fold', label: 'Fold', about: 'A collapsible block, and its parts on their own.' },
+      { id: 'heading', label: 'Heading', about: 'Section heading with an action.' },
+    ] },
+    { label: 'Overlay', items: [
+      { id: 'drawer', label: 'Drawer & pop', about: 'Side drawer, bottom sheet and popover.' },
+      { id: 'tip', label: 'Hint, note, tip', about: 'Inline explanations and tooltips.' },
+    ] },
+    { label: 'Menu', items: [
+      { id: 'tabbar', label: 'Tabbar', about: 'Bottom tab navigation.' },
+    ] },
+    { label: 'Messages', items: [
+      { id: 'tag', label: 'Tag', about: 'Status tags in every tone.' },
+      { id: 'banner', label: 'Banner', about: 'Inline messages, dismissible or with an action.' },
+      { id: 'toast', label: 'Toast', about: 'Short-lived messages in a corner.' },
+      { id: 'upload', label: 'Upload', about: 'Progress of a file upload.' },
+    ] },
+    { label: 'Media', items: [
+      { id: 'photos', label: 'Photos', about: 'Full-screen photo viewer.' },
+      { id: 'frame', label: 'Frame & reveal', about: 'Captioned picture and a before/after slider.' },
+      { id: 'person', label: 'Person & logo', about: 'Avatars and payment provider logos.' },
+    ] },
+    { label: 'Misc', items: [
+      { id: 'meter', label: 'Meter, stars, steps', about: 'Progress, score and step indicators.' },
+      { id: 'wait', label: 'Wait & skeleton', about: 'Loading and empty states.' },
+      { id: 'link', label: 'Link', about: 'A link with a copy button.' },
+    ] },
+  ];
+  private readonly pages = this.nav.flatMap((g) => g.items);
+  private readonly hash = signal(location.hash.slice(1));
+  protected readonly current = computed(() => this.pages.find((p) => p.id === this.hash()) ?? this.pages[0]);
+  protected readonly menuOpen = signal(false);
+
+  @HostListener('window:hashchange')
+  protected hashChanged(): void {
+    this.hash.set(location.hash.slice(1));
+    this.menuOpen.set(false);
+    scrollTo(0, 0);
+  }
 
   // Actions
   protected readonly clicks = signal(0);

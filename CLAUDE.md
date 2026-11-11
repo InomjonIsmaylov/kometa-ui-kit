@@ -35,5 +35,5 @@ Pin `jsdom@^28` and `vitest@^4`. Newer majors (jsdom 30, vitest 5) fail 8 specs,
 
 ## Known gaps
 
-- The demo shows every exported component, grouped by kind, with a theme switch and a sticky "Last event" line. `kometa-tabbar` with `link` and `kometa-row` with `link` need a router, which the demo does not provide, so they are shown without links. `kometa-suggest` draws a bare `<input>` that the host styles; the demo wraps it in `.field`.
+- The demo is a PrimeNG-style showcase: a sidebar of groups (Form, Button, Data, ...) and one page per component, picked by the URL hash (`#button`); the page list is `nav` in `app.ts`. It has a theme switch and a "Last event" line in the top bar (hidden on phones). `kometa-tabbar` with `link` and `kometa-row` with `link` need a router, which the demo does not provide, so they are shown without links. `kometa-suggest` draws a bare `<input>` that the host styles; the demo wraps it in `.field`.
 - `kometa-theme.css` (the Tailwind v4 `@theme inline` mapping) is shipped but not imported by the demo.
