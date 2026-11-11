@@ -17,6 +17,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@an
       font-size: var(--heading-size, 22px);
       font-weight: 700;
       letter-spacing: -0.03em;
+      line-height: 1.2;
     }
     .rule { flex: 1; min-width: 12px; height: 1px; background: var(--heading-rule-color, var(--glass-line, rgba(244, 239, 230, .18))); }
   `,

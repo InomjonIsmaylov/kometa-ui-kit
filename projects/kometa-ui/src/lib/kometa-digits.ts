@@ -36,6 +36,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, 
       font-variant-numeric: tabular-nums;
     }
     input:disabled { opacity: .5; }
+    .phone:has(input:disabled) .prefix { opacity: .5; }
     input:focus-visible { outline: 2px solid var(--amber); }
   `,
   template: `

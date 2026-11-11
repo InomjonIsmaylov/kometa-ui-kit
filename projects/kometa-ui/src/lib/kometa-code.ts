@@ -46,6 +46,7 @@ import {
     }
     input::placeholder { color: var(--muted); opacity: .6; }
     input:focus-visible { outline: 2px solid var(--amber); }
+    input:disabled { opacity: .5; cursor: not-allowed; }
     .underline {
       position: absolute;
       left: 0;

@@ -47,10 +47,11 @@ export interface KometaPhoto {
     .arrow { position: absolute; top: 50%; translate: 0 -50%; font-size: 24px; line-height: 1; }
     .arrow.prev { left: 12px; }
     .arrow.next { right: 12px; }
-    .strip { display: flex; gap: 8px; justify-content: center; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); overflow-x: auto; }
+    .strip { display: flex; gap: 8px; justify-content: safe center; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); overflow-x: auto; }
     .th { flex: none; width: var(--photos-thumb, 56px); height: var(--photos-thumb, 56px); padding: 0; border: 2px solid transparent; border-radius: var(--photos-thumb-radius, 10px); overflow: hidden; opacity: .6; background: none; cursor: pointer; }
     .th.on { border-color: var(--photos-ink, #fff); opacity: 1; }
     .th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .close:focus-visible, .arrow:focus-visible, .tool:focus-visible, .th:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     @media (max-width: 767.98px) { .arrow { display: none; } }
   `,
   template: `

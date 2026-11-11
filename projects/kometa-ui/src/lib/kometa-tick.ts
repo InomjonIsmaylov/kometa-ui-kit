@@ -27,6 +27,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
     .box[aria-invalid='true']::before { border-color: var(--error, #ff6b5e); }
     .box:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; border-radius: 8px; }
     .box:disabled { opacity: .5; cursor: default; }
+    .box[aria-readonly='true'] { cursor: default; }
     svg {
       position: absolute; width: 16px; height: 16px; fill: none; stroke: var(--tick-mark, var(--bg, #1a1408)); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
       stroke-dasharray: 16; stroke-dashoffset: 16; transition: stroke-dashoffset 320ms var(--ease-spring, ease) 60ms;

@@ -19,6 +19,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
       font-size: var(--meter-figure-size, 32px);
       font-weight: 700;
       letter-spacing: -0.03em;
+      line-height: 1.15;
       font-variant-numeric: tabular-nums;
     }
     .fig b { display: inline-block; font-weight: 700; }

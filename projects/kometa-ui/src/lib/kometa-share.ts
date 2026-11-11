@@ -35,7 +35,8 @@ const TICKS = 48;
     dt { display: flex; align-items: baseline; gap: 8px; color: var(--muted); font-size: var(--t-sm, 14px); }
     dt i { flex: none; width: 8px; height: 8px; border-radius: 2px; background: var(--k); }
     dt em { min-width: 3ch; font-size: 12px; font-style: normal; text-align: right; }
-    dd { margin: 0 0 0 auto; color: var(--display-ink, var(--text)); font-weight: var(--w-semi, 600); font-variant-numeric: tabular-nums; }
+    dt { min-width: 0; overflow-wrap: anywhere; }
+    dd { flex: none; margin: 0 0 0 auto; white-space: nowrap; color: var(--display-ink, var(--text)); font-weight: var(--w-semi, 600); font-variant-numeric: tabular-nums; }
     dd.negative { color: var(--red); }
     @media (prefers-reduced-motion: reduce) { .legend > div { transition: none; } }
   `,

@@ -15,7 +15,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     :host {
       display: inline-flex; align-items: center; min-height: 36px; margin: 0; padding: 0 4px; border: 0; border-radius: 6px; background: none;
       color: var(--erase-color, var(--red)); font: inherit; font-size: 14px; cursor: pointer;
-      text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 107, 94, .4);
+      text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255, 107, 94, .4); text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
       transition: text-decoration-color 200ms ease;
     }
     :host(:hover:not(:disabled)) { text-decoration-color: currentColor; }

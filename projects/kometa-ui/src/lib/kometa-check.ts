@@ -27,7 +27,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input, model } fr
       color: var(--display-ink, #f4efe6);
       font: inherit;
       font-size: var(--check-size, 15px);
-      text-align: left;
+      text-align: start;
       cursor: pointer;
     }
     button:disabled { cursor: default; opacity: 0.5; }

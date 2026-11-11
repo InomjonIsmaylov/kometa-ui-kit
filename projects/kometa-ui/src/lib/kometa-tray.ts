@@ -73,6 +73,7 @@ let nextId = 0;
     button:active { transform: scale(.98); }
     button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     .go { background: var(--display-ink, var(--text)); color: var(--bg); }
+    .go:not(.danger):hover { opacity: .88; }
     .go.danger { background: transparent; color: var(--error); border-color: var(--error); }
     .go.danger:hover { background: color-mix(in srgb, var(--error) 14%, transparent); }
     .stay { background: transparent; color: var(--text); border-color: var(--glass-line, var(--border)); }

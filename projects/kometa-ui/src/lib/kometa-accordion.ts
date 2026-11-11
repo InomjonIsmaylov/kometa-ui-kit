@@ -62,7 +62,7 @@ let nextId = 0;
       font-weight: 700;
       font-size: var(--accordion-size, 16px);
       letter-spacing: -0.02em;
-      text-align: left;
+      text-align: start;
       overflow-wrap: break-word;
       cursor: pointer;
     }

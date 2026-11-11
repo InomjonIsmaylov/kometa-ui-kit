@@ -66,6 +66,7 @@ export interface KometaTab {
       overflow: hidden;
       opacity: 0;
       white-space: nowrap;
+      text-overflow: ellipsis;
       font-size: 13px;
       font-weight: 600;
       transition: max-width 680ms var(--ease-spring, ease), opacity 280ms, margin 420ms;

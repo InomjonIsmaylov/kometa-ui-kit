@@ -30,7 +30,7 @@ import {
     .pop {
       inset: auto; margin: 0; padding: var(--pop-padding, 6px); max-width: calc(100vw - 16px); max-height: var(--pop-max-height, min(70vh, calc(100dvh - 24px))); overflow: auto;
       border: 1px solid var(--glass-line); border-radius: var(--pop-radius, 18px); color: var(--text);
-      background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: var(--pop-shadow, 0 12px 30px rgba(0, 0, 0, .35));
+      background: var(--glass, var(--bg)); backdrop-filter: blur(18px); box-shadow: var(--pop-shadow, 0 12px 30px rgba(0, 0, 0, .35));
       transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
     }
     @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }

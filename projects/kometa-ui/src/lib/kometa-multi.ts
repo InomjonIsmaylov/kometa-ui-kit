@@ -58,7 +58,8 @@ let nextId = 0;
     .btn:hover:not(:disabled), .btn[aria-expanded='true'] { border-color: var(--display-ink, var(--text)); }
     .btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     .btn:disabled { opacity: .5; cursor: not-allowed; }
-    .val { font-weight: 600; white-space: nowrap; }
+    .btn { max-width: 100%; }
+    .val { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 600; white-space: nowrap; }
     .val.empty { color: var(--muted); font-weight: 400; }
     .chev {
       flex: none; width: 7px; height: 7px; margin-top: -4px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor;

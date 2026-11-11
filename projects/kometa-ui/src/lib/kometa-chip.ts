@@ -28,10 +28,11 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
       color: var(--text);
       font: inherit;
       font-size: 14px;
-      text-align: left;
+      text-align: start;
       cursor: pointer;
-      transition: box-shadow 420ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1));
+      transition: box-shadow 420ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1)), border-color 200ms ease;
     }
+    button:hover:not(:disabled) { border-color: var(--muted); }
     button[aria-pressed='true'] { box-shadow: inset 2px 0 0 var(--chip-accent, var(--amber)), inset 0 1px 0 var(--glass-hi, rgba(255, 255, 255, .1)); }
     button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     button:disabled { cursor: default; opacity: .5; }

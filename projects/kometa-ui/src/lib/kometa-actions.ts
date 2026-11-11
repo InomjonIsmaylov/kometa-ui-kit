@@ -52,7 +52,7 @@ let nextId = 0;
     @starting-style { .list:popover-open { opacity: 0; translate: 0 -4px; } }
     .row {
       position: relative; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 16px;
-      border: 0; background: none; color: inherit; font: inherit; font-size: 15px; text-align: left; cursor: pointer;
+      border: 0; background: none; color: inherit; font: inherit; font-size: 15px; text-align: start; cursor: pointer;
     }
     .row::before {
       content: ''; position: absolute; left: -1px; top: 8px; bottom: 8px; width: 3px; background: var(--display-ink, var(--text));

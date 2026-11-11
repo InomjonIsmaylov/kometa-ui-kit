@@ -29,9 +29,10 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } f
     button:disabled { opacity: .45; cursor: not-allowed; }
     .go.busy { color: transparent; pointer-events: none; }
     .go.busy::after {
-      content: ''; position: absolute; left: 50%; top: 50%; width: 17px; height: 17px; margin: -9px 0 0 -9px;
+      content: ''; position: absolute; box-sizing: border-box; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px;
       border: 2px solid #fff; border-color: #fff transparent #fff transparent; border-radius: 50%; animation: kometa-pair-spin 700ms linear infinite;
     }
+    :host([data-tone='primary']) .go.busy::after { border-color: var(--pair-go-color, var(--on-amber, #1a1408)) transparent; }
     @keyframes kometa-pair-spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { button { transition: none; } .go.busy::after { animation: none; } }
   `,

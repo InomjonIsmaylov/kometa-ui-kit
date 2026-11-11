@@ -59,10 +59,12 @@ export interface KometaFilmDay {
       font-size: 12px;
       font-weight: 500;
     }
+    button { min-width: 0; line-height: 1.2; }
+    button:hover:not(:disabled):not([aria-pressed='true']) { color: var(--text); }
     button:disabled { cursor: default; opacity: .5; }
     button[data-muted] { opacity: .6; }
     button[aria-pressed='true'] { color: var(--display-ink, #f4efe6); opacity: 1; }
-    button:focus-visible { outline: 2px solid var(--amber); }
+    button:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
     .dot {
       position: absolute;
       top: 6px;

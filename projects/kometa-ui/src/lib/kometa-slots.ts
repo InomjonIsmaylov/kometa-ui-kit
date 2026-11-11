@@ -37,6 +37,7 @@ export interface KometaSlot {
       transition: box-shadow .2s ease;
     }
     button small { color: var(--muted); font-size: 12px; }
+    button:hover:not(:disabled) { border-color: var(--display-ink, var(--text)); }
     button.edge {
       box-shadow: inset 2px 0 0 var(--slot-edge, var(--amber)), inset 0 1px 0 rgba(255, 255, 255, .1);
     }

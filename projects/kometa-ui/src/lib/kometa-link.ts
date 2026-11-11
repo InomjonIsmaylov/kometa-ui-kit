@@ -25,7 +25,7 @@ const BAND = 'linear-gradient(90deg, transparent 0 33.4%, color-mix(in srgb, var
       font: inherit;
       cursor: pointer;
     }
-    button:focus-visible { outline: 2px solid var(--amber); }
+    button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 4px; }
     button:disabled { opacity: .5; cursor: not-allowed; }
     @media (pointer: coarse) { button { min-height: 44px; } }
   `,

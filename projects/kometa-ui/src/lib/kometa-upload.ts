@@ -33,7 +33,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
       text-align: center;
       color: var(--text);
     }
-    :host > :not(.track) { position: relative; }
+    :host > :not(.track) { position: relative; z-index: 1; }
     .file {
       display: flex;
       flex-wrap: wrap;

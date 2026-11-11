@@ -18,7 +18,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation, booleanAttribute
     k-button { display: block; }
     k-button.kbtn-fluid { width: 100%; }
     :where(.kbtn) {
-      display: inline-flex; align-items: center; justify-content: center; gap: var(--kbtn-gap, 8px); box-sizing: border-box; min-height: 48px; padding: 6px 10px;
+      display: inline-flex; align-items: center; justify-content: center; gap: var(--kbtn-gap, 8px); box-sizing: border-box; min-height: 48px; padding: 6px 20px; white-space: nowrap;
       border: 1px solid var(--amber); border-radius: var(--kbtn-radius, var(--r-pill, 9999px)); background: var(--amber); color: var(--on-amber, #121414);
       font: inherit; font-size: 14px; font-weight: 500; line-height: 21px; cursor: pointer;
       transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
@@ -40,8 +40,8 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation, booleanAttribute
     :where(.kbtn.text) { background: transparent; border-color: transparent; color: var(--amber-ink, var(--amber)); }
     :where(.kbtn.text:hover:not(:disabled), .kbtn.text:active:not(:disabled)) { background: transparent; border-color: transparent; }
     :where(.kbtn.text.secondary) { color: var(--text2); }
-    :where(.kbtn.sm) { min-height: 36px; padding: 4px 10px; font-size: 13px; }
-    :where(.kbtn .kbtn-spin) { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: kbtn-spin .7s linear infinite; }
+    :where(.kbtn.sm) { min-height: 36px; padding: 4px 14px; font-size: 13px; }
+    :where(.kbtn .kbtn-spin) { flex: none; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: kbtn-spin .7s linear infinite; }
     @keyframes kbtn-spin { to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) { :where(.kbtn .kbtn-spin) { animation-duration: 2s; } }
   `,

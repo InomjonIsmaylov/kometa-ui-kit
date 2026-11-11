@@ -17,6 +17,7 @@ export interface KometaSplitSide {
   host: { '[attr.data-align]': 'align()' },
   styles: `
     :host { display: grid; grid-template-columns: 1fr 1fr; gap: var(--split-gap, 16px); }
+    :host > div { min-width: 0; overflow-wrap: anywhere; }
     :host([data-align='center']) { text-align: center; }
     .amount {
       display: block;

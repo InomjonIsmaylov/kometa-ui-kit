@@ -38,8 +38,8 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
       color: var(--text); background: var(--glass-drawer, var(--card));
     }
     :where(dialog.kdrawer[open]) { display: flex; flex-direction: column; }
-    :where(dialog.kdrawer-right) { top: 0; right: 0; bottom: 0; width: min(var(--drawer-width, 460px), calc(100vw - 24px)); }
-    :where(dialog.kdrawer-left) { top: 0; left: 0; bottom: 0; width: min(var(--drawer-width, 460px), calc(100vw - 24px)); }
+    :where(dialog.kdrawer-right) { top: 0; right: 0; bottom: 0; width: min(var(--drawer-width, 460px), calc(100vw - 24px)); max-width: calc(100vw - 24px); }
+    :where(dialog.kdrawer-left) { top: 0; left: 0; bottom: 0; width: min(var(--drawer-width, 460px), calc(100vw - 24px)); max-width: calc(100vw - 24px); }
     :where(dialog.kdrawer-bottom) { left: 0; right: 0; bottom: 0; width: 100%; max-height: var(--drawer-max-height, 90dvh); }
     :where(.kdrawer-content) { flex: 1; min-height: 0; overflow-y: auto; }
     .kdrawer:focus { outline: none; }

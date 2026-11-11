@@ -47,13 +47,20 @@ let nextId = 0;
       cursor: pointer;
     }
     .trigger:disabled { cursor: default; opacity: .5; }
-    .trigger:focus-visible, .option:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+    .trigger:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+    /* Inside the list's overflow:hidden, so the ring must not poke out and be clipped. */
+    .option:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; border-radius: 6px; }
+    .option:hover:not([aria-selected='true']) { color: var(--text2); }
     .chosen {
       color: var(--display-ink, #f4efe6);
       font-family: var(--font-display, 'Syne', sans-serif);
       font-size: var(--menu-chosen-size, 18px);
       font-weight: 700;
       letter-spacing: -0.02em;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .caret {
       flex: none;
