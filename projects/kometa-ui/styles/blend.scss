@@ -1,0 +1,306 @@
+/*
+ * Blend shell for the consoles. Unlayered on purpose: each console imports this last, so it beats
+ * the `legacy` layer. The customer app imports blend-public.scss only; this file pulls that in so
+ * the consoles keep the title and the edge.
+ *
+ * `kometa-drawer` puts the position on its dialog (`kdrawer` + `kdrawer-right` /
+ * `kdrawer-bottom`) and owns the slide and the dim; this file only paints the glass.
+ * The phone menu is `dialog.nav-drawer` in the vendor shell, not a kometa-drawer, so it is glass here
+ * too. A bottom sheet keeps its grabber and its edge; it takes the same glass and the same spring.
+ *
+ * One rule set serves both schemes. The glass, the blur, the highlight and the shade are tokens,
+ * and light carries its own (warm translucent white, a white top highlight, a soft ambient shadow:
+ * tokens.scss for --glass*, the helpers just below). `:root:root` (0,2,0) is the prefix that keeps
+ * the old dark-only rules' specificity over a component's own paint.
+ */
+@use 'blend-public';
+@use 'blend-fields';
+@use 'blend-fold';
+
+/* Glass helpers, console only. Dark first, since a browser saying nothing is dark; the two light
+   blocks mirror tokens.scss's pair and must stay equal to each other. */
+:root {
+  --glass-blur: blur(8px);
+  --drawer-blur: blur(18px);
+  --glass-hi: rgba(255, 255, 255, .1);
+  --glass-shade: 0 0 0 0 transparent;
+  --drawer-edge: rgba(255, 255, 255, .2);
+  --drawer-hi: rgba(255, 255, 255, .2);
+  --drawer-shade: 0 0 0 0 transparent;
+  --glass-hover: rgba(255, 255, 255, .04);
+  --glass-card-hi: transparent; /* dark cards never had the top highlight; light's do */
+}
+
+:root[data-theme='light'] {
+  --glass-blur: blur(8px) saturate(1.2);
+  --drawer-blur: blur(18px) saturate(1.4);
+  --glass-hi: rgba(255, 255, 255, .9);
+  --glass-shade: 0 1px 2px rgba(60, 40, 10, .06), 0 8px 24px -12px rgba(60, 40, 10, .12);
+  --drawer-edge: rgba(60, 40, 10, .1);
+  --drawer-hi: rgba(255, 255, 255, .9);
+  --drawer-shade: 0 24px 56px -20px rgba(60, 40, 10, .3);
+  --glass-hover: rgba(60, 40, 10, .04);
+  --glass-card-hi: rgba(255, 255, 255, .9);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --glass-blur: blur(8px) saturate(1.2);
+    --drawer-blur: blur(18px) saturate(1.4);
+    --glass-hi: rgba(255, 255, 255, .9);
+    --glass-shade: 0 1px 2px rgba(60, 40, 10, .06), 0 8px 24px -12px rgba(60, 40, 10, .12);
+    --drawer-edge: rgba(60, 40, 10, .1);
+    --drawer-hi: rgba(255, 255, 255, .9);
+    --drawer-shade: 0 24px 56px -20px rgba(60, 40, 10, .3);
+    --glass-hover: rgba(60, 40, 10, .04);
+    --glass-card-hi: rgba(255, 255, 255, .9);
+  }
+}
+
+/* Side drawers. */
+:root:root .kdrawer.kdrawer-left,
+:root:root .kdrawer.kdrawer-right {
+  background: var(--glass-drawer);
+  -webkit-backdrop-filter: var(--drawer-blur);
+  backdrop-filter: var(--drawer-blur);
+  border: 1px solid var(--drawer-edge);
+  box-shadow: inset 0 1px 0 var(--drawer-hi), var(--drawer-shade);
+  border-radius: 28px;
+  top: 12px;
+  bottom: 12px;
+  height: auto;
+}
+
+:root:root .kdrawer.kdrawer-right { right: 12px; }
+:root:root .kdrawer.kdrawer-left { left: 12px; }
+
+/* The sheet the consoles actually open below 1024px. Geometry stays a bottom sheet. */
+:root:root .kometa-sheet.kdrawer.kdrawer-bottom {
+  background: var(--glass-drawer);
+  -webkit-backdrop-filter: var(--drawer-blur);
+  backdrop-filter: var(--drawer-blur);
+  border-color: var(--drawer-edge);
+  box-shadow: inset 0 1px 0 var(--drawer-hi), var(--drawer-shade);
+}
+
+/* A sheet's Cancel / Save row sat on a solid `--card` band with a `--border` rule: a flat grey slab
+   across the glass. It is now clear glass: rows scrolling under it blur, the rule is the glass line. */
+:root:root .kometa-sheet .sheet-foot {
+  background: var(--glass-drawer);
+  border-top: 1px solid var(--glass-line);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root:root .kometa-sheet .sheet-foot { background: var(--glass-drawer); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* The phone menu is a native dialog. The sidebar inside it is opaque on its own, which would
+   hide the glass, so that fill drops out while the dialog is the surface. */
+@keyframes k-nav-in {
+  from { transform: translateX(calc(-100% - 24px)); }
+}
+
+@keyframes k-nav-out {
+  to { transform: translateX(calc(-100% - 24px)); }
+}
+
+:root:root .nav-drawer {
+  background: var(--glass-drawer);
+  -webkit-backdrop-filter: var(--drawer-blur);
+  backdrop-filter: var(--drawer-blur);
+  border: 1px solid var(--drawer-edge);
+  box-shadow: inset 0 1px 0 var(--drawer-hi), var(--drawer-shade);
+  border-radius: 28px;
+  top: 12px;
+  bottom: 12px;
+  left: 12px;
+  height: auto;
+  overflow: hidden;
+}
+
+:root:root .nav-drawer[open] {
+  animation: k-nav-in var(--drawer-dur) var(--drawer-ease);
+}
+
+:root:root .nav-drawer.is-closing {
+  animation: k-nav-out var(--drawer-dur) cubic-bezier(0.32, 0, 0.22, 1) forwards;
+}
+
+/* The desktop sidebar is glass too, so the glows show faintly through it (the phone drawer is below). */
+:root:root .sidebar-inner {
+  background: var(--glass-drawer);
+  -webkit-backdrop-filter: var(--drawer-blur);
+  backdrop-filter: var(--drawer-blur);
+}
+
+:root:root .nav-drawer .sidebar-inner {
+  background: transparent;
+  border-right-color: transparent;
+}
+
+/* Warm wash behind the console, both schemes. No drift. `transparent` is black at alpha 0, so the
+   amber interpolates through a muddy square and the box edge stays visible. Fade the same
+   amber to alpha 0, and finish that fade inside the box. Light adds a faint cool counter-glow low
+   on the left (::after), so the cream has depth rather than one warm corner. */
+body::before {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  top: calc(9vw - 360px);
+  left: calc(17vw - 360px);
+  width: 720px;
+  height: 720px;
+  background: radial-gradient(circle, rgba(255, 191, 0, .16) 0%, rgba(255, 191, 0, .07) 34%, rgba(255, 191, 0, 0) 68%);
+  pointer-events: none;
+}
+
+/* Second glow, right of centre, like the marketing page's violet blob (centres match its .b1 and .b2). Light uses a stronger violet, since the cream washes out a pale one. */
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  top: calc(33vw - 320px);
+  left: calc(91vw - 320px);
+  width: 640px;
+  height: 640px;
+  background: radial-gradient(circle, rgba(167, 139, 250, .14) 0%, rgba(167, 139, 250, .06) 34%, rgba(167, 139, 250, 0) 68%);
+  pointer-events: none;
+}
+
+:root[data-theme='light'] body::after {
+  background: radial-gradient(circle, rgba(139, 105, 245, .26) 0%, rgba(139, 105, 245, .12) 34%, rgba(139, 105, 245, 0) 68%);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) body::after {
+    background: radial-gradient(circle, rgba(139, 105, 245, .26) 0%, rgba(139, 105, 245, .12) 34%, rgba(139, 105, 245, 0) 68%);
+  }
+}
+
+/* Round 14, C Rule only: `.card` is no longer glass, a rule over its content; it is out of both lists below.
+   Main-screen surfaces. Less transparent than the drawer (.55 / 18px): --glass is .82 with an 8px blur
+   in dark, .72 with saturate in light. The doubled class beats a component rule that paints
+   var(--card) on the same element. The cards take the ambient shade in light (it is none in dark).
+   A visit card's status edge is a box-shadow too, so its two edge states restate it below. */
+:root:root .visit-card,
+:root:root .day-banner,
+:root:root .done-fold,
+:root:root .day-head,
+:root:root .axis-spacer,
+:root:root .treatment-booked,
+:root:root .treatment-done,
+:root:root .week-wrap > .empty-state.card {
+  background-color: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+:root:root .day-banner,
+:root:root .done-fold,
+:root:root .visit-card {
+  box-shadow: inset 0 1px 0 var(--glass-card-hi), var(--glass-shade);
+}
+
+/* The two status edges are box-shadows too, so they are restated with the shade after them. */
+:root:root .visit-card.booked {
+  box-shadow: inset 3px 0 0 var(--blue), inset 0 1px 0 var(--glass-card-hi), var(--glass-shade);
+}
+
+:root:root .visit-card.in-chair {
+  box-shadow: inset 2px 0 0 var(--amber), inset 0 1px 0 var(--glass-card-hi), var(--glass-shade);
+}
+
+/* The tile grid paints itself with --border and the cells were made transparent, so the body of
+   Today's report became a flat #282A2B slab on the warm glass. The card's glass shows through,
+   and the hairlines stay as borders. */
+:root:root .report-tiles {
+  background-color: transparent;
+  gap: 0;
+}
+
+:root:root .report-tile {
+  background-color: transparent;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+:root:root .report-tile:nth-child(2n) { border-right: none; }
+
+:root:root .report-tile:nth-last-child(-n + 2) { border-bottom: none; }
+
+/* Item lists. The queue's glass row, as separate cards with a small gap. The doubled class beats
+   a component rule that still paints one solid panel. A chosen row takes the inset amber edge. */
+:root:root .k-rows.k-rows {
+  background-color: transparent;
+  border: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: visible;
+}
+
+:root:root .k-row.k-row {
+  background-color: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-line);
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shade);
+}
+
+:root:root .k-rows .visit-row.k-row .row,
+:root:root .k-rows .k-row.row {
+  background-color: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+
+:root:root .k-rows .visit-row.k-row .row:hover,
+:root:root .k-rows .k-row.row:hover {
+  background-color: var(--glass-hover);
+}
+
+:root:root .service-row.k-row.selected {
+  border-color: var(--glass-line);
+  box-shadow: inset 2px 0 0 var(--amber), inset 0 1px 0 var(--glass-hi), var(--glass-shade);
+}
+
+body { isolation: isolate; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root:root .nav-drawer[open],
+  :root:root .nav-drawer.is-closing {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Reduced transparency: every glass surface becomes a flat fill and nothing blurs. Dark flattens
+   to its own ink, light to --card. `:root:root:root` (0,3,0) outranks the light blocks above,
+   which set a blur with saturate. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass: #1c1a16;
+    --glass-drawer: #1c1a16;
+  }
+
+  :root[data-theme='light'] {
+    --glass: var(--card);
+    --glass-drawer: var(--card);
+  }
+
+  :root:root:root {
+    --glass-blur: none;
+    --drawer-blur: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --glass: var(--card);
+    --glass-drawer: var(--card);
+  }
+}

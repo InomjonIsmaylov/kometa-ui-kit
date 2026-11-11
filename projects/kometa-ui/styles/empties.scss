@@ -1,0 +1,64 @@
+/*
+ * Blend round 12 empty states (docs/superpowers/labs/2026-10-14-blend-ui-lab-round-12.html, E, F and G).
+ * Modifier classes beside each page's own markup; imported unlayered by the vendor entry stylesheet.
+ *
+ *   .empty-line    One line         a secondary list: a muted sentence, no card
+ *   .empty-match   Say and clear / Filter recap   nothing matches: a title, a hint, one way out
+ *   .empty-steps   Numbered steps   a first-run page that really is a sequence; `.now` marks the step the action does
+ *   .review.example   Show an example   a faded sample under the empty Reviews message
+ */
+
+.empty-line { margin: 24px 0; text-align: center; color: var(--muted); }
+
+.empty-match {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 32px 16px;
+  text-align: center;
+}
+.empty-match h2 { margin: 0; font-size: var(--t-lg); font-weight: var(--w-semi); }
+.empty-match p { margin: 0; }
+.empty-match .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 4px; }
+.match-chip {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  background: var(--input);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-sm);
+  cursor: pointer;
+}
+.match-chip:hover { border-color: var(--muted); }
+
+.empty-steps { display: grid; gap: 14px; justify-items: start; }
+.empty-steps .steps { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.empty-steps .steps li { display: flex; align-items: center; gap: 12px; color: var(--muted); }
+.empty-steps .steps b {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  font-size: var(--t-sm);
+}
+.empty-steps .steps .now { color: var(--text); }
+.empty-steps .steps .now b { border-color: var(--amber); background: rgba(255, 191, 0, .14); color: var(--amber-ink); }
+
+/* The Pro offer (`app-pro-lock`): three faded, empty tiles above the words say what the page would hold.
+   Decorative; inside a sheet there is no room for them. */
+.pro-lock .pro-sample { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; opacity: .5; }
+.pro-lock .pro-sample i {
+  height: 48px;
+  border: 1px dashed var(--border2);
+  border-radius: 10px;
+  background: linear-gradient(var(--border), var(--border)) 12px 14px / 45% 6px no-repeat,
+              linear-gradient(var(--border), var(--border)) 12px 28px / 70% 8px no-repeat;
+}
+.kdrawer .pro-lock .pro-sample { display: none; }
+
+.review.example { opacity: .55; pointer-events: none; border-style: dashed; }

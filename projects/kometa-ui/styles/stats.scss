@@ -1,0 +1,104 @@
+/*
+ * Blend round 12 stat looks (docs/superpowers/labs/2026-10-14-blend-ui-lab-round-12.html, A, B and D).
+ * Modifier classes next to a page's own stat markup, so the specs that count `.stat` keep passing.
+ * Imported unlayered by the admin and vendor entry stylesheets (the `legacy` layer styles `.stat-strip`).
+ *
+ *   .stat-tiles   A  summary above a list: each stat its own card, display-size number; `.is-hot` on the one that needs a look
+ *   .stat-lead    B  counters on a record: the money figure (`.lead`) large, the counts small beside it
+ *   .stat-change  D  day totals: separate tiles, each with a `.tile-delta` chip against the window before
+ *
+ * Kassa's receipt (C) lives in vendor/kassa/kassa.css: it is one page's `dl`.
+ * Colours are the app tokens; the amber wash has a literal fallback because it is a tint, not a control.
+ */
+
+/* ---- A big tiles ---- */
+.stat-strip.stat-tiles {
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 10px;
+  padding: 14px;
+  border: 0;
+}
+.stat-tiles .stat {
+  gap: 2px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--input);
+}
+.stat-tiles .stat-value.num {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+}
+.stat-tiles .stat-value ~ .stat-label { margin-top: 4px; }
+.stat-tiles .stat.is-hot { background: rgba(255, 191, 0, .12); }
+.stat-tiles .stat.is-hot .stat-value { color: var(--amber-ink); }
+.stat-tiles .stat.is-negative { background: var(--red-bg); }
+.stat-strip.stat-tiles + .stat-strip.stat-tiles { border-top: 0; }
+
+/* ---- B lead number ---- */
+.consumer-stats.stat-lead {
+  align-items: flex-end;
+  gap: 8px 22px;
+}
+.stat-lead .stat { align-items: flex-start; }
+.stat-lead .stat-value.num {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.stat-lead .stat.lead .stat-value.num {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.03em;
+  color: var(--text);
+}
+.stat-lead .stat.is-negative .stat-value.num { color: var(--red); }
+
+/* ---- D tiles with change ---- the revenue page's hairline strip, cut into tiles ---- */
+.revenue .tiles.stat-change {
+  gap: 8px;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.stat-change .tile {
+  gap: 2px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--input);
+}
+.tile-delta {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: var(--t-xs);
+  font-weight: var(--w-semi);
+  background: var(--border);
+  color: var(--muted);
+}
+.tile-delta[data-tone='up'] { background: var(--green-bg); color: var(--green); }
+.tile-delta[data-tone='down'] { background: var(--red-bg); color: var(--red); }
+.tile-delta.inline { display: inline-block; margin: 0 0 0 6px; padding: 0 7px; }
+/* ---- K ring ---- the source split, decorative; the table beside it carries every number ---- */
+.source-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 132px;
+  height: 132px;
+  margin: 8px 0 14px;
+  border-radius: 50%;
+}
+.source-ring::before { content: ''; position: absolute; inset: 18px; border-radius: 50%; background: var(--card); }
+.source-ring span { position: relative; display: grid; justify-items: center; line-height: 1.1; }
+.source-ring b { font-family: var(--font-display); font-size: 24px; font-weight: 600; }
+.source-ring small { font-size: var(--t-xs); color: var(--muted); }
+
+.tile-delta .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

@@ -1,0 +1,117 @@
+/*
+ * Blend round 11 table looks (docs/superpowers/labs/2026-10-14-blend-ui-lab-round-11.html, T1 to T6).
+ * One modifier class per situation, put next to a table's own class: `<table class="table tbl-grid">`.
+ * Imported unlayered by the admin and vendor entry stylesheets so a modifier beats the `legacy` layer's `.table` and
+ * `.panel > .table` rules; the customer app has no table and never imports this. Colours are the app tokens only.
+ *
+ *   .tbl-grid     T1  dense ledger: cell rules both ways, 32px rows, an amber wash under the pointer
+ *   .tbl-sticky   T2  money statement: the first column pins while the numbers scroll; `tfoot` is the total row
+ *   .tbl-two      T3  roster: a cell is two lines, `<b>` over `<span>`, the second muted
+ *   .tbl-leaders  T4  short summary: label, a dotted leader, value (needs `<span>` inside each cell, see below)
+ *   .tbl-fold     T6  narrow screens: each row a card of label/value lines from `data-label`
+ *
+ * Every modifier keeps the header cells in the DOM and leaves `aria-sort`, `scope` and the sort buttons alone.
+ */
+
+/* ---- T1 grid ---- */
+.tbl-grid th,
+.tbl-grid td {
+  padding: 0 10px;
+  height: 32px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.tbl-grid th:last-child,
+.tbl-grid td:last-child { border-right: 0; }
+.tbl-grid th { height: 34px; font-size: 12px; border-bottom-color: var(--border2); }
+.tbl-grid tbody tr:hover td { background: rgba(255, 191, 0, .1); }
+
+/* ---- T2 sticky first column and total row ---- */
+.tbl-sticky th:first-child,
+.tbl-sticky td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--card);
+  box-shadow: 1px 0 0 var(--border);
+}
+.tbl-sticky tbody tr:nth-child(odd) td { background: var(--input); }
+.tbl-sticky tbody tr:nth-child(odd) td:first-child { background: var(--input); }
+.tbl-sticky td.num,
+.tbl-sticky td.money { font-variant-numeric: tabular-nums; text-align: right; }
+.tbl-sticky tfoot td,
+.tbl-sticky tfoot th {
+  height: 46px;
+  font-weight: 600;
+  color: var(--text);
+  border-top: 2px solid var(--text);
+  background: var(--input);
+}
+
+/* ---- T3 two-line cells ---- */
+.tbl-two td { height: 62px; vertical-align: middle; }
+.tbl-two td b { display: block; color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.tbl-two td > span,
+.tbl-two td .sub { display: block; color: var(--muted); font-size: 12.5px; }
+
+/* ---- T4 leaders ---- the cell's text sits in a span so the dots run behind it ---- */
+.tbl-leaders { border-collapse: collapse; width: 100%; }
+.tbl-leaders th,
+.tbl-leaders td {
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  background: radial-gradient(circle, var(--border2) 1px, transparent 1.5px) 0 calc(100% - 11px) / 6px 4px repeat-x;
+  font-weight: 400;
+}
+.tbl-leaders thead { display: none; }
+.tbl-leaders tr > :first-child { color: var(--muted); text-align: left; }
+.tbl-leaders tr > :last-child { color: var(--text); font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.tbl-leaders tr > * > span { position: relative; background: var(--card); }
+.tbl-leaders tr > :first-child > span { padding-right: 6px; }
+.tbl-leaders tr > :last-child > span { padding-left: 6px; }
+
+/* ---- T6 fold below 768 ---- */
+@media (max-width: 767px) {
+  .tbl-fold thead { position: absolute; left: -9999px; }
+  .tbl-fold,
+  .tbl-fold tbody,
+  .tbl-fold tr,
+  .tbl-fold th,
+  .tbl-fold td { display: block; }
+  /* Round 14, L Rows in a panel: the folded rows share one panel, a hairline between. */
+  .tbl-fold tbody {
+    overflow: hidden;
+    border: 1px solid var(--glass-line, var(--border));
+    border-radius: 20px;
+    background: var(--glass, var(--card));
+  }
+  .tbl-fold tr {
+    margin: 0;
+    padding: 12px 16px;
+    border: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    background: none;
+  }
+  .tbl-fold tr:first-child { border-top: 0; }
+  .tbl-fold td,
+  .tbl-fold th[scope='row'] {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: 10px;
+    align-items: baseline;
+    padding: 4px 0;
+    border: 0;
+    height: auto;
+    text-align: right;
+    white-space: normal;
+    box-shadow: none;
+    background: none;
+  }
+  .tbl-fold th[scope='row'] { display: block; text-align: left; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .tbl-fold td::before { content: attr(data-label); color: var(--muted); font-size: 12.5px; text-align: left; }
+  .tbl-fold td:not([data-label])::before { content: none; }
+  .tbl-fold td:not([data-label]) { display: block; }
+}

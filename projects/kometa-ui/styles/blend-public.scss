@@ -1,0 +1,52 @@
+/*
+ * The Blend rules the public customer app can afford on its initial stylesheet.
+ * The drawer, the wash, and the toast thread live in blend.scss and stay on the consoles.
+ */
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.k-edge { box-shadow: inset 2px 0 0 var(--amber); }
+
+.k-whisper {
+  /* The whisper for a field that is not `kometa-search`: a link that opens /search, or the top bar's
+     own form. No box; the question is the type, with a hairline under it that thickens on focus. */
+  display: flex;
+  align-items: center;
+  height: auto;
+  min-height: 44px;
+  padding: 8px 0 10px;
+  border: 0;
+  border-bottom: 1px solid var(--glass-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--whisper-size, 22px);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.k-whisper:focus-within {
+  border-bottom-color: var(--display-ink);
+  box-shadow: 0 1px 0 var(--display-ink);
+}
+
+.k-whisper > app-icon { display: none; }
+
+.k-whisper > span,
+.k-whisper input::placeholder {
+  color: var(--text);
+  opacity: 0.62; /* 4.5:1 on the light surface; the old .32 was 2:1 */
+}
+
+.k-whisper input {
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--display-ink);
+}

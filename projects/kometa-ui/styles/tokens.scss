@@ -1,0 +1,234 @@
+/*
+ * Usta Flow — transcribed from the design canvas, not from prose.
+ * Source of truth: docs/design-canvas/*.dc.html (six boards, identical token block in all six).
+ *
+ * TWO schemes since 2026-09-17. The `:root` block below is dark, which is what a browser saying
+ * nothing gets; the light column at the foot of this file is what an explicit `data-theme="light"`
+ * or a light system with no override gets. Every surface that reads these tokens — the customer
+ * app, the vendor console and every kometa-ui component — therefore switches with no second source of truth.
+ *
+ * Amber is spent on exactly one control per screen — the action the user should take next.
+ * Everything else is surface, line, text or status. A screen with two amber buttons has a bug.
+ *
+ * The design is DENSE: 11-13px body, 600/700/800 weights only, pill-shaped controls, mono
+ * numerals for every time and price, and tracked uppercase eyebrows. Roomy 16px/400 text with
+ * 6px radii is what this file exists to stop.
+ */
+
+/*
+ * The sans, self-hosted: Manrope, variable (400..800 in one file per subset), SIL OFL 1.1, from
+ * Google Fonts v20. It replaced the boards' Hanken Grotesk on 2026-09-23 (founder decision),
+ * because Hanken has no Russian letters at all. Until then no font file was loaded here and
+ * every web surface drew in `system-ui`, which on a Samsung with a font pack is a handwriting face.
+ *
+ * Only latin and cyrillic ship. The browser fetches a subset by unicode-range, so a page with no
+ * Russian on it never downloads the cyrillic file. The ranges are Google's, copied verbatim;
+ * a wrong range fails silently (the file is simply never requested).
+ *
+ * The build copies these files into each app's `assets/`, set by `"media": "assets"` in every
+ * `outputPath` in angular.json. Angular's default folder, `media/`, is where Caddy sends
+ * kometa.com.uz/media/* and admin.kometa.com.uz/media/* (shop photos in MinIO), so the first deploy
+ * of this change served the stylesheet and 404'd every font file on those two hosts.
+ */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(./fonts/manrope-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(./fonts/manrope-cyrillic.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/*
+ * Display only: Syne 700, SIL OFL, fontsource 5.3.0. Titles use 700. The package ships no
+ * Cyrillic file, so a Russian title falls through --font-display to Manrope. The 600 file
+ * is not declared here: the booking page's initial CSS cannot spare a second unicode-range.
+ */
+@font-face {
+  font-family: 'Syne';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(./fonts/syne-latin-700.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* ---- surfaces ---- */
+  --bg: #12110e;
+  --card: #1A1C1C;
+  --input: #1E2020;
+
+  /* ---- lines ---- */
+  --border: #282A2B;
+
+  /* ---- text tiers ---- */
+  --text: #E2E2E2;
+  --text2: #C4C7C7;
+  --muted: #8E9192;
+
+  /* ---- the one accent ---- */
+  --amber: #FFBF00;
+
+  /* ---- status. Never decorative: each one means a state. ---- */
+  --green: #3ECF8E;   /* done / success */
+  --red: #F2543D;     /* cancelled / destructive */
+  --error: #FF5555;   /* form + request errors */
+  --blue: #54A9EB;    /* anchored booking */
+  --violet: #A78BFA;  /* pro / subscription */
+  /* Their tints, for an icon tile or a pill behind the ink above. Translucent, so one value sits on card or input. */
+  --green-bg: rgba(62, 207, 142, 0.15);
+  --red-bg: rgba(242, 84, 61, 0.14);
+  --blue-bg: rgba(84, 169, 235, 0.15);
+  --violet-bg: rgba(167, 139, 250, 0.16);
+
+  /* ---- type ----
+   * The sans is self-hosted above. The mono is NOT, so it still resolves to the fallbacks.
+   * ponytail: mono on the system stack; self-host JetBrains Mono if the fallback ever looks wrong.
+   */
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-display: 'Syne', var(--font-sans);
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* Real sizes measured off the boards; 11px is the single most-used size across all six. */
+  /* X-3 / R4 (Wave 9): the 11px text floor, in all three apps. */
+  --t-tiny: 12px;     /* eyebrows, captions (11px until 2026-10-13: the readability audit) */
+  --t-xs: 12px;       /* the workhorse */
+  --t-sm: 12px;
+  --t-body: 13px;     /* default body */
+  --t-md: 14px;
+  --t-lg: 16px;
+  --t-xl: 20px;
+  --t-2xl: 24px;
+  --t-title: 22px;    /* every page <h1>: one title size, 24px from 1024 (see the media query below) */
+
+  /*
+   * The consumer boards (2 and 3) declare 500 in three places — inactive section tabs, every
+   * unselected slot pill, and every inactive tab-bar label — 87 uses between them. Board 1 has
+   * none, which is where the old "no weight below 600" rule came from and why it was wrong.
+   * There is still nothing below 500 anywhere.
+   */
+  --w-mid: 500;
+  --w-semi: 600;
+  --w-bold: 700;
+  --w-black: 800;
+
+  --lh-body: 1.35;
+
+  --track-label: .08em;    /* uppercase eyebrows: JADVAL, HOZIR */
+  --track-tight: -.005em;  /* headings */
+
+  /* ---- shape. Pills dominate (216 uses on board 1 alone). ---- */
+  --r-pill: 9999px;
+  --r-card: 16px;
+
+  /* ---- consumer redesign (2026-09-11); dark values, light ones at the foot of this file ---- */
+  --amber-ink: #FFBF00; /* amber used as text or icon — equals --amber in dark, darker in light */
+  --on-amber: #121414;  /* ink ON an amber fill: one value in both schemes, so no light twin. Never --bg, which is cream in light */
+  --border2: #333535;
+  --skel: #242727;      /* skeleton blocks */
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  /* The consumer app's tab bar and top bar: a shade under --card in dark, equal to it in light.
+     It lives here rather than in that app's legacy.css so the light column below is ONE block. */
+  --bar: #141617;
+
+  /* Founder's badge, everywhere a specific shop is shown (2026-09-28 founder decision): rose, the
+     one hue this palette had no use for yet. Never amber (the next action) and never violet
+     (Pro) — the chip needed a colour that means only "founder". */
+  --founder: #F472B6;
+  /* Its 16% fill, as a literal rather than color-mix(): the build lowers color-mix() to a
+     `background: var(--founder)` fallback, which an older Android WebView applies — rose ink on a
+     solid rose pill, text gone. */
+  --founder-bg: rgba(244, 114, 182, 0.16);
+
+  /* ---- data visualisation (2026-10-07, the /org analytics console) ----
+   * For DATA only: a series, a segment, a heatmap cell. Never for an action or a state — amber
+   * stays "the next action", green/red stay good/bad, violet stays Pro. --viz-heat is an RGB
+   * triple, read as rgba(var(--viz-heat), α). */
+  --viz-1: #7B93FF;
+  --viz-2: #3CC6B4;
+  --viz-3: #F08A5D;
+  --viz-4: #C9A0FF;
+  --viz-5: #8E9192;
+  --viz-heat: 123,147,255;
+
+  /* Blend shell. Timing stays here: the light blocks are pinned exactly, and a spring is not a colour. */
+  --glass: rgba(28, 26, 22, .82);
+  --glass-drawer: rgba(18, 16, 12, .55);
+  --glass-line: rgba(244, 239, 230, .14);
+  --display-ink: #f4efe6;
+  --ease-spring: cubic-bezier(0.22, 1.15, 0.36, 1);
+  --drawer-dur: 680ms;
+  --drawer-ease: cubic-bezier(0.22, 1.35, 0.32, 1);
+}
+
+@media (min-width: 1024px) {
+  :root { --t-title: 24px; }
+}
+
+/*
+ * ---- the light column ----
+ *
+ * Two copies of one block, because there is no selector that means "explicitly chosen light, or a
+ * light system that has not been overridden". The first is the choice, the second is the system.
+ * Two copies drift, so `customer/src/app/theme-tokens.spec.ts` pins both to this table and to each
+ * other; edit one and that spec fails until you edit the other.
+ *
+ * Both outrank the `:root` block above on specificity, not on order — (0,2,0) against (0,1,0) —
+ * which is why base.scss can add its own `:root` block of console-only tokens after this file
+ * without any of it silently winning here. What base.scss must NOT do is re-declare a token this
+ * file already carries in both schemes: that would be a dark value the light column beats only on
+ * specificity, and it holds only until someone writes a more specific selector. `--border2` was
+ * exactly that and was deleted from base.scss on 2026-09-17.
+ *
+ * Amber is the one value that does NOT change: it is a FILL in both schemes. As ink it is 1.56:1
+ * on #FAF8F4, so text and icons read --amber-ink, which darkens to #8A5A00.
+ */
+:root[data-theme='light'] {
+  --bg: #FAF8F4; --card: #FFFFFF; --input: #F2EFE9;
+  --border: #E4DFD6; --border2: #D6D0C5;
+  --text: #1A1C1C; --text2: #45484A; --muted: #5F6364;
+  --amber: #FFBF00; --amber-ink: #8A5A00;
+  --green: #137347; --red: #C2361F; --error: #C62828; --blue: #1A6DAF; --violet: #6D4FC7;
+  --green-bg: rgba(19, 115, 71, 0.12); --red-bg: rgba(194, 54, 31, 0.1); --blue-bg: rgba(26, 109, 175, 0.12); --violet-bg: rgba(109, 79, 199, 0.12);
+  --skel: #ECE8E1; --bar: #FFFFFF;
+  --shadow: 0 8px 24px rgba(60, 48, 20, 0.14);
+  --founder: #BE185D; --founder-bg: rgba(190, 24, 93, 0.12);
+  --viz-1: #4060E0;
+  --viz-2: #11937F;
+  --viz-3: #D2622F;
+  --viz-4: #8B5CF6;
+  --viz-5: #8A8F90;
+  --viz-heat: 64,96,224;
+  --glass: rgba(255, 252, 246, .72); --glass-drawer: rgba(255, 252, 246, .62); --glass-line: rgba(60, 40, 10, .1); --display-ink: var(--text);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --bg: #FAF8F4; --card: #FFFFFF; --input: #F2EFE9;
+    --border: #E4DFD6; --border2: #D6D0C5;
+    --text: #1A1C1C; --text2: #45484A; --muted: #5F6364;
+    --amber: #FFBF00; --amber-ink: #8A5A00;
+    --green: #137347; --red: #C2361F; --error: #C62828; --blue: #1A6DAF; --violet: #6D4FC7;
+    --green-bg: rgba(19, 115, 71, 0.12); --red-bg: rgba(194, 54, 31, 0.1); --blue-bg: rgba(26, 109, 175, 0.12); --violet-bg: rgba(109, 79, 199, 0.12);
+    --skel: #ECE8E1; --bar: #FFFFFF;
+    --shadow: 0 8px 24px rgba(60, 48, 20, 0.14);
+    --founder: #BE185D; --founder-bg: rgba(190, 24, 93, 0.12);
+    --viz-1: #4060E0;
+    --viz-2: #11937F;
+    --viz-3: #D2622F;
+    --viz-4: #8B5CF6;
+    --viz-5: #8A8F90;
+    --viz-heat: 64,96,224;
+    --glass: rgba(255, 252, 246, .72); --glass-drawer: rgba(255, 252, 246, .62); --glass-line: rgba(60, 40, 10, .1); --display-ink: var(--text);
+  }
+}

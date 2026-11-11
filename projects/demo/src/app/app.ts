@@ -1,0 +1,215 @@
+import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import {
+  KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip,
+  KometaCode, KometaConfirm, KometaConfirmationService, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField,
+  KometaFilm, KometaFilmDay, KometaFold, KometaFoldBody, KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint,
+  KometaLink, KometaMarkDay, KometaMarks, KometaMenu, KometaMeter, KometaMulti, KometaNote, KometaNotes, KometaNumber,
+  KometaPager, KometaPair, KometaPerson, KometaPhoto, KometaPhotos, KometaPicker, KometaPop, KometaQuiet, KometaRating,
+  KometaReveal, KometaRow, KometaRows, KometaSearch, KometaSelect, KometaShare, KometaShareSegment, KometaSkeleton,
+  KometaSlot, KometaSlots, KometaSort, KometaSortHeader, KometaSortOption, KometaSplit, KometaStars, KometaStep,
+  KometaStepper, KometaSteps, KometaSuggest, KometaSuggestion, KometaTab, KometaTabbar, KometaTable, KometaTag, KometaTick,
+  KometaTime, KometaTip, KometaToast, KometaToastItem, KometaToggle, KometaTrail, KometaTray, KometaUpload, KometaWait,
+  KometaWord, KometaWordOption, KometaWords, ProviderLogo, ThemePreference, ThemeService, dateAt,
+} from 'kometa-ui';
+
+/** A flat SVG picture as a data URL, so the demo needs no image files. */
+function picture(from: string, to: string, text: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">`
+    + `<stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs>`
+    + `<rect width="640" height="400" fill="url(#g)"/><text x="320" y="215" font-family="sans-serif" font-size="56" fill="#fff" text-anchor="middle">${text}</text></svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+@Component({
+  imports: [
+    FormsModule,
+    KometaAccordion, KometaAccordionItem, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
+    KometaConfirm, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField, KometaFilm, KometaFold, KometaFoldBody,
+    KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint, KometaLink, KometaMarks, KometaMenu, KometaMeter,
+    KometaMulti, KometaNote, KometaNotes, KometaNumber, KometaPager, KometaPair, KometaPerson, KometaPhotos, KometaPicker,
+    KometaPop, KometaQuiet, KometaRating, KometaReveal, KometaRow, KometaRows, KometaSearch, KometaSelect, KometaShare,
+    KometaSkeleton, KometaSlots, KometaSort, KometaSortHeader, KometaSplit, KometaStars, KometaStep, KometaStepper,
+    KometaSteps, KometaSuggest, KometaTabbar, KometaTable, KometaTag, KometaTick, KometaTime, KometaTip, KometaToast,
+    KometaToggle, KometaTrail, KometaTray, KometaUpload, KometaWait, KometaWord, KometaWords, ProviderLogo,
+  ],
+  selector: 'app-root',
+  styleUrl: './app.scss',
+  templateUrl: './app.html',
+})
+export class App {
+  protected readonly theme = inject(ThemeService);
+  private readonly confirmations = inject(KometaConfirmationService);
+  protected readonly themes: ThemePreference[] = ['system', 'dark', 'light'];
+
+  // Actions
+  protected readonly clicks = signal(0);
+  protected readonly log = signal('Nothing yet.');
+  protected readonly actions: KometaAction[] = [
+    { label: 'Edit', run: () => this.log.set('Edit chosen') },
+    { label: 'Export', badge: 'PRO', run: () => this.log.set('Export chosen') },
+    { label: 'Archive', disabled: true, run: () => {} },
+    { label: 'Cancel visit', danger: true, run: () => this.log.set('Cancel chosen') },
+  ];
+  protected readonly asking = signal(false);
+  protected readonly pairBusy = signal(false);
+
+  // Status
+  protected readonly tones = ['now', 'wait', 'book', 'done', 'warn', 'error'] as const;
+  protected readonly banners = ['info', 'ok', 'warn', 'error'] as const;
+  protected readonly toasts = signal<KometaToastItem[]>([]);
+  private toastId = 0;
+
+  // Form controls
+  protected readonly name = signal('Dilnoza');
+  protected readonly email = signal('');
+  protected readonly code = signal('');
+  protected readonly digits = signal('');
+  protected readonly notes = signal('');
+  protected readonly search = signal('');
+  protected readonly amount = signal<number | null>(150000);
+  protected readonly seats = signal(2);
+  protected readonly on = signal(true);
+  protected readonly chip = signal(false);
+  protected readonly checked = signal(true);
+  protected readonly ticked = signal(false);
+  protected readonly rating = signal(4);
+  protected readonly city = signal<string | null>('tas');
+  protected readonly cities = [
+    { label: 'Tashkent', value: 'tas' }, { label: 'Samarkand', value: 'skd' }, { label: 'Bukhara', value: 'bhk' },
+    { label: 'Khiva', value: 'khv' },
+  ];
+  protected readonly services = signal<string[]>(['cut']);
+  protected readonly serviceOptions = [
+    { label: 'Haircut', value: 'cut', dot: 'var(--amber)' }, { label: 'Beard', value: 'beard', dot: 'var(--green)' },
+    { label: 'Colour', value: 'colour', dot: 'var(--violet)' },
+  ];
+  protected readonly view = signal('day');
+  protected readonly words: KometaWordOption[] = [
+    { value: 'day', label: 'Day' }, { value: 'week', label: 'Week', count: 12 }, { value: 'month', label: 'Month', count: 3, hot: true },
+  ];
+  protected readonly client = signal('');
+  protected readonly suggestions = signal<KometaSuggestion[]>([]);
+  private readonly people: KometaSuggestion[] = [
+    { label: 'Aziz Karimov', meta: '+998 90 123 45 67' }, { label: 'Aziza Rahimova', meta: '+998 91 765 43 21' },
+    { label: 'Bekzod Aliyev', meta: '+998 93 555 00 11' },
+  ];
+  protected readonly picked = signal('Nothing picked.');
+
+  // Date and time
+  protected readonly day = signal<Date | null>(new Date());
+  protected readonly period = signal<(Date | null)[] | null>(null);
+  protected readonly time = signal<Date | null>(dateAt(14, 30));
+  protected readonly film: KometaFilmDay[] = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return {
+      value: d.toISOString().slice(0, 10), label: String(d.getDate()),
+      sub: d.toLocaleDateString('en', { weekday: 'short' }), dot: i % 3 === 0, muted: i === 5,
+    };
+  });
+  protected readonly filmDay = signal(this.film[0].value);
+  protected readonly slots: KometaSlot[] = [
+    { value: '09:00', label: '09:00' }, { value: '09:30', label: '09:30', disabled: true }, { value: '10:00', label: '10:00' },
+    { value: '10:30', label: '10:30', note: 'last' }, { value: '11:00', label: '11:00' },
+  ];
+  protected readonly slot = signal('');
+  protected readonly marks: KometaMarkDay[] = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((label, i) => ({ label, mark: i % 2 ? null : '●' }));
+
+  // Navigation
+  protected readonly tab = signal('a');
+  protected readonly tabs: KometaTab[] = [{ value: 'a', label: 'First', icon: '' }, { value: 'b', label: 'Second', icon: '' }];
+  protected readonly page = signal(1);
+  protected readonly pageSize = signal(10);
+
+  // Data
+  protected readonly sortOptions: KometaSortOption[] = [{ value: 'name', label: 'Name' }, { value: 'price', label: 'Price' }];
+  protected readonly sortKey = signal('name');
+  protected readonly sortDir = signal<'asc' | 'desc'>('asc');
+  private readonly rowsData = [
+    { id: 1, name: 'Haircut', price: 80000, group: 'Hair' }, { id: 2, name: 'Colour', price: 250000, group: 'Hair' },
+    { id: 3, name: 'Beard trim', price: 40000, group: 'Beard' },
+  ];
+  protected readonly sorted = computed(() => {
+    const k = this.sortKey() as 'name' | 'price';
+    const s = [...this.rowsData].sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0));
+    return this.sortDir() === 'asc' ? s : s.reverse();
+  });
+  protected readonly share: KometaShareSegment[] = [
+    { label: 'Haircut', value: 6200000, text: "6 200 000 so'm", color: 'var(--viz-1, var(--amber))' },
+    { label: 'Colour', value: 3100000, text: "3 100 000 so'm", color: 'var(--viz-2, var(--green))' },
+    { label: 'Beard', value: 900000, text: "900 000 so'm", color: 'var(--viz-3, var(--violet))' },
+  ];
+
+  // Overlays
+  protected readonly drawer = signal(false);
+  protected readonly sheet = signal(false);
+  protected readonly photosOpen = signal(false);
+  protected readonly photoIndex = signal(0);
+  protected readonly photos: KometaPhoto[] = [
+    ['#7a4b00', '#ffbf00', '1'], ['#0b3d2e', '#2ecc71', '2'], ['#2d1b4e', '#9b59b6', '3'],
+  ].map(([a, b, t]) => ({ url: picture(a, b, `Photo ${t}`), thumbUrl: picture(a, b, t), alt: `Photo ${t}` }));
+  protected readonly before = picture('#333', '#777', '');
+  protected readonly after = picture('#7a4b00', '#ffbf00', '');
+  protected readonly frame = picture('#0b3d2e', '#2ecc71', 'Frame');
+  protected readonly avatar = picture('#2d1b4e', '#9b59b6', 'A');
+
+  // Disclosure
+  protected readonly fold = signal(false);
+  protected readonly bare = signal(false);
+
+  protected setTheme(next: ThemePreference): void {
+    this.theme.set(next);
+  }
+
+  protected toast(kind: KometaToastItem['kind']): void {
+    const item = { id: ++this.toastId, kind, text: `A ${kind} message.`, life: 4000 };
+    this.toasts.update((t) => [...t, item]);
+  }
+
+  protected dismissToast(id: number): void {
+    this.toasts.update((t) => t.filter((x) => x.id !== id));
+  }
+
+  protected ask(danger: boolean): void {
+    this.confirmations.confirm({
+      header: danger ? 'Delete service?' : 'Leave without saving?',
+      message: danger ? 'It is gone for good.' : '',
+      acceptLabel: danger ? 'Delete' : 'Leave',
+      rejectLabel: danger ? 'Keep it' : 'Stay',
+      acceptButtonProps: danger ? { severity: 'danger' } : undefined,
+      accept: () => this.log.set('Tray: accepted'),
+      reject: () => this.log.set('Tray: rejected'),
+    });
+  }
+
+  protected confirmPair(): void {
+    this.pairBusy.set(true);
+    setTimeout(() => {
+      this.pairBusy.set(false);
+      this.log.set('Pair: confirmed');
+    }, 1200);
+  }
+
+  protected query(q: string): void {
+    const s = q.toLowerCase();
+    this.suggestions.set(this.people.filter((p) => p.label.toLowerCase().includes(s)));
+  }
+
+  protected sortBy(key: string): void {
+    if (key === this.sortKey()) this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
+    else {
+      this.sortKey.set(key);
+      this.sortDir.set('asc');
+    }
+  }
+
+  protected openPhoto(i: number): void {
+    this.photoIndex.set(i);
+    this.photosOpen.set(true);
+  }
+
+  protected filesPicked(files: File[]): void {
+    this.picked.set(files.map((f) => f.name).join(', ') || 'Nothing picked.');
+  }
+}

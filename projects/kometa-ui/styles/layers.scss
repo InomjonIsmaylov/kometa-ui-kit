@@ -1,0 +1,2 @@
+/* The layer order, as KOMETA_LAYER_ORDER. `@use` it first: Sass allows no `@layer` statement before a `@use`. */
+@layer theme, base, legacy, components, utilities;

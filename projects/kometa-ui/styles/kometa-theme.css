@@ -1,0 +1,35 @@
+/*
+ * Tailwind utilities over the token layer. `inline` makes a utility emit `var(--amber)` rather than
+ * a copy of today's value, so the customer app's theme switch reaches utilities exactly as it reaches
+ * hand-written CSS.
+ *
+ * Deliberately NOT mapped: `--font-sans` and `--font-mono`. Tailwind's theme.css defines those two
+ * names in layer `theme`; the app's tokens define them in `legacy`, which is later, so the app wins
+ * and `font-sans`/`font-mono` already resolve to the app's fonts. Re-declaring them here as
+ * `var(--font-sans)` would be a self-reference. Spacing uses Tailwind's default 4px scale — tokens.css
+ * has no spacing tokens to map (spec §4).
+ */
+@theme inline {
+  --color-amber: var(--amber);
+  --color-amber-ink: var(--amber-ink);
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text2: var(--text2);
+  --color-muted: var(--muted);
+  --color-green: var(--green);
+  --color-red: var(--red);
+
+  --text-tiny: var(--t-tiny);
+  --text-xs: var(--t-xs);
+  --text-sm: var(--t-sm);
+  --text-body: var(--t-body);
+  --text-md: var(--t-md);
+  --text-lg: var(--t-lg);
+  --text-xl: var(--t-xl);
+  --text-2xl: var(--t-2xl);
+
+  --radius-pill: var(--r-pill);
+}

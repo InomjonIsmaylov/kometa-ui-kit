@@ -1,0 +1,97 @@
+/*
+ * Blend round 12 sheet looks (docs/superpowers/labs/2026-10-14-blend-ui-lab-round-12.html, S, P and L).
+ * Selectors ride each sheet's own content root, never the drawer's `kometa-sheet` class: the
+ * SheetHistory directive matches that class exactly. Structure (head, fields, `.sheet-foot`) is untouched,
+ * so focus trap, dirty guard and the specs stay as they were. Imported unlayered by the vendor stylesheet.
+ *
+ *   hero head       .till              money sheets (Kassa entry, pay wage, till): a tinted band behind the title
+ *   action bar      short forms >=1024 Cancel | title | Save in one top row (the foot's buttons, `display: contents`)
+ *   floating foot   short forms  <1024 the foot floats over the form on a fade
+ *   takeover        .service-editor <1024 full height, the title row pinned
+ * Short forms: caption, review reply, branch add, service request.
+ */
+
+/* ---- hero head ---- */
+.till .sheet-head {
+  display: block;
+  padding: 16px 16px 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 191, 0, .14), transparent);
+}
+.till .sheet-head h2 {
+  font-family: var(--font-display);
+  font-size: var(--t-title);
+  letter-spacing: -.02em;
+}
+
+/* ---- action bar, desktop ---- */
+@media (min-width: 1024px) {
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    row-gap: 12px;
+  }
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > * { grid-column: 1 / -1; }
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > .sheet-head {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: center;
+    margin: 0;
+  }
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > .sheet-head h2 { font-size: var(--t-lg); }
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > .sheet-foot {
+    display: contents;
+  }
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > .sheet-foot > .btn {
+    grid-row: 1;
+    min-height: 48px;
+    padding: 0 12px;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    flex: none;
+  }
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > .sheet-foot > .btn:first-child {
+    grid-column: 1;
+    justify-self: start;
+    color: var(--muted);
+  }
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > .sheet-foot > .btn:last-child {
+    grid-column: 3;
+    justify-self: end;
+    color: var(--amber-ink);
+    font-weight: var(--w-semi);
+  }
+}
+
+/* ---- floating footer, phone ---- */
+@media (max-width: 1023.98px) {
+  :root:root :is(.caption-sheet, .review-reply-sheet, .branch-add-sheet, .request-sheet) > .sheet-foot {
+    position: sticky;
+    bottom: 0;
+    padding-top: 28px;
+    border-top: 0;
+    background: linear-gradient(180deg, transparent, var(--glass-drawer) 45%);
+  }
+}
+
+/* ---- takeover, phone ---- */
+@media (max-width: 1023.98px) {
+  :root:root .kometa-sheet.kdrawer.kdrawer-bottom:has(.service-editor) {
+    /* Edge to edge: the island's 10px insets would push a full-height sheet 10px past the top. */
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .service-editor > .sheet-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--glass-drawer);
+  }
+}

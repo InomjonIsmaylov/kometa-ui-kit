@@ -1,0 +1,667 @@
+/*
+ * Primitives for the admin and vendor consoles, built on the canvas token layer.
+ * Class names are unchanged from the previous version — only their values moved, onto the
+ * measurements taken from docs/design-canvas/*.dc.html.
+ */
+@use 'tokens';
+
+/* Console-only tokens: the byte-budgeted customer app imports tokens.scss alone and
+ * must not pay for layout scale or payment-brand colours it never renders. */
+:root {
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 6px;
+  --sp-4: 8px;
+  --sp-5: 10px;
+  --sp-6: 12px;
+  --sp-7: 14px;
+  --sp-8: 16px;
+  --sp-9: 20px;
+  --sp-10: 24px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --dur: .12s;
+  --click: #0072C6;
+  --payme: #00CFC8;
+
+  /* `--border2` is NOT re-declared here: tokens.scss carries it in both schemes, and a copy at
+     this specificity would have been a dark value the light column could only beat on
+     specificity — which is the kind of thing that holds until someone writes `html[...]`. */
+  --divider: #444748;
+  --amber-hover: #ffd23d;
+  /* The lifted-card shadow (today's visit card). Black at 30% is invisible on a dark page and a
+     bruise on a light one, so it is a token with a light value rather than a literal. */
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 30%);
+  --r-card: 12px;
+  --r-md: 8px;
+  --r-sm: 4px;
+  --t-display: 40px; /* the one hero number: the Sharhlar board sets the rating at 40px */
+  --r-field: 14px; /* board 07 measures the profile fields at 14 */
+  --lh-tight: 1.2;
+
+  /*
+   * ponytail: aliases for the eight names the consoles already use — same colours, the old set
+   * simply stopped at eight. They live here, not in tokens.scss, so the customer app does not
+   * ship names it no longer references. Migrate call sites, then delete this block.
+   */
+  --surface: var(--bg);
+  --container: var(--card);
+  --container-2: var(--input);
+  --container-3: var(--border);
+  --on-surface: var(--text);
+  --outline: var(--muted);
+  --accent: var(--amber);
+}
+
+/*
+ * The console-only colours, in light. Two copies for the same reason tokens.scss's light column is
+ * two copies, and `vendor/src/app/theme.spec.ts` pins them to each other.
+ *
+ * `--divider` is the tier ABOVE `--border2` in both schemes — brighter than the hairline in dark,
+ * darker than it in light — and `--amber-hover` moves the opposite way in each: amber lightens
+ * on a dark surface and darkens on a light one, or a hover is invisible. `--click` and `--payme`
+ * are not here: a merchant's brand colour is its brand colour in both schemes.
+ */
+:root[data-theme='light'] {
+  --divider: #C7C0B2;
+  --amber-hover: #E6AC00;
+  --shadow-sm: 0 2px 8px rgb(60 48 20 / 12%);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --divider: #C7C0B2;
+    --amber-hover: #E6AC00;
+    --shadow-sm: 0 2px 8px rgb(60 48 20 / 12%);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--amber);
+  color: var(--on-amber);
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+}
+a.accent-link {
+  color: var(--amber-ink);
+}
+a.accent-link:hover {
+  color: var(--amber-hover);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--sp-6);
+  font-weight: var(--w-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--track-tight);
+}
+h1 { font-size: var(--t-title); font-weight: var(--w-black); letter-spacing: -0.01em; }
+h2 { font-size: var(--t-xl); }
+h3 { font-size: var(--t-lg); }
+h4, h5, h6 { font-size: var(--t-md); }
+
+/* Round 14, H Hairline: a sentence that explains (under a field, under a list, at a page's foot) wears the
+   `kometa-banner` info hairline, one rule for the six class names it used to have. `p.hint` and not `.hint`,
+   so the command palette's inline `<span class="hint">` stays a span. */
+p.hint, p.footnote, div.footnote, .page-note, .list-hint {
+  padding-inline-start: var(--sp-6);
+  border-inline-start: 2px solid var(--blue);
+}
+.page-note { border-inline-start-color: var(--violet); }
+
+/* Uppercase tracked label — kept for the templates that still use it; page headers dropped it.
+   Sans like its siblings: mono is for numbers only (.num). */
+.eyebrow {
+  font-size: var(--t-xs);
+  font-weight: var(--w-bold);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/*
+ * Every time, price, duration and count on the boards is set in the mono face — 214 uses on
+ * board 1 alone. It is what makes columns of numbers line up and read as data rather than prose.
+ */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--sp-10) var(--sp-8);
+}
+
+.card {
+  /* Round 14, C Rule only: a block is a heavy hairline over its content, not a box. The customer app's
+     `.card` is a list item with a thumbnail and keeps its own fill (its legacy.css). */
+  background-color: transparent;
+  border: 0;
+  border-top: 1px solid var(--border2);
+  border-radius: 0;
+  padding: var(--sp-6) 0 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  padding: 11px var(--sp-7);
+  min-height: 48px;
+  border: none;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--t-sm);
+  font-weight: var(--w-bold);
+  cursor: pointer;
+  transition: transform var(--dur) var(--ease), background-color .12s ease, border-color .12s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(.94);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber-ink);
+  outline-offset: 2px;
+}
+
+.btn-accent {
+  background-color: var(--amber);
+  color: var(--on-amber);
+}
+.btn-accent:hover:not(:disabled) {
+  background-color: var(--amber-hover);
+}
+
+.btn-ghost {
+  border: 1px solid var(--border2);
+  color: var(--text2);
+}
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--border);
+}
+
+/* From 768px (the sidebar tier) the /org look: 8px radius instead of a pill, 38px for a mouse,
+   `--card` + `--border2` for the secondary. A phone keeps the 48px pill and the press scale; a
+   touch screen wider than 768 keeps a 44px target. */
+@media (min-width: 768px) {
+  .btn { border-radius: var(--r-md); min-height: 44px; padding-block: 8px; }
+  .btn-ghost { background-color: var(--card); color: var(--text); }
+  .btn-ghost:hover:not(:disabled) { background-color: var(--input); }
+}
+@media (min-width: 768px) and (pointer: fine) {
+  .btn { min-height: 38px; }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-6);
+}
+
+.field label {
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  color: var(--text2);
+}
+
+.field input[type="text"],
+.field input[type="tel"],
+.field input[type="password"],
+.field input[type="number"],
+.field select {
+  height: 40px;
+  padding: 0 var(--sp-6);
+  background-color: var(--input);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--t-body);
+  font-weight: var(--w-semi);
+}
+
+.field input::placeholder {
+  color: var(--muted);
+  font-weight: var(--w-semi);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid var(--amber-ink);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: var(--sp-6) var(--sp-7);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  font-size: var(--t-xs);
+  font-weight: var(--w-bold);
+  color: var(--muted);
+}
+
+.table tbody tr {
+  transition: background-color .12s ease;
+}
+.table tbody tr:hover {
+  background-color: var(--input);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  padding: var(--sp-6);
+  /* These were `rgba(255, 85, 85, …)` — the DARK `--error` frozen into a literal, so the banner
+     kept its dark tint on a light page. Mixed off the token instead, so both follow the scheme. */
+  border: 1px solid color-mix(in srgb, var(--error) 20%, transparent);
+  border-radius: var(--r-md);
+  background-color: color-mix(in srgb, var(--error) 10%, transparent);
+  color: var(--error);
+  font-size: var(--t-sm);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 0;
+  color: var(--text2);
+  font-size: var(--t-xs);
+  font-weight: var(--w-bold);
+}
+
+/* A status chip carries a dot in its state colour; the chip itself stays neutral. */
+.chip::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: currentColor;
+}
+.chip-plain::before { display: none; }
+.chip-done { color: var(--green); }
+.chip-booked { color: var(--blue); }
+.chip-cancelled { color: var(--red); }
+.chip-pro { color: var(--violet); }
+.chip-now { color: var(--amber-ink); }
+/* Founder's badge (2026-09-28 founder decision): a fill of its own, not a neutral chip with
+   coloured text like the state variants above — the same treatment as the customer app's
+   `.founder-chip`. Pair with `.chip-plain`, since it is a label, not a state. */
+.chip-founder { background-color: var(--founder-bg); color: var(--founder); }
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-7) var(--sp-10);
+  background-color: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header .logo {
+  font-size: var(--t-lg);
+  font-weight: var(--w-black);
+  letter-spacing: var(--track-tight);
+}
+
+.app-header .user-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    padding: var(--sp-7) var(--sp-8);
+  }
+  .container {
+    padding: var(--sp-8) var(--sp-7);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Appended 2026-08-26 for the vendor-console re-skin. Additive only.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/*
+ * The boards' quiet outline pill — `Boshlash`, `Qachon boʻshayman?`, `Oldingilarni yuklash`,
+ * `Ish vaqtini oʻzgartirish`. Text tier 2 on the second border tier, never amber: it is the
+ * option beside the one accent, not a second accent. `.btn-ghost` is the same idea at button
+ * scale; this one is the 11px row-level version the boards use far more often.
+ */
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--t-sm);
+  font-weight: var(--w-bold);
+  padding: 8px 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .12s ease;
+}
+
+.pill-btn:hover:not(:disabled) {
+  background: var(--input);
+}
+
+.pill-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/*
+ * A state pill: the board's History rows carry `Bekor qilindi` in the muted tier and `Kelmadi`
+ * in `--error` — text AND border, so a barber can count no-shows down a column. Unlike `.chip`
+ * these are outlined and carry no dot.
+ */
+.pill-state {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 3px var(--sp-4);
+  font-size: var(--t-xs);
+  font-weight: var(--w-bold);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pill-state.no-show {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+/* A plain-words strip with a cream line under the chosen one: what `kometa-words` draws, for the one
+ * hand-rolled strip left (Calendar's chairs). One-of-N, never amber. */
+.tab-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-9);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-strip button,
+.tab-strip a {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 8px var(--sp-2);
+  font-family: inherit;
+  font-size: var(--t-body);
+  font-weight: var(--w-bold);
+  color: var(--muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .12s ease;
+}
+
+.tab-strip button:hover,
+.tab-strip a:hover {
+  color: var(--text);
+}
+
+.tab-strip .active {
+  color: var(--text);
+  border-bottom-color: var(--display-ink, var(--text));
+}
+
+/* A 6px status dot beside a settings row: filled green = on, hollow muted = off. */
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--muted);
+  vertical-align: middle;
+}
+
+.status-dot.on {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+/*
+ * Promoted from per-screen copies (UI Wave 4, G8/CC2). One definition each, so a screen that
+ * uses the class without redefining it still gets it.
+ */
+
+/* The tier mark: the filled amber pill the boards draw. The one place amber is not a call to
+   action; `--violet` is subscription state, not this. */
+.pro-badge {
+  font-size: var(--t-xs);
+  font-weight: var(--w-black);
+  letter-spacing: .05em;
+  color: var(--on-amber);
+  background: var(--amber);
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+
+.dropzone {
+  border: 1px dashed var(--border2);
+  border-radius: var(--r-card);
+  padding: var(--sp-6);
+  margin-bottom: var(--sp-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  transition: background-color .12s ease, border-color .12s ease;
+}
+
+.dropzone.over {
+  border-color: var(--amber);
+  background: var(--input);
+}
+
+/* A small action on a photo tile (move left/right, remove). Coarse pointers get 44px. */
+.tile-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text2);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+  line-height: 1.6;
+  cursor: pointer;
+  transition: background-color .12s ease;
+}
+
+.tile-btn:hover:not(:disabled) {
+  background: var(--input);
+}
+
+.tile-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.tile-btn.danger {
+  color: var(--red);
+}
+
+@media (pointer: coarse) {
+  .tile-btn { min-width: 44px; min-height: 44px; }
+}
+
+/* The title row of a bottom sheet: heading left, close button right. */
+.sheet-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp-8);
+}
+
+.sheet-head h2 {
+  margin: 0;
+  font-size: var(--t-xl);
+  font-weight: var(--w-black);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Page-header kit (console polish, 2026-10-08): the /org look's title row, card header and
+ * empty state, for the page tasks to adopt. Mirrors `org/ui/org-page.css`.
+ * ───────────────────────────────────────────────────────────────────────────── */
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+  padding-bottom: var(--sp-5);
+  border-bottom: 1px solid var(--border2);
+}
+
+.page-title {
+  margin: 0;
+  font-size: var(--t-title);
+  font-weight: var(--w-black);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.page-sub {
+  margin: 3px 0 0;
+  color: var(--muted);
+}
+
+.page-actions {
+  display: flex;
+  gap: var(--sp-4);
+  flex: none;
+}
+
+@media (max-width: 519.98px) {
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* A card's header row: title left, muted `.meta` or an action right. `.rule` adds the hairline. */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  padding-bottom: var(--sp-5);
+  font-weight: var(--w-bold);
+}
+
+.section-head .meta {
+  color: var(--muted);
+  font-size: var(--t-sm);
+  font-weight: var(--w-semi);
+}
+
+.section-head.rule {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--sp-6);
+}
+
+/* Centred muted icon (a 28px stroke glyph) + one line + the one action. */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 32px var(--sp-8);
+  text-align: center;
+  color: var(--muted);
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.empty-state.card {
+  border-radius: var(--r-card);
+}
+
+.empty-state .empty-title {
+  font-size: var(--t-lg);
+  font-weight: var(--w-bold);
+  color: var(--text2);
+}
+
+@media (min-width: 1024px) {
+  .empty-state {
+    padding: var(--sp-10);
+  }
+}
+
+.empty-state > svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .pill-btn, .tile-btn, .dropzone, .table tbody tr, .tab-strip button, .tab-strip a {
+    transition: none;
+  }
+}
+
+/* The UA draws <small> at 0.833em, which is 10.8px in a 13px parent. Never below the 12px floor. */
+small { font-size: max(var(--t-sm), 0.8333em); }

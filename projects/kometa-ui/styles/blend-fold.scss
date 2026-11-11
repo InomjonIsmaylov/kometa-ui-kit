@@ -1,0 +1,42 @@
+/* Blend expand and collapse: the plus that turns, the spring height. Imported by blend.scss.
+   The component is kometa-fold.ts, which uses the k-fold-* keyframes below; the rest is the global
+   twin, so a native <details> opens and closes the same way. */
+
+@keyframes k-fold-rows-in { from { grid-template-rows: 0fr; } to { grid-template-rows: 1fr; } }
+@keyframes k-fold-rows-out { from { grid-template-rows: 1fr; } to { grid-template-rows: 0fr; } }
+@keyframes k-fold-fade-in { 0%, 40% { opacity: 0; transform: translateY(4px); } 100% { opacity: 1; transform: none; } }
+
+/* A native <details>: marker gone, same mark on the summary, content slides where the browser can. */
+details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::after {
+  content: '';
+  flex: none;
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 1.5px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1.5px 100% no-repeat;
+  transition: background-size 280ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1)), color 280ms ease;
+}
+details[open] > summary::after { color: var(--display-ink, var(--text)); background-size: 100% 1.5px, 1.5px 0; }
+details > summary:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+@supports selector(::details-content) {
+  details { interpolate-size: allow-keywords; }
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    opacity: 0;
+    transition: block-size 260ms cubic-bezier(0.32, 0, 0.22, 1), opacity 160ms ease-out, content-visibility 260ms allow-discrete;
+  }
+  details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+    transition: block-size 420ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1)), opacity 252ms 168ms ease-out, content-visibility 420ms allow-discrete;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  details > summary::after, details::details-content { transition: none; }
+}

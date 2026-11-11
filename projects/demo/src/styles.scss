@@ -1,0 +1,4 @@
+@use '../../kometa-ui/styles/layers';
+@use '../../kometa-ui/styles/base';
+
+body { background: var(--bg); color: var(--text); margin: 0; }

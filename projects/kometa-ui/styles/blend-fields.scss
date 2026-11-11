@@ -1,0 +1,154 @@
+/*
+ * Blend fields and tables for the consoles: native fields in a `.field` and kometa-table.
+ * Imported by blend.scss (the customer app never loads this file). Unlayered, so it beats `legacy`
+ * and `components`. Everything is token-driven (`--glass`, `--glass-line`, `--display-ink`), so the
+ * light twins in tokens.scss apply with no second copy; the few values that have no token are the
+ * `--k-*` set right below, which has a dark default and the same two light blocks tokens.scss has.
+ * Search fields (`.k-whisper`, the Clients search) are not styled here.
+ */
+:root {
+  --k-wash: rgba(244, 239, 230, .05);      /* a hover / focused-option wash, never amber */
+  --k-hi: rgba(255, 255, 255, .1);         /* the inset top highlight */
+  --k-focus: rgba(244, 239, 230, .45);     /* a focused field's border: --display-ink at 45% */
+  --k-solid: #1c1a16;                      /* an opaque stand-in for the glass, for a sticky cell that content slides under */
+  --k-solid2: #24221d;
+}
+
+:root[data-theme='light'] {
+  --k-wash: rgba(26, 28, 28, .045);
+  --k-hi: rgba(255, 255, 255, .7);
+  --k-focus: rgba(26, 28, 28, .45);
+  --k-solid: var(--card);
+  --k-solid2: var(--input);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --k-wash: rgba(26, 28, 28, .045);
+    --k-hi: rgba(255, 255, 255, .7);
+    --k-focus: rgba(26, 28, 28, .45);
+    --k-solid: var(--card);
+    --k-solid2: var(--input);
+  }
+}
+
+/* ===================================================================== kometa-table ======
+ * The panel is the HOST each page already draws (`.tcard`, `.client-table-wrap`, `.table-wrap`,
+ * services' `.table-container.panel`): the pages switch it on and off per breakpoint, so painting it
+ * here would double the border below the breakpoint. The pages paint it from `--card`, `--border` and
+ * `--r-card`, so the host takes the glass by redeclaring those three; the radius is a literal 12px
+ * on two of them, hence the one !important.
+ * Inside, `.ktable` (the kometa-table host) makes `--card` transparent (every cell the pages paint with var(--card)
+ * lets the glass through), the hairlines `--glass-line` and the hover/zebra wash faint.
+ * Custom properties inherit, so a card a page draws INSIDE the table (the stacked services row, a
+ * branch row on a phone) takes the glass back below.
+ */
+.tcard,
+.client-table-wrap,
+.table-wrap,
+.table-container.panel {
+  --card: var(--glass);
+  --border: var(--glass-line);
+  --border2: var(--glass-line);
+  --r-card: 20px;
+  border-radius: 20px !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+@media (min-width: 768px) {
+  .tcard,
+  .client-table-wrap { box-shadow: inset 0 1px 0 var(--k-hi); }
+}
+
+@media (min-width: 1024px) {
+  .table-wrap,
+  .table-container.panel { box-shadow: inset 0 1px 0 var(--k-hi); }
+}
+
+.ktable {
+  --card: transparent;
+  --border: var(--glass-line);
+  --border2: var(--glass-line);
+  --input: var(--k-wash);
+
+  background: transparent;
+  border: 0;
+}
+
+.ktable thead > tr > th {
+  background: transparent;
+  border-color: var(--glass-line);
+  color: var(--muted);
+}
+
+.ktable tbody > tr {
+  background: transparent;
+  transition: background-color .12s ease;
+}
+
+.ktable tbody > tr > td { border-color: var(--glass-line); }
+
+/* The chosen row (selectable, or the expanded one) takes the 2px amber edge, not a fill. */
+.ktable tbody > tr[aria-selected='true'] > td:first-child { box-shadow: inset 2px 0 0 var(--amber); }
+
+/* Below 1024 services' rows are cards of their own, and below 768 so are the branch rows: they were
+   `var(--card)` fills, which the transparent token above would empty, so they take the glass back. */
+@media (max-width: 1023.98px) {
+  table.table.stack tr {
+    --card: var(--glass);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 0 var(--k-hi);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .ktable .branch-row {
+    --card: var(--glass);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 0 var(--k-hi);
+  }
+}
+
+/* The permission matrix scrolls sideways with its name column and header pinned; cells slide under
+   them, so those stay opaque (the glass at its solid). */
+.permissions-table .permission-name { --card: var(--k-solid); }
+
+.ktable .permissions-table > thead > tr > th { background: var(--k-solid); }
+
+.permissions-table tr.group-band th { --input: var(--k-solid2); }
+
+/* ================================================================== fields ====== */
+/* Native <select> and <input> in a `.field`, drawn by base.scss: the same glass, so a form that mixes both reads as one. */
+.field input:not([type='checkbox'], [type='radio'], [type='range']),
+.field select,
+.field textarea {
+  background-color: var(--glass);
+  border-color: var(--glass-line);
+  border-radius: var(--r-field);
+  box-shadow: inset 0 1px 0 var(--k-hi);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--k-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ktable tbody > tr { transition: none; }
+}
+
+
+@media (prefers-reduced-transparency: reduce) {
+  .tcard,
+  .client-table-wrap,
+  .table-wrap,
+  .table-container.panel,
+  table.table.stack tr {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
