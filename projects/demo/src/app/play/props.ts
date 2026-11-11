@@ -5,7 +5,8 @@ import {
 import {
   KometaBanner, KometaButton, KometaCheck, KometaChip, KometaField, KometaHeading, KometaMeter, KometaNumber, KometaPerson, KometaQuiet,
   KometaRating, KometaSearch, KometaSelect, KometaSkeleton, KometaStars, KometaStepper, KometaSteps, KometaTag, KometaToggle, KometaUpload,
-  KometaWait, KometaWords,
+  KometaWait, KometaWords, KometaSlider, KometaHue, KometaRules, KometaInplace, KometaBadge, KometaContext, KometaCrumbs, KometaAvatars,
+  KometaTree, KometaKeys, KometaCountdown,
 } from 'kometa-ui';
 import { highlight } from '../docs';
 import { PlayStore } from './store';
@@ -24,6 +25,7 @@ export interface PlayConfig {
 }
 
 const CITIES = [{ label: 'Tashkent', value: 'tas' }, { label: 'Samarkand', value: 'skd' }, { label: 'Bukhara', value: 'bhk' }];
+const ANIMATIONS = ['', 'fade', 'rise', 'drop', 'scale', 'zoom', 'spring', 'flip', 'blur'];
 const ARIA = ['ariaLabel', 'ariaLabelledBy', 'ariaDescribedBy', 'styleClass', 'name', 'inputId', 'inputmode', 'autocomplete', 'headingId'];
 
 export const PLAY: Record<string, PlayConfig> = {
@@ -44,11 +46,30 @@ export const PLAY: Record<string, PlayConfig> = {
   search: { type: KometaSearch, seed: { ariaLabel: 'Search clients', placeholder: 'Search clients' }, choices: { size: ['md', 'lg'] } },
   number: { type: KometaNumber, seed: { value: 80000, ariaLabel: 'Price' } },
   stepper: { type: KometaStepper, seed: { value: 2, ariaLabel: 'Guests' } },
-  select: { type: KometaSelect, seed: { options: CITIES, placeholder: 'City', ariaLabel: 'City' }, skip: ['optionLabel', 'optionValue'], choices: { animation: ['', 'fade', 'rise', 'drop', 'scale', 'zoom', 'spring', 'flip', 'blur'] } },
+  select: { type: KometaSelect, seed: { options: CITIES, placeholder: 'City', ariaLabel: 'City' }, skip: ['optionLabel', 'optionValue'], choices: { animation: ANIMATIONS } },
   words: { type: KometaWords, seed: { options: [{ value: 'day', label: 'Day' }, { value: 'week', label: 'Week' }, { value: 'month', label: 'Month' }], value: 'day', ariaLabel: 'Period' } },
   steps: { type: KometaSteps, seed: { steps: ['Service', 'Day', 'Time', 'Done'], current: 2 } },
   upload: { type: KometaUpload, seed: { name: 'shop-photo.jpg', sizeLabel: '2.4 MB', progress: 40, state: 'running' }, choices: { state: ['idle', 'running', 'done', 'failed'] } },
   heading: { type: KometaHeading, seed: { title: 'Today' }, choices: { level: [2, 3, 4] } },
+  slider: { type: KometaSlider, seed: { value: 12, unit: 'km', ariaLabel: 'Distance' } },
+  hue: { type: KometaHue, seed: { ariaLabel: 'Shop colour' } },
+  rules: {
+    type: KometaRules,
+    seed: { value: 'kometa1', rules: [{ label: '8 letters', test: '.{8}' }, { label: 'a number', test: '[0-9]' }, { label: 'a capital', test: '[A-Z]' }] },
+  },
+  inplace: { type: KometaInplace, seed: { value: 'Usta Barber', ariaLabel: 'Shop name' } },
+  badge: { type: KometaBadge, seed: { count: 3 }, content: 'Inbox' },
+  context: {
+    type: KometaContext,
+    seed: { items: [{ label: 'Reschedule', shortcut: 'R' }, { label: 'Duplicate', shortcut: 'Ctrl D' }, null, { label: 'Cancel visit', danger: true }] },
+    content: 'Right-click here',
+    choices: { animation: ANIMATIONS },
+  },
+  crumbs: { type: KometaCrumbs, seed: { items: [{ label: 'Shop' }, { label: 'Staff' }, { label: 'Anvar K.' }] } },
+  avatars: { type: KometaAvatars, seed: { people: [{ name: 'Anvar K.' }, { name: 'Malika R.' }, { name: 'Aziz T.' }, { name: 'Dilnoza S.' }, { name: 'Bekzod U.' }] }, choices: { size: ['sm', 'md', 'lg'] } },
+  tree: { type: KometaTree, seed: { nodes: [{ label: 'Hair', children: [{ label: 'Haircut' }, { label: 'Fade' }] }, { label: 'Beard', children: [{ label: 'Trim' }] }] } },
+  keys: { type: KometaKeys, seed: { keys: 'Ctrl+Shift+P' }, choices: { play: ['hover', 'loop', 'off'] } },
+  countdown: { type: KometaCountdown, seed: { duration: 30, label: 'to resend the code' } },
 };
 
 interface Def { inputs: Record<string, string | [string, ...unknown[]]>; outputs: Record<string, string>; selectors: string[][] }
@@ -134,6 +155,10 @@ export class PropsPanel {
     const read = (prop: string): Value => { try { return (inst[prop] as () => Value)(); } catch { return undefined; } };
     const all = Object.entries(def.inputs).map(([name, d]) => ({ name, prop: Array.isArray(d) ? d[0] : d }));
     const defaults = new Map(all.map((i) => [i.name, read(i.prop)]));
+    // Inputs a host directive brings (animation from KometaMotion) are not in the component's own metadata: a choice names them.
+    for (const [name, opts] of Object.entries(config.choices ?? {})) {
+      if (!defaults.has(name)) { all.push({ name, prop: name }); defaults.set(name, opts[0]); }
+    }
     for (const [k, v] of Object.entries(config.seed ?? {})) ref.setInput(k, v);
     const skip = new Set([...(config.skip ?? []), ...ARIA.filter((a) => !(config.seed && a in config.seed))]);
     this.props.set(all.filter((i) => !skip.has(i.name)).map((i) => {

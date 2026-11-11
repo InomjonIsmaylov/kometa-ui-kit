@@ -11,7 +11,7 @@ class Host {
   rules: KometaRule[] = [
     { label: '8 letters', test: (v) => v.length >= 8 },
     { label: 'a number', test: /\d/g },
-    { label: 'a capital', test: /[A-Z]/ },
+    { label: 'a capital', test: '[A-Z]' },
   ];
 }
 

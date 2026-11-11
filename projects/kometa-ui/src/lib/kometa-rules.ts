@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 
 export interface KometaRule {
   label: string;
-  /** Met when the pattern matches, or the function returns true. */
-  test: RegExp | ((value: string) => boolean);
+  /** Met when the pattern matches (a string is read as a pattern, so rules can come from JSON), or the function returns true. */
+  test: RegExp | string | ((value: string) => boolean);
 }
 
 /**

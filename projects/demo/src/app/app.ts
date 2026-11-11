@@ -728,6 +728,55 @@ export const appConfig: ApplicationConfig = {
   }
   // #endregion
 
+  // #region slider/in-context hue/in-context rules/in-context inplace/in-context badge/in-context panes/in-context context/in-context crumbs/in-context tree/in-context carousel/in-context countdown/in-context
+  protected readonly radius = signal(4);
+  protected readonly nearby = computed(() => Math.round(this.radius() * 2.6));
+  protected readonly brand = signal('#E7C255');
+  protected readonly signupPassword = signal('');
+  protected readonly signupReady = computed(() => this.passwordRules.every((r) =>
+    typeof r.test === 'function' ? r.test(this.signupPassword()) : this.signupPassword().search(r.test) >= 0));
+  protected readonly clientPhone = signal('+998 90 123 45 67');
+  protected readonly clientUsual = signal('Low fade, no beard');
+  protected readonly clientNote = signal('');
+  protected readonly newBookings = signal(2);
+  protected readonly newMessages = signal(5);
+  protected readonly clientsSplit = signal(33);
+  protected readonly paneClients = [
+    { name: 'Anvar Karimov', meta: '12 visits · last 2 Nov', note: 'Prefers a fade, no beard trim. Pays by card.' },
+    { name: 'Malika Rashidova', meta: '4 visits · last 28 Oct', note: 'Colour every six weeks; allergic to ammonia.' },
+    { name: 'Zafar Tursunov', meta: '1 visit · last 30 Oct', note: 'Came from Instagram. Hot towel shave.' },
+  ];
+  protected readonly paneClient = signal(this.paneClients[0]);
+  protected readonly dayVisits = signal<{ time: string; who: string; state: string; tone: KometaTagTone }[]>([
+    { time: '10:00', who: 'Anvar K. · Haircut', state: 'Booked', tone: 'book' },
+    { time: '11:30', who: 'Malika R. · Colour', state: 'Booked', tone: 'book' },
+    { time: '13:00', who: 'Zafar T. · Shave', state: 'Booked', tone: 'book' },
+  ]);
+  protected actOnVisit(time: string, action: string): void {
+    if (action === 'Cancel visit') this.dayVisits.update((vs) => vs.map((v) => (v.time === time ? { ...v, state: 'Cancelled', tone: 'warn' } : v)));
+    this.log.set(`${action} · ${time}`);
+  }
+  /** Where the settings walk is: labels from the top of menuTree. */
+  private readonly setPath = signal<string[]>(['Services']);
+  protected readonly setCrumbs = computed<KometaCrumb[]>(() => ['Settings', ...this.setPath()].map((label) => ({ label })));
+  protected readonly setHere = computed(() => this.setPath().reduce<KometaTreeNode[]>((nodes, l) => nodes.find((n) => n.label === l)?.children ?? [], this.menuTree));
+  protected descend(label: string): void { this.setPath.update((p) => [...p, label]); }
+  protected climb(c: KometaCrumb): void {
+    const at = this.setCrumbs().findIndex((x) => x === c);
+    if (at >= 0) this.setPath.set(this.setPath().slice(0, at));
+  }
+  protected readonly servicePath = signal<number[]>([]);
+  protected readonly service = signal('');
+  protected readonly profileSlide = signal(0);
+  protected readonly smsCode = signal('');
+  protected readonly canResend = signal(false);
+  protected readonly resends = signal(0);
+  protected resend(): void {
+    this.canResend.set(false);
+    this.resends.update((n) => n + 1);
+    this.log.set('Code sent again');
+  }
+  // #endregion
   // #region stepper/in-context
   protected readonly groupSize = signal(3);
   protected readonly groupChairs = 6;

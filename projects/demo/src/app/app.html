@@ -61,7 +61,7 @@
             }
           </div>
         </app-doc>
-        <app-doc id="components" heading="On a component" about="Every overlay takes an animation input: pop, select, multi, date, time, actions, note, toast, tray and drawer, and kometaTipAnimation on a tip.">
+        <app-doc id="components" heading="On a component" about="Every overlay takes an animation input: pop, select, multi, date, time, actions, context, note, toast, tray and drawer, and kometaTipAnimation on a tip.">
           <div class="row">
             <k-button label="Flip" severity="secondary" (clicked)="flipPop.toggle($event)" />
             <k-button label="Spring" severity="secondary" (clicked)="springPop.toggle($event)" />
@@ -289,6 +289,13 @@
         <app-doc id="basic" heading="Basic" about="Drag along the ticks, or focus them and use the arrow keys.">
           <k-slider [(value)]="distance" [max]="20" unit="km" ariaLabel="Distance" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Finding a barber nearby: the radius slider narrows the list and the button says how many shops it found.">
+          <div class="ic-card">
+            <p class="ic-card-title">Barbers near Chilonzor</p>
+            <k-slider [(value)]="radius" [min]="1" [max]="15" unit="km" ariaLabel="Search radius" />
+            <k-button fluid (clicked)="log.set(nearby() + ' shops within ' + radius() + ' km')">Show {{ nearby() }} shops</k-button>
+          </div>
+        </app-doc>
         <app-doc id="slider-steps" heading="Range and step" about="min, max and step set the range; above 40 steps it draws 25 ticks and the figure stays exact.">
           <k-slider [(value)]="budget" [min]="10000" [max]="200000" [step]="5000" unit="so'm" ariaLabel="Budget" />
         </app-doc>
@@ -304,6 +311,16 @@
         <app-doc id="basic" heading="Basic" about="Drag along the hues, or focus them and use the arrow keys. value is #RRGGBB.">
           <k-hue [(value)]="shopColour" ariaLabel="Shop colour" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Shop branding: the colour you pick paints the shop's card, as clients will see it.">
+          <div class="ic-card">
+            <p class="ic-card-title">Shop colour</p>
+            <div class="ic-brand" [style.--brand]="brand()">
+              <span class="ic-brand-disc">U</span>
+              <div><b>Usta Barber</b><span>Chilonzor · open till 21:00</span></div>
+            </div>
+            <k-hue [(value)]="brand" ariaLabel="Shop colour" />
+          </div>
+        </app-doc>
         <app-doc id="hue-family" heading="Count, saturation and lightness" about="Fewer, deeper hues: every pick stays in one family.">
           <k-hue [count]="12" [saturation]="55" [lightness]="45" ariaLabel="Label colour" />
         </app-doc>
@@ -316,6 +333,17 @@
           <div class="field"><k-field label="Password" type="password" [(value)]="password" /></div>
           <k-rules [value]="password()" [rules]="passwordRules" ariaLabel="Password needs" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Sign-up: the button waits until every rule is struck.">
+          <div class="ic-card">
+            <p class="ic-card-title">Create your shop account</p>
+            <k-field label="Phone" type="tel" value="+998 90 123 45 67" />
+            <div class="ic-stack">
+              <k-field label="Password" type="password" [(value)]="signupPassword" />
+              <k-rules [value]="signupPassword()" [rules]="passwordRules" ariaLabel="Password needs" />
+            </div>
+            <k-button fluid [disabled]="!signupReady()" (clicked)="log.set('Account created')">Create account</k-button>
+          </div>
+        </app-doc>
         <app-doc id="customizing" heading="Customizing" about="--rules-size.">
           <k-rules value="Kometa1" [rules]="passwordRules" style="--rules-size: 15px" />
         </app-doc>
@@ -323,6 +351,16 @@
       @case ('inplace') {
         <app-doc id="basic" heading="Basic" about="Click the name to edit it. While you type, the old value sits above, struck. Enter or leaving the field saves, Escape cancels.">
           <k-inplace [(value)]="shopName" ariaLabel="Shop name" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A client card: every detail is edited where it stands, no edit screen.">
+          <div class="ic-card">
+            <k-person name="Anvar Karimov" meta="Client since March" />
+            <dl class="ic-facts">
+              <dt>Phone</dt><dd><k-inplace [(value)]="clientPhone" ariaLabel="Phone" /></dd>
+              <dt>Usual</dt><dd><k-inplace [(value)]="clientUsual" ariaLabel="Usual service" /></dd>
+              <dt>Note</dt><dd><k-inplace [(value)]="clientNote" placeholder="Add a note" ariaLabel="Note" /></dd>
+            </dl>
+          </div>
         </app-doc>
         <app-doc id="inplace-states" heading="Placeholder and disabled" about="An empty value shows the placeholder, muted; disabled locks it.">
           <k-inplace placeholder="Add a nickname" ariaLabel="Nickname" />
@@ -338,6 +376,14 @@
             <button k-halo aria-label="Notifications"><k-badge [count]="unread()" label="{n} unread"><svg class="bell" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0" /></svg></k-badge></button>
             <button k-word (click)="unread.set(unread() + 1)">Add one</button>
             <button k-word quiet (click)="unread.set(0)">Clear</button>
+          </div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="An app bar: each icon carries what is new behind it, and opening it clears the count.">
+          <div class="ic-card ic-bar">
+            <b class="ic-bar-title">Today</b>
+            <button k-halo aria-label="Bookings" (click)="newBookings.set(0); log.set('Bookings opened')"><k-badge [count]="newBookings()" label="{n} new bookings">◷</k-badge></button>
+            <button k-halo aria-label="Messages" (click)="newMessages.set(0); log.set('Messages opened')"><k-badge [count]="newMessages()" label="{n} unread">✉</k-badge></button>
+            <button k-word quiet (click)="newBookings.set(newBookings() + 1)">Simulate a booking</button>
           </div>
         </app-doc>
         <app-doc id="badge-max" heading="Max and zero" about="Over max it reads max+; showZero keeps it at zero.">
@@ -358,6 +404,16 @@
           <k-panes [(size)]="paneSize" class="panes-demo">
             <nav kStart class="pane-list"><b>Clients</b><span>Anvar K.</span><span>Malika R.</span><span>Aziz T.</span></nav>
             <article class="pane-body"><b>Anvar K.</b><span>12 visits · last on 2 Nov</span><span>Prefers a fade, no beard trim.</span></article>
+          </k-panes>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Clients and the one you picked: widen the list to scan, widen the card to read.">
+          <k-panes [(size)]="clientsSplit" class="panes-demo" ariaLabel="Resize the client list">
+            <div kStart class="ic-pane-list">
+              @for (c of paneClients; track c.name) {
+                <button type="button" [class.on]="c === paneClient()" (click)="paneClient.set(c)">{{ c.name }}</button>
+              }
+            </div>
+            <div class="pane-body"><k-person [name]="paneClient().name" [meta]="paneClient().meta" /><span>{{ paneClient().note }}</span></div>
           </k-panes>
         </app-doc>
         <app-doc id="panes-free" heading="Without snaps" about="An empty snaps lets it rest anywhere between min and max.">
@@ -382,8 +438,23 @@
             </div>
           </k-context>
         </app-doc>
-        <app-doc id="customizing" heading="Customizing" about="--context-width and --context-radius; animation takes a motion preset.">
-          <k-context [items]="visitActions" animation="scale" style="--context-width: 240px; --context-radius: 6px" (picked)="log.set($event.label)">
+        <app-doc id="in-context" heading="In context" about="A day's visits: right-click one to act on it; cancelling marks the row.">
+          <div class="ctx-rows">
+            @for (v of dayVisits(); track v.time) {
+              <k-context [items]="visitActions" (picked)="actOnVisit(v.time, $event.label)">
+                <button type="button" class="ctx-row"><b>{{ v.time }}</b> {{ v.who }}<k-tag [tone]="v.tone">{{ v.state }}</k-tag></button>
+              </k-context>
+            }
+          </div>
+        </app-doc>
+        <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and right-click the box.">
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /></div>
+          <k-context [items]="visitActions" [animation]="anim()" (picked)="log.set($event.label)">
+            <div class="ctx-zone">Right-click here</div>
+          </k-context>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--context-width and --context-radius.">
+          <k-context [items]="visitActions" style="--context-width: 240px; --context-radius: 6px" (picked)="log.set($event.label)">
             <div class="ctx-zone">Right-click here</div>
           </k-context>
         </app-doc>
@@ -1212,6 +1283,12 @@
         <app-doc id="basic" heading="Basic" about="Pick a word and its children slide in as the next column. Arrow keys move through it.">
           <k-tree [nodes]="menuTree" [(path)]="treePath" ariaLabel="Settings" (picked)="log.set('Tree: ' + $event.label)" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Picking a service: walk the columns and the booking line follows.">
+          <div class="ic-card ic-wide">
+            <k-tree [nodes]="menuTree" [(path)]="servicePath" (picked)="service.set($event.label)" ariaLabel="Services" />
+            <k-button fluid [disabled]="!service()" (clicked)="log.set('Booked: ' + service())">{{ service() ? 'Book ' + service() : 'Pick a service' }}</k-button>
+          </div>
+        </app-doc>
         <app-doc id="customizing" heading="Customizing" about="--tree-col, --tree-gap and --tree-size.">
           <k-tree [nodes]="menuTree" [path]="[1]" ariaLabel="Team" style="--tree-col: 160px; --tree-gap: 24px; --tree-size: 16px" />
         </app-doc>
@@ -1562,6 +1639,18 @@
         <app-doc id="basic" heading="Basic" about="Each level steps further in and a size up; the last is the page.">
           <k-crumbs [items]="crumbs" (picked)="log.set('Crumb: ' + $event.label)" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Settings that go deep: open a section to walk down, pick a crumb to climb back.">
+          <div class="ic-card">
+            <k-crumbs [items]="setCrumbs()" (picked)="climb($event)" />
+            <div class="ic-pane-list">
+              @for (n of setHere(); track n.label) {
+                <button type="button" (click)="descend(n.label)">{{ n.label }} {{ n.children ? '→' : '' }}</button>
+              } @empty {
+                <span class="ic-muted">Nothing deeper. Pick a crumb to go back.</span>
+              }
+            </div>
+          </div>
+        </app-doc>
         <app-doc id="crumbs-links" heading="Links" about="A crumb with href is a plain link; without one it is a button that emits picked.">
           <k-crumbs [items]="[{ label: 'Home', href: '#home' }, { label: 'Data', href: '#table' }, { label: 'Table' }]" />
         </app-doc>
@@ -1763,6 +1852,17 @@
             }
           </k-carousel>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A master's profile: their work to flip through, the score and a way to book.">
+          <div class="ic-card">
+            <k-person name="Aziza Karimova" meta="Master · 6 years" />
+            <k-carousel [(index)]="profileSlide" ariaLabel="Aziza's work" slideLabel="Work">
+              @for (w of works; track w.title) {
+                <div kSlide class="work"><img [src]="w.image" [alt]="w.title" /><p>{{ w.title }}<span>{{ w.by }}</span></p></div>
+              }
+            </k-carousel>
+            <div class="ic-line"><k-stars [value]="4.8" label="4.8 out of 5" /><k-button size="small" (clicked)="log.set('Booking ' + works[profileSlide()].title)">Book {{ works[profileSlide()].title }}</k-button></div>
+          </div>
+        </app-doc>
         <app-doc id="carousel-plain" heading="Ticks only" about="edges false leaves the slides alone, for slides full of their own buttons.">
           <k-carousel [edges]="false" ariaLabel="Works" slideLabel="Work">
             @for (w of works; track w.title) {
@@ -1797,6 +1897,13 @@
       @case ('avatars') {
         <app-doc id="basic" heading="Basic" about="Hover or tab into it and the discs fan apart.">
           <k-avatars [people]="guests" ariaLabel="Coming" moreLabel="and {n} others" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A group visit: who is coming at a glance, and one message to all of them.">
+          <div class="ic-card">
+            <p class="ic-card-title">Saturday, 10:00 · Wedding party</p>
+            <div class="ic-line"><k-avatars [people]="guests" ariaLabel="Guests" /><k-tag tone="book">{{ guests.length }} guests</k-tag></div>
+            <k-button severity="secondary" fluid (clicked)="log.set('Reminder sent to ' + guests.length + ' guests')">Remind them all</k-button>
+          </div>
         </app-doc>
         <app-doc id="avatars-size" heading="Size and max" about="size matches k-person; max is how many discs show before the +N.">
           <k-avatars [people]="guests" [max]="3" size="sm" />
@@ -1936,6 +2043,19 @@
         <app-doc id="basic" heading="Basic" about="A tick drains each second; done fires at zero.">
           <k-countdown [duration]="60" label="to confirm" ariaLabel="Time to confirm" (done)="log.set('Countdown done')" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A code by SMS: the resend link waits for the ticks to run out.">
+          <div class="ic-card">
+            <p class="ic-card-title">Code sent to +998 90 ··· 45 67</p>
+            <k-code [(value)]="smsCode" label="SMS code" />
+            @if (canResend()) {
+              <button k-word (click)="resend()">Send the code again</button>
+            } @else {
+              @for (r of [resends()]; track r) {
+                <k-countdown [duration]="20" label="to send it again" (done)="canResend.set(true)" />
+              }
+            }
+          </div>
+        </app-doc>
         <app-doc id="countdown-short" heading="Short" about="Up to 40 seconds, one tick per second.">
           <k-countdown [duration]="15" label="to resend the code" />
         </app-doc>
@@ -1946,6 +2066,17 @@
       @case ('keys') {
         <app-doc id="basic" heading="Basic" about="Hover or focus it and the keys press themselves in order.">
           <k-keys keys="Ctrl+Shift+P" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A shortcut sheet: each line plays its keys when you hover it.">
+          <div class="ic-card">
+            <p class="ic-card-title">Shortcuts</p>
+            <dl class="ic-facts ic-keys">
+              <dt>New visit</dt><dd><k-keys keys="N" /></dd>
+              <dt>Find a client</dt><dd><k-keys keys="Ctrl+K" /></dd>
+              <dt>Next day</dt><dd><k-keys keys="Alt+→" /></dd>
+              <dt>Close a sheet</dt><dd><k-keys keys="Esc" /></dd>
+            </dl>
+          </div>
         </app-doc>
         <app-doc id="keys-play" heading="Play" about="play loop runs all the time, off never; keys also takes an array.">
           <k-keys keys="Ctrl+K" play="loop" />
