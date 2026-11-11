@@ -64,6 +64,12 @@
             <k-toggle [(checked)]="on" ariaLabel="Blue toggle" />
           </div>
         </app-doc>
+        <app-doc id="component-vars" heading="Per-component variables" about="Components also read their own variables, named --&lt;component&gt;-&lt;part&gt;, with the old look as the fallback. Set them on the element or any ancestor, in a style attribute or a stylesheet." [code]="null">
+          <p><code>--kbtn-radius</code>, <code>--select-max-height</code>, <code>--frame-radius</code>, <code>--meter-on</code>, <code>--wait-duration</code>, <code>--person-bg</code>, <code>--photos-thumb</code>, <code>--link-color</code>. Each page has a Customizing example.</p>
+          <div class="row" style="--meter-on: var(--amber); --meter-height: 14px">
+            <k-meter [value]="14" [max]="25" label="Inherited from the row" />
+          </div>
+        </app-doc>
         <app-doc id="scheme" heading="Light and dark" about="ThemeService follows the system by default and remembers a choice. Bind it to any control.">
           <k-words [options]="[{ value: 'system', label: 'System' }, { value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]"
                         [value]="theme.preference()" (valueChange)="setTheme($any($event))" ariaLabel="Theme" />
@@ -82,6 +88,12 @@
           <k-field value="Read only" label="Read only" readonly />
           <k-field value="" label="Small" size="sm" />
         </app-doc>
+        <app-doc id="placeholder" heading="Placeholder" about="placeholder replaces the label as the hint text; the accessible name stays the label.">
+          <k-field value="" label="Phone" placeholder="+998 90 123 45 67" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--field-size, --field-size-sm and --field-line restyle the text and the underline.">
+          <k-field value="Larger" label="Name" style="--field-size: 32px; --field-line: var(--amber)" />
+        </app-doc>
       }
       @case ('search') {
         <app-doc id="search" heading="Search" about="A search input with a clear button that appears once there is text.">
@@ -89,6 +101,16 @@
         </app-doc>
         <app-doc id="notes" heading="Notes" about="A multi-line note that grows with its text, with a length limit.">
           <k-notes [(value)]="notes" [maxlength]="200" placeholder="A note for the master" ariaLabel="Note" />
+        </app-doc>
+        <app-doc id="states" heading="Disabled, read only, no clear" about="disabled and readonly lock the input; clearable=false hides the × button.">
+          <k-search value="Locked" disabled ariaLabel="Disabled search" />
+          <k-search value="Read only" readonly ariaLabel="Read only search" />
+          <k-search value="No clear button" [clearable]="false" ariaLabel="Search without clear" />
+          <k-notes value="Read only note" readonly ariaLabel="Read only note" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--search-size, --search-size-lg and --search-placeholder-opacity; --notes-line and --notes-warn for notes.">
+          <k-search value="" placeholder="Search" ariaLabel="Custom search" style="--search-size: 30px; --search-placeholder-opacity: .6" />
+          <k-notes value="" [maxlength]="20" placeholder="Note" ariaLabel="Custom note" style="--notes-line: var(--amber); --notes-warn: tomato" />
         </app-doc>
       }
       @case ('code') {
@@ -100,6 +122,17 @@
           <k-digits [(value)]="digits" ariaLabel="PIN" />
           <p class="out">Digits: {{ digits() || '—' }}</p>
         </app-doc>
+        <app-doc id="mask" heading="Mask and placeholder" about="mask hides the characters as a PIN; placeholder fills empty cells; cellLabel names each cell.">
+          <k-code value="" mask placeholder="·" cellLabel="PIN digit" label="PIN" />
+        </app-doc>
+        <app-doc id="phone" heading="Phone prefix" about="Digits takes a prefix, a placeholder and can be disabled.">
+          <k-digits value="" prefix="+7" placeholder="900 000 00 00" ariaLabel="Phone" />
+          <k-digits value="" disabled ariaLabel="Disabled phone" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--code-gap, --code-cell-width and --code-size for the boxes; --digits-size for the phone.">
+          <k-code value="" label="Code" style="--code-gap: 14px; --code-cell-width: 2.6rem; --code-size: 1.6rem" />
+          <k-digits value="" ariaLabel="Large phone" style="--digits-size: 40px" />
+        </app-doc>
       }
       @case ('number') {
         <app-doc id="money" heading="Money" about="money groups thousands as you type; suffix adds the currency.">
@@ -110,6 +143,13 @@
         </app-doc>
         <app-doc id="stepper" heading="Stepper" about="A larger stepper with a unit, for small counts like seats.">
           <k-stepper [(value)]="seats" [min]="1" [max]="6" unit="seats" ariaLabel="Seats" decrementLabel="Fewer" incrementLabel="More" />
+        </app-doc>
+        <app-doc id="locale" heading="Locale and read only" about="locale sets how money groups digits; readonly shows the value and disables the buttons.">
+          <k-number [value]="1234567" money locale="en-US" buttons ariaLabel="US price" />
+          <k-number [value]="5" readonly buttons ariaLabel="Fixed count" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--number-size and --number-color restyle the figure.">
+          <k-number [value]="42" style="--number-size: 40px; --number-color: var(--amber)" ariaLabel="Big number" />
         </app-doc>
       }
       @case ('select') {
@@ -128,11 +168,30 @@
           <k-menu [options]="words" [(value)]="view" label="View" />
           <p class="out">View: {{ view() }}</p>
         </app-doc>
+        <app-doc id="limits" heading="Empty text, max and placeholder" about="emptyLabel shows when there are no options; multi max caps the choices; menu placeholder shows before a choice.">
+          <k-select [options]="[]" value="" emptyLabel="No results" placeholder="Empty list" ariaLabel="Empty select" />
+          <k-multi [options]="serviceOptions" [(value)]="services" [max]="2" placeholder="Up to 2" ariaLabel="Limited services" />
+          <k-menu [options]="words" value="" placeholder="Choose" label="Pick" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--select-radius, --select-max-height, --select-pill-radius, --multi-chip-radius, --menu-chosen-size and more.">
+          <k-select [options]="cities" value="" pill style="--select-pill-radius: 8px; --select-radius: 4px; --select-max-height: 160px" ariaLabel="Custom pill" />
+          <k-multi [options]="serviceOptions" [value]="[]" style="--multi-chip-radius: 4px" ariaLabel="Custom multi" />
+          <k-menu [options]="words" [(value)]="view" label="View" style="--menu-chosen-size: 24px; --menu-active-color: var(--amber)" />
+        </app-doc>
       }
       @case ('suggest') {
         <app-doc id="basic" heading="Basic" about="Emits query as you type; you answer with suggestions. The host styles the input.">
           <div class="field"><k-suggest [(value)]="client" [suggestions]="suggestions()" [delay]="100" placeholder="Type “az”" ariaLabel="Client"
                           (query)="query($event)" (picked)="log.set('Picked ' + $event.label)" /></div>
+        </app-doc>
+        <app-doc id="template" heading="Option template and read only" about="optionTemplate draws each row yourself ($implicit is the suggestion); readonly locks the input.">
+          <ng-template #aOpt let-s><b>{{ s.label }}</b></ng-template>
+          <div class="field"><k-suggest value="" [suggestions]="suggestions()" [optionTemplate]="aOpt" (query)="query($event)" placeholder="Type “az”" ariaLabel="Client with template" /></div>
+          <div class="field"><k-suggest value="Read only" [suggestions]="[]" readonly ariaLabel="Read only client" /></div>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--suggest-radius, --suggest-max-height and --suggest-row-height shape the list.">
+          <div class="field"><k-suggest value="" [suggestions]="suggestions()" (query)="query($event)" placeholder="Type “az”" ariaLabel="Custom client"
+                          style="--suggest-radius: 6px; --suggest-row-height: 40px; --suggest-max-height: 200px" /></div>
         </app-doc>
       }
       @case ('toggle') {
@@ -152,6 +211,21 @@
             <k-chip [disabled]="true">Disabled</k-chip>
           </div>
         </app-doc>
+        <app-doc id="labelled" heading="Labelled and read only" about="ariaLabelledBy names the toggle by another element; check readonly shows state but ignores presses; ariaLabel overrides the projected name.">
+          <div class="row">
+            <span id="aToggleName">Notifications</span>
+            <k-toggle [(checked)]="on" ariaLabelledBy="aToggleName" />
+            <k-check [checked]="true" readonly ariaLabel="Locked option">Locked</k-check>
+            <k-chip ariaLabel="Rated 4.5 and above">4.5+</k-chip>
+          </div>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--toggle-font-size, --toggle-ink-on, --toggle-ink-off, --check-size, --check-line, --chip-radius, --chip-pad and --chip-accent.">
+          <div class="row">
+            <k-toggle [(checked)]="on" ariaLabel="Custom toggle" onLabel="On" offLabel="Off" style="--toggle-font-size: 20px; --toggle-ink-on: var(--amber)" />
+            <k-check [(checked)]="checked" style="--check-size: 20px; --check-line: var(--amber)">Custom</k-check>
+            <k-chip [(selected)]="chip" style="--chip-radius: 6px; --chip-pad: 12px 18px; --chip-accent: tomato">Square</k-chip>
+          </div>
+        </app-doc>
       }
       @case ('words') {
         <app-doc id="words" heading="Words" about="A segmented choice; options can carry a count and a hot dot.">
@@ -163,6 +237,13 @@
         <app-doc id="rating" heading="Rating" about="Stars you can set, with a word for each score.">
           <k-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Rating" />
         </app-doc>
+        <app-doc id="no-word" heading="Rating without the word" about="showWord=false hides the word under the numerals.">
+          <k-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" [showWord]="false" ariaLabel="Rating, no word" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--words-gap, --words-pad, --words-ink-on, --words-line, --words-line-height, --rating-gap, --rating-size and --rating-word-size.">
+          <k-words [options]="words" [(value)]="view" tabs ariaLabel="Custom tabs" style="--words-gap: 28px; --words-line: var(--amber); --words-line-height: 3px" />
+          <k-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Big rating" style="--rating-size: 36px; --rating-gap: 12px" />
+        </app-doc>
       }
       @case ('picker') {
         <app-doc id="zone" heading="Zone" about="A drop zone that also opens the file dialog on click.">
@@ -171,6 +252,12 @@
         <app-doc id="button" heading="Button" about="The same picker as a plain button.">
           <k-picker label="Attach file" (picked)="filesPicked($event)" />
           <p class="out">{{ picked() }}</p>
+        </app-doc>
+        <app-doc id="form" heading="Form name and label" about="name sets the file input's name for a surrounding form; ariaLabel overrides the accessible name.">
+          <k-picker label="Passport scan" name="passport" ariaLabel="Upload passport scan" (picked)="filesPicked($event)" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--picker-line, --picker-radius and --picker-zone-height.">
+          <k-picker label="Add photos" variant="zone" style="--picker-line: var(--amber); --picker-radius: 16px; --picker-zone-height: 100px" (picked)="filesPicked($event)" />
         </app-doc>
       }
 
@@ -186,6 +273,12 @@
         <app-doc id="inline" heading="Inline" about="The calendar drawn in place, without an input.">
           <k-date inline [(value)]="day" ariaLabel="Inline day" />
         </app-doc>
+        <app-doc id="week-start" heading="Week start" about="weekStart=0 starts the week on Sunday (Monday by default).">
+          <k-date inline [weekStart]="0" [(value)]="day" ariaLabel="Sunday-first day" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--date-size, --date-pop-width, --date-pop-radius and --date-cell.">
+          <k-date [(value)]="day" ariaLabel="Custom day" style="--date-size: 32px; --date-pop-width: 340px; --date-pop-radius: 8px; --date-cell: 44px" />
+        </app-doc>
       }
       @case ('time') {
         <app-doc id="basic" heading="Basic" about="A time of day; works with ngModel and reactive forms.">
@@ -197,6 +290,13 @@
         <app-doc id="film" heading="Film" about="A strip of days to scroll through; days can carry a dot or be muted.">
           <k-film [days]="film" [(value)]="filmDay" ariaLabel="Day" />
           <p class="out">Day {{ filmDay() }}</p>
+        </app-doc>
+        <app-doc id="film-disabled" heading="Disabled film" about="disabled stops the days from being chosen.">
+          <k-film [days]="film" [value]="filmDay()" disabled ariaLabel="Disabled day" />
+        </app-doc>
+        <app-doc id="film-custom" heading="Customizing" about="--film-radius and --film-thumb restyle the strip and its thumb; --marks-gap, --marks-label-size and --marks-muted for marks, and empty for closed days.">
+          <k-film [days]="film" [(value)]="filmDay" ariaLabel="Custom day" style="--film-radius: 4px; --film-thumb: var(--amber)" />
+          <k-marks [days]="marks" empty="off" style="--marks-gap: 20px; --marks-label-size: 16px" />
         </app-doc>
         <app-doc id="slots" heading="Slots" about="Bookable times, with disabled slots and short notes.">
           <k-slots [slots]="slots" [(value)]="slot" [clearable]="true" ariaLabel="Time slot" />
@@ -233,6 +333,15 @@
         <app-doc id="fluid" heading="Fluid" about="fluid fills the width of its container.">
           <k-button label="Fluid" fluid />
         </app-doc>
+        <app-doc id="icon" heading="Icon" about="icon puts a decorative glyph beside the label; iconPos moves it to the right.">
+          <div class="row">
+            <k-button label="Add" icon="+" />
+            <k-button label="Next" icon="→" iconPos="right" />
+          </div>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--kbtn-radius and --kbtn-gap reshape one button.">
+          <k-button label="Square" icon="★" style="--kbtn-radius: 6px; --kbtn-gap: 14px" />
+        </app-doc>
       }
       @case ('word') {
         <app-doc id="word" heading="Word" about="A button that reads as a word. quiet tones it down, lead makes it the main action.">
@@ -243,6 +352,12 @@
             <button k-word lead busy>Saving</button>
           </div>
         </app-doc>
+        <app-doc id="arrow" heading="Without arrow" about="arrow=false drops the trailing arrow.">
+          <div class="row"><button k-word [arrow]="false">Plain word</button></div>
+        </app-doc>
+        <app-doc id="word-customizing" heading="Customizing" about="--word-ink and --word-font-size restyle a word.">
+          <div class="row"><button k-word style="--word-ink: var(--red); --word-font-size: 18px">Bigger, red</button></div>
+        </app-doc>
         <app-doc id="erase" heading="Erase" about="A destructive action, red and unmistakable.">
           <div class="row"><button k-erase (click)="log.set('Erase')">Delete service</button></div>
         </app-doc>
@@ -252,15 +367,31 @@
             <button k-halo aria-label="More">⋯</button>
           </div>
         </app-doc>
+        <app-doc id="halo-size" heading="Size" about="size is md, sm or lg; --halo-size sets any other.">
+          <div class="row">
+            <button k-halo size="sm" aria-label="Small">✕</button>
+            <button k-halo size="lg" aria-label="Large">✕</button>
+            <button k-halo aria-label="Custom" style="--halo-size: 64px; --halo-color: var(--amber); --halo-hover-bg: transparent">✕</button>
+          </div>
+        </app-doc>
       }
       @case ('actions') {
         <app-doc id="basic" heading="Basic" about="A list of actions behind one button; items can be disabled, dangerous or badged.">
           <k-actions [items]="actions" label="Visit actions" />
         </app-doc>
+        <app-doc id="align" heading="Align" about="align=start lines the list up with the left edge of the button.">
+          <k-actions [items]="actions" label="Visit actions" align="start" />
+        </app-doc>
+        <app-doc id="actions-customizing" heading="Customizing" about="--actions-size, --actions-radius and --actions-min-width.">
+          <k-actions [items]="actions" label="Visit actions" style="--actions-size: 48px; --actions-radius: 12px; --actions-min-width: 260px" />
+        </app-doc>
       }
       @case ('confirm') {
         <app-doc id="pair" heading="Pair" about="Keep and confirm side by side; busy shows progress on the confirm button.">
           <k-pair keep="Keep" confirm="Cancel visit" [busy]="pairBusy()" (kept)="log.set('Pair: kept')" (confirmed)="confirmPair()" />
+        </app-doc>
+        <app-doc id="pair-tone" heading="Pair tone" about="tone=primary draws the confirm side in amber; --pair-go-bg and --pair-height customize it.">
+          <k-pair keep="Back" confirm="Save" tone="primary" style="--pair-height: 56px" />
         </app-doc>
         <app-doc id="inline" heading="Inline confirm" about="A row that turns into a question in place while asking is true.">
           <k-confirm [asking]="asking()">
@@ -269,6 +400,12 @@
               <button k-word quiet (click)="asking.set(false)">No</button>
               <button k-word (click)="asking.set(false); log.set('Confirm: yes')">Yes</button>
             </span>
+          </k-confirm>
+        </app-doc>
+        <app-doc id="confirm-customizing" heading="Customizing" about="--confirm-dur sets how long the swap takes.">
+          <k-confirm [asking]="asking()" style="--confirm-dur: 600ms">
+            <span data-row class="row">Slow swap <button k-word (click)="asking.set(true)">Ask</button></span>
+            <span data-question class="row">Sure? <button k-word (click)="asking.set(false)">Done</button></span>
           </k-confirm>
         </app-doc>
         <app-doc id="tray" heading="Tray" about="Place one k-tray in the app, then call KometaConfirmationService.confirm() from anywhere.">
@@ -295,11 +432,29 @@
             <ng-template #emptymessage><tr><td colspan="2">Nothing yet</td></tr></ng-template>
           </k-table>
         </app-doc>
+        <app-doc id="look" heading="Size, stripes and hover" about="size=sm tightens padding; striped and hoverable tint rows; ariaLabel names the table.">
+          <k-table [value]="sorted()" dataKey="id" size="sm" [striped]="true" [hoverable]="true" ariaLabel="Price list">
+            <ng-template #header><tr><th>Name</th><th>Price</th></tr></ng-template>
+            <ng-template #body let-row><tr><td>{{ row.name }}</td><td>{{ row.price }}</td></tr></ng-template>
+          </k-table>
+        </app-doc>
+        <app-doc id="table-customizing" heading="Customizing" about="--ktable-pad-y, --ktable-pad-x, --ktable-stripe and --ktable-hover.">
+          <k-table [value]="sorted()" dataKey="id" [striped]="true" [hoverable]="true" style="--ktable-pad-y: 1.2rem; --ktable-pad-x: 2rem; --ktable-stripe: rgba(255, 180, 0, .12); --ktable-hover: rgba(255, 180, 0, .25)">
+            <ng-template #header><tr><th>Name</th><th>Price</th></tr></ng-template>
+            <ng-template #body let-row><tr><td>{{ row.name }}</td><td>{{ row.price }}</td></tr></ng-template>
+          </k-table>
+        </app-doc>
       }
       @case ('pager') {
         <app-doc id="basic" heading="Basic" about="Page and page size are both two-way.">
           <k-pager [total]="137" [(page)]="page" [(pageSize)]="pageSize" />
           <p class="out">Page {{ page() }}, {{ pageSize() }} per page</p>
+        </app-doc>
+        <app-doc id="no-caption" heading="Without caption" about="caption=false hides the range caption.">
+          <k-pager [total]="137" [caption]="false" />
+        </app-doc>
+        <app-doc id="pager-customizing" heading="Customizing" about="--pager-margin and --pager-active-color.">
+          <k-pager [total]="137" style="--pager-margin: 0; --pager-active-color: var(--amber)" />
         </app-doc>
       }
       @case ('rows') {
@@ -311,6 +466,16 @@
             <k-row title="Disabled" meta="Nothing here" tone="blue" button disabled><span rowIcon>⛔</span></k-row>
           </k-rows>
         </app-doc>
+        <app-doc id="links" heading="Link rows" about="An href row can open in a new tab (target); ariaLabel overrides the accessible name.">
+          <k-rows label="Links">
+            <k-row title="Docs" meta="Opens in a new tab" tone="blue" href="https://angular.dev" target="_blank" ariaLabel="Angular docs"><span rowIcon>📖</span></k-row>
+          </k-rows>
+        </app-doc>
+        <app-doc id="rows-customizing" heading="Customizing" about="--rows-radius, --row-min-height, --row-pad-x, --row-icon-size and --row-icon-radius.">
+          <k-rows label="Custom" style="--rows-radius: 8px; --row-min-height: 72px; --row-pad-x: 28px; --row-icon-size: 48px; --row-icon-radius: 50%">
+            <k-row title="Notifications" meta="SMS" tone="amber" button><span rowIcon>🔔</span></k-row>
+          </k-rows>
+        </app-doc>
       }
       @case ('trail') {
         <app-doc id="basic" heading="Basic" about="A timeline; gap labels the time between two steps.">
@@ -320,6 +485,12 @@
             <k-step time="09:37">Reminder sent</k-step>
           </k-trail>
         </app-doc>
+        <app-doc id="trail-customizing" heading="Customizing" about="--trail-time-width, --trail-col-gap, --trail-time-size, --trail-gap-height and --trail-gap-size.">
+          <k-trail style="--trail-time-width: 88px; --trail-col-gap: 20px; --trail-time-size: 26px; --trail-gap-height: 44px; --trail-gap-size: 14px">
+            <k-step time="09:00" gap="32 min">Booked online</k-step>
+            <k-step time="09:32">Confirmed</k-step>
+          </k-trail>
+        </app-doc>
       }
       @case ('share') {
         <app-doc id="split" heading="Split" about="Two amounts side by side with their share of the whole.">
@@ -327,6 +498,13 @@
         </app-doc>
         <app-doc id="share" heading="Share" about="A stacked bar with a legend, one segment per part.">
           <k-share [segments]="share" label="Revenue by service" />
+        </app-doc>
+        <app-doc id="share-options" heading="Options" about="legend=false hides the list, percents=false hides the shares, tickCount sets the bar resolution.">
+          <k-share [segments]="share" label="No legend" [legend]="false" [tickCount]="40" />
+          <k-share [segments]="share" label="No percents" [percents]="false" [tickCount]="10" />
+        </app-doc>
+        <app-doc id="share-customizing" heading="Customizing" about="--share-gap and --share-height.">
+          <k-share [segments]="share" label="Custom bar" style="--share-gap: 4px; --share-height: 36px" />
         </app-doc>
       }
 
@@ -338,6 +516,17 @@
             <k-accordion-item heading="Is the link paid?">No, the booking link is free.</k-accordion-item>
           </k-accordion>
         </app-doc>
+        <app-doc id="disabled" heading="Disabled" about="A question that cannot be pressed.">
+          <k-accordion>
+            <k-accordion-item heading="Locked question" disabled>Not reachable.</k-accordion-item>
+            <k-accordion-item heading="Open question">This one opens.</k-accordion-item>
+          </k-accordion>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Padding, size and body colour through CSS variables.">
+          <k-accordion style="--accordion-pad: 8px 0; --accordion-size: 14px; --accordion-body-ink: var(--amber)">
+            <k-accordion-item heading="Compact question">A tighter row with an amber answer.</k-accordion-item>
+          </k-accordion>
+        </app-doc>
       }
       @case ('fold') {
         <app-doc id="fold" heading="Fold" about="A title, an aside and a lazy body that opens with a spring.">
@@ -345,6 +534,18 @@
             <span fold-title>Opening hours</span>
             <span fold-aside class="aside muted">9–18</span>
             <ng-template><p>Mon–Fri 9:00–18:00, Sat 10:00–15:00.</p></ng-template>
+          </k-fold>
+        </app-doc>
+        <app-doc id="disabled" heading="Disabled" about="The trigger cannot be pressed.">
+          <k-fold disabled>
+            <span fold-title>Locked section</span>
+            <ng-template><p>Never shown.</p></ng-template>
+          </k-fold>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="A larger chevron through a CSS variable.">
+          <k-fold style="--fold-mark-size: 18px">
+            <span fold-title>Big chevron</span>
+            <ng-template><p>The mark is 18px.</p></ng-template>
           </k-fold>
         </app-doc>
         <app-doc id="parts" heading="Mark and body by hand" about="The chevron and the animated body on their own, for custom triggers.">
@@ -355,6 +556,12 @@
       @case ('heading') {
         <app-doc id="action" heading="With action" about="A section heading at any level, with an action on the right.">
           <k-heading title="Today's visits" [level]="3"><button k-word action>See all</button></k-heading>
+        </app-doc>
+        <app-doc id="no-rule" heading="Without rule" about="rule false draws no hairline, so the action sits next to the title.">
+          <k-heading title="Today's visits" [level]="3" [rule]="false"><button k-word action>See all</button></k-heading>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Gap, size, colour and rule colour through CSS variables.">
+          <k-heading title="Today's visits" [level]="3" style="--heading-size: 30px; --heading-gap: 20px; --heading-color: var(--amber); --heading-rule-color: var(--amber)"><button k-word action>See all</button></k-heading>
         </app-doc>
       }
 
@@ -373,6 +580,16 @@
             <div class="pad"><h3>Bottom sheet</h3><p>Slides up from the bottom.</p></div>
           </k-drawer>
         </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Width, height and backdrop through CSS variables on the drawer.">
+          <div class="row">
+            <k-button label="Wide drawer" severity="secondary" (clicked)="cWide.set(true)" />
+          </div>
+          <div style="--drawer-width: 640px; --drawer-backdrop: rgba(120, 60, 0, .5)">
+            <k-drawer [(visible)]="cWide" ariaLabel="Wide drawer">
+              <div class="pad"><h3>Wide drawer</h3><p>640px wide with a tinted backdrop.</p></div>
+            </k-drawer>
+          </div>
+        </app-doc>
         <app-doc id="pop" heading="Pop" about="A small panel anchored to the element that opened it.">
           <div class="row"><k-button label="Pop" severity="secondary" (clicked)="pop.toggle($event)" /></div>
           <k-pop #pop ariaLabel="Shop" [width]="240"><p class="pad">A small panel hung off the button.</p></k-pop>
@@ -388,6 +605,12 @@
         <app-doc id="tip" heading="Tip" about="A tooltip directive with an optional second line.">
           <p><button k-word quiet kometaTip="A tooltip" kometaTipSub="With a second line">Hover me</button></p>
         </app-doc>
+        <app-doc id="delay" heading="Delay" about="kometaTipDelay sets the hover time in milliseconds before the tip shows.">
+          <p><button k-word quiet kometaTip="Shows after 1.2 s" [kometaTipDelay]="1200">Slow tip</button></p>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Width, radius, size and background through CSS variables on the trigger.">
+          <p><button k-word quiet kometaTip="A wide, round tip" style="--tip-max-width: 360px; --tip-radius: 20px; --tip-font-size: 15px; --tip-bg: var(--amber)">Styled tip</button></p>
+        </app-doc>
       }
 
       <!-- ============================================================ Menu -->
@@ -396,12 +619,24 @@
           <k-tabbar [tabs]="tabs" [(value)]="tab" ariaLabel="Demo tabs" />
           <p class="out">Selected: {{ tab() }}</p>
         </app-doc>
+        <app-doc id="labels" heading="All labels" about="labels all keeps every word open, not just the chosen tab's.">
+          <k-tabbar [tabs]="tabs" [(value)]="tab" labels="all" ariaLabel="Demo tabs with labels" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Padding, radii and icon size through CSS variables.">
+          <k-tabbar [tabs]="tabs" [(value)]="tab" ariaLabel="Demo tabs, styled" style="--tabbar-pad: 10px; --tabbar-radius: 16px; --tabbar-tab-radius: 10px; --tabbar-icon-size: 26px; --tabbar-ink-on: var(--amber)" />
+        </app-doc>
       }
 
       <!-- ============================================================ Messages -->
       @case ('tag') {
         <app-doc id="tones" heading="Tones" about="One tone per status.">
           <div class="row">@for (t of tones; track t) { <k-tag [tone]="t">{{ t }}</k-tag> }</div>
+        </app-doc>
+        <app-doc id="no-dot" heading="Without dot" about="dot false leaves the word alone, coloured by its tone.">
+          <div class="row">@for (t of tones; track t) { <k-tag [tone]="t" [dot]="false">{{ t }}</k-tag> }</div>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Gap, size and dot size through CSS variables.">
+          <k-tag tone="book" style="--tag-gap: 10px; --tag-font-size: 15px; --tag-dot-size: 10px">booked</k-tag>
         </app-doc>
       }
       @case ('banner') {
@@ -410,6 +645,12 @@
         </app-doc>
         <app-doc id="glass" heading="Glass with action" about="A frosted surface for banners over pictures, with an action button.">
           <k-banner tone="info" surface="glass" actionLabel="Retry" (action)="log.set('Banner action')">A glass banner with an action.</k-banner>
+        </app-doc>
+        <app-doc id="icon" heading="Icon" about="A leading glyph in the tone colour; the sentence still carries the meaning.">
+          <k-banner tone="warn" icon="!">Check the schedule before you confirm.</k-banner>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Radius and gap through CSS variables.">
+          <k-banner tone="ok" icon="✓" style="--banner-radius: 2px; --banner-gap: 18px">A square banner with a wide gap.</k-banner>
         </app-doc>
       }
       @case ('toast') {
@@ -421,12 +662,22 @@
             <k-button label="Error" size="small" severity="danger" (clicked)="toast('error')" />
           </div>
         </app-doc>
+        <app-doc id="position" heading="Top and customizing" about="position top stacks from the top edge; gap, radius, size and background are CSS variables.">
+          <k-button label="Top toast" size="small" severity="secondary" (clicked)="cTopToasts.set([{ id: 1, kind: 'info', text: 'From the top.', life: 3000 }])" />
+          <k-toast [items]="cTopToasts()" (dismiss)="cTopToasts.set([])" position="top" style="--toast-gap: 14px; --toast-radius: 4px; --toast-font-size: 16px; --toast-bg: var(--bg)" />
+        </app-doc>
       }
       @case ('upload') {
         <app-doc id="states" heading="States" about="Running with progress, done, and failed with a retry action.">
           <k-upload name="receipt.pdf" sizeLabel="1.2 MB" [progress]="0.45" state="running" statusLabel="45%" />
           <k-upload name="photo.jpg" sizeLabel="820 KB" [progress]="100" state="done" statusLabel="Uploaded" />
           <k-upload name="scan.png" sizeLabel="4.1 MB" state="failed" statusLabel="Too large" actionLabel="Retry" (action)="log.set('Upload retry')" />
+        </app-doc>
+        <app-doc id="no-percent" heading="Without percentage" about="showPercent false hides the big figure; the fill and progressbar remain.">
+          <k-upload name="video.mp4" sizeLabel="48 MB" [progress]="0.6" state="running" statusLabel="60%" [showPercent]="false" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="Height, radius, figure size and fill through CSS variables.">
+          <k-upload name="report.pdf" sizeLabel="2 MB" [progress]="0.3" state="running" statusLabel="30%" style="--upload-min-height: 140px; --upload-radius: 6px; --upload-fig-size: 28px; --upload-fill: var(--amber)" />
         </app-doc>
       }
 
@@ -440,10 +691,22 @@
           </div>
           <k-photos [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" ariaLabel="Photos" />
         </app-doc>
+        <app-doc id="photos-bare" heading="Without download or thumbnails" about="downloadable and thumbs are on by default; turn either off. Opens the same viewer as above.">
+          <k-photos [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" [downloadable]="false" [thumbs]="false" ariaLabel="Photos" />
+        </app-doc>
+        <app-doc id="photos-custom" heading="Customizing" about="--photos-bg, --photos-ink, --photos-thumb and --photos-thumb-radius.">
+          <k-photos style="--photos-bg: #1b1408; --photos-ink: var(--amber); --photos-thumb: 72px; --photos-thumb-radius: 50%" [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" ariaLabel="Photos" />
+        </app-doc>
       }
       @case ('frame') {
         <app-doc id="frame" heading="Frame" about="A picture with rounded corners and a caption.">
           <k-frame caption="A framed picture"><img [src]="frame" alt="Sample" /></k-frame>
+        </app-doc>
+        <app-doc id="frame-slot" heading="Caption slot" about="Project any element with the caption attribute for a richer caption.">
+          <k-frame><img [src]="frame" alt="Sample" /><span caption>Shot by <b>Dilnoza</b></span></k-frame>
+        </app-doc>
+        <app-doc id="frame-custom" heading="Customizing" about="--frame-radius, --frame-caption-color and --frame-caption-size.">
+          <k-frame style="--frame-radius: 4px; --frame-caption-color: var(--amber); --frame-caption-size: 16px" caption="Square corners"><img [src]="frame" alt="Sample" /></k-frame>
         </app-doc>
         <app-doc id="reveal" heading="Reveal" about="Drag the handle to compare before and after.">
           <k-reveal [before]="before" [after]="after" ariaLabel="Before and after" />
@@ -458,6 +721,12 @@
             <k-person name="Bare" bare />
           </div>
         </app-doc>
+        <app-doc id="person-initials" heading="Initials" about="initialsText overrides the letters drawn in the disc.">
+          <k-person name="Dilnoza Karimova" initialsText="DK" meta="Master" />
+        </app-doc>
+        <app-doc id="person-custom" heading="Customizing" about="--person-bg and --person-fg.">
+          <k-person style="--person-bg: var(--amber); --person-fg: #000" name="Dilnoza Karimova" meta="Master" />
+        </app-doc>
         <app-doc id="logo" heading="Provider logo" about="Payment provider marks.">
           <div class="row">
             <span><k-provider-logo provider="Click" /> Click</span>
@@ -471,6 +740,12 @@
         <app-doc id="meter" heading="Meter" about="Progress toward a limit.">
           <k-meter [value]="14" [max]="25" label="14 of 25" />
         </app-doc>
+        <app-doc id="meter-ticks" heading="Ticks only" about="showFigure false hides the big number; the value is still read aloud.">
+          <k-meter [value]="14" [max]="25" label="14 of 25" [showFigure]="false" />
+        </app-doc>
+        <app-doc id="meter-custom" heading="Customizing" about="--meter-figure-size, --meter-height, --meter-on and --meter-off.">
+          <k-meter style="--meter-figure-size: 20px; --meter-height: 14px; --meter-on: var(--amber)" [value]="14" [max]="25" label="14 of 25" />
+        </app-doc>
         <app-doc id="stars" heading="Stars" about="A read-only score.">
           <k-stars [value]="4" label="4 out of 5" />
         </app-doc>
@@ -481,6 +756,9 @@
       @case ('wait') {
         <app-doc id="wait" heading="Wait" about="A spinner with a label for screen readers.">
           <k-wait label="Loading visits" />
+        </app-doc>
+        <app-doc id="wait-custom" heading="Customizing" about="--wait-ink, --wait-font-size, --wait-line, --wait-line-height and --wait-duration.">
+          <k-wait style="--wait-ink: var(--amber); --wait-font-size: 16px; --wait-line: var(--amber); --wait-line-height: 4px; --wait-duration: 3s" label="Loading slowly" />
         </app-doc>
         <app-doc id="skeleton" heading="Skeleton" about="Placeholder rows, cards and lines while data loads.">
           <k-skeleton [rows]="3" ariaLabel="Loading list" />
@@ -495,6 +773,16 @@
         <app-doc id="copy" heading="Copy link" about="A copy button that confirms when the text is on the clipboard.">
           <div class="row"><span>kometa.uz/b/dilnoza</span>
             <k-link text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy booking link" /></div>
+        </app-doc>
+        <app-doc id="copy-options" heading="Options" about="copiedMs sets how long the confirmation shows; disabled greys the button out.">
+          <div class="row">
+            <k-link text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" [copiedMs]="3000" ariaLabel="Copy for three seconds" />
+            <k-link text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" disabled ariaLabel="Copy disabled" />
+          </div>
+        </app-doc>
+        <app-doc id="copy-custom" heading="Customizing" about="--link-color tints the text.">
+          <div class="row"><span>kometa.uz/b/dilnoza</span>
+            <k-link style="--link-color: var(--amber)" text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy tinted" /></div>
         </app-doc>
       }
     }

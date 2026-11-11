@@ -218,6 +218,8 @@ export const appConfig: ApplicationConfig = {
   protected readonly banners = ['info', 'ok', 'warn', 'error'] as const;
   protected readonly toasts = signal<KometaToastItem[]>([]);
   private toastId = 0;
+  protected readonly cWide = signal(false);
+  protected readonly cTopToasts = signal<KometaToastItem[]>([]);
 
   // Form controls
   protected readonly name = signal('Dilnoza');
