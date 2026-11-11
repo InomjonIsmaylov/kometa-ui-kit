@@ -1,0 +1,47 @@
+// Unencapsulated: the highlighted code is [innerHTML], which never gets Angular's scoping attributes.
+app-doc { display: block; margin: 0 0 48px; scroll-margin-top: 80px; }
+
+.doc-title {
+  margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -.01em;
+
+  a { color: var(--text); text-decoration: none; }
+  a:hover::after { content: ' #'; color: var(--amber-ink); }
+}
+.doc-about { margin: 0 0 16px; color: var(--text2); font-size: 15px; line-height: 1.6; }
+
+.doc-box { position: relative; border: 1px solid var(--border); border-radius: 14px; background: var(--card); overflow: hidden; }
+.doc-demo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 32px; }
+
+.doc-bar {
+  display: flex; justify-content: flex-end; gap: 4px; padding: 6px 8px;
+  border-top: 1px solid var(--border);
+}
+.doc-bar button, .doc-copy {
+  padding: 4px 10px; border: 0; border-radius: 8px; background: none; color: var(--muted);
+  font: 500 12px var(--font-sans); cursor: pointer;
+
+  &:hover { background: var(--input); color: var(--text); }
+}
+.doc-copy { position: absolute; top: 8px; right: 8px; z-index: 1; background: var(--bg); }
+.doc-copy ~ .doc-code { padding-right: 72px; }
+
+.doc-code {
+  margin: 0; padding: 16px 0; overflow-x: auto; border-top: 1px solid var(--border); background: var(--bg);
+  font: 13px/1.7 var(--font-mono); counter-reset: line; scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+
+  .doc-box > &:first-child { border-top: 0; }
+  code { display: block; min-width: max-content; }
+  .line { display: block; padding-right: 24px; }
+  .line::before {
+    counter-increment: line; content: counter(line); display: inline-block; width: 3em; margin-right: 16px;
+    color: var(--muted); opacity: .5; text-align: right; user-select: none;
+  }
+}
+
+// Token colours, from the kit's own palette so both schemes stay readable.
+.tk-c { color: var(--muted); font-style: italic; }
+.tk-t { color: var(--blue); }
+.tk-s { color: var(--green); }
+.tk-i { color: var(--violet); }
+.tk-k { color: var(--red); }
+.tk-a { color: var(--amber-ink); }

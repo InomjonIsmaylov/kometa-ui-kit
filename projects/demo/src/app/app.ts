@@ -1,4 +1,4 @@
-import { Component, HostListener, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, Type, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip,
@@ -12,6 +12,10 @@ import {
   KometaTime, KometaTip, KometaToast, KometaToastItem, KometaToggle, KometaTrail, KometaTray, KometaUpload, KometaWait,
   KometaWord, KometaWordOption, KometaWords, ProviderLogo, ThemePreference, ThemeService, dateAt,
 } from 'kometa-ui';
+import { DocSection, Docs } from './docs';
+
+/** The part of Angular's compiled component metadata the API tables read. */
+interface ApiDef { inputs: Record<string, unknown>; outputs: Record<string, string>; selectors: string[][] }
 
 /** A flat SVG picture as a data URL, so the demo needs no image files. */
 function picture(from: string, to: string, text: string): string {
@@ -23,7 +27,7 @@ function picture(from: string, to: string, text: string): string {
 
 @Component({
   imports: [
-    FormsModule,
+    DocSection, FormsModule,
     KometaAccordion, KometaAccordionItem, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
     KometaConfirm, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField, KometaFilm, KometaFold, KometaFoldBody,
     KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint, KometaLink, KometaMarks, KometaMenu, KometaMeter,
@@ -44,6 +48,10 @@ export class App {
 
   // Showcase navigation: one component page at a time, kept in the URL hash so reload and back work.
   protected readonly nav: { label: string; items: { id: string; label: string; about: string }[] }[] = [
+    { label: 'Guides', items: [
+      { id: 'start', label: 'Getting started', about: 'Install the kit, load its styles and use your first component.' },
+      { id: 'theming', label: 'Theming', about: 'Colours and type are CSS custom properties: override them anywhere.' },
+    ] },
     { label: 'Form', items: [
       { id: 'field', label: 'Field', about: 'Labelled text input with error, count and sizes.' },
       { id: 'search', label: 'Search & notes', about: 'Search box with clear, and a multi-line note.' },
@@ -102,16 +110,95 @@ export class App {
       { id: 'link', label: 'Link', about: 'A link with a copy button.' },
     ] },
   ];
+  /** What each page documents: the import line and the API tables are made from these. */
+  private readonly apis: Record<string, Record<string, Type<unknown>>> = {
+    field: { KometaField }, search: { KometaSearch, KometaNotes }, code: { KometaCode, KometaDigits },
+    number: { KometaNumber, KometaStepper }, select: { KometaSelect, KometaMulti, KometaMenu }, suggest: { KometaSuggest },
+    toggle: { KometaToggle, KometaCheck, KometaTick, KometaChip }, words: { KometaWords, KometaRating },
+    picker: { KometaPicker }, date: { KometaDate }, time: { KometaTime }, film: { KometaFilm, KometaSlots, KometaMarks },
+    button: { KometaButton }, word: { KometaWord, KometaErase, KometaHalo }, actions: { KometaActions },
+    confirm: { KometaPair, KometaConfirm, KometaTray, KometaConfirmationService },
+    table: { KometaTable, KometaSort, KometaSortHeader }, pager: { KometaPager }, rows: { KometaRows, KometaRow },
+    trail: { KometaTrail, KometaStep }, share: { KometaSplit, KometaShare },
+    accordion: { KometaAccordion, KometaAccordionItem }, fold: { KometaFold, KometaFoldMark, KometaFoldBody },
+    heading: { KometaHeading }, drawer: { KometaDrawer, KometaPop }, tip: { KometaHint, KometaNote, KometaTip },
+    tabbar: { KometaTabbar }, tag: { KometaTag }, banner: { KometaBanner }, toast: { KometaToast },
+    upload: { KometaUpload }, photos: { KometaPhotos }, frame: { KometaFrame, KometaReveal },
+    person: { KometaPerson, ProviderLogo }, meter: { KometaMeter, KometaStars, KometaSteps },
+    wait: { KometaWait, KometaSkeleton, KometaQuiet }, link: { KometaLink },
+  };
   private readonly pages = this.nav.flatMap((g) => g.items);
   private readonly hash = signal(location.hash.slice(1));
-  protected readonly current = computed(() => this.pages.find((p) => p.id === this.hash()) ?? this.pages[0]);
+  protected readonly current = computed(() => this.pages.find((p) => p.id === this.hash().split('/')[0]) ?? this.pages[0]);
+  protected readonly prev = computed(() => this.pages[this.pages.indexOf(this.current()) - 1]);
+  protected readonly next = computed(() => this.pages[this.pages.indexOf(this.current()) + 1]);
   protected readonly menuOpen = signal(false);
+  protected readonly filter = signal('');
+  protected readonly filtered = computed(() => {
+    const q = this.filter().trim().toLowerCase();
+    return this.nav.map((g) => ({ ...g, items: g.items.filter((p) => p.label.toLowerCase().includes(q)) })).filter((g) => g.items.length);
+  });
+  protected readonly docs = inject(Docs);
+  protected readonly active = signal('');
+  protected readonly group = computed(() => this.nav.find((g) => g.items.includes(this.current()))?.label);
+  protected readonly tokens = ['bg', 'card', 'input', 'border', 'text', 'text2', 'muted', 'amber', 'green', 'red', 'error', 'blue', 'violet'];
+  protected readonly stylesCode = `// styles.scss: the layer order has to come first
+@use 'kometa-ui/styles/layers';
+@use 'kometa-ui/styles/base';`;
+  protected readonly provideCode = `// app.config.ts
+import { ApplicationConfig } from '@angular/core';
+import { provideKometaUi } from 'kometa-ui';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideKometaUi()],
+};`;
+  protected readonly importLine = computed(() => {
+    const api = this.apis[this.current().id];
+    return api ? `import { ${Object.keys(api).join(', ')} } from 'kometa-ui';` : null;
+  });
+  /** Inputs, two-way models and outputs, read from Angular's own component metadata, so the tables cannot go stale. */
+  protected readonly api = computed(() => Object.entries(this.apis[this.current().id] ?? {}).flatMap(([name, type]) => {
+    const def = (type as { ɵcmp?: ApiDef; ɵdir?: ApiDef }).ɵcmp ?? (type as { ɵdir?: ApiDef }).ɵdir;
+    if (!def) return [];
+    const outputs = Object.keys(def.outputs);
+    const rows = [
+      ...Object.keys(def.inputs).map((n) => ({ name: n, kind: outputs.includes(`${n}Change`) ? 'model' : 'input' })),
+      ...outputs.filter((o) => !(o.endsWith('Change') && o.slice(0, -6) in def.inputs)).map((n) => ({ name: n, kind: 'output' })),
+    ];
+    const selector = def.selectors.map(([tag, ...attrs]) =>
+      tag + attrs.reduce((s, a, i) => (i % 2 ? s + (a ? `=${a}]` : ']') : `${s}[${a}`), '')).join(', ');
+    return [{ name, selector, rows }];
+  }));
+
+  constructor() {
+    this.docs.page.set(this.current().id);
+    this.revealSection();
+  }
 
   @HostListener('window:hashchange')
   protected hashChanged(): void {
+    const page = this.current().id;
     this.hash.set(location.hash.slice(1));
     this.menuOpen.set(false);
-    scrollTo(0, 0);
+    if (page !== this.current().id) this.docs.page.set(this.current().id);
+    this.revealSection();
+  }
+
+  /** `#page/section` scrolls to the section, a bare `#page` to the top. */
+  private revealSection(): void {
+    const section = this.hash().split('/')[1];
+    // shortcut: two frames are enough for zoneless change detection to draw the new page; upgrade to afterNextRender if it ever lags.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const el = section && document.getElementById(section);
+      if (el) el.scrollIntoView();
+      else scrollTo(0, 0);
+    }));
+  }
+
+  @HostListener('window:scroll')
+  protected spy(): void {
+    const passed = this.docs.sections().filter((s) => s.el.getBoundingClientRect().top < 120);
+    this.active.set(passed.at(-1)?.id ?? '');
   }
 
   // Actions
