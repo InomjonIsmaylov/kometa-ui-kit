@@ -3,3 +3,7 @@ declare module '*.html' {
   const text: string;
   export default text;
 }
+declare module '*.scss' {
+  const text: string;
+  export default text;
+}

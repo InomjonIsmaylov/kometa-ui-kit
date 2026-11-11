@@ -1,35 +1,78 @@
 // Unencapsulated: the highlighted code is [innerHTML], which never gets Angular's scoping attributes.
-app-doc { display: block; margin: 0 0 48px; scroll-margin-top: 80px; }
+app-doc { display: block; margin: 0 0 56px; scroll-margin-top: 88px; }
 
 .doc-title {
-  margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -.01em;
+  margin: 0 0 8px; font: 700 21px var(--font-display); letter-spacing: -.01em;
 
   a { color: var(--text); text-decoration: none; }
   a:hover::after { content: ' #'; color: var(--amber-ink); }
 }
-.doc-about { margin: 0 0 16px; color: var(--text2); font-size: 15px; line-height: 1.6; }
+.doc-about { margin: 0 0 16px; color: var(--text2); font-size: 15px; line-height: 1.6; max-width: 68ch; }
 
-.doc-box { position: relative; border: 1px solid var(--border); border-radius: 14px; background: var(--card); overflow: hidden; }
-.doc-demo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 32px; }
+.doc-box {
+  position: relative; border: 1px solid var(--border); border-radius: 18px; background: var(--card); overflow: hidden;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--text) 4%, transparent) inset;
+}
+
+// The stage is the canvas; the demo inside it can be narrowed to a tablet or phone width.
+.doc-stage {
+  padding: 32px; transition: background-color .2s;
+
+  &[data-canvas=grid] {
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 24px 24px; background-position: -1px -1px;
+  }
+  &[data-canvas=dots] {
+    background-image: radial-gradient(color-mix(in srgb, var(--muted) 45%, transparent) 1px, transparent 1.5px);
+    background-size: 18px 18px;
+  }
+}
+.doc-demo {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin: 0 auto; transition: max-width .35s cubic-bezier(.2, .8, .2, 1);
+  max-width: 100%;
+
+  &[data-width=tablet], &[data-width=phone] {
+    padding: 20px; border: 1px solid var(--border2); border-radius: 22px; background: var(--bg);
+    box-shadow: var(--shadow);
+  }
+  &[data-width=tablet] { max-width: 768px; }
+  &[data-width=phone] { max-width: 375px; }
+}
 
 .doc-bar {
-  display: flex; justify-content: flex-end; gap: 4px; padding: 6px 8px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 8px;
   border-top: 1px solid var(--border);
 }
-.doc-bar button, .doc-copy {
-  padding: 4px 10px; border: 0; border-radius: 8px; background: none; color: var(--muted);
-  font: 500 12px var(--font-sans); cursor: pointer;
+.doc-box > .doc-bar:first-child { border-top: 0; }
+.doc-tools { display: flex; align-items: center; gap: 2px; margin-right: auto; }
+.doc-sep { width: 1px; height: 16px; margin: 0 6px; background: var(--border2); }
+.doc-tool {
+  display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 8px; background: none;
+  color: var(--muted); font-size: 14px; cursor: pointer;
+
+  &:hover { background: var(--input); color: var(--text); }
+  &[aria-pressed=true] { background: var(--input); color: var(--amber-ink); }
+}
+.doc-swatch {
+  width: 14px; height: 14px; border: 1px solid var(--border2); border-radius: 4px; background: var(--card);
+
+  &[data-canvas=grid] { background-image: linear-gradient(var(--muted) 1px, transparent 1px), linear-gradient(90deg, var(--muted) 1px, transparent 1px); background-size: 5px 5px; }
+  &[data-canvas=dots] { background-image: radial-gradient(var(--muted) 1px, transparent 1.2px); background-size: 4px 4px; }
+}
+.doc-tabs { display: flex; gap: 2px; margin-left: auto; }
+.doc-tools + .doc-tabs { margin-left: 0; }
+.doc-tabs button, .doc-copy {
+  padding: 5px 10px; border: 0; border-radius: 8px; background: none; color: var(--muted);
+  font: 600 12px var(--font-sans); cursor: pointer;
 
   &:hover { background: var(--input); color: var(--text); }
 }
-.doc-copy { position: absolute; top: 8px; right: 8px; z-index: 1; background: var(--bg); }
-.doc-copy ~ .doc-code { padding-right: 72px; }
+.doc-tabs button[aria-selected=true] { background: var(--input); color: var(--text); box-shadow: inset 0 -2px 0 var(--amber); }
 
 .doc-code {
-  margin: 0; padding: 16px 0; overflow-x: auto; border-top: 1px solid var(--border); background: var(--bg);
+  margin: 0; padding: 16px 0; max-height: 560px; overflow: auto; border-top: 1px solid var(--border); background: var(--bg);
   font: 13px/1.7 var(--font-mono); counter-reset: line; scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
 
-  .doc-box > &:first-child { border-top: 0; }
   code { display: block; min-width: max-content; }
   .line { display: block; padding-right: 24px; }
   .line::before {
@@ -45,3 +88,9 @@ app-doc { display: block; margin: 0 0 48px; scroll-margin-top: 80px; }
 .tk-i { color: var(--violet); }
 .tk-k { color: var(--red); }
 .tk-a { color: var(--amber-ink); }
+
+@media (max-width: 767px) {
+  .doc-stage { padding: 20px 16px; }
+  .doc-tools { display: none; }
+  .doc-tabs { margin-left: 0; }
+}

@@ -1,0 +1,88 @@
+:host { display: grid; gap: 24px; container-type: inline-size; color: var(--text); font: 14px/1.45 var(--font-sans); }
+
+.eyebrow {
+  margin: 0; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+}
+
+.top {
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: end; justify-content: space-between;
+  h1 { margin: 4px 0 0; font: 700 clamp(28px, 4vw, 40px)/1.05 var(--font-display); letter-spacing: -.03em; }
+}
+
+// Two columns: what the section is about on the left, its cards on the right.
+.sect { display: grid; grid-template-columns: minmax(180px, 260px) minmax(0, 1fr); gap: 32px; align-items: start; }
+.lead {
+  position: sticky; top: 88px; display: grid; gap: 10px; justify-items: start;
+  h2 { margin: 0; font: 700 22px/1.1 var(--font-display); letter-spacing: -.02em; }
+  p { margin: 0; color: var(--text2); font-size: 13px; }
+}
+.cards { display: grid; gap: 16px; min-width: 0; }
+
+.card {
+  display: grid; gap: 14px; padding: 20px; border: 1px solid var(--border); border-radius: 20px;
+  background: var(--card); min-width: 0;
+}
+.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; align-items: end; }
+.wide { grid-column: 1 / -1; }
+.labelled { display: grid; gap: 8px; min-width: 0; }
+
+// k-suggest draws a bare input; this one matches the underline of k-field.
+.bare input {
+  width: 100%; box-sizing: border-box; padding: 6px 0 8px; border: 0; border-bottom: 1px solid var(--border2);
+  background: transparent; color: var(--text); font: inherit; font-size: 16px; outline: none;
+  &:focus { border-bottom-color: var(--text); }
+}
+
+// ---------------------------------------------------------------- Profile
+.cover { grid-template-columns: minmax(0, 3fr) minmax(200px, 2fr); align-items: stretch; }
+.cover img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.stack { display: grid; gap: 12px; align-content: start; }
+
+// ---------------------------------------------------------------- Hours
+.week { font-size: 13px; }
+.days { gap: 0; padding: 4px 20px; }
+.days k-fold + k-fold { border-top: 1px solid var(--border); }
+.day { font-weight: 600; }
+.times {
+  display: flex; flex-wrap: wrap; gap: 24px; padding: 4px 0 16px;
+  label { display: flex; align-items: center; gap: 10px; color: var(--text2); font-size: 13px; }
+}
+
+// ---------------------------------------------------------------- Payments
+.verify { justify-items: start; p { margin: 0; color: var(--text2); } }
+.note { margin: 0; color: var(--text2); font-size: 13px; }
+.checks { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+
+// ---------------------------------------------------------------- Team
+.team { gap: 0; padding: 4px 20px; }
+.master {
+  display: grid; grid-template-columns: minmax(180px, 1fr) minmax(0, 1.4fr) auto; gap: 16px; align-items: center; padding: 14px 0;
+  & + & { border-top: 1px solid var(--border); }
+}
+.edit { display: flex; gap: 12px; align-items: end; }
+
+// ---------------------------------------------------------------- Danger zone
+.danger { border-color: color-mix(in srgb, var(--red) 40%, var(--border)); }
+.ask {
+  display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; min-height: 48px;
+  small { display: block; color: var(--muted); font-size: 12px; }
+}
+.answers { display: flex; gap: 16px; }
+
+// ---------------------------------------------------------------- Save bar
+.savebar {
+  position: sticky; bottom: 16px; z-index: 5; display: flex; gap: 16px; align-items: center; justify-content: space-between;
+  padding: 12px 12px 12px 20px; border: 1px solid var(--border2); border-radius: 18px; box-shadow: var(--shadow);
+  background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(12px);
+  span { display: flex; gap: 10px; align-items: center; font-weight: 600; }
+  i { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+  k-pair { width: min(280px, 50%); }
+}
+
+// The screen sits inside the docs column, so it reacts to its own width, not the window's.
+@container (max-width: 760px) {
+  .sect { grid-template-columns: 1fr; gap: 16px; }
+  .lead { position: static; }
+  .grid, .cover { grid-template-columns: 1fr; }
+  .master { grid-template-columns: minmax(0, 1fr) auto; k-multi { grid-column: 1 / -1; grid-row: 2; } }
+}

@@ -1,0 +1,40 @@
+// The grid answers to the width it is given, not the window, so it collapses inside a narrow docs column too.
+:host { display: grid; gap: 16px; container-type: inline-size; color: var(--text); font-size: 14px; }
+
+.top { min-width: 0; }
+.range { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+
+.card {
+  display: grid; align-content: start; gap: 12px; min-width: 0; padding: 18px 20px;
+  border: 1px solid var(--border); border-radius: 20px; background: var(--card);
+}
+.eyebrow {
+  display: flex; align-items: center; gap: 6px; margin: 0;
+  color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+}
+.fig { margin: 0; font: 700 26px/1.1 var(--font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.sub { margin: 0; color: var(--text2); font-size: 12px; }
+
+// ---------------------------------------------------------------- KPI tiles
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+.marks { --marks-gap: 10px; --marks-label-size: 12px; flex-wrap: wrap; font-weight: 600; }
+
+// ---------------------------------------------------------------- Main and side columns
+.body { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 16px; align-items: start; }
+.main, .side { display: grid; gap: 16px; min-width: 0; }
+
+@container (width < 860px) {
+  .body { grid-template-columns: minmax(0, 1fr); }
+}
+
+// ---------------------------------------------------------------- Visits table
+.search { width: min(240px, 100%); }
+.time { font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; }
+.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.end { width: 1%; text-align: right; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+// ---------------------------------------------------------------- Masters
+.masters { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.masters li { display: grid; gap: 8px; border-radius: 12px; --meter-height: 14px; }
+.masters li:focus-visible { outline: 2px solid var(--border2); outline-offset: 4px; }

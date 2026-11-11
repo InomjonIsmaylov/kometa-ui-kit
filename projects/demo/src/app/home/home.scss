@@ -1,0 +1,220 @@
+:host {
+  display: block; --sky-1: var(--amber); --sky-2: var(--red); --sky-3: var(--violet);
+  overflow-x: clip;
+}
+
+// ---------------------------------------------------------------- Hero
+.hero {
+  position: relative; isolation: isolate; display: grid; justify-items: center; gap: 24px; min-height: min(760px, calc(100dvh - 64px));
+  align-content: center; padding: 96px 24px 120px; box-sizing: border-box; text-align: center;
+}
+.sky { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; mask-image: linear-gradient(#000 70%, transparent); }
+
+.aurora {
+  position: absolute; width: 46vw; height: 46vw; max-width: 640px; max-height: 640px; border-radius: 50%;
+  filter: blur(90px); opacity: .28; animation: drift 18s ease-in-out infinite alternate;
+}
+.a1 { left: 8%; top: -10%; background: var(--sky-1); }
+.a2 { right: 4%; top: 12%; background: var(--sky-2); animation-delay: -6s; opacity: .18; }
+.a3 { left: 34%; bottom: -20%; background: var(--sky-3); animation-delay: -12s; opacity: .2; }
+
+// Two star layers drawn as tiled radial gradients, twinkling out of step.
+.stars {
+  position: absolute; inset: 0; opacity: .7;
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, var(--text) 50%, transparent 51%),
+    radial-gradient(1px 1px at 80px 120px, var(--text2) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 150px 60px, var(--text) 50%, transparent 51%),
+    radial-gradient(1px 1px at 210px 170px, var(--muted) 50%, transparent 51%);
+  background-size: 240px 200px; animation: twinkle 5s ease-in-out infinite alternate;
+}
+.s2 { background-size: 330px 270px; background-position: 60px 40px; animation-delay: -2.5s; opacity: .45; }
+
+// The comet: a bright head with a long tail, crossing the sky on a slant.
+.comet {
+  position: absolute; top: 18%; left: -20%; width: 260px; height: 2px; border-radius: 2px; transform: rotate(-18deg);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--amber) 60%, transparent) 70%, #fff);
+  filter: drop-shadow(0 0 6px var(--amber)); animation: streak 9s cubic-bezier(.3, .1, .3, 1) infinite;
+
+  &::after {
+    content: ''; position: absolute; right: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 12px 4px var(--amber), 0 0 30px 10px color-mix(in srgb, var(--red) 50%, transparent);
+  }
+  &.late { top: 52%; width: 160px; animation-delay: -4.5s; animation-duration: 11s; opacity: .7; }
+}
+
+.kicker {
+  display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 6px 14px 6px 10px; border: 1px solid var(--border2);
+  border-radius: 999px; background: color-mix(in srgb, var(--card) 70%, transparent); backdrop-filter: blur(8px);
+  color: var(--text2); font-size: 13px; font-weight: 600;
+}
+.pulse {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 0 0 var(--green); animation: pulse 2s infinite;
+}
+
+h1 {
+  margin: 0; font: 700 clamp(40px, 7.4vw, 88px)/1.02 var(--font-display); letter-spacing: -.035em; color: var(--text);
+}
+.grad {
+  background: linear-gradient(100deg, var(--amber) 0%, var(--red) 35%, var(--violet) 65%, var(--amber) 100%);
+  background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 8s linear infinite;
+}
+.lede { max-width: 620px; margin: 0; color: var(--text2); font-size: clamp(16px, 2vw, 19px); line-height: 1.6; }
+
+.cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.go {
+  display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border: 1px solid var(--border2); border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 80%, transparent); color: var(--text); font-weight: 700; font-size: 15px;
+  text-decoration: none; transition: transform .2s, border-color .2s, box-shadow .2s;
+
+  &:hover { transform: translateY(-2px); border-color: var(--amber); }
+  &.primary { border-color: transparent; background: var(--amber); color: var(--on-amber); box-shadow: 0 10px 30px -10px var(--amber); }
+  &.primary:hover { box-shadow: 0 14px 40px -10px var(--amber); }
+  &:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+}
+
+.install {
+  display: inline-flex; align-items: center; gap: 12px; padding: 8px 8px 8px 18px; border: 1px solid var(--border);
+  border-radius: 14px; background: var(--card); font: 14px var(--font-mono);
+
+  .prompt { color: var(--amber-ink); }
+  code { color: var(--text); }
+}
+
+// ---------------------------------------------------------------- Bands
+section:not(.hero) { max-width: 1160px; margin: 0 auto; padding: 72px 24px; box-sizing: border-box; }
+.band-head {
+  display: grid; justify-items: center; gap: 12px; margin-bottom: 40px; text-align: center;
+
+  h2 { margin: 0; font: 700 clamp(28px, 4vw, 44px)/1.1 var(--font-display); letter-spacing: -.02em; }
+}
+.eyebrow { margin: 0; color: var(--amber-ink); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; }
+.band-sub { max-width: 560px; margin: 0; color: var(--text2); line-height: 1.6; }
+
+.accents { display: flex; align-items: center; gap: 10px; }
+.accent {
+  width: 26px; height: 26px; padding: 0; border: 2px solid var(--bg); border-radius: 50%; cursor: pointer;
+  box-shadow: 0 0 0 1px var(--border2); transition: transform .15s;
+
+  &:hover { transform: scale(1.12); }
+  &[aria-checked=true] { box-shadow: 0 0 0 2px var(--text); }
+  &:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+}
+.accent-note { margin-left: 6px; color: var(--muted); font-size: 13px; code { font-family: var(--font-mono); color: var(--amber-ink); } }
+
+// ---------------------------------------------------------------- Bento
+.bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.tile {
+  display: grid; align-content: start; gap: 16px; padding: 22px; border: 1px solid var(--border); border-radius: 22px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--amber) 5%, var(--card)), var(--card) 40%);
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1), border-color .3s;
+
+  &:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--amber) 40%, var(--border)); }
+  &.book { grid-row: span 3; grid-column: span 2; gap: 20px; }
+  &.wide { grid-column: span 2; }
+}
+.tile-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tile-label { margin: 0; color: var(--muted); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
+.tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.legend-row {
+  display: flex; gap: 14px; color: var(--text2); font-size: 12px;
+  i { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; }
+}
+.toggle-row { display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
+
+// ---------------------------------------------------------------- Stats
+.stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; padding-top: 24px !important; padding-bottom: 24px !important;
+
+  div { display: grid; gap: 4px; padding: 20px; border-left: 1px solid var(--border); text-align: center; }
+  div:first-child { border-left: 0; }
+  b { font: 700 clamp(32px, 5vw, 56px)/1 var(--font-display); background: linear-gradient(180deg, var(--text), var(--muted)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  span { color: var(--muted); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; }
+}
+
+// ---------------------------------------------------------------- Principles
+.principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.principle {
+  display: grid; align-content: start; gap: 10px; padding: 24px; border: 1px solid var(--border); border-radius: 20px; background: var(--card);
+
+  .glyph { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--input); color: var(--amber-ink); font-size: 20px; }
+  h3 { margin: 6px 0 0; font-size: 16px; }
+  p { margin: 0; color: var(--text2); font-size: 14px; line-height: 1.55; }
+  code { margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: var(--bg); color: var(--amber-ink); font: 12px var(--font-mono); overflow-wrap: anywhere; }
+}
+
+// ---------------------------------------------------------------- Screens teaser
+.screen-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.screen-card {
+  display: grid; gap: 8px; padding: 16px 16px 20px; border: 1px solid var(--border); border-radius: 22px; background: var(--card);
+  color: var(--text); text-decoration: none; transition: transform .3s cubic-bezier(.2, .8, .2, 1), border-color .3s;
+
+  &:hover { transform: translateY(-4px) rotate(-.4deg); border-color: var(--amber); }
+  &:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  b { margin-top: 8px; font: 700 18px var(--font-display); }
+  > span:last-child { color: var(--text2); font-size: 14px; line-height: 1.5; }
+}
+// Abstract wireframes, one per card, drawn from four <i> blocks.
+.art {
+  position: relative; display: grid; gap: 6px; height: 140px; padding: 14px; box-sizing: border-box; border-radius: 14px;
+  background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--amber) 22%, transparent), transparent 60%), var(--bg);
+  overflow: hidden;
+
+  i { display: block; border-radius: 6px; background: var(--input); }
+  i:nth-child(1) { height: 14px; width: 55%; background: color-mix(in srgb, var(--text) 18%, transparent); }
+  i:nth-child(4) { background: var(--amber); width: 40%; height: 14px; justify-self: end; border-radius: 999px; }
+}
+[data-art='0'] .art { grid-template-rows: auto 1fr 1fr auto; width: 56%; margin: 0 auto; border: 1px solid var(--border2); }
+[data-art='1'] .art { grid-template-columns: 1fr 1fr; grid-template-rows: 14px 1fr 1fr;
+  i:nth-child(1) { grid-column: span 2; } i:nth-child(4) { width: auto; height: auto; border-radius: 6px; justify-self: stretch; opacity: .6; } }
+[data-art='2'] .art { grid-template-rows: 14px repeat(3, 1fr); i:nth-child(n+2) { background: linear-gradient(90deg, var(--input) 30%, var(--card)); } }
+[data-art='3'] .art { grid-template-columns: 30% 1fr; grid-template-rows: 14px 1fr 14px;
+  i:nth-child(1) { grid-column: span 2; } i:nth-child(2) { grid-row: span 2; } }
+
+// ---------------------------------------------------------------- Finale
+.finale {
+  display: grid; justify-items: center; gap: 20px; text-align: center; padding-bottom: 120px !important;
+
+  h2 { margin: 0; font: 700 clamp(32px, 5vw, 56px) var(--font-display); letter-spacing: -.03em; }
+}
+.hint { margin: 0; color: var(--muted); font-size: 14px; }
+kbd { padding: 2px 7px; border: 1px solid var(--border2); border-bottom-width: 2px; border-radius: 6px; background: var(--card); font: 12px var(--font-mono); color: var(--text); }
+
+// ---------------------------------------------------------------- Motion
+@keyframes drift { to { transform: translate(6%, 8%) scale(1.15); } }
+@keyframes twinkle { from { opacity: .25; } to { opacity: .8; } }
+@keyframes streak {
+  0% { transform: translate(0, 0) rotate(-18deg); opacity: 0; }
+  8% { opacity: 1; }
+  45%, 100% { transform: translate(150vw, -42vw) rotate(-18deg); opacity: 0; }
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@keyframes rise { from { opacity: 0; transform: translateY(48px) scale(.98); } }
+
+// Bands rise into place as they scroll in, where the browser can tie animation to scroll.
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% cover 22%; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora, .stars, .comet, .grad, .pulse { animation: none; }
+  .comet { display: none; }
+}
+
+// ---------------------------------------------------------------- Narrow screens
+@media (max-width: 1023px) {
+  .bento, .principles, .screen-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tile.book { grid-row: auto; }
+}
+@media (max-width: 639px) {
+  .hero { padding: 64px 16px 80px; }
+  section:not(.hero) { padding: 48px 16px; }
+  .bento, .principles, .screen-cards { grid-template-columns: minmax(0, 1fr); }
+  .tile.book, .tile.wide { grid-column: auto; }
+  .stats { grid-template-columns: 1fr 1fr; div:nth-child(3) { border-left: 0; } }
+  .install { max-width: 100%; box-sizing: border-box; font-size: 12px; }
+}

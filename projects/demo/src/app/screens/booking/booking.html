@@ -1,0 +1,132 @@
+<div class="stage">
+  <div class="phone">
+    <span class="notch" aria-hidden="true"></span>
+
+    <div class="screen">
+      <!-- Shop header -->
+      <header class="shop">
+        <div class="shop-top">
+          <k-person name="Usta Barbershop" meta="Chilonzor, Tashkent" shape="square" size="lg" [image]="logo" imageAlt="Usta Barbershop logo" />
+          <button k-halo [attr.aria-pressed]="favourite()" [attr.aria-label]="favourite() ? 'Remove from favourites' : 'Add to favourites'"
+                  [class.fav]="favourite()" (click)="favourite.set(!favourite())">{{ favourite() ? '♥' : '♡' }}</button>
+        </div>
+        <div class="shop-meta">
+          <k-stars [value]="4.8" label="Rated 4.8 out of 5" [size]="14" />
+          <span>4.8 · 312 reviews</span>
+          <k-tag tone="done">Open until 21:00</k-tag>
+        </div>
+        <div class="thumbs">
+          @for (p of photos; track p.url) {
+            <button type="button" [attr.aria-label]="'Open photo: ' + p.alt" (click)="openPhoto($index)"><img [src]="p.thumbUrl" alt="" /></button>
+          }
+        </div>
+      </header>
+
+      <!-- Progress: the step rail beside what is chosen so far -->
+      <section class="progress">
+        <k-steps [steps]="stepNames" [current]="step()" ariaLabel="Booking steps" />
+        <dl class="summary">
+          <dt>Services</dt><dd>{{ chosen().length ? som(total()) + ' · ' + duration(minutes()) : '—' }}</dd>
+          <dt>Master</dt><dd>{{ master()?.name ?? '—' }}</dd>
+          <dt>Time</dt><dd>{{ slot() ? dayLabel() + ', ' + slot() : '—' }}</dd>
+        </dl>
+      </section>
+
+      @switch (step()) {
+        @case (1) {
+          <h2>What are we doing today?</h2>
+          <div class="chips">
+            @for (c of categories; track c) {
+              <!-- Tapping the chosen chip again clears the filter. -->
+              <k-chip [selected]="category() === c" (selectedChange)="category.set($event ? c : '')">{{ c }}</k-chip>
+            }
+          </div>
+          <k-rows label="Services" ariaLabel="Services">
+            @for (s of services(); track s.id) {
+              @let on = chosen().includes(s.id);
+              <k-row button [chevron]="false" [title]="s.name" [meta]="duration(s.minutes)" [tone]="on ? 'green' : 'neutral'"
+                     [ariaLabel]="(on ? 'Remove ' : 'Add ') + s.name" (activated)="toggleService(s.id)">
+                <span rowIcon>{{ on ? '✓' : '+' }}</span>
+                <span class="price">{{ som(s.price) }}</span>
+              </k-row>
+            }
+          </k-rows>
+        }
+
+        @case (2) {
+          <h2>Who should cut?</h2>
+          <div class="masters">
+            @for (m of masters; track m.id) {
+              <button type="button" class="master" [attr.aria-pressed]="masterId() === m.id" (click)="masterId.set(m.id)">
+                <k-person [name]="m.name" [meta]="m.role" />
+                <span class="master-meta">
+                  <k-stars [value]="m.rating" [label]="'Rated ' + m.rating + ' out of 5'" [size]="12" />
+                  <span>{{ m.rating }} · {{ m.reviews }}</span>
+                  <k-tag tone="wait">next free {{ m.nextFree }}</k-tag>
+                </span>
+              </button>
+            }
+          </div>
+        }
+
+        @case (3) {
+          <h2>Pick a time</h2>
+          <k-film [days]="days" [value]="day()" (valueChange)="pickDay($event)" ariaLabel="Day" />
+          <p class="caption">{{ dayLabel() }} with {{ master()?.name }}</p>
+          @if (loadingSlots()) {
+            <k-skeleton [rows]="3" [avatar]="false" [lines]="1" ariaLabel="Loading free times" />
+          } @else {
+            <k-slots [slots]="slots()" [(value)]="slot" ariaLabel="Free times" />
+          }
+        }
+
+        @case (4) {
+          <h2>Your details</h2>
+          <div class="form">
+            <k-field label="Name" placeholder="Malika Yusupova" autocomplete="given-name" [(value)]="name" [error]="nameError()" required />
+            <label class="phone-field">
+              <span>Phone</span>
+              <k-digits size="sm" placeholder="90 123 45 67" ariaLabel="Phone number" [(value)]="phone" />
+            </label>
+            <k-notes [(value)]="comment" [maxlength]="200" placeholder="Anything the master should know?" ariaLabel="Comment for the master" />
+            <k-check [(checked)]="remind">Remind me 2 hours before</k-check>
+            <k-hint term="No deposit, free cancellation">
+              You pay at the shop. Cancel up to 3 hours before the visit at no cost; after that the shop may ask for 30% next time.
+            </k-hint>
+          </div>
+        }
+
+        @case (5) {
+          <k-banner tone="ok" icon="✓">You're booked. The shop has confirmed your visit.</k-banner>
+          <k-rows label="Your visit">
+            <k-row label="When">{{ dayLabel() }}, {{ slot() }}</k-row>
+            <k-row label="Master">{{ master()?.name }}</k-row>
+            <k-row label="Services">{{ chosenServices().length }} · {{ duration(minutes()) }}</k-row>
+            <k-row label="To pay">{{ som(total()) }}</k-row>
+            <k-row label="Where">Usta Barbershop, Bunyodkor 12</k-row>
+          </k-rows>
+          <k-trail>
+            <k-step [time]="bookedTime()" gap="2 min">Booked by you</k-step>
+            <k-step [time]="confirmedAt()" [gap]="remind() ? 'until the day' : null">Confirmed by {{ master()?.name }}</k-step>
+            @if (remind()) { <k-step [time]="reminderTime()">Reminder by SMS</k-step> }
+          </k-trail>
+          <p class="share"><span>{{ bookingUrl }}</span> <k-link [text]="bookingUrl" copyLabel="Copy link" copiedLabel="Copied" /></p>
+        }
+      }
+    </div>
+
+    <!-- Sticky footer: the one next action, then the app's tab bar -->
+    <footer class="bar">
+      @if (step() < 5) {
+        <k-pair tone="primary" [keep]="step() === 1 ? 'Clear' : 'Back'" [confirm]="nextLabel()"
+                [busy]="booking()" (kept)="back()" (confirmed)="next()" />
+      } @else {
+        <k-pair tone="primary" keep="Cancel visit" confirm="Book again" (kept)="cancelVisit()" (confirmed)="restart()" />
+      }
+      <k-tabbar [tabs]="tabs" [(value)]="tab" [iconTemplate]="glyph" ariaLabel="App" />
+      <ng-template #glyph let-t>{{ t.icon }}</ng-template>
+    </footer>
+  </div>
+</div>
+
+<k-photos [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" ariaLabel="Shop photos" />

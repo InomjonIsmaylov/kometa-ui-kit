@@ -1,0 +1,54 @@
+:host { display: block; color: var(--text); font-family: var(--font-sans); font-size: 14px; }
+
+.clients { display: grid; gap: 14px; }
+
+.top { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+h2, h3 { margin: 0; font: 700 28px/1.1 var(--font-display); letter-spacing: -.02em; }
+h3 { font-size: 22px; }
+.total { color: var(--muted); font-size: 18px; }
+.eyebrow { margin: 0 0 4px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.find { flex: 1 1 280px; max-width: 420px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.card {
+  padding: 6px 8px 8px; border: 1px solid var(--border); border-radius: var(--r-card, 20px); background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+// Table cells: a narrow tick column, right-aligned figures, muted asides.
+th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+td { font-size: 13px; vertical-align: middle; }
+.pick { width: 1%; padding-right: 0; }
+.num { text-align: right; white-space: nowrap; }
+.dim { color: var(--muted); }
+tbody tr { cursor: pointer; }
+tr.on { background: color-mix(in srgb, var(--amber) 8%, transparent); }
+.who {
+  margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer;
+  &:focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; border-radius: 8px; }
+}
+
+// The bulk bar sticks to the bottom of the viewport and rises in when the first row is ticked.
+.bulk {
+  position: sticky; bottom: 16px; z-index: 2; padding: 6px 10px 6px 18px; border: 1px solid var(--border2);
+  border-radius: 999px; background: var(--glass, var(--card)); box-shadow: var(--shadow); backdrop-filter: blur(12px);
+  animation: rise .32s var(--ease-spring, ease) backwards;
+}
+.bulk-row { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.grow { flex: 1; }
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+@media (prefers-reduced-motion: reduce) { .bulk { animation: none; } }
+
+// Drawer contents (profile and the add form).
+.sheet { display: grid; gap: 22px; padding: 28px 24px 32px; }
+.visits { --trail-time-width: 76px; }
+.older {
+  display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 13px;
+  span:first-child { display: inline-block; min-width: 96px; color: var(--muted); font-variant-numeric: tabular-nums; }
+}
+.input { display: grid; gap: 6px; }
+.error { color: var(--red); font-size: 12px; }
+.end { justify-self: start; }
+k-pair.end { justify-self: stretch; }

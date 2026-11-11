@@ -1,0 +1,214 @@
+<header class="top">
+  <div>
+    <p class="eyebrow">Vendor console · {{ name() }}</p>
+    <h1>Shop settings</h1>
+  </div>
+  @if (closed()) {
+    <k-banner tone="warn" icon="!" actionLabel="Reopen" (action)="closed.set(false)">The shop is closed. Clients see it, but cannot book.</k-banner>
+  }
+</header>
+
+<k-words [options]="tabs()" [(value)]="section" tabs ariaLabel="Settings sections" />
+
+@switch (section()) {
+  @case ('profile') {
+    <section class="sect">
+      <div class="lead">
+        <h2>Profile</h2>
+        <p>What clients see on your booking page: the cover, the name and where to find you.</p>
+      </div>
+      <div class="cards">
+        <div class="card cover">
+          <k-frame [caption]="upload() ? 'New cover' : 'Current cover'"><img [src]="cover()" alt="Shop cover" /></k-frame>
+          <div class="stack">
+            @if (upload(); as u) {
+              <k-upload [name]="u.name" [sizeLabel]="u.size" [progress]="u.progress" [state]="u.progress < 1 ? 'running' : 'done'"
+                        [statusLabel]="u.progress < 1 ? 'Uploading…' : 'Uploaded'" />
+            }
+            <k-picker label="Replace cover" hint="JPG or PNG, 1600 × 900" variant="zone" accept="image/*" (picked)="pickCover($event)" />
+          </div>
+        </div>
+        @if (cover() !== savedCover()) {
+          <div class="card">
+            <p class="eyebrow">Old and new, drag to compare</p>
+            <k-reveal [before]="savedCover()" [after]="cover()" beforeLabel="Old" afterLabel="New" aspectRatio="16/9" ariaLabel="Old and new cover" />
+          </div>
+        }
+        <div class="card grid">
+          <k-field class="wide" label="Shop name" [(value)]="name" [maxLength]="40" showCount />
+          <label class="labelled">
+            <span class="eyebrow">City</span>
+            <k-select [options]="cities" [(value)]="city" ariaLabel="City" />
+          </label>
+          <label class="labelled">
+            <span class="eyebrow">District</span>
+            <k-suggest class="bare" [(value)]="district" [suggestions]="districts()" [minLength]="1" [delay]="150" placeholder="Start typing"
+                       ariaLabel="District" (query)="findDistricts($event)" />
+          </label>
+          <label class="labelled wide">
+            <span class="eyebrow">About</span>
+            <k-notes [(value)]="about" [rows]="3" [maxlength]="240" ariaLabel="About the shop" />
+          </label>
+        </div>
+      </div>
+    </section>
+  }
+
+  @case ('hours') {
+    <section class="sect">
+      <div class="lead">
+        <h2>Hours</h2>
+        <p>When clients can book. A closed day shows a dash on the week.</p>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <p class="eyebrow">This week</p>
+          <k-marks class="week" [days]="week()" empty="closed" />
+        </div>
+        <div class="card days">
+          @for (d of days(); track d.label; let i = $index) {
+            <k-fold [open]="i === 0">
+              <span fold-title class="day">{{ d.name }}</span>
+              <k-toggle fold-aside [checked]="d.open" (checkedChange)="setDay(i, { open: $event })" onLabel="Open" offLabel="Closed"
+                        [ariaLabel]="d.name + ' open'" />
+              <ng-template>
+                <div class="times">
+                  <label>Opens <k-time [ngModel]="d.from" (ngModelChange)="setDay(i, { from: $event })" [disabled]="!d.open" [ariaLabel]="d.name + ' opens'" /></label>
+                  <label>Closes <k-time [ngModel]="d.to" (ngModelChange)="setDay(i, { to: $event })" [disabled]="!d.open" [ariaLabel]="d.name + ' closes'" /></label>
+                </div>
+              </ng-template>
+            </k-fold>
+          }
+        </div>
+        <div class="card grid">
+          <div class="labelled">
+            <span class="eyebrow">Slot length</span>
+            <k-stepper [(value)]="slot" [min]="15" [max]="120" [step]="15" unit="min" ariaLabel="Slot length in minutes" />
+          </div>
+          <div class="labelled">
+            <span class="eyebrow">Buffer between visits</span>
+            <k-stepper [(value)]="buffer" [max]="30" [step]="5" unit="min" ariaLabel="Buffer in minutes" />
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  @case ('payments') {
+    <section class="sect">
+      <div class="lead">
+        <h2>Payments</h2>
+        <p>Where deposits and payouts go. A new payout is confirmed with a code we text to the owner.</p>
+      </div>
+      <div class="cards">
+        <k-rows label="Payouts">
+          <k-row title="Click" [meta]="payouts().click ? 'Payouts on · card •• 4417' : 'Off'">
+            <k-provider-logo rowIcon provider="Click" />
+            <k-toggle [checked]="payouts().click" (checkedChange)="setPayout('click', $event)" ariaLabel="Click payouts" />
+          </k-row>
+          <k-row title="Payme" [meta]="payouts().payme ? 'Payouts on · card •• 0932' : 'Off'">
+            <k-provider-logo rowIcon provider="Payme" />
+            <k-toggle [checked]="payouts().payme" (checkedChange)="setPayout('payme', $event)" ariaLabel="Payme payouts" />
+          </k-row>
+        </k-rows>
+
+        @if (verifying(); as which) {
+          <div class="card verify">
+            <p>Enter the 6-digit code sent to <b>+998 90 ••• •• 17</b> to turn on {{ which === 'click' ? 'Click' : 'Payme' }} payouts.</p>
+            <k-code [value]="code()" (valueChange)="enterCode($event)" label="Confirmation code" />
+            <button k-word quiet (click)="setPayout(which, false)">Cancel</button>
+          </div>
+        }
+        @if (payoutNote()) {
+          <k-banner tone="ok" icon="✓" dismissible (dismissed)="payoutNote.set('')">{{ payoutNote() }}</k-banner>
+        }
+
+        <div class="card grid">
+          <div class="labelled">
+            <span class="eyebrow">Deposit per visit</span>
+            <k-number [(value)]="deposit" money suffix="so'm" [min]="0" [step]="10000" ariaLabel="Deposit amount" />
+          </div>
+          <p class="note">
+            New clients pay the deposit online; Kometa keeps a
+            <k-hint term="lead fee">12% of a new client's first visit, only when they came through Kometa. Returning clients are free.</k-hint>
+            from it.
+          </p>
+          <div class="checks wide">
+            <k-check [(checked)]="depositNew">Ask new clients for a deposit</k-check>
+            <k-check [(checked)]="refund">Refund if cancelled 24 hours before</k-check>
+            <k-check [(checked)]="receipts">Send receipts by SMS</k-check>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Questions</p>
+          <k-accordion>
+            <k-accordion-item heading="When does the money arrive?">Click and Payme pay out the next working day, minus the lead fee.</k-accordion-item>
+            <k-accordion-item heading="What if a client does not come?">The deposit stays with you; the visit is marked as a no-show.</k-accordion-item>
+            <k-accordion-item heading="Can I take cash only?">Yes. Turn both payouts off and clients pay at the chair.</k-accordion-item>
+          </k-accordion>
+        </div>
+      </div>
+    </section>
+  }
+
+  @case ('team') {
+    <section class="sect">
+      <div class="lead">
+        <h2>Team</h2>
+        <p>Who takes bookings, and which services each master does. Admins can change these settings.</p>
+        <k-button label="Invite a master" icon="+" outlined [disabled]="!invites().length" (clicked)="invite()" />
+      </div>
+      <div class="card team">
+        @for (m of team(); track m.id) {
+          <div class="master">
+            @if (editing() === m.id) {
+              <div class="edit">
+                <k-field label="Name" size="sm" [value]="m.name" (valueChange)="setMaster(m.id, { name: $event })" />
+                <button k-word (click)="editing.set(null)">Done</button>
+              </div>
+            } @else {
+              <k-person [name]="m.name" [meta]="m.role + ' · ' + m.since" />
+            }
+            <k-multi [options]="serviceOptions" [value]="m.services" (valueChange)="setMaster(m.id, { services: [...$event] })" optionDot="dot"
+                     placeholder="Services" [ariaLabel]="m.name + ' services'" />
+            <k-actions [items]="m.actions" [label]="'More for ' + m.name" />
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  @case ('danger') {
+    <section class="sect">
+      <div class="lead">
+        <h2>Danger zone</h2>
+        <p>Closing stops new bookings at once. Visits already booked and your history are kept.</p>
+      </div>
+      <div class="card danger">
+        <k-confirm [asking]="asking()">
+          <span data-row class="ask">
+            <span><b>Close the shop</b><small>You can reopen it from this page.</small></span>
+            <button k-erase [disabled]="closed()" (click)="asking.set(true)">Close the shop</button>
+          </span>
+          <span data-question class="ask">
+            <b>Close {{ name() }} for new bookings?</b>
+            <span class="answers">
+              <button k-word quiet (click)="asking.set(false)">Keep open</button>
+              <button k-word (click)="asking.set(false); closed.set(true)">Close</button>
+            </span>
+          </span>
+        </k-confirm>
+      </div>
+    </section>
+  }
+}
+
+@if (dirty()) {
+  <footer class="savebar">
+    <span><i aria-hidden="true"></i>Unsaved changes</span>
+    <k-pair keep="Discard" confirm="Save" tone="primary" [busy]="saving()" [disabled]="verifying() !== null" (kept)="discard()" (confirmed)="save()" />
+  </footer>
+}
+
+<k-toast [items]="toasts()" (dismiss)="toasts.set([])" />

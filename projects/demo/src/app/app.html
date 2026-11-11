@@ -1,23 +1,37 @@
 <header class="topbar">
-  <button type="button" class="menu-toggle" [attr.aria-expanded]="menuOpen()" aria-controls="sidebar"
-          (click)="menuOpen.set(!menuOpen())">☰<span class="sr">Components</span></button>
-  <a class="brand" href="#start"><span class="brand-mark" aria-hidden="true"></span>Kometa UI</a>
-  <p class="log" aria-live="polite">Last event: {{ log() }}</p>
-  <k-words [options]="[{ value: 'system', label: 'System' }, { value: 'dark', label: 'Dark' }, { value: 'light', label: 'Light' }]"
-                [value]="theme.preference()" (valueChange)="setTheme($any($event))" ariaLabel="Theme" />
+  @if (layout() !== 'home') {
+    <button type="button" class="menu-toggle" [attr.aria-expanded]="menuOpen()" aria-controls="sidebar"
+            (click)="menuOpen.set(!menuOpen())">☰<span class="sr">Components</span></button>
+  }
+  <a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"></span>Kometa<span class="brand-ui">UI</span></a>
+  <nav class="top-links" aria-label="Sections">
+    <a href="#start" [attr.aria-current]="group() === 'Guides' ? 'page' : null">Guides</a>
+    <a href="#button" [attr.aria-current]="layout() === 'docs' && group() !== 'Guides' ? 'page' : null">Components</a>
+    <a href="#booking" [attr.aria-current]="layout() === 'wide' ? 'page' : null">Screens</a>
+  </nav>
+  <button type="button" class="search-trigger" (click)="openPalette()" aria-label="Search the docs">
+    <span aria-hidden="true">⌕</span><span class="search-word">Search</span><kbd>Ctrl K</kbd>
+  </button>
+  <k-words [options]="[{ value: 'system', label: '◐' }, { value: 'dark', label: '☾' }, { value: 'light', label: '☀' }]"
+           [value]="theme.preference()" (valueChange)="setTheme($any($event))" ariaLabel="Theme: system, dark or light" />
 </header>
 
-<div class="layout">
+@if (layout() === 'home') {
+  <app-home [count]="componentCount" [screens]="screens" />
+} @else {
+<div class="layout" [attr.data-layout]="layout()">
   <nav id="sidebar" class="sidebar" [class.open]="menuOpen()" aria-label="Components">
-    <input type="search" class="filter" placeholder="Search components" aria-label="Search components"
+    <input type="search" class="filter" placeholder="Filter pages" aria-label="Filter pages"
            [value]="filter()" (input)="filter.set($any($event.target).value)" />
     @for (g of filtered(); track g.label) {
-      <h2>{{ g.label }}</h2>
-      <ul>
-        @for (p of g.items; track p.id) {
-          <li><a [href]="'#' + p.id" [attr.aria-current]="current().id === p.id ? 'page' : null">{{ p.label }}</a></li>
-        }
-      </ul>
+      @if (g.label !== 'Overview') {
+        <h2>{{ g.label }}</h2>
+        <ul>
+          @for (p of g.items; track p.id) {
+            <li><a [href]="'#' + p.id" [attr.aria-current]="current().id === p.id ? 'page' : null">{{ p.label }}</a></li>
+          }
+        </ul>
+      }
     } @empty {
       <p class="none">Nothing matches “{{ filter() }}”.</p>
     }
@@ -76,10 +90,27 @@
         </app-doc>
       }
 
+      <!-- ============================================================ Screens -->
+      @case ('booking') { <app-doc id="screen" [files]="screenFiles['booking']" folded><app-booking /></app-doc> }
+      @case ('dashboard') { <app-doc id="screen" [files]="screenFiles['dashboard']" folded><app-dashboard /></app-doc> }
+      @case ('clients') { <app-doc id="screen" [files]="screenFiles['clients']" folded><app-clients /></app-doc> }
+      @case ('settings') { <app-doc id="screen" [files]="screenFiles['settings']" folded><app-settings /></app-doc> }
+
       <!-- ============================================================ Form -->
       @case ('field') {
         <app-doc id="basic" heading="Basic" about="A label above the input, with an optional character count.">
           <k-field [(value)]="name" label="Name" autocomplete="name" [maxLength]="40" showCount />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A compact sign-up card: the field, a phone number and the terms are checked together when the button is pressed.">
+          <div class="ic-signup">
+            <h3>Join Kometa as a master</h3>
+            <k-field [(value)]="signupName" label="Full name" autocomplete="name" required error="Enter your full name."
+                     [invalid]="signupName().trim().length < 2" [touched]="signupTried()" />
+            <div class="ic-signup-phone"><span>Phone</span><k-digits [(value)]="signupPhone" size="sm" ariaLabel="Phone" placeholder="90 123 45 67" /></div>
+            <k-check [(checked)]="signupTerms">I accept the terms of service</k-check>
+            @if (signupTried() && !signupValid()) { <p class="ic-signup-err">Check the name, a 9-digit phone and the terms.</p> }
+            <k-button label="Create account" fluid [loading]="signupBusy()" (clicked)="signUp()" />
+          </div>
         </app-doc>
         <app-doc id="invalid" heading="Invalid" about="Set invalid and touched to show the error text under the field.">
           <k-field [(value)]="email" label="Email" type="email" error="Enter a valid email." invalid touched />
@@ -99,6 +130,16 @@
         <app-doc id="basic" heading="Basic" about="A search input with a clear button that appears once there is text.">
           <k-search [(value)]="search" placeholder="Search clients" ariaLabel="Search clients" clearLabel="Clear" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A client lookup: the search filters by name or phone as you type, and an empty state answers when nobody matches.">
+          <div class="ic-lookup">
+            <k-search [(value)]="lookupQ" placeholder="Name or phone" ariaLabel="Find a client" clearLabel="Clear" />
+            @for (c of lookupHits(); track c.phone) {
+              <div class="ic-lookup-row"><k-person [name]="c.name" [meta]="c.phone" size="sm" /><k-tag [tone]="c.tone">{{ c.tag }}</k-tag></div>
+            } @empty {
+              <k-quiet title="No one by that name" hint="Check the spelling, or add them as a new client." />
+            }
+          </div>
+        </app-doc>
         <app-doc id="states" heading="Disabled, read only, no clear" about="disabled and readonly lock the input; clearable=false hides the × button.">
           <k-search value="Locked" disabled ariaLabel="Disabled search" />
           <k-search value="Read only" readonly ariaLabel="Read only search" />
@@ -112,6 +153,16 @@
         <app-doc id="basic" heading="Basic" about="A multi-line note that grows with its text, with a length limit.">
           <k-notes [(value)]="notes" [maxlength]="200" placeholder="A note for the master" ariaLabel="Note" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A note for the master before a visit: quick phrases as chips write into the note, and the button waits for some text.">
+          <div class="ic-memo">
+            <k-person name="Aziz Rahimov" meta="Haircut · today, 14:30" />
+            <div class="row">
+              @for (p of memoPhrases; track p) { <k-chip [selected]="memo().includes(p)" (selectedChange)="togglePhrase(p, $event)">{{ p }}</k-chip> }
+            </div>
+            <k-notes [(value)]="memo" [maxlength]="160" placeholder="Anything Aziz should know" ariaLabel="Note for the master" />
+            <k-button label="Send to Aziz" size="small" [disabled]="!memo().trim()" (clicked)="log.set('Note sent: ' + memo())" />
+          </div>
+        </app-doc>
         <app-doc id="readonly" heading="Read only" about="readonly shows the note without letting it be edited.">
           <k-notes value="Read only note" readonly ariaLabel="Read only note" />
         </app-doc>
@@ -123,6 +174,20 @@
         <app-doc id="basic" heading="Basic" about="A one-time code entry, one box per character.">
           <k-code [(value)]="code" label="Confirmation code" />
           <p class="out">Code: {{ code() || '—' }}</p>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="The last step of a booking: the SMS code is checked as soon as all six digits are in.">
+          <div class="ic-otp">
+            <p>We sent a code to <b>+998 90 *** 45 67</b>. In this demo it is 482915.</p>
+            <k-code [(value)]="otp" label="SMS code" />
+            @if (otp().length === 6) {
+              @if (otp() === '482915') {
+                <k-banner tone="ok" icon="✓">Phone confirmed. Your visit on Friday at 11:00 is booked.</k-banner>
+              } @else {
+                <k-banner tone="error" icon="!">That code does not match. Check the SMS and try again.</k-banner>
+              }
+            }
+            <button k-word quiet (click)="otp.set(''); log.set('Code sent again')">Send the code again</button>
+          </div>
         </app-doc>
         <app-doc id="mask" heading="Mask and placeholder" about="mask hides the characters as a PIN; placeholder fills empty cells; cellLabel names each cell.">
           <k-code value="" mask placeholder="·" cellLabel="PIN digit" label="PIN" />
@@ -136,6 +201,18 @@
           <k-digits [(value)]="digits" ariaLabel="PIN" />
           <p class="out">Digits: {{ digits() || '—' }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A call-back request on a shop page: the button wakes up once all nine digits are in.">
+          <div class="ic-call">
+            <k-person name="Kometa Barbershop" meta="Chilonzor, Tashkent · open till 21:00" shape="square" />
+            @if (callAsked()) {
+              <k-banner tone="ok" icon="✓">We will call +998 {{ callPhone() }} within 10 minutes.</k-banner>
+            } @else {
+              <p class="ic-call-hint">Leave your number and the administrator calls you back.</p>
+              <k-digits [(value)]="callPhone" ariaLabel="Your phone" placeholder="90 123 45 67" />
+              <div class="row"><k-button label="Call me back" [disabled]="callPhone().length < 9" (clicked)="callAsked.set(true)" /></div>
+            }
+          </div>
+        </app-doc>
         <app-doc id="phone" heading="Phone prefix" about="Digits takes a prefix, a placeholder and can be disabled.">
           <k-digits value="" prefix="+7" placeholder="900 000 00 00" ariaLabel="Phone" />
           <k-digits value="" disabled ariaLabel="Disabled phone" />
@@ -147,6 +224,18 @@
       @case ('number') {
         <app-doc id="basic" heading="Basic" about="A formatted number input.">
           <k-number [value]="42" ariaLabel="Quantity" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A price list editor: one money input per service, with the average ticket worked out as you type.">
+          <div class="ic-prices">
+            <k-heading title="Price list" [level]="3"><button k-word action (click)="log.set('Prices saved')">Save</button></k-heading>
+            @for (s of priceList(); track s.name; let i = $index) {
+              <div class="ic-prices-row">
+                <span>{{ s.name }}<small>{{ s.minutes }} min</small></span>
+                <k-number [value]="s.price" (valueChange)="setPrice(i, $event)" money suffix="so'm" [ariaLabel]="s.name + ' price'" />
+              </div>
+            }
+            <p class="out">Average ticket: {{ priceAverage().toLocaleString('ru-RU') }} so'm</p>
+          </div>
         </app-doc>
         <app-doc id="money" heading="Money" about="money groups thousands as you type; suffix adds the currency.">
           <k-number [(value)]="amount" money suffix="so'm" ariaLabel="Price" />
@@ -166,6 +255,14 @@
         <app-doc id="basic" heading="Basic" about="A larger stepper with a unit, for small counts like seats.">
           <k-stepper [(value)]="seats" [min]="1" [max]="6" unit="seats" ariaLabel="Seats" decrementLabel="Fewer" incrementLabel="More" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A group booking: the stepper is capped by the free chairs, a meter shows how full the hour gets and the button prices it.">
+          <div class="ic-group">
+            <p class="ic-group-title">Saturday, 10:00 · Wedding party</p>
+            <k-stepper [(value)]="groupSize" [min]="1" [max]="groupChairs" unit="guests" ariaLabel="Guests" decrementLabel="Fewer guests" incrementLabel="More guests" />
+            <k-meter [value]="groupSize()" [max]="groupChairs" label="chairs taken at 10:00" />
+            <k-button fluid (clicked)="log.set('Group of ' + groupSize() + ' booked')">Book {{ groupSize() }} chairs · {{ groupPrice().toLocaleString('ru-RU') }} so'm</k-button>
+          </div>
+        </app-doc>
         <app-doc id="icons" heading="Icons and read only" about="decrementIcon and incrementIcon replace the symbols; readonly and disabled lock the value.">
           <k-stepper [value]="2" decrementIcon="‹" incrementIcon="›" ariaLabel="Guests" />
           <k-stepper [value]="3" [readonly]="true" ariaLabel="Fixed seats" />
@@ -178,6 +275,19 @@
         <app-doc id="basic" heading="Basic" about="Pick one option from a list of label and value pairs.">
           <k-select [options]="cities" [(value)]="city" placeholder="City" ariaLabel="City" />
           <p class="out">City: {{ city() }}</p>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Two pill selects filter a team list by branch and role.">
+          <div class="ic-team">
+            <div class="row">
+              <k-select [options]="teamBranches" [(value)]="teamBranch" pill prefix="Branch:" ariaLabel="Branch" />
+              <k-select [options]="teamRoles" [(value)]="teamRole" pill prefix="Role:" ariaLabel="Role" />
+            </div>
+            @for (m of teamShown(); track m.name) {
+              <k-person [name]="m.name" [meta]="m.role" />
+            } @empty {
+              <k-quiet title="Nobody here yet" hint="No one with that role works at this branch." />
+            }
+          </div>
         </app-doc>
         <app-doc id="pill" heading="Pill" about="A compact pill for filters, with a prefix before the value.">
           <k-select [options]="cities" [(value)]="city" pill prefix="City:" ariaLabel="City pill" />
@@ -194,6 +304,15 @@
           <k-multi [options]="serviceOptions" [(value)]="services" optionDot="dot" placeholder="Services" ariaLabel="Services" />
           <p class="out">Services: {{ services().join(', ') || '—' }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Services for one visit: each choice adds its time and price to the button.">
+          <div class="ic-order">
+            <k-person name="Malika Yusupova" meta="Stylist · Yunusobod" />
+            <k-multi [options]="orderOptions" [(value)]="orderServices" optionDot="dot" placeholder="Choose services" ariaLabel="Services" />
+            <k-button fluid [disabled]="!orderServices().length" (clicked)="log.set('Booked ' + orderServices().join(', '))">
+              Book · {{ orderTotal().minutes }} min · {{ orderTotal().price.toLocaleString('ru-RU') }} so'm
+            </k-button>
+          </div>
+        </app-doc>
         <app-doc id="max" heading="Max" about="max caps the number of choices.">
           <k-multi [options]="serviceOptions" [(value)]="services" [max]="2" placeholder="Up to 2" ariaLabel="Limited services" />
         </app-doc>
@@ -206,6 +325,18 @@
           <k-menu [options]="words" [(value)]="view" label="View" />
           <p class="out">View: {{ view() }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="The menu sits in a heading's action slot and switches the body between today's free times and the week.">
+          <div class="ic-agenda">
+            <k-heading title="Aziz's calendar" [level]="3"><k-menu action [options]="agendaViews" [(value)]="agendaView" label="Show" /></k-heading>
+            @if (agendaView() === 'day') {
+              <k-slots [slots]="agendaSlots" value="" ariaLabel="Free times today" />
+              <p class="out">Greyed times are booked; two are still free.</p>
+            } @else {
+              <k-marks [days]="agendaWeek" empty="off" />
+              <p class="out">Visits per day; Sunday is Aziz's day off.</p>
+            }
+          </div>
+        </app-doc>
         <app-doc id="placeholder" heading="Placeholder" about="placeholder shows before a choice.">
           <k-menu [options]="words" value="" placeholder="Choose" label="Pick" />
         </app-doc>
@@ -217,6 +348,17 @@
         <app-doc id="basic" heading="Basic" about="Emits query as you type; you answer with suggestions. The host styles the input.">
           <div class="field"><k-suggest [(value)]="client" [suggestions]="suggestions()" [delay]="100" placeholder="Type “az”" ariaLabel="Client"
                           (query)="query($event)" (picked)="log.set('Picked ' + $event.label)" /></div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A new visit form: pick a known client from the suggestions and their card appears, ready to book.">
+          <div class="ic-newvisit">
+            <span class="ic-newvisit-label">Client</span>
+            <k-suggest [(value)]="visitClient" [suggestions]="visitHits()" [minLength]="1" [delay]="100" placeholder="Name or phone, try “dil”"
+                       ariaLabel="Client" (query)="findClient($event)" (picked)="visitPicked.set($event)" />
+            @if (visitPicked(); as c) {
+              <div class="ic-newvisit-card"><k-person [name]="c.label" [meta]="c.meta ?? ''" /><k-tag tone="done">{{ c.data }}</k-tag></div>
+              <div class="row"><k-button [label]="'Book a visit for ' + c.label" (clicked)="log.set('Visit for ' + c.label)" /></div>
+            }
+          </div>
         </app-doc>
         <app-doc id="template" heading="Option template and read only" about="optionTemplate draws each row yourself ($implicit is the suggestion); readonly locks the input.">
           <ng-template #aOpt let-s><b>{{ s.label }}</b></ng-template>
@@ -231,6 +373,14 @@
       @case ('toggle') {
         <app-doc id="basic" heading="Basic" about="An on/off switch with optional state words.">
           <k-toggle [(checked)]="on" ariaLabel="Demo toggle" onLabel="On" offLabel="Off" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Notification settings: setting rows with a toggle at the end of each.">
+          <k-rows label="Notifications">
+            <k-row title="SMS a day before" meta="To clients, 150 so'm each" tone="amber"><span rowIcon>✉</span><k-toggle [(checked)]="alertSms" ariaLabel="SMS a day before" /></k-row>
+            <k-row title="Telegram reminder" meta="Two hours before the visit" tone="telegram"><span rowIcon>✈</span><k-toggle [(checked)]="alertTelegram" ariaLabel="Telegram reminder" /></k-row>
+            <k-row title="New booking" meta="To you, the moment it lands" tone="green"><span rowIcon>＋</span><k-toggle [(checked)]="alertBooking" ariaLabel="New booking" /></k-row>
+            <k-row title="Weekly report" meta="Mondays at 09:00" tone="violet"><span rowIcon>∑</span><k-toggle [(checked)]="alertReport" ariaLabel="Weekly report" /></k-row>
+          </k-rows>
         </app-doc>
         <app-doc id="labelled" heading="Labelled" about="ariaLabelledBy names the toggle by another element.">
           <div class="row">
@@ -247,6 +397,16 @@
           <k-check [(checked)]="checked">Remind me</k-check>
           <p class="out">check {{ checked() }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A checklist before colouring: the meter counts what is done, and the visit starts once the required checks are in.">
+          <div class="ic-prep">
+            <p class="ic-prep-title">Before colouring · Malika Yusupova</p>
+            @for (p of prep(); track p.text; let i = $index) {
+              <k-check [checked]="p.done" (checkedChange)="setPrep(i, $event)">{{ p.text }}@if (!p.required) { <small class="muted"> · optional</small> }</k-check>
+            }
+            <k-meter [value]="prepDone()" [max]="prep().length" label="checks done" [showFigure]="false" />
+            <div class="row"><k-button label="Start the visit" [disabled]="!prepReady()" (clicked)="log.set('Colouring started')" /></div>
+          </div>
+        </app-doc>
         <app-doc id="readonly" heading="Read only" about="readonly shows state but ignores presses; ariaLabel overrides the projected name.">
           <k-check [checked]="true" readonly ariaLabel="Locked option">Locked</k-check>
         </app-doc>
@@ -258,6 +418,21 @@
         <app-doc id="basic" heading="Basic" about="A bare tick for selecting table rows.">
           <k-tick [(checked)]="ticked" ariaLabel="Select row" />
           <p class="out">tick {{ ticked() }}</p>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Bulk reminders: tick rows one by one or all at once from the header, then act on the selection.">
+          <div class="ic-remind">
+            <div class="ic-remind-head">
+              <k-tick [checked]="remindAll()" (checkedChange)="pickAllRemind($event)" ariaLabel="Select all" />
+              <span>{{ remindPicked().length ? remindPicked().length + ' selected' : 'Tomorrow, 4 visits' }}</span>
+              <k-button label="Send SMS" size="small" [disabled]="!remindPicked().length" (clicked)="log.set('Reminders sent: ' + remindPicked().length)" />
+            </div>
+            @for (r of remindList; track r.name) {
+              <div class="ic-remind-row">
+                <k-tick [checked]="remindPicked().includes(r.name)" (checkedChange)="pickRemind(r.name, $event)" [ariaLabel]="'Select ' + r.name" />
+                <k-person [name]="r.name" [meta]="r.meta" size="sm" />
+              </div>
+            }
+          </div>
         </app-doc>
         <app-doc id="states" heading="Invalid and read only" about="invalid marks the tick with the error colour; readonly and disabled lock it.">
           <div class="row">
@@ -277,6 +452,20 @@
             <k-chip [disabled]="true">Disabled</k-chip>
           </div>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Filter chips with counts narrow a list of masters; an empty state answers when nothing is left.">
+          <div class="ic-find">
+            <div class="row">
+              <k-chip [(selected)]="findOpen">Open now<span chip-count>{{ findCounts.open }}</span></k-chip>
+              <k-chip [(selected)]="findTop">4.5+<span chip-count>{{ findCounts.top }}</span></k-chip>
+              <k-chip [(selected)]="findBeard">Beard<span chip-count>{{ findCounts.beard }}</span></k-chip>
+            </div>
+            @for (m of findShown(); track m.name) {
+              <div class="ic-find-row"><k-person [name]="m.name" [meta]="m.meta" /><k-stars [value]="m.score" [label]="m.score + ' out of 5'" /></div>
+            } @empty {
+              <k-quiet title="No master matches" hint="Turn a filter off to see more." />
+            }
+          </div>
+        </app-doc>
         <app-doc id="label" heading="Accessible name" about="ariaLabel overrides the projected text as the name.">
           <k-chip ariaLabel="Rated 4.5 and above">4.5+</k-chip>
         </app-doc>
@@ -287,6 +476,12 @@
       @case ('words') {
         <app-doc id="basic" heading="Basic" about="A segmented choice; options can carry a count and a hot dot.">
           <k-words [options]="words" [(value)]="view" ariaLabel="View" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A period switch over the day's takings, split into cash and card.">
+          <div class="ic-takings">
+            <k-words [options]="takingsPeriods" [(value)]="takingsPeriod" ariaLabel="Period" />
+            <k-split [left]="takings()[0]" [right]="takings()[1]" />
+          </div>
         </app-doc>
         <app-doc id="tabs" heading="Tabs" about="The same choice drawn as underlined tabs.">
           <k-words [options]="words" [(value)]="view" tabs ariaLabel="View tabs" />
@@ -299,6 +494,19 @@
         <app-doc id="basic" heading="Basic" about="Stars you can set, with a word for each score.">
           <k-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Rating" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A review form after the visit: the score is required, the text is not.">
+          <div class="ic-review">
+            @if (reviewSent()) {
+              <k-banner tone="ok" icon="✓">Thank you! Aziz will see your {{ reviewScore() }}-star review.</k-banner>
+              <button k-word quiet (click)="reviewSent.set(false); reviewScore.set(0); reviewText.set('')">Write another</button>
+            } @else {
+              <k-person name="Aziz Rahimov" meta="Haircut and beard · yesterday, 18:00" />
+              <k-rating [(value)]="reviewScore" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Your score" />
+              <k-notes [(value)]="reviewText" [maxlength]="300" placeholder="What did you like? Optional" ariaLabel="Review" />
+              <div class="row"><k-button label="Send review" [disabled]="!reviewScore()" (clicked)="reviewSent.set(true)" /></div>
+            }
+          </div>
+        </app-doc>
         <app-doc id="no-word" heading="Without the word" about="showWord=false hides the word under the numerals.">
           <k-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" [showWord]="false" ariaLabel="Rating, no word" />
         </app-doc>
@@ -309,6 +517,15 @@
       @case ('picker') {
         <app-doc id="zone" heading="Zone" about="A drop zone that also opens the file dialog on click.">
           <k-picker label="Add photos" hint="JPG or PNG" variant="zone" accept="image/*" multiple (picked)="filesPicked($event)" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A portfolio upload: picked files turn into upload rows; anything over 5 MB fails at once.">
+          <div class="ic-portfolio">
+            <k-picker label="Add work photos" hint="JPG or PNG, up to 5 MB each" variant="zone" accept="image/*" multiple (picked)="addToPortfolio($event)" />
+            @for (u of portfolio(); track u.name) {
+              <k-upload [name]="u.name" [sizeLabel]="u.size" [progress]="u.progress" [state]="u.state"
+                        [statusLabel]="u.state === 'failed' ? 'Over 5 MB' : u.state === 'done' ? 'In your portfolio' : 'Uploading'" />
+            }
+          </div>
         </app-doc>
         <app-doc id="button" heading="Button" about="The same picker as a plain button.">
           <k-picker label="Attach file" (picked)="filesPicked($event)" />
@@ -328,6 +545,33 @@
           <k-date [(value)]="day" ariaLabel="Day" />
           <p class="out">Day: {{ day()?.toDateString() ?? '—' }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A request for days off: the range counts the days, and past dates cannot be picked.">
+          <div class="ic-leave">
+            <k-person name="Dilnoza Karimova" meta="Stylist · Chilonzor" />
+            <k-date range [(rangeValue)]="leave" [min]="leaveMin" ariaLabel="Days off" />
+            <k-notes [(value)]="leaveNote" placeholder="Reason, for example a family wedding in Samarkand" ariaLabel="Reason" />
+            <div class="row">
+              <k-button [disabled]="!leaveDays()" (clicked)="log.set('Asked for ' + leaveDays() + ' days off')">
+                {{ leaveDays() ? 'Ask for ' + leaveDays() + (leaveDays() === 1 ? ' day' : ' days') + ' off' : 'Pick the days' }}
+              </k-button>
+            </div>
+          </div>
+        </app-doc>
+        <app-doc id="booking" heading="Booking calendar" about="The inline calendar picks the day and the free times for it appear beside it; Sundays are closed.">
+          <div class="ic-book">
+            <k-date inline [(value)]="bookDay" [min]="bookMin" (valueChange)="bookTime.set('')" ariaLabel="Visit day" />
+            <div class="ic-book-times">
+              @if (!bookDay()) {
+                <k-quiet title="Pick a day" hint="Free times show up here." />
+              } @else if (!bookSlots().length) {
+                <k-quiet title="Closed on Sundays" hint="Try Saturday or Monday." />
+              } @else {
+                <k-slots [slots]="bookSlots()" [(value)]="bookTime" ariaLabel="Visit time" />
+                <k-button label="Book" [disabled]="!bookTime()" (clicked)="log.set('Booked ' + bookDay()!.toDateString() + ', ' + bookTime())" />
+              }
+            </div>
+          </div>
+        </app-doc>
         <app-doc id="range" heading="Range" about="Pick a start and an end date.">
           <k-date range [(rangeValue)]="period" ariaLabel="Period" />
         </app-doc>
@@ -346,11 +590,38 @@
           <k-time [(ngModel)]="time" clearable ariaLabel="Start time" />
           <p class="out">Time: {{ time()?.toTimeString()?.slice(0, 5) ?? '—' }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Opening hours: a toggle per day, and two times when it is open.">
+          <div class="ic-hours">
+            @for (h of workHours; track h.day) {
+              <div class="ic-hours-row">
+                <span>{{ h.day }}</span>
+                <k-toggle [(checked)]="h.open" [ariaLabel]="h.day + ' open'" />
+                @if (h.open()) {
+                  <k-time [(ngModel)]="h.from" [ariaLabel]="h.day + ' opens'" /><span class="muted">–</span><k-time [(ngModel)]="h.to" [ariaLabel]="h.day + ' closes'" />
+                } @else {
+                  <span class="muted">Closed</span>
+                }
+              </div>
+            }
+          </div>
+        </app-doc>
       }
       @case ('film') {
         <app-doc id="basic" heading="Basic" about="A strip of days to scroll through; days can carry a dot or be muted.">
           <k-film [days]="film" [(value)]="filmDay" ariaLabel="Day" />
           <p class="out">Day {{ filmDay() }}</p>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A master's week: the film picks the day and a timeline lists its visits; muted days are days off.">
+          <div class="ic-shift">
+            <k-film [days]="shiftDays" [(value)]="shiftDay" ariaLabel="Aziz's week" />
+            @if (shiftVisits().length) {
+              <k-trail>
+                @for (v of shiftVisits(); track v.time) { <k-step [time]="v.time" [gap]="v.gap">{{ v.who }}</k-step> }
+              </k-trail>
+            } @else {
+              <k-quiet title="Day off" hint="Aziz does not work this day, so nothing is booked." />
+            }
+          </div>
         </app-doc>
         <app-doc id="disabled" heading="Disabled" about="disabled stops the days from being chosen.">
           <k-film [days]="film" [value]="filmDay()" disabled ariaLabel="Disabled day" />
@@ -364,6 +635,19 @@
           <k-slots [slots]="slots" [(value)]="slot" [clearable]="true" ariaLabel="Time slot" />
           <p class="out">Slot {{ slot() || '—' }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A day picker: the film chooses the day, the slots change with it, and the button names the choice.">
+          <div class="ic-pick">
+            <k-film [days]="pickDays" [(value)]="pickDay" (valueChange)="pickTime.set('')" ariaLabel="Day" />
+            @if (pickSlots().length) {
+              <k-slots [slots]="pickSlots()" [(value)]="pickTime" ariaLabel="Time" />
+            } @else {
+              <k-quiet title="Closed on Sunday" hint="Pick another day." />
+            }
+            <k-button fluid [disabled]="!pickTime()" (clicked)="log.set('Booked ' + pickTime())">
+              {{ pickTime() ? 'Book ' + pickTime() + ' with Aziz' : 'Choose a time' }}
+            </k-button>
+          </div>
+        </app-doc>
         <app-doc id="disabled" heading="Disabled" about="disabled stops the slots from being chosen.">
           <k-slots [slots]="slots" value="" disabled ariaLabel="Disabled slots" />
         </app-doc>
@@ -374,6 +658,17 @@
       @case ('marks') {
         <app-doc id="basic" heading="Basic" about="A week at a glance, one mark per day.">
           <k-marks [days]="marks" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A team rota: each master's week at a glance, with a tag for today.">
+          <div class="ic-rota">
+            @for (m of rota; track m.name) {
+              <div class="ic-rota-row">
+                <k-person [name]="m.name" [meta]="m.meta" size="sm" />
+                <k-marks [days]="m.days" empty="off" />
+                <k-tag [tone]="m.today ? 'now' : 'wait'">{{ m.today ? 'On shift' : 'Off today' }}</k-tag>
+              </div>
+            }
+          </div>
         </app-doc>
         <app-doc id="empty" heading="Empty text" about="empty is shown for days without a mark, such as closed days.">
           <k-marks [days]="marks" empty="off" />
@@ -392,6 +687,20 @@
             <k-button label="Danger" severity="danger" />
           </div>
           <p class="out">Primary clicked {{ clicks() }} times.</p>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A checkout: the main button carries the total, shows progress while paying and then locks.">
+          <div class="ic-checkout">
+            @for (i of cart(); track i.name) {
+              <div class="ic-checkout-line"><span>{{ i.name }}</span><span>{{ i.price.toLocaleString('ru-RU') }} so'm</span></div>
+            }
+            <k-words [options]="[{ value: 'click', label: 'Click' }, { value: 'payme', label: 'Payme' }, { value: 'cash', label: 'Cash' }]" [(value)]="payWith" ariaLabel="Pay with" />
+            <div class="row">
+              <k-button label="Back" severity="secondary" outlined [disabled]="paying()" />
+              <k-button icon="→" iconPos="right" [loading]="paying()" [disabled]="paid()" (clicked)="checkout()">
+                {{ paid() ? 'Paid ✓' : 'Pay ' + cartTotal().toLocaleString('ru-RU') + " so'm" }}
+              </k-button>
+            </div>
+          </div>
         </app-doc>
         <app-doc id="variants" heading="Variants" about="Outlined and text buttons for lower emphasis, and a small size.">
           <div class="row">
@@ -428,6 +737,24 @@
             <button k-word lead busy>Saving</button>
           </div>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A visit card whose word buttons move the visit along; the lead word is always the next step.">
+          <div class="ic-next">
+            <div class="ic-next-head">
+              <k-person name="Dilnoza Karimova" meta="Haircut · 14:30 · 80 000 so'm" />
+              <k-tag [tone]="nextVisit()">{{ nextVisit() === 'book' ? 'Booked' : nextVisit() === 'now' ? 'In the chair' : 'Done' }}</k-tag>
+            </div>
+            <div class="row">
+              @if (nextVisit() === 'book') {
+                <button k-word lead (click)="nextVisit.set('now')">Start visit</button>
+                <button k-word quiet (click)="log.set('Move asked')">Move</button>
+              } @else if (nextVisit() === 'now') {
+                <button k-word lead (click)="nextVisit.set('done')">Finish and take payment</button>
+              } @else {
+                <button k-word quiet [arrow]="false" (click)="nextVisit.set('book')">Undo</button>
+              }
+            </div>
+          </div>
+        </app-doc>
         <app-doc id="arrow" heading="Without arrow" about="arrow=false drops the trailing arrow.">
           <div class="row"><button k-word [arrow]="false">Plain word</button></div>
         </app-doc>
@@ -439,6 +766,15 @@
         <app-doc id="basic" heading="Basic" about="A destructive action, red and unmistakable.">
           <div class="row"><button k-erase (click)="log.set('Erase')">Delete service</button></div>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A service list where each row has its own delete, confirmed through the app-wide tray.">
+          <k-rows label="Services">
+            @for (s of menuItems(); track s.name) {
+              <k-row [label]="s.name">{{ s.price }} <button k-erase (click)="removeService(s.name)">Delete</button></k-row>
+            } @empty {
+              <k-quiet title="No services" hint="Add one so clients can book." />
+            }
+          </k-rows>
+        </app-doc>
         <app-doc id="erase-customizing" heading="Customizing" about="--erase-color changes the ink.">
           <div class="row"><button k-erase style="--erase-color: var(--amber)">Archive service</button></div>
         </app-doc>
@@ -448,6 +784,14 @@
           <div class="row">
             <button k-halo aria-label="Close">✕</button>
             <button k-halo aria-label="More">⋯</button>
+          </div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A visit header on a phone: halos for back, call and message around the client.">
+          <div class="ic-visitbar">
+            <button k-halo aria-label="Back" (click)="log.set('Back')">‹</button>
+            <k-person name="Malika Yusupova" meta="Colour · Fri 11:00" size="sm" />
+            <button k-halo size="sm" aria-label="Call Malika" (click)="log.set('Calling +998 93 410 77 02')">☎</button>
+            <button k-halo size="sm" aria-label="Message Malika" (click)="log.set('Telegram opened')">✉</button>
           </div>
         </app-doc>
         <app-doc id="halo-size" heading="Size" about="size is md, sm or lg; --halo-size sets any other.">
@@ -461,6 +805,18 @@
       @case ('actions') {
         <app-doc id="basic" heading="Basic" about="A list of actions behind one button; items can be disabled, dangerous or badged.">
           <k-actions [items]="actions" label="Visit actions" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A visit queue with an actions menu per row; each action updates that row's tag.">
+          <div class="ic-queue">
+            @for (v of queue(); track v.id) {
+              <div class="ic-queue-row">
+                <b>{{ v.time }}</b>
+                <k-person [name]="v.name" [meta]="v.service" size="sm" />
+                <k-tag [tone]="v.status">{{ queueWords[v.status] }}</k-tag>
+                <k-actions [items]="v.actions" [label]="'Actions for ' + v.name" />
+              </div>
+            }
+          </div>
         </app-doc>
         <app-doc id="align" heading="Align" about="align=start lines the list up with the left edge of the button.">
           <k-actions [items]="actions" label="Visit actions" align="start" />
@@ -479,6 +835,21 @@
             </span>
           </k-confirm>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Unpaid visits: each row asks in place before it marks the visit paid.">
+          <div class="ic-debts">
+            @for (d of debts(); track d.id) {
+              <k-confirm [asking]="debtAsking() === d.id">
+                <span data-row class="ic-debts-row">
+                  <k-person [name]="d.name" [meta]="d.what" size="sm" />
+                  @if (d.paid) { <k-tag tone="done">Paid</k-tag> } @else { <button k-word (click)="debtAsking.set(d.id)">Mark paid</button> }
+                </span>
+                <span data-question class="ic-debts-row">Paid in cash by {{ d.name }}?
+                  <span class="row"><button k-word quiet (click)="debtAsking.set(null)">No</button><button k-word (click)="markPaid(d.id)">Yes, paid</button></span>
+                </span>
+              </k-confirm>
+            }
+          </div>
+        </app-doc>
         <app-doc id="confirm-customizing" heading="Customizing" about="--confirm-dur sets how long the swap takes.">
           <k-confirm [asking]="asking()" style="--confirm-dur: 600ms">
             <span data-row class="row">Slow swap <button k-word (click)="asking.set(true)">Ask</button></span>
@@ -489,6 +860,21 @@
       @case ('pair') {
         <app-doc id="basic" heading="Basic" about="Keep and confirm side by side; busy shows progress on the confirm button.">
           <k-pair keep="Keep" confirm="Cancel visit" [busy]="pairBusy()" (kept)="log.set('Pair: kept')" (confirmed)="confirmPair()" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="The foot of a visit card: keep or cancel, with a banner once it is cancelled.">
+          <div class="ic-cancel">
+            <k-rows label="Your visit">
+              <k-row label="Master">Aziz Rahimov</k-row>
+              <k-row label="When">Friday, 11:00</k-row>
+              <k-row label="Service">Haircut and beard</k-row>
+              <k-row label="Price">110 000 so'm</k-row>
+            </k-rows>
+            @if (cancelled()) {
+              <k-banner tone="info" actionLabel="Book again" (action)="cancelled.set(false)">The visit is cancelled and Aziz has been told.</k-banner>
+            } @else {
+              <k-pair keep="Keep visit" confirm="Cancel visit" [busy]="cancelBusy()" (kept)="log.set('Visit kept')" (confirmed)="cancelVisit()" />
+            }
+          </div>
         </app-doc>
         <app-doc id="tone" heading="Tone" about="tone=primary draws the confirm side in amber, for a pair that destroys nothing.">
           <k-pair keep="Back" confirm="Save" tone="primary" />
@@ -504,6 +890,22 @@
             <k-button label="Ask (plain)" severity="secondary" (clicked)="ask(false)" />
           </div>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Blocking a client from their card: the tray asks first, and the card follows the answer.">
+          <div class="ic-block">
+            <k-person name="Sardor Tursunov" meta="+998 97 300 11 45 · 9 visits" size="lg" />
+            <div class="row">
+              <k-tag tone="warn">3 no-shows</k-tag>
+              @if (blocked()) { <k-tag tone="error">Blocked</k-tag> }
+            </div>
+            <div class="row">
+              @if (blocked()) {
+                <k-button label="Unblock" severity="secondary" (clicked)="blocked.set(false)" />
+              } @else {
+                <k-button label="Block client" severity="danger" outlined (clicked)="blockClient()" />
+              }
+            </div>
+          </div>
+        </app-doc>
       }
 
       <!-- ============================================================ Data -->
@@ -514,6 +916,34 @@
             <ng-template #groupheader let-row><tr><th colspan="2">{{ row.group }}</th></tr></ng-template>
             <ng-template #body let-row><tr><td>{{ row.name }}</td><td>{{ row.price }}</td></tr></ng-template>
             <ng-template #emptymessage><tr><td colspan="2">Nothing yet</td></tr></ng-template>
+          </k-table>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Today's visits: each row has a person, a status tag and an actions menu that updates it.">
+          <k-table [value]="todayVisits()" dataKey="id" [hoverable]="true" ariaLabel="Today's visits">
+            <ng-template #header><tr><th>Time</th><th>Client</th><th>Price</th><th>Status</th><th></th></tr></ng-template>
+            <ng-template #body let-v>
+              <tr>
+                <td>{{ v.time }}</td>
+                <td><k-person [name]="v.name" [meta]="v.service" size="sm" /></td>
+                <td>{{ v.price.toLocaleString('ru-RU') }}</td>
+                <td><k-tag [tone]="v.status">{{ todayWords[v.status] }}</k-tag></td>
+                <td><k-actions [items]="todayActions.get(v.id)!" [label]="'Actions for ' + v.name" /></td>
+              </tr>
+            </ng-template>
+          </k-table>
+        </app-doc>
+        <app-doc id="ledger" heading="Day ledger" about="groupRowsBy splits the day by master; each group row carries that master's takings.">
+          <k-table [value]="ledger" dataKey="id" groupRowsBy="master" size="sm" [striped]="true" ariaLabel="Day ledger">
+            <ng-template #header><tr><th>Time</th><th>Service</th><th>Cash</th><th>Card</th></tr></ng-template>
+            <ng-template #groupheader let-r>
+              <tr><th colspan="3"><k-person [name]="r.master" size="sm" /></th><th>{{ ledgerTotal(r.master).toLocaleString('ru-RU') }} so'm</th></tr>
+            </ng-template>
+            <ng-template #body let-r>
+              <tr>
+                <td>{{ r.time }}</td><td>{{ r.service }}</td>
+                <td>{{ r.cash ? r.cash.toLocaleString('ru-RU') : '—' }}</td><td>{{ r.card ? r.card.toLocaleString('ru-RU') : '—' }}</td>
+              </tr>
+            </ng-template>
           </k-table>
         </app-doc>
         <app-doc id="look" heading="Size, stripes and hover" about="size=sm tightens padding; striped and hoverable tint rows; ariaLabel names the table.">
@@ -532,6 +962,18 @@
       @case ('sort') {
         <app-doc id="basic" heading="Basic" about="A row of sort choices; the active one shows an arrow, and picking it again flips the direction.">
           <k-sort [options]="sortOptions" [key]="sortKey()" [dir]="sortDir()" ariaLabel="Sort" (pick)="sortBy($event)">Sort</k-sort>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A leaderboard of masters: sort by rating, visits or name; picking a choice again flips it.">
+          <div class="ic-board">
+            <k-sort [options]="boardOptions" [key]="boardBy()" [dir]="boardDir()" ariaLabel="Sort masters" (pick)="sortBoard($event)">Sort</k-sort>
+            @for (m of boardRows(); track m.name; let i = $index) {
+              <div class="ic-board-row">
+                <span class="ic-board-n">{{ i + 1 }}</span>
+                <k-person [name]="m.name" [meta]="m.role + ' · ' + m.visits + ' visits'" />
+                <k-stars [value]="m.rating" [label]="m.rating + ' out of 5'" />
+              </div>
+            }
+          </div>
         </app-doc>
         <app-doc id="header" heading="Table header" about="kometaSortHeader turns a th into a sort button.">
           <k-table [value]="sorted()" dataKey="id">
@@ -556,6 +998,15 @@
           <k-pager [total]="137" [(page)]="page" [(pageSize)]="pageSize" />
           <p class="out">Page {{ page() }}, {{ pageSize() }} per page</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="The pager drives a client table: the page is a slice of the list, and sizes offers 5 per page.">
+          <div class="ic-clients">
+            <k-table [value]="clientRows()" dataKey="id" size="sm" ariaLabel="Clients">
+              <ng-template #header><tr><th>Client</th><th>Phone</th><th>Visits</th></tr></ng-template>
+              <ng-template #body let-c><tr><td><k-person [name]="c.name" size="sm" /></td><td>{{ c.phone }}</td><td>{{ c.visits }}</td></tr></ng-template>
+            </k-table>
+            <k-pager [total]="47" [(page)]="clientPage" [(pageSize)]="clientPageSize" [sizes]="[5, 10, 25]" />
+          </div>
+        </app-doc>
         <app-doc id="no-caption" heading="Without caption" about="caption=false hides the range caption.">
           <k-pager [total]="137" [caption]="false" />
         </app-doc>
@@ -571,6 +1022,22 @@
             <k-row title="Notifications" meta="SMS and Telegram" tone="amber" button (activated)="log.set('Row activated')"><span rowIcon>🔔</span></k-row>
             <k-row title="Disabled" meta="Nothing here" tone="blue" button disabled><span rowIcon>⛔</span></k-row>
           </k-rows>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A visit screen: fact rows for the details, a tag as a value, and button rows for what to do next.">
+          <div class="ic-visit">
+            <k-person name="Malika Yusupova" meta="Client since 2023 · 27 visits" size="lg" />
+            <k-rows label="Visit">
+              <k-row label="Status"><k-tag tone="book">Booked</k-tag></k-row>
+              <k-row label="When">Friday, 11:00 – 12:30</k-row>
+              <k-row label="Service">Colour, long hair</k-row>
+              <k-row label="Price">250 000 so'm</k-row>
+            </k-rows>
+            <k-rows label="Actions">
+              <k-row title="Call Malika" meta="+998 93 410 77 02" tone="green" button (activated)="log.set('Calling Malika')"><span rowIcon>☎</span></k-row>
+              <k-row title="Send a reminder" meta="Telegram, now" tone="telegram" button (activated)="log.set('Reminder sent')"><span rowIcon>✈</span></k-row>
+              <k-row title="Cancel visit" tone="danger" button (activated)="log.set('Cancel asked')"><span rowIcon>✕</span></k-row>
+            </k-rows>
+          </div>
         </app-doc>
         <app-doc id="links" heading="Link rows" about="An href row can open in a new tab (target); ariaLabel overrides the accessible name.">
           <k-rows label="Links">
@@ -591,6 +1058,17 @@
             <k-step time="09:37">Reminder sent</k-step>
           </k-trail>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="The history of one visit, from booking to payment, with a status tag at each turn.">
+          <div class="ic-history">
+            <k-heading title="Visit #1042 · Aziz Rahimov" [level]="4" [rule]="false" />
+            <k-trail>
+              <k-step time="Mon 18:12" gap="2 days">Booked online for Thursday, 11:00 <k-tag tone="book">Booked</k-tag></k-step>
+              <k-step time="Wed 11:00" gap="24 h">Reminder sent by Telegram</k-step>
+              <k-step time="Thu 10:58" gap="1 h 10 min">Arrived <k-tag tone="now">In the chair</k-tag></k-step>
+              <k-step time="Thu 12:08">Paid 110 000 so'm with Click <k-tag tone="done">Done</k-tag></k-step>
+            </k-trail>
+          </div>
+        </app-doc>
         <app-doc id="trail-customizing" heading="Customizing" about="--trail-time-width, --trail-col-gap, --trail-time-size, --trail-gap-height and --trail-gap-size.">
           <k-trail style="--trail-time-width: 88px; --trail-col-gap: 20px; --trail-time-size: 26px; --trail-gap-height: 44px; --trail-gap-size: 14px">
             <k-step time="09:00" gap="32 min">Booked online</k-step>
@@ -601,6 +1079,12 @@
       @case ('share') {
         <app-doc id="basic" heading="Basic" about="A stacked bar with a legend, one segment per part.">
           <k-share [segments]="share" label="Revenue by service" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A month's takings, split three ways; underlined words in the heading switch the split.">
+          <div class="ic-mix">
+            <k-heading title="November takings" [level]="3"><k-words action [options]="mixViews" [(value)]="mixBy" tabs ariaLabel="Split by" /></k-heading>
+            <k-share [segments]="mix()" label="November takings" />
+          </div>
         </app-doc>
         <app-doc id="share-options" heading="Options" about="legend=false hides the list, percents=false hides the shares, tickCount sets the bar resolution.">
           <k-share [segments]="share" label="No legend" [legend]="false" [tickCount]="40" />
@@ -613,6 +1097,17 @@
       @case ('split') {
         <app-doc id="basic" heading="Basic" about="Two amounts side by side with their share of the whole.">
           <k-split [left]="{ amount: '8 400 000', label: 'Cash' }" [right]="{ amount: '1 800 000', label: 'Card' }" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Closing the day: cash against card, the card side broken down by app, and one button to close.">
+          <div class="ic-close">
+            <k-heading title="Closing Tuesday" [level]="3" [rule]="false" />
+            <k-split [left]="{ amount: '1 240 000', label: 'Cash in the drawer' }" [right]="{ amount: '860 000', label: 'Card and apps' }" />
+            <div class="ic-close-apps">
+              <span><k-provider-logo provider="Click" /> 520 000</span>
+              <span><k-provider-logo provider="Payme" /> 340 000</span>
+            </div>
+            <k-button [label]="dayClosed() ? 'Day closed ✓' : 'Close the day'" [disabled]="dayClosed()" fluid (clicked)="dayClosed.set(true); log.set('Day closed')" />
+          </div>
         </app-doc>
         <app-doc id="align" heading="Align" about="align=center centres the amounts and labels.">
           <k-split align="center" [left]="{ amount: '8 400 000', label: 'Cash' }" [right]="{ amount: '1 800 000', label: 'Card' }" />
@@ -628,6 +1123,21 @@
           <k-accordion>
             <k-accordion-item heading="What is the lead fee?">12% of a new client's first visit.</k-accordion-item>
             <k-accordion-item heading="Is the link paid?">No, the booking link is free.</k-accordion-item>
+          </k-accordion>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A shop's questions: answers can hold a copy link, payment marks or a button.">
+          <k-accordion>
+            <k-accordion-item heading="Where are you?">
+              Bunyodkor avenue 12, Chilonzor, next to the metro.
+              <k-link text="https://maps.app/kometa-chilonzor" copyLabel="Copy map link" copiedLabel="Copied" ariaLabel="Copy map link" />
+            </k-accordion-item>
+            <k-accordion-item heading="How do I pay?">
+              <span class="ic-faq-pay">Cash, card, or <k-provider-logo provider="Click" /> Click and <k-provider-logo provider="Payme" /> Payme after the visit.</span>
+            </k-accordion-item>
+            <k-accordion-item heading="Can I cancel?">
+              <p class="ic-faq-p">Free up to 2 hours before the visit.</p>
+              <k-button label="Cancel my visit" size="small" severity="danger" outlined (clicked)="log.set('Cancel asked')" />
+            </k-accordion-item>
           </k-accordion>
         </app-doc>
         <app-doc id="disabled" heading="Disabled" about="A question that cannot be pressed.">
@@ -650,6 +1160,25 @@
             <ng-template><p>Mon–Fri 9:00–18:00, Sat 10:00–15:00.</p></ng-template>
           </k-fold>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A booking summary: the order folds away behind its total, the policy behind its title.">
+          <div class="ic-summary">
+            <k-fold [(open)]="orderOpen">
+              <span fold-title>Order details</span>
+              <span fold-aside class="ic-summary-aside">135 000 so'm</span>
+              <ng-template>
+                <k-rows>
+                  <k-row label="Haircut">80 000 so'm</k-row>
+                  <k-row label="Beard trim">40 000 so'm</k-row>
+                  <k-row label="Hot towel">15 000 so'm</k-row>
+                </k-rows>
+              </ng-template>
+            </k-fold>
+            <k-fold>
+              <span fold-title>Cancellation policy</span>
+              <ng-template><p class="muted">Free up to 2 hours before the visit. Later than that, the master keeps 30%.</p></ng-template>
+            </k-fold>
+          </div>
+        </app-doc>
         <app-doc id="disabled" heading="Disabled" about="The trigger cannot be pressed.">
           <k-fold disabled>
             <span fold-title>Locked section</span>
@@ -670,6 +1199,15 @@
       @case ('heading') {
         <app-doc id="action" heading="With action" about="A section heading at any level, with an action on the right.">
           <k-heading title="Today's visits" [level]="3"><button k-word action>See all</button></k-heading>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Headings structure a dashboard column: a level 3 section with its action, then a quieter level 4 one.">
+          <div class="ic-today">
+            <k-heading title="Today's visits" [level]="3"><button k-word action (click)="log.set('See all visits')">See all 12</button></k-heading>
+            <div class="ic-today-row"><b>10:00</b><k-person name="Dilnoza Karimova" meta="Haircut" size="sm" /><k-tag tone="done">Done</k-tag></div>
+            <div class="ic-today-row"><b>11:30</b><k-person name="Aziz Rahimov" meta="Beard trim" size="sm" /><k-tag tone="now">In the chair</k-tag></div>
+            <div class="ic-today-row"><b>13:00</b><k-person name="Malika Yusupova" meta="Colour" size="sm" /><k-tag tone="book">Booked</k-tag></div>
+            <k-heading title="Tomorrow" [level]="4" [rule]="false"><button k-word quiet action>9 visits</button></k-heading>
+          </div>
         </app-doc>
         <app-doc id="no-rule" heading="Without rule" about="rule false draws no hairline, so the action sits next to the title.">
           <k-heading title="Today's visits" [level]="3" [rule]="false"><button k-word action>See all</button></k-heading>
@@ -694,6 +1232,38 @@
             <div class="pad"><h3>Bottom sheet</h3><p>Slides up from the bottom.</p></div>
           </k-drawer>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A cart drawer: remove services with a halo, and book from the bottom with the running total.">
+          <div class="row"><k-button severity="secondary" (clicked)="bagOpen.set(true)">Your visit · {{ bag().length }}</k-button></div>
+          <k-drawer [(visible)]="bagOpen" ariaLabel="Your visit">
+            <div class="ic-bag">
+              <h3>Your visit, Friday 11:00</h3>
+              @for (i of bag(); track i.name) {
+                <div class="ic-bag-line">
+                  <span><b>{{ i.name }}</b><small>{{ i.who }}</small></span>
+                  <span>{{ i.price.toLocaleString('ru-RU') }}</span>
+                  <button k-halo size="sm" [attr.aria-label]="'Remove ' + i.name" (click)="dropFromBag(i.name)">✕</button>
+                </div>
+              } @empty {
+                <k-quiet title="Nothing here" hint="Add a service to book a visit." />
+              }
+              <k-button fluid [disabled]="!bag().length" (clicked)="bagOpen.set(false); log.set('Visit booked')">Book · {{ bagTotal().toLocaleString('ru-RU') }} so'm</k-button>
+            </div>
+          </k-drawer>
+        </app-doc>
+        <app-doc id="filters" heading="Filter sheet" about="A bottom sheet of filters for a phone: day, chips and one button that applies them.">
+          <div class="row"><k-button label="Filters" severity="secondary" outlined (clicked)="filtersOpen.set(true)" /></div>
+          <k-drawer [(visible)]="filtersOpen" position="bottom" styleClass="kometa-sheet" ariaLabel="Filters" (kometaSheetClosed)="log.set('Filters applied')">
+            <div class="ic-filters">
+              <h3>Find a master</h3>
+              <k-words [options]="[{ value: 'any', label: 'Any day' }, { value: 'today', label: 'Today' }, { value: 'tomorrow', label: 'Tomorrow' }]" [(value)]="filterDay" ariaLabel="Day" />
+              <div class="row">
+                <k-chip [(selected)]="filterOpenNow">Open now</k-chip>
+                <k-chip [(selected)]="filterTop">4.5+</k-chip>
+              </div>
+              <k-button label="Show 14 masters" fluid (clicked)="filtersOpen.set(false)" />
+            </div>
+          </k-drawer>
+        </app-doc>
         <app-doc id="customizing" heading="Customizing" about="Width, height and backdrop through CSS variables on the drawer.">
           <div class="row">
             <k-button label="Wide drawer" severity="secondary" (clicked)="cWide.set(true)" />
@@ -710,6 +1280,18 @@
           <div class="row"><k-button label="Pop" severity="secondary" (clicked)="pop.toggle($event)" /></div>
           <k-pop #pop ariaLabel="Shop" [width]="240"><p class="pad">A small panel hung off the button.</p></k-pop>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A shop switcher: the button names the current shop, and the pop lists the others.">
+          <div class="row"><k-button severity="secondary" icon="▾" iconPos="right" (clicked)="shopPop.toggle($event)">{{ shop().name }}</k-button></div>
+          <k-pop #shopPop ariaLabel="Choose a shop" [width]="300">
+            <div class="ic-shops">
+              @for (s of shops; track s.id) {
+                <button type="button" class="ic-shops-item" [attr.aria-pressed]="s === shop()" (click)="shop.set(s); shopPop.hide(true); log.set('Switched to ' + s.name)">
+                  <k-person [name]="s.name" [meta]="s.meta" shape="square" size="sm" />
+                </button>
+              }
+            </div>
+          </k-pop>
+        </app-doc>
         <app-doc id="align" heading="Align and offset" about="align=end lines the panel up with the right edge of the button; offset is the gap in pixels.">
           <div class="row"><k-button label="Pop (end, 24px)" severity="secondary" (clicked)="popEnd.toggle($event)" /></div>
           <k-pop #popEnd ariaLabel="Shop" [width]="240" align="end" [offset]="24"><p class="pad">Right edge, 24px away.</p></k-pop>
@@ -723,6 +1305,18 @@
         <app-doc id="basic" heading="Basic" about="A tooltip directive with an optional second line.">
           <p><button k-word quiet kometaTip="A tooltip" kometaTipSub="With a second line">Hover me</button></p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A week of visits as bars: each bar's tip gives the count and the takings.">
+          <div class="ic-load">
+            <k-heading title="Visits this week" [level]="4" [rule]="false" />
+            <div class="ic-load-bars">
+              @for (d of load; track d.day) {
+                <button type="button" class="ic-load-bar" [kometaTip]="d.day + ': ' + d.visits + ' visits'" [kometaTipSub]="d.sum" [attr.aria-label]="d.day + ', ' + d.visits + ' visits'">
+                  <i [style.height.%]="d.visits * 4"></i><span>{{ d.day }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        </app-doc>
         <app-doc id="delay" heading="Delay" about="kometaTipDelay sets the hover time in milliseconds before the tip shows.">
           <p><button k-word quiet kometaTip="Shows after 1.2 s" [kometaTipDelay]="1200">Slow tip</button></p>
         </app-doc>
@@ -734,6 +1328,18 @@
         <app-doc id="basic" heading="Basic" about="A term with a dotted underline that explains itself.">
           <k-hint term="Lead fee">12% of a new client's first visit.</k-hint>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A payout statement where the fee names explain themselves.">
+          <div class="ic-payout">
+            <k-heading title="Payout for October" [level]="3" [rule]="false" />
+            <dl>
+              <dt>Visits paid online</dt><dd>4 820 000 so'm</dd>
+              <dt><k-hint term="Lead fee">12% of a new client's first visit, for clients Kometa brought you.</k-hint></dt><dd>− 186 000 so'm</dd>
+              <dt><k-hint term="Acquiring">The 1.5% Click and Payme keep for card payments.</k-hint></dt><dd>− 72 300 so'm</dd>
+              <dt><b>To your card</b></dt><dd><b>4 561 700 so'm</b></dd>
+            </dl>
+            <div class="row"><k-button label="Withdraw" size="small" (clicked)="log.set('Payout requested')" /></div>
+          </div>
+        </app-doc>
         <app-doc id="disabled" heading="Disabled and label" about="disabled stops the term from opening; ariaLabel names the button when the term alone is not enough.">
           <k-hint term="Lead fee" ariaLabel="What is a lead fee" [disabled]="true">12% of a new client's first visit.</k-hint>
         </app-doc>
@@ -744,6 +1350,22 @@
       @case ('note') {
         <app-doc id="basic" heading="Basic" about="A small info button next to a word.">
           <p>Revenue <k-note label="About revenue">Takings for the period, before payouts.</k-note></p>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Dashboard figures: each label carries a note on how it is counted, and a tag compares it with last week.">
+          <div class="ic-kpi">
+            <div class="ic-kpi-tile">
+              <span>Revenue <k-note label="About revenue">Takings for the week, before payouts and fees.</k-note></span>
+              <b>8 570 000</b><k-tag tone="done">+12% on last week</k-tag>
+            </div>
+            <div class="ic-kpi-tile">
+              <span>Load <k-note label="About load">Booked minutes out of all the working minutes of your masters.</k-note></span>
+              <b>74%</b><k-tag tone="wait">Same as last week</k-tag>
+            </div>
+            <div class="ic-kpi-tile">
+              <span>No-shows <k-note label="About no-shows">Visits where the client neither came nor cancelled.</k-note></span>
+              <b>3</b><k-tag tone="warn">+2 on last week</k-tag>
+            </div>
+          </div>
         </app-doc>
         <app-doc id="placement" heading="Placement" about="placement is auto, above or below; auto flips below near the top edge.">
           <p>Revenue <k-note label="About revenue" placement="below">Always opens below.</k-note></p>
@@ -759,6 +1381,25 @@
           <k-tabbar [tabs]="tabs" [(value)]="tab" ariaLabel="Demo tabs" />
           <p class="out">Selected: {{ tab() }}</p>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A phone app shell: the tab bar switches the screen above it, and iconTemplate draws plain glyphs as icons.">
+          <div class="ic-phone">
+            <div class="ic-phone-screen">
+              @if (phoneTab() === 'today') {
+                <k-heading title="Today" [level]="3" [rule]="false" />
+                <k-person name="Dilnoza Karimova" meta="10:00 · Haircut" />
+                <k-person name="Aziz Rahimov" meta="11:30 · Beard trim" />
+              } @else if (phoneTab() === 'clients') {
+                <k-heading title="Clients" [level]="3" [rule]="false" />
+                <k-quiet title="248 clients" hint="Search by name or phone." />
+              } @else {
+                <k-heading title="Money" [level]="3" [rule]="false" />
+                <k-split [left]="{ amount: '1 240 000', label: 'Cash' }" [right]="{ amount: '860 000', label: 'Card' }" />
+              }
+            </div>
+            <ng-template #phoneIcon let-t><span class="ic-phone-icon">{{ t.icon }}</span></ng-template>
+            <k-tabbar [tabs]="phoneTabs" [(value)]="phoneTab" [iconTemplate]="phoneIcon" ariaLabel="Sections" />
+          </div>
+        </app-doc>
         <app-doc id="labels" heading="All labels" about="labels all keeps every word open, not just the chosen tab's.">
           <k-tabbar [tabs]="tabs" [(value)]="tab" labels="all" ariaLabel="Demo tabs with labels" />
         </app-doc>
@@ -772,6 +1413,13 @@
         <app-doc id="tones" heading="Tones" about="One tone per status.">
           <div class="row">@for (t of tones; track t) { <k-tag [tone]="t">{{ t }}</k-tag> }</div>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A day of visits, where the tag carries the state of each.">
+          <div class="ic-visits">
+            @for (v of visitsList; track v.time) {
+              <div class="ic-visits-row"><b>{{ v.time }}</b><k-person [name]="v.name" [meta]="v.service" size="sm" /><k-tag [tone]="v.tone">{{ v.word }}</k-tag></div>
+            }
+          </div>
+        </app-doc>
         <app-doc id="no-dot" heading="Without dot" about="dot false leaves the word alone, coloured by its tone.">
           <div class="row">@for (t of tones; track t) { <k-tag [tone]="t" [dot]="false">{{ t }}</k-tag> }</div>
         </app-doc>
@@ -782,6 +1430,19 @@
       @case ('banner') {
         <app-doc id="tones" heading="Tones" about="Info, ok, warn and error; dismissible adds a close button.">
           @for (b of banners; track b) { <k-banner [tone]="b" dismissible>This is a {{ b }} banner.</k-banner> }
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Profile setup: a warning banner's action does the next step, until a dismissible success banner closes the job.">
+          <div class="ic-profile">
+            <k-person name="Kometa Chilonzor" meta="Your shop page" shape="square" size="lg" />
+            <k-meter [value]="profileSteps()" [max]="5" label="setup steps done" />
+            @if (profileSteps() < 5) {
+              <k-banner tone="warn" icon="!" [actionLabel]="profileSteps() < 4 ? 'Add photos' : 'Set hours'" (action)="profileSteps.set(profileSteps() + 1)">
+                {{ profileSteps() < 4 ? 'Shops with photos get twice as many bookings.' : 'Clients cannot book until your hours are set.' }}
+              </k-banner>
+            } @else if (!profileHidden()) {
+              <k-banner tone="ok" icon="✓" dismissible (dismissed)="profileHidden.set(true)">Your page is complete and open for booking.</k-banner>
+            }
+          </div>
         </app-doc>
         <app-doc id="glass" heading="Glass with action" about="A frosted surface for banners over pictures, with an action button.">
           <k-banner tone="info" surface="glass" actionLabel="Retry" (action)="log.set('Banner action')">A glass banner with an action.</k-banner>
@@ -802,6 +1463,17 @@
             <k-button label="Error" size="small" severity="danger" (clicked)="toast('error')" />
           </div>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Quick actions on a visit, each answered by a toast in the app-wide stack.">
+          <div class="ic-quick">
+            <k-person name="Aziz Rahimov" meta="Beard trim · today 11:30" />
+            <div class="row">
+              <k-button label="Remind" size="small" severity="secondary" (clicked)="notify('success', 'Reminder sent to Aziz by Telegram.')" />
+              <k-button label="Move to 12:00" size="small" severity="secondary" (clicked)="notify('info', 'Moved to 12:00. Aziz gets an SMS.')" />
+              <k-button label="Charge 40 000" size="small" (clicked)="notify('warn', 'Click is slow today; the payment may take a minute.')" />
+              <k-button label="No-show" size="small" severity="danger" outlined (clicked)="notify('error', 'Aziz is marked as a no-show.')" />
+            </div>
+          </div>
+        </app-doc>
         <app-doc id="position" heading="Top and customizing" about="position top stacks from the top edge; gap, radius, size and background are CSS variables.">
           <k-button label="Top toast" size="small" severity="secondary" (clicked)="cTopToasts.set([{ id: 1, kind: 'info', text: 'From the top.', life: 3000 }])" />
           <k-toast [items]="cTopToasts()" (dismiss)="cTopToasts.set([])" position="top" style="--toast-gap: 14px; --toast-radius: 4px; --toast-font-size: 16px; --toast-bg: var(--bg)" />
@@ -812,6 +1484,20 @@
           <k-upload name="receipt.pdf" sizeLabel="1.2 MB" [progress]="0.45" state="running" statusLabel="45%" />
           <k-upload name="photo.jpg" sizeLabel="820 KB" [progress]="100" state="done" statusLabel="Uploaded" />
           <k-upload name="scan.png" sizeLabel="4.1 MB" state="failed" statusLabel="Too large" actionLabel="Retry" (action)="log.set('Upload retry')" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Importing clients from a spreadsheet: the upload shows progress, then a banner offers the next step.">
+          <div class="ic-import">
+            <k-heading title="Bring your clients to Kometa" [level]="4" [rule]="false" />
+            @if (importState() !== 'idle') {
+              <k-upload name="clients-from-excel.csv" sizeLabel="48 KB · 312 rows" [progress]="importProgress()" [state]="importState()"
+                        [statusLabel]="importState() === 'done' ? 'Imported' : 'Reading rows'" />
+            }
+            @if (importState() === 'done') {
+              <k-banner tone="ok" icon="✓" actionLabel="Open clients" (action)="log.set('Open clients')">312 clients imported, 4 duplicates merged.</k-banner>
+            } @else {
+              <div class="row"><k-button label="Import clients-from-excel.csv" [loading]="importState() === 'running'" (clicked)="runImport()" /></div>
+            }
+          </div>
         </app-doc>
         <app-doc id="no-percent" heading="Without percentage" about="showPercent false hides the big figure; the fill and progressbar remain.">
           <k-upload name="video.mp4" sizeLabel="48 MB" [progress]="0.6" state="running" statusLabel="60%" [showPercent]="false" />
@@ -831,6 +1517,17 @@
           </div>
           <k-photos [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" ariaLabel="Photos" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A master's portfolio: thumbnails under the profile open the full-screen viewer.">
+          <div class="ic-work">
+            <div class="ic-work-head"><k-person name="Aziz Rahimov" meta="Barber · 212 visits" /><k-stars [value]="4.9" label="4.9 out of 5" /></div>
+            <div class="ic-work-grid">
+              @for (p of work; track p.url; let i = $index) {
+                <button type="button" (click)="openWork(i)"><img [src]="p.thumbUrl" [alt]="p.alt" /></button>
+              }
+            </div>
+            <k-photos [photos]="work" [(open)]="workOpen" [(index)]="workIndex" ariaLabel="Aziz's work" />
+          </div>
+        </app-doc>
         <app-doc id="photos-bare" heading="Without download or thumbnails" about="downloadable and thumbs are on by default; turn either off. Opens the same viewer as above.">
           <k-photos [photos]="photos" [(open)]="photosOpen" [(index)]="photoIndex" [downloadable]="false" [thumbs]="false" ariaLabel="Photos" />
         </app-doc>
@@ -842,6 +1539,18 @@
         <app-doc id="frame" heading="Frame" about="A picture with rounded corners and a caption.">
           <k-frame caption="A framed picture"><img [src]="frame" alt="Sample" /></k-frame>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A feed of recent work: the caption slot holds the master and a tag.">
+          <div class="ic-feed">
+            <k-frame>
+              <img [src]="feedA" alt="A skin fade" />
+              <span caption class="ic-feed-cap"><k-person name="Aziz Rahimov" meta="Skin fade · 2 days ago" size="sm" /><k-tag tone="now">New</k-tag></span>
+            </k-frame>
+            <k-frame>
+              <img [src]="feedB" alt="Balayage on long hair" />
+              <span caption class="ic-feed-cap"><k-person name="Malika Yusupova" meta="Balayage · last week" size="sm" /></span>
+            </k-frame>
+          </div>
+        </app-doc>
         <app-doc id="frame-slot" heading="Caption slot" about="Project any element with the caption attribute for a richer caption.">
           <k-frame><img [src]="frame" alt="Sample" /><span caption>Shot by <b>Dilnoza</b></span></k-frame>
         </app-doc>
@@ -852,6 +1561,14 @@
       @case ('reveal') {
         <app-doc id="basic" heading="Basic" about="Drag the handle to compare before and after.">
           <k-reveal [before]="before" [after]="after" ariaLabel="Before and after" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A before-and-after post: the master above, the price below, and a button to book the same look.">
+          <div class="ic-look">
+            <k-person name="Malika Yusupova" meta="Stylist · Yunusobod" />
+            <k-reveal [before]="lookBefore" [after]="lookAfter" aspectRatio="4/3" afterLabel="After 2 h" ariaLabel="Balayage, before and after" />
+            <p class="ic-look-cap">Balayage on long hair · from 450 000 so'm</p>
+            <div class="row"><k-button label="Book this look" (clicked)="log.set('Booking balayage with Malika')" /></div>
+          </div>
         </app-doc>
         <app-doc id="reveal-options" heading="Options" about="aspectRatio sets the shape of the picture; showLabels false hides the before/after labels.">
           <k-reveal [before]="before" [after]="after" aspectRatio="16/9" [showLabels]="false" ariaLabel="Wide, unlabelled" />
@@ -865,6 +1582,17 @@
             <k-person name="Shop" shape="square" size="lg" [image]="avatar" imageAlt="Shop logo" />
             <k-person name="Bare" bare />
           </div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Choosing a master: people as radio cards with their rating, and initialsText for the 'any master' choice.">
+          <div class="ic-crew" role="radiogroup" aria-label="Master">
+            @for (m of crew; track m.name) {
+              <button type="button" role="radio" class="ic-crew-item" [attr.aria-checked]="crewPick() === m.name" (click)="crewPick.set(m.name)">
+                <k-person [name]="m.name" [meta]="m.meta" [initialsText]="m.score ? '' : '★'" />
+                @if (m.score) { <k-stars [value]="m.score" [label]="m.score + ' out of 5'" [size]="12" /> }
+              </button>
+            }
+          </div>
+          <div class="row"><k-button [label]="'Continue with ' + crewPick()" (clicked)="log.set('Master: ' + crewPick())" /></div>
         </app-doc>
         <app-doc id="person-initials" heading="Initials" about="initialsText overrides the letters drawn in the disc.">
           <k-person name="Dilnoza Karimova" initialsText="DK" meta="Master" />
@@ -880,12 +1608,34 @@
             <span><k-provider-logo provider="Payme" /> Payme</span>
           </div>
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A payment choice: the marks make each option recognisable at a glance.">
+          <div class="ic-pay">
+            <div class="ic-pay-options" role="radiogroup" aria-label="Pay with">
+              @for (p of ['Click', 'Payme']; track p) {
+                <button type="button" role="radio" class="ic-pay-item" [attr.aria-checked]="payBy() === p" (click)="payBy.set(p)">
+                  <k-provider-logo [provider]="p" /><span>{{ p }}</span>
+                  @if (p === 'Click') { <k-tag tone="done" [dot]="false">5% cashback</k-tag> }
+                </button>
+              }
+            </div>
+            <k-button fluid (clicked)="log.set('Paying 120 000 with ' + payBy())">Pay 120 000 so'm with {{ payBy() }}</k-button>
+          </div>
+        </app-doc>
       }
 
       <!-- ============================================================ Misc -->
       @case ('meter') {
         <app-doc id="meter" heading="Meter" about="Progress toward a limit.">
           <k-meter [value]="14" [max]="25" label="14 of 25" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A plan usage card: several meters, a tag for the renewal and a way up.">
+          <div class="ic-plan">
+            <div class="ic-plan-head"><b>Start plan</b><k-tag tone="warn">Renews in 4 days</k-tag></div>
+            <k-meter [value]="3" [max]="5" label="masters on the team" />
+            <k-meter [value]="22" [max]="25" label="free leads used this month" />
+            <k-meter [value]="410" [max]="500" label="SMS reminders sent" />
+            <div class="row"><k-button label="Upgrade to Pro" size="small" (clicked)="log.set('Upgrade')" /></div>
+          </div>
         </app-doc>
         <app-doc id="meter-ticks" heading="Ticks only" about="showFigure false hides the big number; the value is still read aloud.">
           <k-meter [value]="14" [max]="25" label="14 of 25" [showFigure]="false" />
@@ -898,6 +1648,21 @@
         <app-doc id="basic" heading="Basic" about="A read-only score.">
           <k-stars [value]="4" label="4 out of 5" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="Reviews on a master's page: a larger average on top, then one score per review.">
+          <div class="ic-reviews">
+            <div class="ic-reviews-sum">
+              <b>{{ reviewAverage.toFixed(1) }}</b>
+              <k-stars [value]="reviewAverage" [label]="reviewAverage.toFixed(1) + ' out of 5'" [size]="20" />
+              <span class="muted">{{ reviews.length }} reviews</span>
+            </div>
+            @for (r of reviews; track r.name) {
+              <div class="ic-reviews-item">
+                <div class="ic-reviews-top"><k-person [name]="r.name" [meta]="r.when" size="sm" /><k-stars [value]="r.score" [label]="r.score + ' out of 5'" /></div>
+                <p>{{ r.text }}</p>
+              </div>
+            }
+          </div>
+        </app-doc>
         <app-doc id="stars-options" heading="Options" about="max sets the number of stars; size sets their pixel size.">
           <k-stars [value]="7" [max]="10" [size]="24" label="7 out of 10" />
         </app-doc>
@@ -909,6 +1674,28 @@
         <app-doc id="basic" heading="Basic" about="Where the user is in a flow.">
           <k-steps [steps]="['Service', 'Time', 'Details', 'Done']" [current]="2" ariaLabel="Booking progress" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A small booking wizard: the steps follow along while each page asks one thing.">
+          <div class="ic-wizard">
+            <k-steps [steps]="['Service', 'Time', 'Details', 'Done']" [current]="wizardStep()" ariaLabel="Booking progress" />
+            @if (wizardStep() === 1) {
+              <k-words [options]="[{ value: 'cut', label: 'Haircut' }, { value: 'beard', label: 'Beard' }, { value: 'both', label: 'Both' }]" [(value)]="wizardService" ariaLabel="Service" />
+            } @else if (wizardStep() === 2) {
+              <k-slots [slots]="wizardSlots" [(value)]="wizardTime" ariaLabel="Time" />
+            } @else if (wizardStep() === 3) {
+              <k-field [(value)]="wizardName" label="Your name" autocomplete="name" />
+            } @else {
+              <k-banner tone="ok" icon="✓">See you at {{ wizardTime() }}, {{ wizardName() }}. Aziz is expecting you.</k-banner>
+            }
+            <div class="row">
+              @if (wizardStep() > 1 && wizardStep() < 4) { <k-button label="Back" severity="secondary" outlined (clicked)="wizardStep.set(wizardStep() - 1)" /> }
+              @if (wizardStep() < 4) {
+                <k-button [label]="wizardStep() === 3 ? 'Book' : 'Next'" [disabled]="!wizardReady()" (clicked)="wizardStep.set(wizardStep() + 1)" />
+              } @else {
+                <k-button label="Book another" severity="secondary" (clicked)="wizardStep.set(1); wizardTime.set('')" />
+              }
+            </div>
+          </div>
+        </app-doc>
         <app-doc id="steps-custom" heading="Customizing" about="--steps-ink, --steps-ink-current, --steps-font-size, --steps-font-size-current, --steps-line, --steps-bead and --steps-bead-size.">
           <k-steps style="--steps-ink-current: var(--amber); --steps-bead: var(--amber); --steps-bead-size: 12px; --steps-font-size: 13px" [steps]="['Service', 'Time', 'Details', 'Done']" [current]="2" ariaLabel="Booking progress" />
         </app-doc>
@@ -916,6 +1703,16 @@
       @case ('wait') {
         <app-doc id="wait" heading="Wait" about="A spinner with a label for screen readers.">
           <k-wait label="Loading visits" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A sync panel: the word shows it is busy while a wait line takes the place of the status.">
+          <div class="ic-sync">
+            <k-heading title="Telegram bot" [level]="4" [rule]="false"><button k-word action [busy]="syncing()" (click)="sync()">Sync now</button></k-heading>
+            @if (syncing()) {
+              <k-wait label="Pulling new bookings from Telegram" />
+            } @else {
+              <p class="ic-sync-line"><k-tag tone="done">Connected</k-tag> Last sync at {{ syncedAt() }} · 3 new bookings</p>
+            }
+          </div>
         </app-doc>
         <app-doc id="wait-custom" heading="Customizing" about="--wait-ink, --wait-font-size, --wait-line, --wait-line-height and --wait-duration.">
           <k-wait style="--wait-ink: var(--amber); --wait-font-size: 16px; --wait-line: var(--amber); --wait-line-height: 4px; --wait-duration: 3s" label="Loading slowly" />
@@ -927,6 +1724,22 @@
           <k-skeleton shape="card" ariaLabel="Loading card" />
           <k-skeleton shape="line" width="60%" ariaLabel="Loading line" />
         </app-doc>
+        <app-doc id="in-context" heading="In context" about="A master's card that reloads: a row skeleton stands in for the person, text-only rows for the prices.">
+          <div class="ic-master">
+            @if (cardLoading()) {
+              <k-skeleton [rows]="1" [lines]="2" ariaLabel="Loading master" />
+              <k-skeleton [rows]="3" [avatar]="false" [lines]="1" ariaLabel="Loading prices" />
+            } @else {
+              <k-person name="Dilnoza Karimova" meta="Stylist · Chilonzor" size="lg" />
+              <k-rows>
+                <k-row label="Women's haircut">120 000 so'm</k-row>
+                <k-row label="Colour">from 250 000 so'm</k-row>
+                <k-row label="Styling">70 000 so'm</k-row>
+              </k-rows>
+            }
+            <div class="row"><k-button label="Reload" size="small" severity="secondary" [disabled]="cardLoading()" (clicked)="reloadCard()" /></div>
+          </div>
+        </app-doc>
         <app-doc id="skeleton-options" heading="Rows options" about="avatar false drops the disc; lines sets the lines per row.">
           <k-skeleton [rows]="2" [avatar]="false" [lines]="3" ariaLabel="Loading text rows" />
         </app-doc>
@@ -934,6 +1747,19 @@
       @case ('quiet') {
         <app-doc id="basic" heading="Basic" about="An empty state with a title and a hint.">
           <k-quiet title="No visits yet" hint="Book the first one and it shows up here." />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="An empty tab: the quiet state explains it and its projected button leads somewhere useful.">
+          <div class="ic-inbox">
+            <k-words [options]="inboxTabs" [(value)]="inboxTab" tabs ariaLabel="Visits" />
+            @if (inboxTab() === 'upcoming') {
+              <k-person name="Dilnoza Karimova" meta="Tomorrow 10:00 · Haircut" />
+              <k-person name="Aziz Rahimov" meta="Friday 11:30 · Beard trim" />
+            } @else {
+              <k-quiet title="No cancelled visits" hint="Every client this month came as booked.">
+                <button k-word (click)="inboxTab.set('upcoming')">See upcoming</button>
+              </k-quiet>
+            }
+          </div>
         </app-doc>
         <app-doc id="quiet-custom" heading="Customizing" about="--quiet-padding, --quiet-title-size and --quiet-hint-width.">
           <k-quiet style="--quiet-padding: 8px 0; --quiet-title-size: 16px; --quiet-hint-width: 16rem" title="No visits yet" hint="Book the first one and it shows up here." />
@@ -943,6 +1769,20 @@
         <app-doc id="copy" heading="Copy link" about="A copy button that confirms when the text is on the clipboard.">
           <div class="row"><span>kometa.uz/b/dilnoza</span>
             <k-link text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy booking link" /></div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Sharing a booking page: the copy button turns off with online booking.">
+          <div class="ic-share">
+            <k-person name="Aziz Rahimov" meta="Your booking page" />
+            <div class="ic-share-url">
+              <span [class.muted]="!bookingOpen()">kometa.uz/b/aziz</span>
+              <k-link text="https://kometa.uz/b/aziz" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy booking link" [disabled]="!bookingOpen()" />
+            </div>
+            <div class="ic-share-row">
+              <span>Online booking</span>
+              <k-toggle [(checked)]="bookingOpen" ariaLabel="Online booking" onLabel="On" offLabel="Off" />
+            </div>
+            <k-tag [tone]="bookingOpen() ? 'done' : 'wait'">{{ bookingOpen() ? 'Clients can book' : 'Link paused' }}</k-tag>
+          </div>
         </app-doc>
         <app-doc id="copy-options" heading="Options" about="copiedMs sets how long the confirmation shows; disabled greys the button out.">
           <div class="row">
@@ -955,6 +1795,13 @@
             <k-link style="--link-color: var(--amber)" text="https://kometa.uz/b/dilnoza" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy tinted" /></div>
         </app-doc>
       }
+    }
+
+    @if (screenUses[current().id]; as uses) {
+      <section class="built-with" aria-label="Built with">
+        <h2>Built with {{ uses.length }} components</h2>
+        <div class="uses">@for (u of uses; track u) { <a [href]="'#' + u">{{ labelOf(u) }}</a> }</div>
+      </section>
     }
 
     @if (api().length) {
@@ -990,6 +1837,26 @@
     </ul>
   </aside>
 </div>
+}
+
+<dialog #palette class="palette" aria-label="Search the docs" (click)="$event.target === palette && palette.close()">
+  <div class="palette-box">
+    <input type="search" class="palette-q" placeholder="Jump to a component, guide or screen" aria-label="Search"
+           autofocus [value]="q()" (input)="q.set($any($event.target).value); hit.set(0)" (keydown)="paletteKey($event)" />
+    <ul class="palette-list" role="listbox" aria-label="Results">
+      @for (r of results(); track r.id; let i = $index) {
+        <li role="option" [attr.aria-selected]="i === hit()" (mouseenter)="hit.set(i)" (click)="go(r.id)">
+          <span class="palette-group">{{ r.group }}</span><b>{{ r.label }}</b><span class="palette-about">{{ r.about }}</span>
+        </li>
+      } @empty {
+        <li class="palette-none">Nothing matches “{{ q() }}”.</li>
+      }
+    </ul>
+    <p class="palette-foot"><kbd>↑</kbd><kbd>↓</kbd> move <kbd>Enter</kbd> open <kbd>Esc</kbd> close</p>
+  </div>
+</dialog>
+
+<p class="ticker" aria-live="polite"><span class="ticker-dot" aria-hidden="true"></span>{{ log() }}</p>
 
 <k-toast [items]="toasts()" (dismiss)="dismissToast($event)" />
 <k-tray />

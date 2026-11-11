@@ -1,4 +1,4 @@
-import { Component, HostListener, Type, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, Type, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip,
@@ -7,12 +7,18 @@ import {
   KometaLink, KometaMarkDay, KometaMarks, KometaMenu, KometaMeter, KometaMulti, KometaNote, KometaNotes, KometaNumber,
   KometaPager, KometaPair, KometaPerson, KometaPhoto, KometaPhotos, KometaPicker, KometaPop, KometaQuiet, KometaRating,
   KometaReveal, KometaRow, KometaRows, KometaSearch, KometaSelect, KometaShare, KometaShareSegment, KometaSkeleton,
-  KometaSlot, KometaSlots, KometaSort, KometaSortHeader, KometaSortOption, KometaSplit, KometaStars, KometaStep,
-  KometaStepper, KometaSteps, KometaSuggest, KometaSuggestion, KometaTab, KometaTabbar, KometaTable, KometaTag, KometaTick,
+  KometaSlot, KometaSlots, KometaSort, KometaSortHeader, KometaSortOption, KometaSplit, KometaSplitSide, KometaStars, KometaStep,
+  KometaStepper, KometaSteps, KometaSuggest, KometaSuggestion, KometaTab, KometaTabbar, KometaTable, KometaTag, KometaTagTone, KometaTick,
   KometaTime, KometaTip, KometaToast, KometaToastItem, KometaToggle, KometaTrail, KometaTray, KometaUpload, KometaWait,
   KometaWord, KometaWordOption, KometaWords, ProviderLogo, ThemePreference, ThemeService, dateAt,
 } from 'kometa-ui';
 import { DocSection, Docs } from './docs';
+import { Home } from './home/home';
+import { BookingScreen, USES as bookingUses } from './screens/booking/booking';
+import { ClientsScreen, USES as clientsUses } from './screens/clients/clients';
+import { DashboardScreen, USES as dashboardUses } from './screens/dashboard/dashboard';
+import { SettingsScreen, USES as settingsUses } from './screens/settings/settings';
+import { SCREEN_FILES } from './screens/sources';
 
 /** The part of Angular's compiled component metadata the API tables read. */
 interface ApiDef { inputs: Record<string, unknown>; outputs: Record<string, string>; selectors: string[][] }
@@ -27,7 +33,7 @@ function picture(from: string, to: string, text: string): string {
 
 @Component({
   imports: [
-    DocSection, FormsModule,
+    BookingScreen, ClientsScreen, DashboardScreen, DocSection, FormsModule, Home, SettingsScreen,
     KometaAccordion, KometaAccordionItem, KometaActions, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
     KometaConfirm, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField, KometaFilm, KometaFold, KometaFoldBody,
     KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint, KometaLink, KometaMarks, KometaMenu, KometaMeter,
@@ -48,9 +54,18 @@ export class App {
 
   // Showcase navigation: one component page at a time, kept in the URL hash so reload and back work.
   protected readonly nav: { label: string; items: { id: string; label: string; about: string }[] }[] = [
+    { label: 'Overview', items: [
+      { id: 'home', label: 'Welcome', about: 'Kometa UI for Angular.' },
+    ] },
     { label: 'Guides', items: [
       { id: 'start', label: 'Getting started', about: 'Install the kit, load its styles and use your first component.' },
       { id: 'theming', label: 'Theming', about: 'Colours and type are CSS custom properties: override them anywhere.' },
+    ] },
+    { label: 'Screens', items: [
+      { id: 'booking', label: 'Booking flow', about: 'A client books a haircut on a phone: service, day, time, details, done.' },
+      { id: 'dashboard', label: 'Shop dashboard', about: "The owner's day at a glance: takings, load, ratings and today's visits." },
+      { id: 'clients', label: 'Clients', about: 'Search, filter, select and open a client: the CRM corner of the console.' },
+      { id: 'settings', label: 'Shop settings', about: 'Profile, hours, payments and team: long forms that stay calm.' },
     ] },
     { label: 'Form', items: [
       { id: 'field', label: 'Field', about: 'Labelled text input with error, count and sizes.' },
@@ -156,6 +171,21 @@ export class App {
     wait: { KometaWait }, skeleton: { KometaSkeleton }, quiet: { KometaQuiet }, link: { KometaLink },
   };
   private readonly pages = this.nav.flatMap((g) => g.items);
+  protected readonly screens = this.nav.find((g) => g.label === 'Screens')!.items;
+  protected readonly screenFiles = SCREEN_FILES;
+  /** Each screen's parts, as docs pages, for its "Built with" list. */
+  protected readonly screenUses: Record<string, string[]> = {
+    booking: bookingUses, dashboard: dashboardUses, clients: clientsUses, settings: settingsUses,
+  };
+  protected readonly componentCount = Object.keys(this.apis).length;
+  /** The welcome page fills the window; screens drop the page outline to get the width. */
+  protected readonly layout = computed(() => {
+    const id = this.current().id;
+    return id === 'home' ? 'home' : id in this.screenUses ? 'wide' : 'docs';
+  });
+  protected labelOf(id: string): string {
+    return this.pages.find((p) => p.id === id)?.label ?? id;
+  }
   private readonly hash = signal(location.hash.slice(1));
   protected readonly current = computed(() => this.pages.find((p) => p.id === this.hash().split('/')[0]) ?? this.pages[0]);
   protected readonly prev = computed(() => this.pages[this.pages.indexOf(this.current()) - 1]);
@@ -223,6 +253,49 @@ export const appConfig: ApplicationConfig = {
     }));
   }
 
+  // Command palette: Ctrl+K or / opens it, arrows move, Enter goes.
+  private readonly palette = viewChild<ElementRef<HTMLDialogElement>>('palette');
+  protected readonly q = signal('');
+  protected readonly hit = signal(0);
+  protected readonly results = computed(() => {
+    const q = this.q().trim().toLowerCase();
+    return this.nav.flatMap((g) => g.items.map((p) => ({ ...p, group: g.label })))
+      .filter((p) => !q || `${p.label} ${p.about} ${p.group}`.toLowerCase().includes(q)).slice(0, 12);
+  });
+
+  @HostListener('document:keydown', ['$event'])
+  protected shortcut(e: KeyboardEvent): void {
+    const typing = (e.target as HTMLElement).closest?.('input, textarea, [contenteditable]');
+    if ((e.key === 'k' && (e.ctrlKey || e.metaKey)) || (e.key === '/' && !typing)) {
+      e.preventDefault();
+      this.openPalette();
+    }
+  }
+
+  protected openPalette(): void {
+    this.q.set('');
+    this.hit.set(0);
+    const d = this.palette()?.nativeElement;
+    if (!d || d.open) return;
+    d.showModal();
+    d.querySelector('input')?.focus();
+  }
+
+  protected paletteKey(e: KeyboardEvent): void {
+    const n = this.results().length;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      this.hit.set((this.hit() + (e.key === 'ArrowDown' ? 1 : n - 1)) % Math.max(n, 1));
+    } else if (e.key === 'Enter' && n) {
+      this.go(this.results()[this.hit()].id);
+    }
+  }
+
+  protected go(id: string): void {
+    this.palette()?.nativeElement.close();
+    location.hash = id;
+  }
+
   @HostListener('window:scroll')
   protected spy(): void {
     const passed = this.docs.sections().filter((s) => s.el.getBoundingClientRect().top < 120);
@@ -230,65 +303,116 @@ export const appConfig: ApplicationConfig = {
   }
 
   // Actions
+  // #region button/severity
   protected readonly clicks = signal(0);
+  // #endregion
   protected readonly log = signal('Nothing yet.');
+  // #region actions/basic
   protected readonly actions: KometaAction[] = [
     { label: 'Edit', run: () => this.log.set('Edit chosen') },
     { label: 'Export', badge: 'PRO', run: () => this.log.set('Export chosen') },
     { label: 'Archive', disabled: true, run: () => {} },
     { label: 'Cancel visit', danger: true, run: () => this.log.set('Cancel chosen') },
   ];
+  // #endregion
+  // #region confirm/basic
   protected readonly asking = signal(false);
+  // #endregion
+  // #region pair/basic
   protected readonly pairBusy = signal(false);
+  // #endregion
 
   // Status
   protected readonly tones = ['now', 'wait', 'book', 'done', 'warn', 'error'] as const;
   protected readonly banners = ['info', 'ok', 'warn', 'error'] as const;
+  // #region toast/kinds
   protected readonly toasts = signal<KometaToastItem[]>([]);
   private toastId = 0;
+  // #endregion
   protected readonly cWide = signal(false);
   protected readonly cTopToasts = signal<KometaToastItem[]>([]);
 
   // Form controls
+  // #region field/basic
   protected readonly name = signal('Dilnoza');
+  // #endregion
+  // #region field/invalid
   protected readonly email = signal('');
+  // #endregion
+  // #region code/basic
   protected readonly code = signal('');
+  // #endregion
+  // #region digits/basic
   protected readonly digits = signal('');
+  // #endregion
+  // #region notes/basic
   protected readonly notes = signal('');
+  // #endregion
+  // #region search/basic
   protected readonly search = signal('');
+  // #endregion
+  // #region number/money
   protected readonly amount = signal<number | null>(150000);
+  // #endregion
+  // #region stepper/basic
   protected readonly seats = signal(2);
+  // #endregion
+  // #region toggle/basic
   protected readonly on = signal(true);
+  // #endregion
+  // #region chip/basic
   protected readonly chip = signal(false);
+  // #endregion
+  // #region check/basic
   protected readonly checked = signal(true);
+  // #endregion
+  // #region tick/basic
   protected readonly ticked = signal(false);
+  // #endregion
+  // #region rating/basic
   protected readonly rating = signal(4);
+  // #endregion
+  // #region select/basic
   protected readonly city = signal<string | null>('tas');
   protected readonly cities = [
     { label: 'Tashkent', value: 'tas' }, { label: 'Samarkand', value: 'skd' }, { label: 'Bukhara', value: 'bhk' },
     { label: 'Khiva', value: 'khv' },
   ];
+  // #endregion
+  // #region multi/basic
   protected readonly services = signal<string[]>(['cut']);
   protected readonly serviceOptions = [
     { label: 'Haircut', value: 'cut', dot: 'var(--amber)' }, { label: 'Beard', value: 'beard', dot: 'var(--green)' },
     { label: 'Colour', value: 'colour', dot: 'var(--violet)' },
   ];
+  // #endregion
+  // #region words/basic
   protected readonly view = signal('day');
   protected readonly words: KometaWordOption[] = [
     { value: 'day', label: 'Day' }, { value: 'week', label: 'Week', count: 12 }, { value: 'month', label: 'Month', count: 3, hot: true },
   ];
+  // #endregion
+  // #region suggest/basic
   protected readonly client = signal('');
   protected readonly suggestions = signal<KometaSuggestion[]>([]);
   private readonly people: KometaSuggestion[] = [
     { label: 'Aziz Karimov', meta: '+998 90 123 45 67' }, { label: 'Aziza Rahimova', meta: '+998 91 765 43 21' },
     { label: 'Bekzod Aliyev', meta: '+998 93 555 00 11' },
   ];
+  // #endregion
   protected readonly picked = signal('Nothing picked.');
 
   // Date and time
+  // #region date/basic
   protected readonly day = signal<Date | null>(new Date());
+  // #endregion
+  // #region date/range
   protected readonly period = signal<(Date | null)[] | null>(null);
+  // #endregion
+  // #region time/basic
   protected readonly time = signal<Date | null>(dateAt(14, 30));
+  // #endregion
+  // #region film/basic
   protected readonly film: KometaFilmDay[] = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
@@ -298,20 +422,30 @@ export const appConfig: ApplicationConfig = {
     };
   });
   protected readonly filmDay = signal(this.film[0].value);
+  // #endregion
+  // #region slots/basic
   protected readonly slots: KometaSlot[] = [
     { value: '09:00', label: '09:00' }, { value: '09:30', label: '09:30', disabled: true }, { value: '10:00', label: '10:00' },
     { value: '10:30', label: '10:30', note: 'last' }, { value: '11:00', label: '11:00' },
   ];
   protected readonly slot = signal('');
+  // #endregion
+  // #region marks/basic
   protected readonly marks: KometaMarkDay[] = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((label, i) => ({ label, mark: i % 2 ? null : '●' }));
+  // #endregion
 
   // Navigation
+  // #region tabbar/basic
   protected readonly tab = signal('a');
   protected readonly tabs: KometaTab[] = [{ value: 'a', label: 'First', icon: '' }, { value: 'b', label: 'Second', icon: '' }];
+  // #endregion
+  // #region pager/basic
   protected readonly page = signal(1);
   protected readonly pageSize = signal(10);
+  // #endregion
 
   // Data
+  // #region sort/basic
   protected readonly sortOptions: KometaSortOption[] = [{ value: 'name', label: 'Name' }, { value: 'price', label: 'Price' }];
   protected readonly sortKey = signal('name');
   protected readonly sortDir = signal<'asc' | 'desc'>('asc');
@@ -324,33 +458,45 @@ export const appConfig: ApplicationConfig = {
     const s = [...this.rowsData].sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0));
     return this.sortDir() === 'asc' ? s : s.reverse();
   });
+  // #endregion
+  // #region share/basic
   protected readonly share: KometaShareSegment[] = [
     { label: 'Haircut', value: 6200000, text: "6 200 000 so'm", color: 'var(--viz-1, var(--amber))' },
     { label: 'Colour', value: 3100000, text: "3 100 000 so'm", color: 'var(--viz-2, var(--green))' },
     { label: 'Beard', value: 900000, text: "900 000 so'm", color: 'var(--viz-3, var(--violet))' },
   ];
+  // #endregion
 
   // Overlays
+  // #region drawer/basic
   protected readonly drawer = signal(false);
   protected readonly sheet = signal(false);
+  // #endregion
+  // #region photos/gallery
   protected readonly photosOpen = signal(false);
   protected readonly photoIndex = signal(0);
   protected readonly photos: KometaPhoto[] = [
     ['#7a4b00', '#ffbf00', '1'], ['#0b3d2e', '#2ecc71', '2'], ['#2d1b4e', '#9b59b6', '3'],
   ].map(([a, b, t]) => ({ url: picture(a, b, `Photo ${t}`), thumbUrl: picture(a, b, t), alt: `Photo ${t}` }));
+  // #endregion
   protected readonly before = picture('#333', '#777', '');
   protected readonly after = picture('#7a4b00', '#ffbf00', '');
   protected readonly frame = picture('#0b3d2e', '#2ecc71', 'Frame');
   protected readonly avatar = picture('#2d1b4e', '#9b59b6', 'A');
 
   // Disclosure
+  // #region fold/fold
   protected readonly fold = signal(false);
+  // #endregion
+  // #region fold/parts
   protected readonly bare = signal(false);
+  // #endregion
 
   protected setTheme(next: ThemePreference): void {
     this.theme.set(next);
   }
 
+  // #region toast/kinds
   protected toast(kind: KometaToastItem['kind']): void {
     const item = { id: ++this.toastId, kind, text: `A ${kind} message.`, life: 4000 };
     this.toasts.update((t) => [...t, item]);
@@ -359,7 +505,9 @@ export const appConfig: ApplicationConfig = {
   protected dismissToast(id: number): void {
     this.toasts.update((t) => t.filter((x) => x.id !== id));
   }
+  // #endregion
 
+  // #region tray/basic
   protected ask(danger: boolean): void {
     this.confirmations.confirm({
       header: danger ? 'Delete service?' : 'Leave without saving?',
@@ -371,7 +519,9 @@ export const appConfig: ApplicationConfig = {
       reject: () => this.log.set('Tray: rejected'),
     });
   }
+  // #endregion
 
+  // #region pair/basic
   protected confirmPair(): void {
     this.pairBusy.set(true);
     setTimeout(() => {
@@ -379,12 +529,16 @@ export const appConfig: ApplicationConfig = {
       this.log.set('Pair: confirmed');
     }, 1200);
   }
+  // #endregion
 
+  // #region suggest/basic
   protected query(q: string): void {
     const s = q.toLowerCase();
     this.suggestions.set(this.people.filter((p) => p.label.toLowerCase().includes(s)));
   }
+  // #endregion
 
+  // #region sort/basic
   protected sortBy(key: string): void {
     if (key === this.sortKey()) this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
     else {
@@ -392,13 +546,730 @@ export const appConfig: ApplicationConfig = {
       this.sortDir.set('asc');
     }
   }
+  // #endregion
 
+  // #region photos/gallery
   protected openPhoto(i: number): void {
     this.photoIndex.set(i);
     this.photosOpen.set(true);
   }
+  // #endregion
 
   protected filesPicked(files: File[]): void {
     this.picked.set(files.map((f) => f.name).join(', ') || 'Nothing picked.');
   }
+
+  // ---------------- In context examples
+
+  // #region field/in-context
+  protected readonly signupName = signal('');
+  protected readonly signupPhone = signal('');
+  protected readonly signupTerms = signal(false);
+  protected readonly signupTried = signal(false);
+  protected readonly signupBusy = signal(false);
+  protected readonly signupValid = computed(() =>
+    this.signupName().trim().length > 1 && this.signupPhone().length === 9 && this.signupTerms());
+
+  protected signUp(): void {
+    this.signupTried.set(true);
+    if (!this.signupValid()) return;
+    this.signupBusy.set(true);
+    setTimeout(() => {
+      this.signupBusy.set(false);
+      this.log.set(`Account created for ${this.signupName()}`);
+    }, 900);
+  }
+  // #endregion
+
+  // #region search/in-context
+  protected readonly lookupQ = signal('');
+  private readonly lookupClients: { name: string; phone: string; tag: string; tone: KometaTagTone }[] = [
+    { name: 'Dilnoza Karimova', phone: '+998 90 123 45 67', tag: 'Regular', tone: 'done' },
+    { name: 'Aziz Rahimov', phone: '+998 91 555 20 10', tag: 'New', tone: 'book' },
+    { name: 'Malika Yusupova', phone: '+998 93 410 77 02', tag: 'VIP', tone: 'now' },
+    { name: 'Sardor Tursunov', phone: '+998 97 300 11 45', tag: '2 no-shows', tone: 'warn' },
+  ];
+  protected readonly lookupHits = computed(() => {
+    const q = this.lookupQ().toLowerCase().replace(/\s/g, '');
+    return this.lookupClients.filter((c) => (c.name + c.phone).toLowerCase().replace(/\s/g, '').includes(q));
+  });
+  // #endregion
+
+  // #region notes/in-context
+  protected readonly memo = signal('');
+  protected readonly memoPhrases = ['Short on the sides', 'Keep the length', 'Beard trim too', 'A quiet visit, please'];
+
+  protected togglePhrase(phrase: string, on: boolean): void {
+    const rest = this.memo().split('. ').filter((s) => s && s !== phrase);
+    this.memo.set((on ? [...rest, phrase] : rest).join('. '));
+  }
+  // #endregion
+
+  // #region code/in-context
+  protected readonly otp = signal('');
+  // #endregion
+
+  // #region digits/in-context
+  protected readonly callPhone = signal('');
+  protected readonly callAsked = signal(false);
+  // #endregion
+
+  // #region number/in-context
+  protected readonly priceList = signal<{ name: string; minutes: number; price: number | null }[]>([
+    { name: 'Haircut', minutes: 40, price: 80000 },
+    { name: 'Beard trim', minutes: 20, price: 40000 },
+    { name: 'Haircut and beard', minutes: 60, price: 110000 },
+    { name: 'Kids haircut', minutes: 30, price: 60000 },
+  ]);
+  protected readonly priceAverage = computed(() =>
+    Math.round(this.priceList().reduce((sum, s) => sum + (s.price ?? 0), 0) / this.priceList().length));
+
+  protected setPrice(i: number, price: number | null): void {
+    this.priceList.update((list) => list.map((s, j) => (j === i ? { ...s, price } : s)));
+  }
+  // #endregion
+
+  // #region stepper/in-context
+  protected readonly groupSize = signal(3);
+  protected readonly groupChairs = 6;
+  protected readonly groupPrice = computed(() => this.groupSize() * 80000);
+  // #endregion
+
+  // #region select/in-context
+  protected readonly teamBranch = signal('chilonzor');
+  protected readonly teamRole = signal('any');
+  protected readonly teamBranches = [
+    { label: 'Chilonzor', value: 'chilonzor' }, { label: 'Yunusobod', value: 'yunusobod' }, { label: 'Mirzo Ulugbek', value: 'mirzo' },
+  ];
+  protected readonly teamRoles = [{ label: 'Anyone', value: 'any' }, { label: 'Barber', value: 'Barber' }, { label: 'Stylist', value: 'Stylist' }];
+  private readonly team = [
+    { name: 'Aziz Rahimov', role: 'Barber', branch: 'chilonzor' },
+    { name: 'Dilnoza Karimova', role: 'Stylist', branch: 'chilonzor' },
+    { name: 'Malika Yusupova', role: 'Stylist', branch: 'yunusobod' },
+    { name: 'Jasur Nazarov', role: 'Barber', branch: 'yunusobod' },
+    { name: 'Bekzod Aliyev', role: 'Barber', branch: 'mirzo' },
+  ];
+  protected readonly teamShown = computed(() =>
+    this.team.filter((m) => m.branch === this.teamBranch() && (this.teamRole() === 'any' || m.role === this.teamRole())));
+  // #endregion
+
+  // #region multi/in-context
+  protected readonly orderServices = signal<string[]>(['cut']);
+  protected readonly orderOptions = [
+    { label: 'Haircut', value: 'cut', dot: 'var(--amber)', price: 80000, minutes: 40 },
+    { label: 'Beard trim', value: 'beard', dot: 'var(--green)', price: 40000, minutes: 20 },
+    { label: 'Hair wash', value: 'wash', dot: 'var(--blue)', price: 20000, minutes: 10 },
+    { label: 'Colour', value: 'colour', dot: 'var(--violet)', price: 250000, minutes: 90 },
+  ];
+  protected readonly orderTotal = computed(() => {
+    const picked = this.orderOptions.filter((o) => this.orderServices().includes(o.value));
+    return { price: picked.reduce((s, o) => s + o.price, 0), minutes: picked.reduce((s, o) => s + o.minutes, 0) };
+  });
+  // #endregion
+
+  // #region menu/in-context
+  protected readonly agendaView = signal('day');
+  protected readonly agendaViews: KometaWordOption[] = [
+    { value: 'day', label: 'Today', count: 4 }, { value: 'week', label: 'This week', count: 42 },
+  ];
+  protected readonly agendaSlots: KometaSlot[] = [
+    { value: '10:00', label: '10:00', disabled: true }, { value: '11:30', label: '11:30' },
+    { value: '13:00', label: '13:00', disabled: true }, { value: '15:30', label: '15:30', note: 'last' },
+  ];
+  protected readonly agendaWeek: KometaMarkDay[] = [
+    { label: 'Mon', mark: '6' }, { label: 'Tue', mark: '5' }, { label: 'Wed', mark: '7' }, { label: 'Thu', mark: '4' },
+    { label: 'Fri', mark: '9' }, { label: 'Sat', mark: '11' }, { label: 'Sun', mark: null },
+  ];
+  // #endregion
+
+  // #region suggest/in-context
+  protected readonly visitClient = signal('');
+  protected readonly visitHits = signal<KometaSuggestion[]>([]);
+  protected readonly visitPicked = signal<KometaSuggestion | null>(null);
+  private readonly visitBook: KometaSuggestion<string>[] = [
+    { label: 'Dilnoza Karimova', meta: '+998 90 123 45 67', data: '14 visits, last 2 weeks ago' },
+    { label: 'Dilshod Ergashev', meta: '+998 94 222 81 30', data: '2 visits, last in March' },
+    { label: 'Aziz Rahimov', meta: '+998 91 555 20 10', data: '6 visits, last yesterday' },
+  ];
+
+  protected findClient(q: string): void {
+    const s = q.toLowerCase().replace(/\s/g, '');
+    this.visitHits.set(this.visitBook.filter((c) => (c.label + c.meta).toLowerCase().replace(/\s/g, '').includes(s)));
+  }
+  // #endregion
+
+  // #region toggle/in-context
+  protected readonly alertSms = signal(true);
+  protected readonly alertTelegram = signal(true);
+  protected readonly alertBooking = signal(true);
+  protected readonly alertReport = signal(false);
+  // #endregion
+
+  // #region check/in-context
+  protected readonly prep = signal([
+    { text: 'Patch test done 48 hours ago', done: true, required: true },
+    { text: "Client agreed to the price, 250 000 so'm", done: false, required: true },
+    { text: 'Before photo taken', done: false, required: false },
+  ]);
+  protected readonly prepDone = computed(() => this.prep().filter((p) => p.done).length);
+  protected readonly prepReady = computed(() => this.prep().every((p) => p.done || !p.required));
+
+  protected setPrep(i: number, done: boolean): void {
+    this.prep.update((list) => list.map((p, j) => (j === i ? { ...p, done } : p)));
+  }
+  // #endregion
+
+  // #region tick/in-context
+  protected readonly remindList = [
+    { name: 'Dilnoza Karimova', meta: 'Haircut · tomorrow 10:00' },
+    { name: 'Aziz Rahimov', meta: 'Beard trim · tomorrow 11:30' },
+    { name: 'Malika Yusupova', meta: 'Colour · tomorrow 14:00' },
+    { name: 'Sardor Tursunov', meta: 'Haircut · tomorrow 17:30' },
+  ];
+  protected readonly remindPicked = signal<string[]>([]);
+  protected readonly remindAll = computed(() => this.remindPicked().length === this.remindList.length);
+
+  protected pickRemind(name: string, on: boolean): void {
+    this.remindPicked.update((p) => (on ? [...p, name] : p.filter((n) => n !== name)));
+  }
+
+  protected pickAllRemind(on: boolean): void {
+    this.remindPicked.set(on ? this.remindList.map((r) => r.name) : []);
+  }
+  // #endregion
+
+  // #region chip/in-context
+  protected readonly findOpen = signal(false);
+  protected readonly findTop = signal(false);
+  protected readonly findBeard = signal(false);
+  private readonly findMasters = [
+    { name: 'Aziz Rahimov', meta: 'Barber · Chilonzor', score: 4.9, open: true, beard: true },
+    { name: 'Dilnoza Karimova', meta: 'Stylist · Chilonzor', score: 4.7, open: false, beard: false },
+    { name: 'Jasur Nazarov', meta: 'Barber · Yunusobod', score: 4.3, open: true, beard: true },
+    { name: 'Malika Yusupova', meta: 'Stylist · Yunusobod', score: 4.8, open: true, beard: false },
+  ];
+  protected readonly findCounts = {
+    open: this.findMasters.filter((m) => m.open).length,
+    top: this.findMasters.filter((m) => m.score >= 4.5).length,
+    beard: this.findMasters.filter((m) => m.beard).length,
+  };
+  protected readonly findShown = computed(() => this.findMasters.filter((m) =>
+    (!this.findOpen() || m.open) && (!this.findTop() || m.score >= 4.5) && (!this.findBeard() || m.beard)));
+  // #endregion
+
+  // #region words/in-context
+  protected readonly takingsPeriod = signal('today');
+  protected readonly takingsPeriods: KometaWordOption[] = [
+    { value: 'today', label: 'Today' }, { value: 'week', label: 'Week' }, { value: 'month', label: 'Month' },
+  ];
+  private readonly takingsData: Record<string, [KometaSplitSide, KometaSplitSide]> = {
+    today: [{ amount: '1 240 000', label: 'Cash' }, { amount: '860 000', label: 'Card' }],
+    week: [{ amount: '7 900 000', label: 'Cash' }, { amount: '5 300 000', label: 'Card' }],
+    month: [{ amount: '31 400 000', label: 'Cash' }, { amount: '24 100 000', label: 'Card' }],
+  };
+  protected readonly takings = computed(() => this.takingsData[this.takingsPeriod()]);
+  // #endregion
+
+  // #region rating/in-context
+  protected readonly reviewScore = signal(0);
+  protected readonly reviewText = signal('');
+  protected readonly reviewSent = signal(false);
+  // #endregion
+
+  // #region picker/in-context
+  protected readonly portfolio = signal<{ name: string; size: string; progress: number; state: 'running' | 'done' | 'failed' }[]>([]);
+
+  protected addToPortfolio(files: File[]): void {
+    for (const f of files) {
+      const big = f.size > 5_000_000;
+      const size = `${Math.max(1, Math.round(f.size / 1024))} KB`;
+      this.portfolio.update((list) => [...list, { name: f.name, size, progress: 0, state: big ? 'failed' : 'running' }]);
+      if (big) continue;
+      const tick = setInterval(() => this.portfolio.update((list) => list.map((u) => {
+        if (u.name !== f.name || u.state !== 'running') return u;
+        const progress = Math.min(1, u.progress + 0.2);
+        if (progress >= 1) clearInterval(tick);
+        return { ...u, progress, state: progress >= 1 ? 'done' : 'running' };
+      })), 300);
+    }
+  }
+  // #endregion
+
+  // #region date/in-context
+  protected readonly leave = signal<(Date | null)[] | null>(null);
+  protected readonly leaveNote = signal('');
+  protected readonly leaveMin = new Date();
+  protected readonly leaveDays = computed(() => {
+    const [from, to] = this.leave() ?? [];
+    return from && to ? Math.round((to.getTime() - from.getTime()) / 86_400_000) + 1 : 0;
+  });
+  // #endregion
+
+  // #region date/booking
+  protected readonly bookDay = signal<Date | null>(null);
+  protected readonly bookTime = signal('');
+  protected readonly bookMin = new Date();
+  protected readonly bookSlots = computed<KometaSlot[]>(() => {
+    const d = this.bookDay();
+    if (!d || d.getDay() === 0) return [];
+    const busy = d.getDate() % 3;
+    return ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30'].map((t, i) => ({ value: t, label: t, disabled: i % 3 === busy }));
+  });
+  // #endregion
+
+  // #region time/in-context
+  protected readonly workHours = [
+    { day: 'Mon – Fri', open: signal(true), from: signal<Date | null>(dateAt(9, 0)), to: signal<Date | null>(dateAt(20, 0)) },
+    { day: 'Saturday', open: signal(true), from: signal<Date | null>(dateAt(10, 0)), to: signal<Date | null>(dateAt(18, 0)) },
+    { day: 'Sunday', open: signal(false), from: signal<Date | null>(dateAt(10, 0)), to: signal<Date | null>(dateAt(16, 0)) },
+  ];
+  // #endregion
+
+  // #region film/in-context
+  protected readonly shiftDays: KometaFilmDay[] = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return { value: String(i), label: String(d.getDate()), sub: d.toLocaleDateString('en', { weekday: 'short' }), dot: i % 2 === 0, muted: i % 2 === 1 };
+  });
+  protected readonly shiftDay = signal('0');
+  private readonly shiftPlans = [
+    [
+      { time: '10:00', who: 'Dilnoza Karimova · haircut', gap: '1 h 20 min' },
+      { time: '11:20', who: 'Aziz Rahimov · beard trim', gap: '2 h' },
+      { time: '13:20', who: 'Malika Yusupova · colour', gap: null },
+    ],
+    [
+      { time: '09:30', who: 'Sardor Tursunov · haircut', gap: '50 min' },
+      { time: '10:20', who: 'Jasur Nazarov · haircut and beard', gap: null },
+    ],
+  ];
+  protected readonly shiftVisits = computed(() => {
+    const i = Number(this.shiftDay());
+    return i % 2 ? [] : this.shiftPlans[(i / 2) % 2];
+  });
+  // #endregion
+
+  // #region slots/in-context
+  protected readonly pickDays: KometaFilmDay[] = Array.from({ length: 10 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return { value: String(i), label: String(d.getDate()), sub: d.toLocaleDateString('en', { weekday: 'short' }), muted: d.getDay() === 0 };
+  });
+  protected readonly pickDay = signal('0');
+  protected readonly pickTime = signal('');
+  protected readonly pickSlots = computed<KometaSlot[]>(() => {
+    const i = Number(this.pickDay());
+    if (this.pickDays[i].muted) return [];
+    return ['10:00', '10:45', '11:30', '13:00', '14:15', '15:00', '16:30', '18:00'].map((t, j) => ({
+      value: t, label: t, disabled: (i + j) % 3 === 0, note: j === 7 ? 'last' : undefined,
+    }));
+  });
+  // #endregion
+
+  // #region marks/in-context
+  protected readonly rota = [
+    { name: 'Aziz Rahimov', meta: 'Barber · 6 days', today: true, days: this.rotaWeek('xxxxxx-') },
+    { name: 'Dilnoza Karimova', meta: 'Stylist · 4 days', today: false, days: this.rotaWeek('x-x-xx-') },
+    { name: 'Jasur Nazarov', meta: 'Barber · part time', today: true, days: this.rotaWeek('--xxx--') },
+  ];
+
+  private rotaWeek(pattern: string): KometaMarkDay[] {
+    return ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((label, i) => ({ label, mark: pattern[i] === 'x' ? '●' : null }));
+  }
+  // #endregion
+
+  // #region button/in-context
+  protected readonly cart = signal([
+    { name: 'Haircut', price: 80000 }, { name: 'Beard trim', price: 40000 }, { name: 'Hot towel', price: 15000 },
+  ]);
+  protected readonly cartTotal = computed(() => this.cart().reduce((s, i) => s + i.price, 0));
+  protected readonly payWith = signal('click');
+  protected readonly paying = signal(false);
+  protected readonly paid = signal(false);
+
+  protected checkout(): void {
+    this.paying.set(true);
+    setTimeout(() => {
+      this.paying.set(false);
+      this.paid.set(true);
+      this.log.set(`Paid ${this.cartTotal()} so'm by ${this.payWith()}`);
+    }, 1200);
+  }
+  // #endregion
+
+  // #region word/in-context
+  protected readonly nextVisit = signal<'book' | 'now' | 'done'>('book');
+  // #endregion
+
+  // #region erase/in-context
+  protected readonly menuItems = signal([
+    { name: 'Haircut', price: "80 000 so'm" }, { name: 'Beard trim', price: "40 000 so'm" }, { name: 'Kids haircut', price: "60 000 so'm" },
+  ]);
+
+  protected removeService(name: string): void {
+    this.confirmations.confirm({
+      header: `Delete “${name}”?`,
+      message: 'Clients can no longer book it. Past visits keep their records.',
+      acceptLabel: 'Delete',
+      rejectLabel: 'Keep it',
+      acceptButtonProps: { severity: 'danger' },
+      accept: () => {
+        this.menuItems.update((list) => list.filter((s) => s.name !== name));
+        this.log.set(`${name} deleted`);
+      },
+    });
+  }
+  // #endregion
+
+  // #region actions/in-context
+  protected readonly queueWords: Record<string, string> = { book: 'Booked', wait: 'Unconfirmed', now: 'In the chair', done: 'Done', error: 'Cancelled' };
+  protected readonly queue = signal([
+    { id: 1, time: '10:00', name: 'Dilnoza Karimova', service: 'Haircut', status: 'book' as KometaTagTone },
+    { id: 2, time: '11:30', name: 'Aziz Rahimov', service: 'Beard trim', status: 'wait' as KometaTagTone },
+    { id: 3, time: '13:00', name: 'Sardor Tursunov', service: 'Haircut and beard', status: 'book' as KometaTagTone },
+  ].map((v) => ({ ...v, actions: this.queueActions(v.id) })));
+
+  private queueActions(id: number): KometaAction[] {
+    const set = (status: KometaTagTone) => () => {
+      this.queue.update((q) => q.map((v) => (v.id === id ? { ...v, status } : v)));
+      this.log.set(`Visit ${id}: ${this.queueWords[status]}`);
+    };
+    return [
+      { label: 'Start visit', run: set('now') },
+      { label: 'Mark done', run: set('done') },
+      { label: 'Send reminder', badge: 'SMS', run: () => this.log.set(`Reminder sent for visit ${id}`) },
+      { label: 'Cancel visit', danger: true, run: set('error') },
+    ];
+  }
+  // #endregion
+
+  // #region confirm/in-context
+  protected readonly debts = signal([
+    { id: 1, name: 'Aziz Rahimov', what: "Haircut · 80 000 so'm", paid: false },
+    { id: 2, name: 'Malika Yusupova', what: "Colour · 250 000 so'm", paid: false },
+    { id: 3, name: 'Sardor Tursunov', what: "Beard trim · 40 000 so'm", paid: true },
+  ]);
+  protected readonly debtAsking = signal<number | null>(null);
+
+  protected markPaid(id: number): void {
+    this.debts.update((list) => list.map((d) => (d.id === id ? { ...d, paid: true } : d)));
+    this.debtAsking.set(null);
+    this.log.set(`Visit ${id} paid in cash`);
+  }
+  // #endregion
+
+  // #region pair/in-context
+  protected readonly cancelBusy = signal(false);
+  protected readonly cancelled = signal(false);
+
+  protected cancelVisit(): void {
+    this.cancelBusy.set(true);
+    setTimeout(() => {
+      this.cancelBusy.set(false);
+      this.cancelled.set(true);
+    }, 1000);
+  }
+  // #endregion
+
+  // #region tray/in-context
+  protected readonly blocked = signal(false);
+
+  protected blockClient(): void {
+    this.confirmations.confirm({
+      header: 'Block Sardor Tursunov?',
+      message: 'He missed 3 visits. He cannot book online until you unblock him.',
+      acceptLabel: 'Block',
+      rejectLabel: 'Not now',
+      acceptButtonProps: { severity: 'danger' },
+      accept: () => this.blocked.set(true),
+    });
+  }
+  // #endregion
+
+  // #region table/in-context
+  protected readonly todayWords: Record<string, string> = { done: 'Done', now: 'In the chair', book: 'Booked', wait: 'Unconfirmed', error: 'Cancelled' };
+  protected readonly todayVisits = signal([
+    { id: 1, time: '09:30', name: 'Dilnoza Karimova', service: 'Haircut', price: 80000, status: 'done' as KometaTagTone },
+    { id: 2, time: '10:30', name: 'Aziz Rahimov', service: 'Beard trim', price: 40000, status: 'now' as KometaTagTone },
+    { id: 3, time: '12:00', name: 'Malika Yusupova', service: 'Colour', price: 250000, status: 'book' as KometaTagTone },
+    { id: 4, time: '15:30', name: 'Sardor Tursunov', service: 'Haircut and beard', price: 110000, status: 'wait' as KometaTagTone },
+  ]);
+  protected readonly todayActions = new Map(this.todayVisits().map((v): [number, KometaAction[]] => [v.id, [
+    { label: 'Mark done', run: () => this.setToday(v.id, 'done') },
+    { label: 'Call client', run: () => this.log.set(`Calling ${v.name}`) },
+    { label: 'Cancel visit', danger: true, run: () => this.setToday(v.id, 'error') },
+  ]]));
+
+  protected setToday(id: number, status: KometaTagTone): void {
+    this.todayVisits.update((list) => list.map((v) => (v.id === id ? { ...v, status } : v)));
+  }
+  // #endregion
+
+  // #region table/ledger
+  protected readonly ledger = [
+    { id: 1, master: 'Aziz Rahimov', time: '09:30', service: 'Haircut', cash: 80000, card: 0 },
+    { id: 2, master: 'Aziz Rahimov', time: '11:00', service: 'Haircut and beard', cash: 0, card: 110000 },
+    { id: 3, master: 'Dilnoza Karimova', time: '10:00', service: 'Colour', cash: 0, card: 250000 },
+    { id: 4, master: 'Dilnoza Karimova', time: '13:30', service: 'Haircut', cash: 80000, card: 0 },
+    { id: 5, master: 'Dilnoza Karimova', time: '16:00', service: 'Kids haircut', cash: 60000, card: 0 },
+  ];
+
+  protected ledgerTotal(master: string): number {
+    return this.ledger.filter((r) => r.master === master).reduce((s, r) => s + r.cash + r.card, 0);
+  }
+  // #endregion
+
+  // #region sort/in-context
+  protected readonly boardBy = signal('rating');
+  protected readonly boardDir = signal<'asc' | 'desc'>('desc');
+  protected readonly boardOptions: KometaSortOption[] = [
+    { value: 'rating', label: 'Rating' }, { value: 'visits', label: 'Visits' }, { value: 'name', label: 'Name' },
+  ];
+  private readonly board = [
+    { name: 'Aziz Rahimov', role: 'Barber', rating: 4.9, visits: 212 },
+    { name: 'Dilnoza Karimova', role: 'Stylist', rating: 4.7, visits: 168 },
+    { name: 'Jasur Nazarov', role: 'Barber', rating: 4.3, visits: 240 },
+    { name: 'Malika Yusupova', role: 'Stylist', rating: 4.8, visits: 131 },
+  ];
+  protected readonly boardRows = computed(() => {
+    const k = this.boardBy() as 'rating' | 'visits' | 'name';
+    const rows = [...this.board].sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0));
+    return this.boardDir() === 'asc' ? rows : rows.reverse();
+  });
+
+  protected sortBoard(key: string): void {
+    if (key === this.boardBy()) this.boardDir.set(this.boardDir() === 'asc' ? 'desc' : 'asc');
+    else {
+      this.boardBy.set(key);
+      this.boardDir.set(key === 'name' ? 'asc' : 'desc');
+    }
+  }
+  // #endregion
+
+  // #region pager/in-context
+  private readonly clientBook = Array.from({ length: 47 }, (_, i) => {
+    const she = i % 2 === 0;
+    const first = (she ? ['Dilnoza', 'Malika', 'Nodira', 'Gulnora', 'Kamola'] : ['Aziz', 'Sardor', 'Jasur', 'Bekzod', 'Otabek'])[i % 5];
+    const last = (she ? ['Karimova', 'Yusupova', 'Saidova', 'Ergasheva'] : ['Rahimov', 'Tursunov', 'Nazarov', 'Aliyev'])[i % 4];
+    const phone = `+998 9${i % 10} ${100 + ((i * 37) % 900)} ${10 + ((i * 7) % 90)} ${10 + ((i * 13) % 90)}`;
+    return { id: i + 1, name: `${first} ${last}`, phone, visits: ((i * 7) % 23) + 1 };
+  });
+  protected readonly clientPage = signal(1);
+  protected readonly clientPageSize = signal(5);
+  protected readonly clientRows = computed(() =>
+    this.clientBook.slice((this.clientPage() - 1) * this.clientPageSize(), this.clientPage() * this.clientPageSize()));
+  // #endregion
+
+  // #region share/in-context
+  protected readonly mixBy = signal('services');
+  protected readonly mixViews: KometaWordOption[] = [
+    { value: 'services', label: 'Services' }, { value: 'masters', label: 'Masters' }, { value: 'pay', label: 'Payment' },
+  ];
+  private readonly mixData: Record<string, KometaShareSegment[]> = {
+    services: [
+      { label: 'Haircut', value: 14_200_000, text: "14 200 000 so'm", color: 'var(--viz-1)' },
+      { label: 'Colour', value: 9_600_000, text: "9 600 000 so'm", color: 'var(--viz-2)' },
+      { label: 'Beard', value: 3_100_000, text: "3 100 000 so'm", color: 'var(--viz-3)' },
+      { label: 'Manicure', value: 2_400_000, text: "2 400 000 so'm", color: 'var(--viz-4)' },
+    ],
+    masters: [
+      { label: 'Aziz Rahimov', value: 11_300_000, text: "11 300 000 so'm", color: 'var(--viz-1)' },
+      { label: 'Dilnoza Karimova', value: 10_100_000, text: "10 100 000 so'm", color: 'var(--viz-2)' },
+      { label: 'Malika Yusupova', value: 7_900_000, text: "7 900 000 so'm", color: 'var(--viz-3)' },
+    ],
+    pay: [
+      { label: 'Cash', value: 15_800_000, text: "15 800 000 so'm", color: 'var(--viz-1)' },
+      { label: 'Click', value: 8_200_000, text: "8 200 000 so'm", color: 'var(--viz-2)' },
+      { label: 'Payme', value: 5_300_000, text: "5 300 000 so'm", color: 'var(--viz-3)' },
+    ],
+  };
+  protected readonly mix = computed(() => this.mixData[this.mixBy()]);
+  // #endregion
+
+  // #region split/in-context
+  protected readonly dayClosed = signal(false);
+  // #endregion
+
+  // #region fold/in-context
+  protected readonly orderOpen = signal(true);
+  // #endregion
+
+  // #region drawer/in-context
+  protected readonly bagOpen = signal(false);
+  protected readonly bag = signal([
+    { name: 'Haircut', who: 'Aziz Rahimov', price: 80000 },
+    { name: 'Beard trim', who: 'Aziz Rahimov', price: 40000 },
+    { name: 'Manicure', who: 'Malika Yusupova', price: 90000 },
+  ]);
+  protected readonly bagTotal = computed(() => this.bag().reduce((s, i) => s + i.price, 0));
+
+  protected dropFromBag(name: string): void {
+    this.bag.update((b) => b.filter((i) => i.name !== name));
+  }
+  // #endregion
+
+  // #region drawer/filters
+  protected readonly filtersOpen = signal(false);
+  protected readonly filterDay = signal('any');
+  protected readonly filterOpenNow = signal(false);
+  protected readonly filterTop = signal(true);
+  // #endregion
+
+  // #region pop/in-context
+  protected readonly shops = [
+    { id: 'chilonzor', name: 'Kometa Chilonzor', meta: 'Bunyodkor avenue 12' },
+    { id: 'yunusobod', name: 'Kometa Yunusobod', meta: 'Amir Temur street 108' },
+    { id: 'samarkand', name: 'Kometa Samarkand', meta: 'Registan street 5' },
+  ];
+  protected readonly shop = signal(this.shops[0]);
+  // #endregion
+
+  // #region tip/in-context
+  protected readonly load = [
+    { day: 'Mon', visits: 14, sum: "1 120 000 so'm" }, { day: 'Tue', visits: 9, sum: "720 000 so'm" },
+    { day: 'Wed', visits: 17, sum: "1 410 000 so'm" }, { day: 'Thu', visits: 12, sum: "950 000 so'm" },
+    { day: 'Fri', visits: 21, sum: "1 830 000 so'm" }, { day: 'Sat', visits: 24, sum: "2 060 000 so'm" },
+    { day: 'Sun', visits: 6, sum: "480 000 so'm" },
+  ];
+  // #endregion
+
+  // #region tabbar/in-context
+  protected readonly phoneTab = signal('today');
+  protected readonly phoneTabs: KometaTab[] = [
+    { value: 'today', label: 'Today', icon: '◷' }, { value: 'clients', label: 'Clients', icon: '☺' }, { value: 'money', label: 'Money', icon: '∑' },
+  ];
+  // #endregion
+
+  // #region tag/in-context
+  protected readonly visitsList: { time: string; name: string; service: string; tone: KometaTagTone; word: string }[] = [
+    { time: '09:00', name: 'Dilnoza Karimova', service: 'Haircut', tone: 'done', word: 'Done' },
+    { time: '10:30', name: 'Aziz Rahimov', service: 'Beard trim', tone: 'now', word: 'In the chair' },
+    { time: '11:15', name: 'Sardor Tursunov', service: 'Haircut', tone: 'warn', word: 'Late 15 min' },
+    { time: '13:00', name: 'Malika Yusupova', service: 'Colour', tone: 'book', word: 'Booked' },
+    { time: '15:30', name: 'Nodira Saidova', service: 'Manicure', tone: 'wait', word: 'Unconfirmed' },
+    { time: '17:00', name: 'Jasur Nazarov', service: 'Haircut and beard', tone: 'error', word: 'Cancelled' },
+  ];
+  // #endregion
+
+  // #region banner/in-context
+  protected readonly profileSteps = signal(3);
+  protected readonly profileHidden = signal(false);
+  // #endregion
+
+  // #region toast/in-context
+  protected notify(kind: KometaToastItem['kind'], text: string): void {
+    this.toasts.update((t) => [...t, { id: ++this.toastId, kind, text, life: 4000 }]);
+  }
+  // #endregion
+
+  // #region upload/in-context
+  protected readonly importProgress = signal(0);
+  protected readonly importState = signal<'idle' | 'running' | 'done' | 'failed'>('idle');
+
+  protected runImport(): void {
+    this.importState.set('running');
+    this.importProgress.set(0);
+    const tick = setInterval(() => {
+      const next = Math.min(1, this.importProgress() + 0.15);
+      this.importProgress.set(next);
+      if (next >= 1) {
+        clearInterval(tick);
+        this.importState.set('done');
+      }
+    }, 250);
+  }
+  // #endregion
+
+  // #region photos/in-context
+  protected readonly workOpen = signal(false);
+  protected readonly workIndex = signal(0);
+  protected readonly work: KometaPhoto[] = [
+    ['#3b2a1a', '#c08a4a', 'Fade'], ['#1d2b3a', '#5a8bbf', 'Crop'], ['#2a1a2e', '#a35fb0', 'Colour'], ['#1a2e22', '#4caf7a', 'Beard'],
+  ].map(([a, b, t]) => ({ url: picture(a, b, t), thumbUrl: picture(a, b, t), alt: `${t} by Aziz Rahimov` }));
+
+  protected openWork(i: number): void {
+    this.workIndex.set(i);
+    this.workOpen.set(true);
+  }
+  // #endregion
+
+  // #region frame/in-context
+  protected readonly feedA = picture('#3b2a1a', '#c08a4a', 'Skin fade');
+  protected readonly feedB = picture('#2a1a2e', '#a35fb0', 'Balayage');
+  // #endregion
+
+  // #region reveal/in-context
+  protected readonly lookBefore = picture('#3a3a3a', '#6b6b6b', '');
+  protected readonly lookAfter = picture('#5a3a10', '#e0a040', '');
+  // #endregion
+
+  // #region person/in-context
+  protected readonly crew = [
+    { name: 'Any master', meta: 'First free chair', score: 0 },
+    { name: 'Aziz Rahimov', meta: 'Barber · from 80 000', score: 4.9 },
+    { name: 'Dilnoza Karimova', meta: 'Stylist · from 120 000', score: 4.7 },
+    { name: 'Jasur Nazarov', meta: 'Barber · from 70 000', score: 4.3 },
+  ];
+  protected readonly crewPick = signal('Any master');
+  // #endregion
+
+  // #region logo/in-context
+  protected readonly payBy = signal('Click');
+  // #endregion
+
+  // #region stars/in-context
+  protected readonly reviews = [
+    { name: 'Dilnoza Karimova', when: '2 days ago', score: 5, text: 'Aziz listened and did exactly what I asked. Booking took a minute.' },
+    { name: 'Sardor Tursunov', when: 'last week', score: 4, text: 'Great fade. I waited ten minutes past my time.' },
+    { name: 'Nodira Saidova', when: 'in October', score: 5, text: 'Clean, calm, and the green tea was good.' },
+  ];
+  protected readonly reviewAverage = this.reviews.reduce((s, r) => s + r.score, 0) / this.reviews.length;
+  // #endregion
+
+  // #region steps/in-context
+  protected readonly wizardStep = signal(1);
+  protected readonly wizardService = signal('cut');
+  protected readonly wizardTime = signal('');
+  protected readonly wizardName = signal('');
+  protected readonly wizardSlots: KometaSlot[] = [
+    { value: '10:00', label: '10:00' }, { value: '11:30', label: '11:30', disabled: true },
+    { value: '14:00', label: '14:00' }, { value: '16:30', label: '16:30' },
+  ];
+  /** Whether the current step has what it needs, indexed by step (1 = service, 2 = time, 3 = details). */
+  protected readonly wizardReady = computed(() =>
+    [true, !!this.wizardService(), !!this.wizardTime(), this.wizardName().trim().length > 1][this.wizardStep()] ?? true);
+  // #endregion
+
+  // #region wait/in-context
+  protected readonly syncing = signal(false);
+  protected readonly syncedAt = signal('09:41');
+
+  protected sync(): void {
+    this.syncing.set(true);
+    setTimeout(() => {
+      this.syncing.set(false);
+      this.syncedAt.set(new Date().toTimeString().slice(0, 5));
+    }, 1500);
+  }
+  // #endregion
+
+  // #region skeleton/in-context
+  protected readonly cardLoading = signal(false);
+
+  protected reloadCard(): void {
+    this.cardLoading.set(true);
+    setTimeout(() => this.cardLoading.set(false), 1400);
+  }
+  // #endregion
+
+  // #region quiet/in-context
+  protected readonly inboxTab = signal('cancelled');
+  protected readonly inboxTabs: KometaWordOption[] = [
+    { value: 'upcoming', label: 'Upcoming', count: 2 }, { value: 'cancelled', label: 'Cancelled', count: 0 },
+  ];
+  // #endregion
+
+  // #region link/in-context
+  protected readonly bookingOpen = signal(true);
+  // #endregion
 }

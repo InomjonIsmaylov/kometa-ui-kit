@@ -1,0 +1,113 @@
+<header class="top">
+  <k-heading title="Barbershop Usta · Chilonzor">
+    <div class="range" action>
+      <k-words [options]="ranges" [value]="range()" (valueChange)="pickRange($event)" ariaLabel="Range" />
+      <k-date range [(rangeValue)]="period" ariaLabel="Period" />
+    </div>
+  </k-heading>
+</header>
+
+@if (unconfirmed()) {
+  <k-banner tone="warn" icon="!" [actionLabel]="unconfirmedOnly() ? 'Show all' : 'Show them'" (action)="toggleUnconfirmed(visitsCard)">
+    {{ unconfirmed() }} {{ unconfirmed() === 1 ? 'visit is' : 'visits are' }} not confirmed
+  </k-banner>
+}
+
+<!-- KPI tiles: every figure comes from the dataset of the picked range. -->
+<section class="kpis" aria-label="Key figures">
+  @if (loading()) {
+    @for (n of [1, 2, 3, 4, 5]; track n) { <div class="card"><k-skeleton [rows]="2" [avatar]="false" ariaLabel="Loading figure" /></div> }
+  } @else {
+    <div class="card">
+      <p class="eyebrow">Takings <k-note label="About takings">Paid visits in the range, after discounts and before the masters' share.</k-note></p>
+      <p class="fig">{{ takings() }}</p>
+      <p class="sub">{{ figures().trend }}</p>
+    </div>
+    <div class="card">
+      <p class="eyebrow">Cash and card</p>
+      <k-split [left]="split().cash" [right]="split().card" />
+    </div>
+    <div class="card">
+      <p class="eyebrow">Chair load</p>
+      <k-meter [value]="figures().booked" [max]="figures().capacity" label="slots booked" />
+    </div>
+    <div class="card">
+      <p class="eyebrow">Rating</p>
+      <p class="fig">{{ figures().rating }}</p>
+      <k-stars [value]="figures().rating" [label]="figures().rating + ' out of 5'" />
+      <p class="sub">{{ figures().reviews }} reviews</p>
+    </div>
+    <div class="card">
+      <p class="eyebrow">{{ range() === 'month' ? 'Visits by week' : 'Visits by day' }}</p>
+      <k-marks class="marks" [days]="figures().marks" empty="off" />
+    </div>
+  }
+</section>
+
+<div class="body">
+  <div class="main">
+    <section class="card">
+      <k-heading title="Revenue by service" [level]="3" />
+      @if (loading()) {
+        <k-skeleton shape="line" ariaLabel="Loading revenue" />
+      } @else {
+        <k-share [segments]="share()" label="Revenue by service" />
+      }
+    </section>
+
+    <section class="card" #visitsCard>
+      <k-heading title="Today's visits" [level]="3">
+        <k-search action class="search" [(value)]="query" placeholder="Client, service, master" ariaLabel="Filter visits" />
+      </k-heading>
+      <k-table [value]="view.rows()" dataKey="id" size="sm" [hoverable]="true" ariaLabel="Today's visits">
+        <ng-template #header>
+          <tr>
+            <th kometaSortHeader="time" [active]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)">Time</th>
+            <th kometaSortHeader="client" [active]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)">Client</th>
+            <th kometaSortHeader="service" [active]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)">Service</th>
+            <th kometaSortHeader="price" [active]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)" class="num">Price</th>
+            <th>Status</th>
+            <th><span class="sr">Actions</span></th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-row>
+          <tr>
+            <td class="time">{{ row.time }}</td>
+            <td><k-person [name]="row.client" [meta]="row.master" size="sm" /></td>
+            <td>{{ row.service }}</td>
+            <td class="num">{{ som(row.price) }}</td>
+            <td><k-tag [tone]="row.status">{{ statusLabel[row.status] }}</k-tag></td>
+            <td class="end"><k-actions [items]="menus().get(row.id) ?? []" [label]="'Actions for ' + row.client" /></td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr><td colspan="6"><k-quiet title="No visits match" hint="Try another name or service, or clear the filter." /></td></tr>
+        </ng-template>
+      </k-table>
+      <k-pager [total]="view.total()" [(page)]="view.page" [(pageSize)]="view.pageSize" [sizes]="[6, 14]" />
+    </section>
+  </div>
+
+  <aside class="side">
+    <section class="card">
+      <k-heading title="Masters today" [level]="3" />
+      <ul class="masters">
+        @for (m of masters(); track m.name) {
+          <li [kometaTip]="'Next free slot ' + m.nextFree" [kometaTipSub]="m.slots - m.booked + ' slots open today'" tabindex="0">
+            <k-person [name]="m.name" [meta]="m.role" size="sm" />
+            <k-meter [value]="m.booked" [max]="m.slots" [showFigure]="false" [label]="m.booked + ' of ' + m.slots + ' booked'" />
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="card">
+      <k-heading title="Live activity" [level]="3" />
+      <k-trail>
+        @for (a of activity; track a.time) { <k-step [time]="a.time" [gap]="a.gap">{{ a.text }}</k-step> }
+      </k-trail>
+    </section>
+  </aside>
+</div>
+
+<k-toast [items]="toasts()" (dismiss)="dismissToast($event)" />

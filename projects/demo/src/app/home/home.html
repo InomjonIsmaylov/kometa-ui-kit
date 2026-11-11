@@ -1,0 +1,123 @@
+<section class="hero">
+  <div class="sky" aria-hidden="true">
+    <span class="aurora a1"></span><span class="aurora a2"></span><span class="aurora a3"></span>
+    <span class="stars s1"></span><span class="stars s2"></span>
+    <span class="comet"></span><span class="comet late"></span>
+  </div>
+
+  <p class="kicker"><span class="pulse"></span>Angular 22 · standalone · no runtime dependencies</p>
+  <h1>Components that leave<br /><span class="grad">a trail of light.</span></h1>
+  <p class="lede">
+    Kometa is a dense, warm UI kit for Angular: {{ count() }} standalone components, light and dark from one set of tokens,
+    and styles you can override without a fight.
+  </p>
+  <div class="cta">
+    <a class="go primary" href="#start">Get started <span aria-hidden="true">→</span></a>
+    <a class="go" href="#booking">See a real screen</a>
+  </div>
+  <div class="install">
+    <span class="prompt" aria-hidden="true">$</span><code>npm install kometa-ui</code>
+    <k-link text="npm install kometa-ui" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy the install command" />
+  </div>
+</section>
+
+<section class="constellation reveal" [style.--amber]="accent()" [style.--amber-ink]="accent()" aria-label="Live components">
+  <header class="band-head">
+    <p class="eyebrow">Live, not screenshots</p>
+    <h2>Touch them. Then recolour them.</h2>
+    <div class="accents" role="radiogroup" aria-label="Accent colour">
+      @for (a of accents; track a.value) {
+        <button type="button" role="radio" class="accent" [attr.aria-checked]="accent() === a.value" [attr.aria-label]="a.name"
+                [style.background]="a.value" (click)="accent.set(a.value)"></button>
+      }
+      <span class="accent-note">one token: <code>--amber</code></span>
+    </div>
+  </header>
+
+  <div class="bento">
+    <article class="tile book">
+      <div class="tile-head">
+        <k-person name="Dilnoza Karimova" meta="Barber · Chilonzor" />
+        <k-stars [value]="5" label="5 out of 5" />
+      </div>
+      <k-steps [steps]="['Service', 'Time', 'Details']" [current]="1" ariaLabel="Booking progress" />
+      <k-slots [slots]="slots" [(value)]="slot" ariaLabel="Time slot" />
+      <k-button [label]="'Book ' + (slot() || 'a time')" fluid />
+    </article>
+
+    <article class="tile">
+      <p class="tile-label">This month</p>
+      <k-meter [value]="18" [max]="25" label="18 of 25 bookings" />
+    </article>
+
+    <article class="tile">
+      <p class="tile-label">Revenue by service</p>
+      <k-share [segments]="share" label="Revenue by service" [legend]="false" [tickCount]="24" />
+      <div class="legend-row">
+        @for (s of share; track s.label) { <span><i [style.background]="s.color"></i>{{ s.label }}</span> }
+      </div>
+    </article>
+
+    <article class="tile">
+      <p class="tile-label">Statuses</p>
+      <div class="tags">
+        <k-tag tone="now">in chair</k-tag><k-tag tone="book">booked</k-tag><k-tag tone="done">paid</k-tag><k-tag tone="error">no-show</k-tag>
+      </div>
+    </article>
+
+    <article class="tile">
+      <p class="tile-label">How was your visit?</p>
+      <k-rating [(value)]="rating" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Rating" />
+    </article>
+
+    <article class="tile wide">
+      <div class="toggle-row"><span>Reminders by SMS</span><k-toggle [(checked)]="reminders" ariaLabel="Reminders by SMS" /></div>
+      <k-words [options]="[{ value: 'day', label: 'Day' }, { value: 'week', label: 'Week', count: 42 }, { value: 'month', label: 'Month' }]"
+               [(value)]="range" ariaLabel="Range" />
+    </article>
+  </div>
+</section>
+
+<section class="stats reveal" aria-label="In numbers">
+  <div><b>{{ count() }}</b><span>components</span></div>
+  <div><b>0</b><span>runtime deps</span></div>
+  <div><b>2</b><span>colour schemes</span></div>
+  <div><b>1</b><span>import line</span></div>
+</section>
+
+<section class="principles reveal" aria-label="Principles">
+  @for (p of principles; track p.title) {
+    <article class="principle">
+      <span class="glyph" aria-hidden="true">{{ p.glyph }}</span>
+      <h3>{{ p.title }}</h3>
+      <p>{{ p.text }}</p>
+      <code>{{ p.code }}</code>
+    </article>
+  }
+</section>
+
+<section class="screens reveal" aria-label="Screens">
+  <header class="band-head">
+    <p class="eyebrow">Screens</p>
+    <h2>Components are words. Screens are sentences.</h2>
+    <p class="band-sub">Whole pages built only from the kit, with mock data and their full source in HTML, TypeScript and SCSS.</p>
+  </header>
+  <div class="screen-cards">
+    @for (s of screens(); track s.id; let i = $index) {
+      <a class="screen-card" [href]="'#' + s.id" [attr.data-art]="i % 4">
+        <span class="art" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <b>{{ s.label }}</b>
+        <span>{{ s.about }}</span>
+      </a>
+    }
+  </div>
+</section>
+
+<section class="finale reveal">
+  <h2>Ready when you are.</h2>
+  <div class="cta">
+    <a class="go primary" href="#start">Read the guide <span aria-hidden="true">→</span></a>
+    <a class="go" href="#button">Browse components</a>
+  </div>
+  <p class="hint">Tip: press <kbd>Ctrl</kbd> <kbd>K</kbd> anywhere to jump to a component.</p>
+</section>

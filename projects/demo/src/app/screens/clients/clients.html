@@ -1,0 +1,168 @@
+<section class="clients">
+  <header class="top">
+    <div>
+      <p class="eyebrow">CRM</p>
+      <h2>Clients <span class="total">{{ clients().length }}</span></h2>
+    </div>
+    <k-button label="Add client" icon="+" (clicked)="addOpen.set(true)" />
+  </header>
+
+  <!-- Toolbar: search and master narrow the list, the chips pick a group, the words sort it. -->
+  <div class="toolbar">
+    <k-search class="find" [(value)]="query" placeholder="Name or phone" ariaLabel="Search clients" clearLabel="Clear" />
+    <k-select [options]="masters" [(value)]="master" pill prefix="Master:" ariaLabel="Master" />
+  </div>
+  <div class="toolbar">
+    <div class="chips" role="group" aria-label="Client groups">
+      @for (f of filters(); track f.id) {
+        <k-chip [selected]="filter() === f.id" (selectedChange)="pickFilter(f.id, $event)">{{ f.label }}<span chip-count>{{ f.count }}</span></k-chip>
+      }
+    </div>
+    <k-sort [options]="sortOptions" [key]="sortKey()" [dir]="sortDir()" ariaLabel="Sort clients" (pick)="sortBy($event)" />
+  </div>
+
+  <div class="card">
+    @if (loading()) {
+      <k-skeleton [rows]="6" ariaLabel="Loading clients" />
+    } @else if (shown().length === 0) {
+      <k-quiet title="No clients match" hint="Try another name, group or master." />
+    } @else {
+      <k-table [value]="pageRows()" dataKey="id" [hoverable]="true" ariaLabel="Clients">
+        <ng-template #header>
+          <tr>
+            <th class="pick"><k-tick [checked]="allTicked()" (checkedChange)="tickPage($event)" ariaLabel="Select all on this page" /></th>
+            <th>Client</th>
+            <th>Segment</th>
+            <th>Last visit</th>
+            <th class="num">Visits</th>
+            <th class="num">Spent</th>
+            <th>Rating</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-c>
+          <tr [class.on]="ticked().has(c.id)" (click)="openProfile(c)">
+            <td class="pick" (click)="$event.stopPropagation()">
+              <k-tick [checked]="ticked().has(c.id)" (checkedChange)="tick(c.id, $event)" [ariaLabel]="'Select ' + c.name" />
+            </td>
+            <td>
+              <!-- The button makes the row reachable by keyboard; its click bubbles to the row. -->
+              <button type="button" class="who"><k-person [name]="c.name" [meta]="c.phone" size="sm" /></button>
+            </td>
+            <td>
+              @if (segmentOf(c); as s) { <k-tag [tone]="s.tone">{{ s.label }}</k-tag> } @else { <span class="dim">Regular</span> }
+            </td>
+            <td>{{ fmtShort.format(c.lastVisit) }} <span class="dim">· {{ ago(c.lastVisit) }}</span></td>
+            <td class="num">{{ c.visits }}</td>
+            <td class="num">{{ som(c.spent) }}</td>
+            <td>
+              @if (c.rating) { <k-stars [value]="c.rating" [label]="c.rating + ' out of 5'" /> } @else { <span class="dim">—</span> }
+            </td>
+          </tr>
+        </ng-template>
+      </k-table>
+      <k-pager [total]="shown().length" [(page)]="page" [(pageSize)]="pageSize" />
+    }
+  </div>
+
+  <!-- Bulk bar: appears while rows are ticked; Delete asks in place before it acts. -->
+  @if (ticked().size) {
+    <div class="bulk" role="region" aria-label="Selected clients">
+      <k-confirm [asking]="askingDelete()">
+        <div data-row class="bulk-row">
+          <strong>{{ ticked().size }} selected</strong>
+          <button k-word quiet [arrow]="false" (click)="clearTicks()">Clear</button>
+          <span class="grow"></span>
+          <button k-erase (click)="askingDelete.set(true)">Delete</button>
+          <k-actions [items]="bulkActions" label="Bulk actions" />
+        </div>
+        <div data-question class="bulk-row">
+          <strong>Delete {{ ticked().size }} clients?</strong>
+          <span class="grow"></span>
+          <button k-word quiet [arrow]="false" (click)="askingDelete.set(false)">Keep</button>
+          <button k-erase (click)="deleteTicked()">Yes, delete</button>
+        </div>
+      </k-confirm>
+    </div>
+  }
+</section>
+
+<!-- Profile -->
+<k-drawer [(visible)]="profileOpen" ariaLabel="Client profile">
+  @if (profile(); as c) {
+    <div class="sheet">
+      <k-person [name]="c.name" [meta]="'Client since ' + fmtDate.format(c.firstSeen)" size="lg" />
+      @if (segmentOf(c); as s) { <k-tag [tone]="s.tone">{{ s.label }}</k-tag> }
+
+      <k-split [left]="{ amount: som(c.spent), label: c.visits + ' visits, spent' }" [right]="{ amount: som(c.owed), label: 'Owes' }" />
+
+      <k-rows label="Details">
+        <k-row label="Phone"><span>{{ c.phone }}</span> <k-link [text]="c.phone" copyLabel="Copy" copiedLabel="Copied" [ariaLabel]="'Copy ' + c.phone" /></k-row>
+        <k-row label="Birthday">{{ c.birthday ? fmtDate.format(c.birthday) : '—' }}</k-row>
+        <k-row label="Favourite master">{{ c.master }}</k-row>
+        <k-row label="Usual services">{{ c.services.length ? c.services.map(serviceLabel).join(', ') : '—' }}</k-row>
+        <k-row title="Send reminders" meta="SMS the evening before a visit">
+          <k-toggle [checked]="c.reminders" (checkedChange)="patchProfile({ reminders: $event })" ariaLabel="Send reminders" />
+        </k-row>
+      </k-rows>
+
+      <div>
+        <p class="eyebrow">Private note</p>
+        <k-notes [value]="c.note" (valueChange)="patchProfile({ note: $event })" [maxlength]="200" placeholder="Only your team sees this" ariaLabel="Private note" />
+      </div>
+
+      @if (history().length) {
+        <div>
+          <p class="eyebrow">Recent visits</p>
+          <k-trail class="visits">
+            @for (v of history().slice(0, 3); track $index) {
+              <k-step [time]="fmtShort.format(v.date)" [gap]="$index < 2 && history()[$index + 1] ? gap(v.date, history()[$index + 1].date) + ' before' : null">
+                {{ v.service }} <span class="dim">· {{ v.master }} · {{ som(v.price) }}</span>
+              </k-step>
+            }
+          </k-trail>
+        </div>
+      }
+      @if (history().length > 3) {
+        <k-accordion>
+          <k-accordion-item [heading]="'Older visits (' + (history().length - 3) + ')'">
+            <ul class="older">
+              @for (v of history().slice(3); track $index) {
+                <li><span>{{ fmtDate.format(v.date) }}</span> {{ v.service }} <span class="dim">{{ som(v.price) }}</span></li>
+              }
+            </ul>
+          </k-accordion-item>
+        </k-accordion>
+      }
+
+      <button k-erase class="end" (click)="deleteProfile(c)">Delete client</button>
+    </div>
+  }
+</k-drawer>
+
+<!-- Add client -->
+<k-drawer [(visible)]="addOpen" ariaLabel="Add client" (closing)="closeAdd()">
+  <form class="sheet" (submit)="$event.preventDefault()">
+    <div>
+      <p class="eyebrow">New client</p>
+      <h3>Add client</h3>
+    </div>
+    <k-field [(value)]="newName" label="Full name" placeholder="Malika Yusupova" autocomplete="name" required
+             [error]="nameError()" [invalid]="!!nameError()" [touched]="tried()" />
+    <label class="input">
+      <span class="eyebrow">Phone</span>
+      <k-digits [(value)]="newPhone" size="sm" placeholder="90 123 45 67" ariaLabel="Phone" />
+      @if (phoneError(); as e) { <span class="error">{{ e }}</span> }
+    </label>
+    <div class="input">
+      <span class="eyebrow">Birthday</span>
+      <k-date [(value)]="newBirthday" [max]="today" placeholder="Optional" ariaLabel="Birthday" />
+    </div>
+    <div class="input">
+      <span class="eyebrow">Favourite services</span>
+      <k-multi [options]="services" [(value)]="newServices" optionDot="dot" placeholder="Pick any" ariaLabel="Favourite services" />
+    </div>
+    <k-pair class="end" keep="Cancel" confirm="Save" tone="primary" (kept)="closeAdd()" (confirmed)="saveClient()" />
+  </form>
+</k-drawer>
+
+<k-toast [items]="toasts()" (dismiss)="dismiss($event)" />
