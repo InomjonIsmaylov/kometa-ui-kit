@@ -149,7 +149,5 @@ function ownStyles(component: unknown): string {
 
 function stylesheet(component: unknown): string {
   const fromDef = ownStyles(component);
-  const fromDoc = [...document.querySelectorAll('style')].map((s) => s.textContent ?? '').join('\n');
-  return `${fromDef}
-${fromDoc}`.replaceAll('%NS%', '');
+  return fromDef.replaceAll('%NS%', '');
 }

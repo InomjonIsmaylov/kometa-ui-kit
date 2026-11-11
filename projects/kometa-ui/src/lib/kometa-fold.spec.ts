@@ -135,6 +135,10 @@ describe('the parts on their own', () => {
   });
 });
 
+// The fold's own compiled styles, not the page: those tags come and go with other specs' fixtures.
 function stylesheet(): string {
-  return [...document.querySelectorAll('style')].map((s) => s.textContent ?? '').join('\n');
+  return [KometaFold, KometaFoldBody, KometaFoldMark]
+    .flatMap((c) => (c as unknown as { ɵcmp?: { styles?: string[] } }).ɵcmp?.styles ?? [])
+    .join('\n')
+    .replaceAll('%NS%', '');
 }

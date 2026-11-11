@@ -50,7 +50,8 @@ describe('KometaConfirm', () => {
       expect(button.closest('[data-question]')).not.toBeNull();
     }
 
-    const css = [...document.querySelectorAll('style')].map((style) => style.textContent ?? '').join('\n');
+    // Its own compiled styles, not the page: those tags come and go with other specs' fixtures.
+    const css = ((KometaConfirm as unknown as { ɵcmp?: { styles?: string[] } }).ɵcmp?.styles ?? []).join('\n').replaceAll('%NS%', '');
     expect(css).toContain('prefers-reduced-motion: reduce');
     expect(css).not.toMatch(/button[^{]*\{[^}]*background:\s*var\(--amber\)/);
   });

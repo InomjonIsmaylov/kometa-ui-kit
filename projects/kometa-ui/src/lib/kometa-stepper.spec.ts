@@ -176,6 +176,5 @@ describe('KometaStepper inside Signal Forms', () => {
 function stylesheet(component: unknown): string {
   const def = (component as { ɵcmp?: { styles?: string[] | string } }).ɵcmp;
   const fromDef = def?.styles == null ? '' : Array.isArray(def.styles) ? def.styles.join('\n') : String(def.styles);
-  const fromDoc = [...document.querySelectorAll('style')].map((s) => s.textContent ?? '').join('\n');
-  return `${fromDef}\n${fromDoc}`.replace(/%NS%/g, '').replace(/\[_ng(?:content|host)-[^\]]*\]/g, '');
+  return fromDef.replace(/%NS%/g, '').replace(/\[_ng(?:content|host)-[^\]]*\]/g, '');
 }
