@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, TemplateRef, ViewEncapsulation, contentChild, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, TemplateRef, ViewEncapsulation, booleanAttribute, contentChild, input } from '@angular/core';
 
 /**
  * A plain `<table>` drawn with our classes, for the lists the consoles show: it keeps the
@@ -71,9 +71,9 @@ export class KometaTable {
   readonly scrollHeight = input<string | null>(null);
   /** `sm` tightens cell padding. */
   readonly size = input<'md' | 'sm'>('md');
-  readonly striped = input(false);
+  readonly striped = input(false, { transform: booleanAttribute });
   /** Tints the row under the pointer. */
-  readonly hoverable = input(false);
+  readonly hoverable = input(false, { transform: booleanAttribute });
   readonly ariaLabel = input('');
 
   protected readonly header = contentChild('header', { read: TemplateRef });

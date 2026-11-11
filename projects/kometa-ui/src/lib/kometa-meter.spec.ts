@@ -115,3 +115,10 @@ function stylesheet(component: unknown): string {
   const fromDoc = [...document.querySelectorAll('style')].map((s) => s.textContent ?? '').join('\n');
   return `${fromDef}\n${fromDoc}`.replace(/%NS%/g, '').replace(/\[_ng(?:content|host)-[^\]]*\]/g, '');
 }
+
+describe('KometaMeter figure size', () => {
+  it('sizes the "/ max" part relative to --meter-figure-size', () => {
+    const css = String((KometaMeter as unknown as { ɵcmp: { styles: string[] } }).ɵcmp.styles);
+    expect(css).toMatch(/\.fig\S*\s+span[^{]*\{[^}]*font-size: 0?\.5625em/);
+  });
+});

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, booleanAttribute, input, output } from '@angular/core';
 
 /**
  * The upload zone, as round 10's "Fill" draws it: a dashed box that fills from the bottom
@@ -135,7 +135,7 @@ export class KometaUpload {
   /** The progressbar's accessible name; the file name when empty. */
   readonly ariaLabel = input('');
   /** `false` hides the big percentage (the fill and the progressbar remain). */
-  readonly showPercent = input(true);
+  readonly showPercent = input(true, { transform: booleanAttribute });
   /** The button was pressed. Cancel or retry is the page's decision. */
   readonly action = output<void>();
 

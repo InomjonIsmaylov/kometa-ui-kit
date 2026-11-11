@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, effect, inject, input, model, output, signal, viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, effect, inject, booleanAttribute, input, model, output, signal, viewChild,
 } from '@angular/core';
 
 /**
@@ -49,7 +49,7 @@ export class KometaPop {
   readonly ariaLabel = input('');
   readonly ariaLabelledBy = input('');
   readonly width = input<number | null>(null);
-  readonly focusOnShow = input(true);
+  readonly focusOnShow = input(true, { transform: booleanAttribute });
   /** Gap in pixels between the button and the panel. */
   readonly offset = input(8);
   /** Which edge of the button the panel lines up with. */

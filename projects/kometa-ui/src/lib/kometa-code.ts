@@ -88,7 +88,7 @@ import {
 export class KometaCode {
   readonly value = model('');
   readonly length = input(6);
-  readonly disabled = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   readonly label = input('');
   /** Shown in each empty cell, e.g. `·`. */
   readonly placeholder = input('');

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } from '@angular/core';
 
 /**
  * An on/off switch whose state is a word in Syne: the on word goes cream and a 1px cream line draws
@@ -56,7 +56,7 @@ export class KometaToggle {
   readonly checked = model(false);
   readonly onLabel = input('');
   readonly offLabel = input('');
-  readonly disabled = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   /** Names the switch for a screen reader; the visible word is only its state. */
   readonly ariaLabel = input('');
   /** The id of the element that explains the switch. */

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, booleanAttribute, input, model, signal } from '@angular/core';
 
 const TICKS = 21;
 const STEP = 100 / (TICKS - 1);
@@ -52,7 +52,7 @@ export class KometaReveal {
   /** The frame's CSS aspect-ratio (`4 / 3`, `1`). */
   readonly aspectRatio = input('1');
   /** The Before / After words under the ticks. */
-  readonly showLabels = input(true);
+  readonly showLabels = input(true, { transform: booleanAttribute });
   readonly position = model(50);
 
   protected readonly ticks = Array.from({ length: TICKS }, (_, i) => i);

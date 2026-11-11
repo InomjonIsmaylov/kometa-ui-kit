@@ -36,8 +36,15 @@ describe('KometaStars', () => {
     expect(el.querySelector('link, i, .pi')).toBeNull();
   });
 
-  it('fills whole stars up to the floor and clamps to 0–5', () => {
-    expect(counts(render(4.8))).toEqual({ filled: 4, outline: 1 });
+  it('rounds to the nearest half star and clamps to 0–5', () => {
+    expect(counts(render(4.8))).toEqual({ filled: 5, outline: 0 });
+    expect(counts(render(4.2))).toEqual({ filled: 4, outline: 1 });
+    const half = render(4.7);
+    expect(counts(half)).toEqual({ filled: 4, outline: 0 });
+    const last = half.querySelectorAll('svg')[4];
+    expect(last.getAttribute('data-fill')).toBe('half');
+    expect(last.querySelectorAll('path').length).toBe(2);
+    expect(last.querySelector('path.half')?.getAttribute('fill')).toBe('currentColor');
     expect(counts(render(9))).toEqual({ filled: 5, outline: 0 });
     expect(counts(render(-2))).toEqual({ filled: 0, outline: 5 });
   });
