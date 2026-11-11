@@ -11,7 +11,7 @@ const STEP = 100 / (TICKS - 1);
  * Spec: kometa-reveal.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Ticks).
  */
 @Component({
-  selector: 'kometa-reveal',
+  selector: 'k-reveal',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[style.--p]': "position() + '%'", '[style.--reveal-ratio]': 'aspectRatio()' },
   styles: `

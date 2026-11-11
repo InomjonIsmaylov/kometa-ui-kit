@@ -4,13 +4,13 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
  * A checkbox: a hairline ring that fills with ink while the tick draws itself in. A real
  * `<button role="checkbox" aria-checked>`, so Space and Enter toggle natively. It has no label of its own: name
  * it with `ariaLabel`, `ariaLabelledBy` or a `<label for>` and `inputId`. For a row whose words
- * are the control, with no ring, see `kometa-check`.
+ * are the control, with no ring, see `k-check`.
  * Spec: kometa-tick.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-9.html (Ring).
  *
  *
  */
 @Component({
-  selector: 'kometa-tick',
+  selector: 'k-tick',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: inline-block; vertical-align: middle; }

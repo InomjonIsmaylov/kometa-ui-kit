@@ -12,7 +12,7 @@ export interface KometaSlot {
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Time: slots".
  */
 @Component({
-  selector: 'kometa-slots',
+  selector: 'k-slots',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     role: 'group',

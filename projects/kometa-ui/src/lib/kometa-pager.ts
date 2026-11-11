@@ -7,7 +7,7 @@ import { docLang } from './paging';
  * (a container query, so a drawer counts) only "‹ 2 / 9 ›" and the caption stay. Hidden entirely when
  * `total` fits the smallest size, so a short list shows no pager at all.
  *
- *   <kometa-pager [total]="view.total()" [(page)]="view.page" [(pageSize)]="view.pageSize" />
+ *   <k-pager [total]="view.total()" [(page)]="view.page" [(pageSize)]="view.pageSize" />
  *
  * - `total`: rows in the whole (filtered) list. `page` is 1-based and `pageSize` a model; both are
  *   plain signals, so it pages a server list as well as `listView` (paging.ts) does a client one.
@@ -47,7 +47,7 @@ export function pageWindow(page: number, count: number): (number | null)[] {
 }
 
 @Component({
-  selector: 'kometa-pager',
+  selector: 'k-pager',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[hidden]': '!visible()' },
   styles: `

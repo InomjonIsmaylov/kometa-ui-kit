@@ -18,13 +18,13 @@ let nextId = 0;
 /**
  * One question and its answer: a real `<button aria-expanded aria-controls>` in Syne, a hairline under
  * it that stretches to full width while open (680ms spring), and the answer in a `role="region"` that
- * opens on `grid-template-rows` 0fr to 1fr through `kometa-fold-body` (so its 420ms spring, its close
+ * opens on `grid-template-rows` 0fr to 1fr through `k-fold-body` (so its 420ms spring, its close
  * and its reduced-motion handling are the fold's own). The answer is the projected content and is
  * created only while open. `open` is a model. The question wraps; it is never cut.
  * Named `heading`, not `title`, so no native tooltip rides on the host.
  */
 @Component({
-  selector: 'kometa-accordion-item',
+  selector: 'k-accordion-item',
   imports: [KometaFoldBody],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.open]': 'open()' },
@@ -79,7 +79,7 @@ let nextId = 0;
       <button #q type="button" class="q" [id]="id + '-h'" [attr.aria-expanded]="open()" [attr.aria-controls]="id" [disabled]="disabled()"
               (click)="open.set(!open())"><span class="t">{{ heading() }}</span></button>
     </div>
-    <kometa-fold-body role="region" [id]="id" [attr.aria-labelledby]="id + '-h'" [open]="open()" [tpl]="body" />
+    <k-fold-body role="region" [id]="id" [attr.aria-labelledby]="id + '-h'" [open]="open()" [tpl]="body" />
     <ng-template #body><div class="a"><ng-content /></div></ng-template>
   `,
 })
@@ -112,13 +112,13 @@ export class KometaAccordionItem {
 }
 
 /**
- * A stack of `kometa-accordion-item`s. One open at a time unless `multiple`; ArrowUp, ArrowDown, Home
+ * A stack of `k-accordion-item`s. One open at a time unless `multiple`; ArrowUp, ArrowDown, Home
  * and End move focus between the questions. Spec: kometa-accordion.spec.ts.
  *
  *
  */
 @Component({
-  selector: 'kometa-accordion',
+  selector: 'k-accordion',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(keydown)': 'onKey($event)' },
   styles: `:host { display: flex; flex-direction: column; }`,

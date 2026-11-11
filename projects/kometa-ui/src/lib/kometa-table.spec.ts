@@ -6,12 +6,12 @@ import { KometaTable } from './kometa-table';
 @Component({
   imports: [KometaTable],
   template: `
-    <kometa-table class="mine" [value]="rows()" dataKey="id.n" groupRowsBy="group" tableStyleClass="wide" [tableStyle]="{ 'min-width': '100%' }" [scrollHeight]="cap()">
+    <k-table class="mine" [value]="rows()" dataKey="id.n" groupRowsBy="group" tableStyleClass="wide" [tableStyle]="{ 'min-width': '100%' }" [scrollHeight]="cap()">
       <ng-template #header><tr><th scope="col">Name</th></tr></ng-template>
       <ng-template #groupheader let-row><tr class="band"><th>{{ row.group }}</th></tr></ng-template>
       <ng-template #body let-row let-i="rowIndex"><tr class="row"><td>{{ i }}:{{ row.name }}</td></tr></ng-template>
       <ng-template #emptymessage><tr class="none"><td>Nothing</td></tr></ng-template>
-    </kometa-table>
+    </k-table>
   `,
 })
 class Host {
@@ -29,7 +29,7 @@ describe('KometaTable', () => {
     f.detectChanges();
     return f;
   };
-  const el = (f: { nativeElement: HTMLElement }) => f.nativeElement.querySelector('kometa-table') as HTMLElement;
+  const el = (f: { nativeElement: HTMLElement }) => f.nativeElement.querySelector('k-table') as HTMLElement;
 
   it('is a plain table: the header in thead, a row per value in tbody with its index', () => {
     const f = mount();

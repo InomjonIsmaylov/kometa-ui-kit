@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { KometaConfirmationService, KometaTray } from './kometa-tray';
 
-@Component({ imports: [KometaTray], template: `<kometa-tray />` })
+@Component({ imports: [KometaTray], template: `<k-tray />` })
 class Host {}
 
 describe('KometaTray', () => {

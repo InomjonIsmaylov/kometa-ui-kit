@@ -20,7 +20,7 @@ let nextId = 0;
  * Spec: kometa-multi.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-9.html (Chips).
  */
 @Component({
-  selector: 'kometa-multi',
+  selector: 'k-multi',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.pill]': 'pill()',

@@ -24,7 +24,7 @@ let nextId = 0;
  * Spec: kometa-suggest.spec.ts.
  */
 @Component({
-  selector: 'kometa-suggest',
+  selector: 'k-suggest',
   imports: [KometaPerson, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -64,7 +64,7 @@ let nextId = 0;
             @if (optionTemplate(); as tpl) {
               <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: s }" />
             } @else {
-              <kometa-person size="sm" [name]="s.label" [meta]="s.meta ?? ''" />
+              <k-person size="sm" [name]="s.label" [meta]="s.meta ?? ''" />
             }
           </button>
         }

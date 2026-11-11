@@ -1,5 +1,5 @@
 /* Blend expand and collapse: the plus that turns, the spring height. Imported by blend.scss.
-   The component is kometa-fold.ts, which uses the k-fold-* keyframes below; the rest is the global
+   The component is k-fold.ts, which uses the k-fold-* keyframes below; the rest is the global
    twin, so a native <details> opens and closes the same way. */
 
 @keyframes k-fold-rows-in { from { grid-template-rows: 0fr; } to { grid-template-rows: 1fr; } }

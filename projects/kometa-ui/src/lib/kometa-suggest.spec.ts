@@ -5,7 +5,7 @@ import { KometaSuggest, type KometaSuggestion } from './kometa-suggest';
 
 @Component({
   imports: [KometaSuggest],
-  template: `<kometa-suggest inputId="s" [delay]="10" [(value)]="text" [suggestions]="rows()" (query)="asked.push($event)" (picked)="got.push($event.label)" />`,
+  template: `<k-suggest inputId="s" [delay]="10" [(value)]="text" [suggestions]="rows()" (query)="asked.push($event)" (picked)="got.push($event.label)" />`,
 })
 class Host {
   text = signal('');

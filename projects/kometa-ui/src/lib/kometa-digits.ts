@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, 
  *
  */
 @Component({
-  selector: 'kometa-digits',
+  selector: 'k-digits',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-size]': 'size()' },
   styles: `

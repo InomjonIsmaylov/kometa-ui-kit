@@ -17,8 +17,8 @@ import {
 
 /**
  * Blend expand and collapse, in three pieces so a table row, a card and a form reveal share one
- * behaviour: `kometa-fold-mark` (the plus that becomes a minus), `kometa-fold-body` (the 0fr to 1fr
- * spring) and `kometa-fold` (a real header button plus a body, for the plain disclosure).
+ * behaviour: `k-fold-mark` (the plus that becomes a minus), `k-fold-body` (the 0fr to 1fr
+ * spring) and `k-fold` (a real header button plus a body, for the plain disclosure).
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md; the global twin for a native
  * <details> is in styles/blend-fold.scss.
  *
@@ -27,7 +27,7 @@ import {
 
 /** Two 1.5px hairlines, 12px. The vertical one scales to nothing when open: a plus becomes a minus. */
 @Component({
-  selector: 'kometa-fold-mark',
+  selector: 'k-fold-mark',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'aria-hidden': 'true', '[class.open]': 'open()' },
   styles: `
@@ -74,7 +74,7 @@ const CLOSE_MS = 260;
  * `appear`: animate in when it is created already open (a detail row that is only rendered while open).
  */
 @Component({
-  selector: 'kometa-fold-body',
+  selector: 'k-fold-body',
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-phase]': 'phase()' },
@@ -148,7 +148,7 @@ let nextId = 0;
  * `(openChange)`. The trigger's padding is `--fold-pad`, its hover fill `--fold-hover`.
  */
 @Component({
-  selector: 'kometa-fold',
+  selector: 'k-fold',
   imports: [KometaFoldMark, KometaFoldBody],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
@@ -182,11 +182,11 @@ let nextId = 0;
       <button type="button" class="trigger" [id]="id + '-h'" [attr.aria-expanded]="open()" [attr.aria-controls]="id" [disabled]="disabled()"
               (click)="open.set(!open())">
         <span class="title"><ng-content select="[fold-title]" /></span>
-        <kometa-fold-mark [open]="open()" />
+        <k-fold-mark [open]="open()" />
       </button>
       <ng-content select="[fold-aside]" />
     </div>
-    <kometa-fold-body role="region" [id]="id" [attr.aria-labelledby]="id + '-h'" [open]="open()" [tpl]="body() ?? null" />
+    <k-fold-body role="region" [id]="id" [attr.aria-labelledby]="id + '-h'" [open]="open()" [tpl]="body() ?? null" />
   `,
 })
 export class KometaFold {

@@ -5,11 +5,11 @@ import { KometaStep, KometaTrail } from './kometa-trail';
 @Component({
   imports: [KometaTrail, KometaStep],
   template: `
-    <kometa-trail>
+    <k-trail>
       @for (s of steps(); track s.time) {
-        <kometa-step [time]="s.time" [gap]="s.gap"><b>{{ s.word }}</b></kometa-step>
+        <k-step [time]="s.time" [gap]="s.gap"><b>{{ s.word }}</b></k-step>
       }
-    </kometa-trail>
+    </k-trail>
   `,
 })
 class Host {
@@ -25,12 +25,12 @@ describe('KometaTrail', () => {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
     const root = f.nativeElement as HTMLElement;
-    return { f, root, steps: () => [...root.querySelectorAll<HTMLElement>('kometa-step')] };
+    return { f, root, steps: () => [...root.querySelectorAll<HTMLElement>('k-step')] };
   }
 
   it('is a list of steps, each with its time and its projected content', () => {
     const { root, steps } = render();
-    expect(root.querySelector('kometa-trail')?.getAttribute('role')).toBe('list');
+    expect(root.querySelector('k-trail')?.getAttribute('role')).toBe('list');
     expect(steps().map((s) => s.getAttribute('role'))).toEqual(['listitem', 'listitem', 'listitem']);
     expect(steps().map((s) => s.querySelector('time')?.textContent)).toEqual(['09:58', '10:30', '10:34']);
     expect(steps().map((s) => s.querySelector('.body b')?.textContent)).toEqual(['Booked', 'Checked in', 'Started']);

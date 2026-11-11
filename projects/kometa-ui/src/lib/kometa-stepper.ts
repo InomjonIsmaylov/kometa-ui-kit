@@ -9,7 +9,7 @@ import type { FormValueControl } from '@angular/forms/signals';
  *
  */
 @Component({
-  selector: 'kometa-stepper',
+  selector: 'k-stepper',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: inline-block; }

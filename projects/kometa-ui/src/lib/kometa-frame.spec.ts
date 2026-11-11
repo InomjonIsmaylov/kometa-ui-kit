@@ -5,9 +5,9 @@ import { KometaFrame } from './kometa-frame';
 @Component({
   imports: [KometaFrame],
   template: `
-    <kometa-frame [caption]="caption()">
+    <k-frame [caption]="caption()">
       <img alt="Do'kon" src="/shop.jpg" />
-    </kometa-frame>
+    </k-frame>
   `,
 })
 class Host {
@@ -18,7 +18,7 @@ describe('KometaFrame', () => {
   it('projects the picture in a 16px frame and omits an empty caption', () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const el = fixture.nativeElement.querySelector('kometa-frame') as HTMLElement;
+    const el = fixture.nativeElement.querySelector('k-frame') as HTMLElement;
     const frame = el.querySelector('.frame') as HTMLElement;
     expect(frame.querySelector('img')!.getAttribute('alt')).toBe("Do'kon");
     expect(el.querySelector('.caption')).toBeNull();
@@ -29,7 +29,7 @@ describe('KometaFrame', () => {
     const fixture = TestBed.createComponent(Host);
     fixture.componentInstance.caption.set('Chilonzor');
     fixture.detectChanges();
-    const el = fixture.nativeElement.querySelector('kometa-frame') as HTMLElement;
+    const el = fixture.nativeElement.querySelector('k-frame') as HTMLElement;
     const caption = el.querySelector('.caption') as HTMLElement;
     expect(caption.textContent!.trim()).toBe('Chilonzor');
     expect(el.querySelector('.frame')!.nextElementSibling).toBe(caption);

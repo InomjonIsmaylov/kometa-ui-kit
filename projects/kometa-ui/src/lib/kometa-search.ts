@@ -13,7 +13,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, boolea
  *
  */
 @Component({
-  selector: 'kometa-search',
+  selector: 'k-search',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-size]': 'size()' },
   styles: `

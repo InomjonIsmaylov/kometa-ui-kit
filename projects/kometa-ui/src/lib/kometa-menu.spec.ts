@@ -11,7 +11,7 @@ const OPTIONS = [
 
 @Component({
   imports: [KometaMenu],
-  template: `<kometa-menu [(value)]="value" [options]="options" label="Saralash" ariaLabel="Tartib" [disabled]="off()" />`,
+  template: `<k-menu [(value)]="value" [options]="options" label="Saralash" ariaLabel="Tartib" [disabled]="off()" />`,
 })
 class Host {
   value = signal('near');
@@ -21,7 +21,7 @@ class Host {
 
 @Component({
   imports: [FormField, KometaMenu],
-  template: `<kometa-menu [formField]="f.sort" [options]="options" label="Saralash" />`,
+  template: `<k-menu [formField]="f.sort" [options]="options" label="Saralash" />`,
 })
 class FormHost {
   model = signal({ sort: 'rating' });
@@ -76,7 +76,7 @@ describe('KometaMenu', () => {
     trigger.click();
     f.detectChanges();
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
-    expect(el.querySelector('kometa-menu')!.classList.contains('open')).toBe(true);
+    expect(el.querySelector('k-menu')!.classList.contains('open')).toBe(true);
   });
 
   it('closes again on a second click of the trigger', () => {

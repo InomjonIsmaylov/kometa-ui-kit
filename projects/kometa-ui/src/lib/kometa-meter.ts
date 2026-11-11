@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
  *
  */
 @Component({
-  selector: 'kometa-meter',
+  selector: 'k-meter',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }

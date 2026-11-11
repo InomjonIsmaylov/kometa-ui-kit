@@ -6,7 +6,7 @@ import { KometaRating } from './kometa-rating';
 @Component({
   imports: [KometaRating],
   template: `
-    <kometa-rating
+    <k-rating
       [(value)]="value"
       [max]="max()"
       [words]="words()"
@@ -27,7 +27,7 @@ class Host {
 
 @Component({
   imports: [KometaRating, FormField],
-  template: `<kometa-rating [formField]="f.score" ariaLabel="Baho" />`,
+  template: `<k-rating [formField]="f.score" ariaLabel="Baho" />`,
 })
 class FormsHost {
   model = signal({ score: 0 });
@@ -40,7 +40,7 @@ describe('KometaRating', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-rating') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-rating') as HTMLElement;
     const buttons = [...root.querySelectorAll('button')] as HTMLButtonElement[];
     return { f, root, buttons };
   }

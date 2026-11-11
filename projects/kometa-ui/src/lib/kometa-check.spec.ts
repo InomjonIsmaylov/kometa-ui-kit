@@ -5,8 +5,8 @@ import { KometaCheck } from './kometa-check';
 @Component({
   imports: [KometaCheck],
   template: `
-    <kometa-check [(checked)]="a" [disabled]="off()">Xizmatlarni qo'shing</kometa-check>
-    <kometa-check [(checked)]="b">Rasm yuklang</kometa-check>
+    <k-check [(checked)]="a" [disabled]="off()">Xizmatlarni qo'shing</k-check>
+    <k-check [(checked)]="b">Rasm yuklang</k-check>
   `,
 })
 class Host {

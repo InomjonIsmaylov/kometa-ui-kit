@@ -4,7 +4,7 @@ import { KometaCode } from './kometa-code';
 
 @Component({
   imports: [KometaCode],
-  template: `<kometa-code [(value)]="code" />`,
+  template: `<k-code [(value)]="code" />`,
 })
 class Host {
   code = signal('');
@@ -14,7 +14,7 @@ describe('KometaCode', () => {
   function setup() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-code') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-code') as HTMLElement;
     const inputs = [...root.querySelectorAll('input')] as HTMLInputElement[];
     return { f, root, inputs };
   }

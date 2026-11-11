@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@an
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Heading: rule".
  */
 @Component({
-  selector: 'kometa-heading',
+  selector: 'k-heading',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: flex; align-items: center; gap: var(--heading-gap, 12px); }

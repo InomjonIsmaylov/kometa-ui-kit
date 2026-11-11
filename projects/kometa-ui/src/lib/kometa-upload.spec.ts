@@ -5,7 +5,7 @@ import { KometaUpload } from './kometa-upload';
 @Component({
   imports: [KometaUpload],
   template: `
-    <kometa-upload
+    <k-upload
       [name]="name()"
       [sizeLabel]="sizeLabel()"
       [progress]="progress()"
@@ -32,7 +32,7 @@ describe('KometaUpload', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-upload') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-upload') as HTMLElement;
     const q = <T extends HTMLElement>(s: string) => root.querySelector(s) as T;
     return { f, root, q };
   }

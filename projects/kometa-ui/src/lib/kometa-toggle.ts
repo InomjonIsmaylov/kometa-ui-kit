@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
  *
  */
 @Component({
-  selector: 'kometa-toggle',
+  selector: 'k-toggle',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: inline-flex; }

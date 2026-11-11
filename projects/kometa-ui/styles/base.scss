@@ -118,7 +118,7 @@ h3 { font-size: var(--t-lg); }
 h4, h5, h6 { font-size: var(--t-md); }
 
 /* Round 14, H Hairline: a sentence that explains (under a field, under a list, at a page's foot) wears the
-   `kometa-banner` info hairline, one rule for the six class names it used to have. `p.hint` and not `.hint`,
+   `k-banner` info hairline, one rule for the six class names it used to have. `p.hint` and not `.hint`,
    so the command palette's inline `<span class="hint">` stays a span. */
 p.hint, p.footnote, div.footnote, .page-note, .list-hint {
   padding-inline-start: var(--sp-6);
@@ -425,7 +425,7 @@ p.hint, p.footnote, div.footnote, .page-note, .list-hint {
   border-color: var(--error);
 }
 
-/* A plain-words strip with a cream line under the chosen one: what `kometa-words` draws, for the one
+/* A plain-words strip with a cream line under the chosen one: what `k-words` draws, for the one
  * hand-rolled strip left (Calendar's chairs). One-of-N, never amber. */
 .tab-strip {
   display: flex;

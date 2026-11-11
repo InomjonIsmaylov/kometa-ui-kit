@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  *
  */
 @Component({
-  selector: 'kometa-frame',
+  selector: 'k-frame',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }

@@ -6,11 +6,11 @@ import { KometaAccordion, KometaAccordionItem } from './kometa-accordion';
 @Component({
   imports: [KometaAccordion, KometaAccordionItem],
   template: `
-    <kometa-accordion [multiple]="multiple()">
-      <kometa-accordion-item heading="Lid to'lovi nima?" [(open)]="first">Birinchi javob.</kometa-accordion-item>
-      <kometa-accordion-item heading="Havola pullikmi?">Ikkinchi javob.</kometa-accordion-item>
-      <kometa-accordion-item heading="Qanday bekor qilaman? Juda uzun savol, ruscha va oʻzbekcha, bir necha qatorga oʻralishi kerak.">Uchinchi javob.</kometa-accordion-item>
-    </kometa-accordion>
+    <k-accordion [multiple]="multiple()">
+      <k-accordion-item heading="Lid to'lovi nima?" [(open)]="first">Birinchi javob.</k-accordion-item>
+      <k-accordion-item heading="Havola pullikmi?">Ikkinchi javob.</k-accordion-item>
+      <k-accordion-item heading="Qanday bekor qilaman? Juda uzun savol, ruscha va oʻzbekcha, bir necha qatorga oʻralishi kerak.">Uchinchi javob.</k-accordion-item>
+    </k-accordion>
   `,
 })
 class Host {
@@ -57,7 +57,7 @@ describe('KometaAccordion', () => {
     f.detectChanges();
     expect(open()).toEqual(['true', 'false', 'false']);
     expect(f.nativeElement.textContent).toContain('Birinchi javob.');
-    expect(f.nativeElement.querySelector('kometa-accordion-item').classList.contains('open')).toBe(true);
+    expect(f.nativeElement.querySelector('k-accordion-item').classList.contains('open')).toBe(true);
   });
 
   it('closes the open one when another opens by default', () => {
@@ -124,17 +124,17 @@ describe('KometaAccordion', () => {
     const { f, q } = render();
     q()[0].click();
     f.detectChanges();
-    expect(f.nativeElement.querySelector('kometa-fold-body').getAttribute('data-phase')).toBe('opening');
+    expect(f.nativeElement.querySelector('k-fold-body').getAttribute('data-phase')).toBe('opening');
     await wait(480);
     f.detectChanges();
-    expect(f.nativeElement.querySelector('kometa-fold-body').getAttribute('data-phase')).toBe('open');
+    expect(f.nativeElement.querySelector('k-fold-body').getAttribute('data-phase')).toBe('open');
 
     vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('reduce'), media: query }));
     const g = TestBed.createComponent(Host);
     g.detectChanges();
     (g.nativeElement.querySelector('button.q') as HTMLButtonElement).click();
     g.detectChanges();
-    expect(g.nativeElement.querySelector('kometa-fold-body').getAttribute('data-phase')).toBe('open');
+    expect(g.nativeElement.querySelector('k-fold-body').getAttribute('data-phase')).toBe('open');
   });
 
   it('stretches a hairline from scaleX .18 at .3 opacity to full when open over 680ms', () => {

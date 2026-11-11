@@ -5,7 +5,7 @@ import { KometaSort, KometaSortHeader } from './kometa-sort';
 @Component({
   imports: [KometaSort, KometaSortHeader],
   template: `
-    <kometa-sort [options]="options" [key]="key()" [dir]="dir()" (pick)="picked.push($event)" />
+    <k-sort [options]="options" [key]="key()" [dir]="dir()" (pick)="picked.push($event)" />
     <table><thead><tr>
       <th kometaSortHeader="name" [active]="key()" [dir]="dir()" (pick)="picked.push($event)">Name</th>
       <th kometaSortHeader="date" [active]="key()" [dir]="dir()" (pick)="picked.push($event)">Date</th>
@@ -24,7 +24,7 @@ describe('KometaSort', () => {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
     const el = f.nativeElement as HTMLElement;
-    return { f, el, words: () => [...el.querySelectorAll('kometa-sort button')] as HTMLButtonElement[] };
+    return { f, el, words: () => [...el.querySelectorAll('k-sort button')] as HTMLButtonElement[] };
   }
 
   it('presses the active word and draws its direction', () => {
@@ -46,7 +46,7 @@ describe('KometaSort', () => {
 
   it('names the group and the direction for a screen reader', () => {
     const { el, words } = render();
-    expect(el.querySelector('kometa-sort')?.getAttribute('aria-label')).toBe('Sort');
+    expect(el.querySelector('k-sort')?.getAttribute('aria-label')).toBe('Sort');
     expect(words()[0].querySelector('.sr')?.textContent).toBe('ascending');
   });
 });

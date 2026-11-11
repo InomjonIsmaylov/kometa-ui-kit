@@ -5,7 +5,7 @@ import { KometaNumber } from './kometa-number';
 
 @Component({
   imports: [KometaNumber],
-  template: `<kometa-number ariaLabel="Years" [min]="0" [max]="60" [disabled]="disabled()" [(value)]="value" />`,
+  template: `<k-number ariaLabel="Years" [min]="0" [max]="60" [disabled]="disabled()" [(value)]="value" />`,
 })
 class Host {
   value = signal<number | null>(12);
@@ -16,7 +16,7 @@ describe('KometaNumber', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-number') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-number') as HTMLElement;
     const input = root.querySelector('input') as HTMLInputElement;
     const type = (text: string) => { input.value = text; input.dispatchEvent(new Event('input')); f.detectChanges(); };
     const key = (k: string, shiftKey = false) => {
@@ -107,7 +107,7 @@ describe('KometaNumber', () => {
   describe('money, suffix, buttons and forms', () => {
     @Component({
       imports: [KometaNumber, ReactiveFormsModule],
-      template: `<kometa-number inputId="amt" [money]="true" suffix="so'm" [buttons]="true" [step]="1000" ariaLabel="Amount" [formControl]="ctl" />`,
+      template: `<k-number inputId="amt" [money]="true" suffix="so'm" [buttons]="true" [step]="1000" ariaLabel="Amount" [formControl]="ctl" />`,
     })
     class FormHost { ctl = new FormControl<number | null>(1250000); }
 

@@ -5,7 +5,7 @@ import { KometaToggle } from './kometa-toggle';
 
 @Component({
   imports: [KometaToggle],
-  template: `<kometa-toggle [(checked)]="on" onLabel="Yoqilgan" offLabel="Oʻchiq" ariaLabel="SMS eslatma" ariaDescribedBy="why" [disabled]="off()" />`,
+  template: `<k-toggle [(checked)]="on" onLabel="Yoqilgan" offLabel="Oʻchiq" ariaLabel="SMS eslatma" ariaDescribedBy="why" [disabled]="off()" />`,
 })
 class Host {
   on = signal(true);
@@ -14,7 +14,7 @@ class Host {
 
 @Component({
   imports: [FormField, KometaToggle],
-  template: `<kometa-toggle [formField]="f.sms" onLabel="Yoqilgan" offLabel="Oʻchiq" />`,
+  template: `<k-toggle [formField]="f.sms" onLabel="Yoqilgan" offLabel="Oʻchiq" />`,
 })
 class FormHost {
   model = signal({ sms: false });

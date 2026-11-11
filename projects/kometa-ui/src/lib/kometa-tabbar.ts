@@ -25,7 +25,7 @@ export interface KometaTab {
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Tab bar: glass".
  */
 @Component({
-  selector: 'kometa-tabbar',
+  selector: 'k-tabbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet, RouterLink],
   host: { '(keydown)': 'onKey($event)' },

@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input }
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Skeleton: hair".
  */
 @Component({
-  selector: 'kometa-skeleton',
+  selector: 'k-skeleton',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[attr.role]': "shape() === 'line' ? null : 'status'",

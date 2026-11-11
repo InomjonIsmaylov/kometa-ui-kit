@@ -6,11 +6,11 @@ import {
  * Free text, several lines. No box: a hairline under the text draws itself on focus, and the field grows with what is
  * written (never shorter than `rows`). With a `maxlength` the count shows only in the last 30 characters, amber and then
  * red at the limit; a page that draws its own counter passes `[count]="false"`. `value` is a model:
- * `<kometa-notes [rows]="4" [maxlength]="300" [(value)]="draft" ariaLabel="Reply" />`.
+ * `<k-notes [rows]="4" [maxlength]="300" [(value)]="draft" ariaLabel="Reply" />`.
  * Spec: kometa-notes.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Whisper).
  */
 @Component({
-  selector: 'kometa-notes',
+  selector: 'k-notes',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }

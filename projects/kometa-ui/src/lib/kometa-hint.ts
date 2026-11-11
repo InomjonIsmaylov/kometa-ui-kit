@@ -6,11 +6,11 @@ let nextId = 0;
  * An explanation that stays in the page. The term itself is the button (dotted underline); opened,
  * a 1px thread grows to 24px and the sentence fades in beside it. Escape closes it and returns focus
  * to the term. `open` is a model. The sentence is projected:
- * `<kometa-hint term="Lid tolovi">Qidiruvdan kelgan yangi mijozning birinchi tashrifidan 12%.</kometa-hint>`.
+ * `<k-hint term="Lid tolovi">Qidiruvdan kelgan yangi mijozning birinchi tashrifidan 12%.</k-hint>`.
  * Spec: kometa-hint.spec.ts.
  */
 @Component({
-  selector: 'kometa-hint',
+  selector: 'k-hint',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(keydown.escape)': 'onEscape($event)' },
   styles: `

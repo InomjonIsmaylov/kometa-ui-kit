@@ -4,7 +4,7 @@ import { KometaAction, KometaActions } from './kometa-actions';
 
 @Component({
   imports: [KometaActions],
-  template: `<kometa-actions label="More options" [items]="items()" [disabled]="disabled()" [(open)]="open" />`,
+  template: `<k-actions label="More options" [items]="items()" [disabled]="disabled()" [(open)]="open" />`,
 })
 class Host {
   ran: string[] = [];
@@ -23,7 +23,7 @@ describe('KometaActions', () => {
     const f = TestBed.createComponent(Host);
     document.body.append(f.nativeElement);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-actions') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-actions') as HTMLElement;
     const btn = root.querySelector('button.more') as HTMLButtonElement;
     const rows = () => [...root.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')];
     const open = async () => { btn.click(); f.detectChanges(); await f.whenStable(); f.detectChanges(); };

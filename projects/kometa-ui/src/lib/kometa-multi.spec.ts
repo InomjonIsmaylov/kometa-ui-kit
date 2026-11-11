@@ -10,7 +10,7 @@ const SHOPS = [
 
 @Component({
   imports: [KometaMulti],
-  template: `<kometa-multi ariaLabel="Shops" inputId="shops" placeholder="Add a shop" noMatch="Nothing" removeLabel="Remove" summary="Shops: 2" optionLabel="name"
+  template: `<k-multi ariaLabel="Shops" inputId="shops" placeholder="Add a shop" noMatch="Nothing" removeLabel="Remove" summary="Shops: 2" optionLabel="name"
                            optionValue="id" optionDot="colour" [options]="shops" [pill]="pill()" [disabled]="disabled()" [(value)]="value" />`,
 })
 class Host {
@@ -25,7 +25,7 @@ describe('KometaMulti', () => {
     const f = TestBed.createComponent(Host);
     f.componentInstance.pill.set(pill);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-multi') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-multi') as HTMLElement;
     const input = () => root.querySelector('input') as HTMLInputElement;
     const btn = () => root.querySelector('.btn') as HTMLButtonElement;
     const rows = () => [...root.querySelectorAll<HTMLElement>('.opt')];

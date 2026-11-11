@@ -12,7 +12,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
  * docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
-  selector: 'kometa-upload',
+  selector: 'k-upload',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-state]': 'state()' },
   styles: `

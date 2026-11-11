@@ -6,7 +6,7 @@ import { KometaTime } from './kometa-time';
 
 @Component({
   imports: [FormsModule, KometaTime],
-  template: `<kometa-time inputId="t" [clearable]="clearable()" clearLabel="Tozalash" [step]="step()" [ngModel]="value()" (ngModelChange)="value.set($event)" />`,
+  template: `<k-time inputId="t" [clearable]="clearable()" clearLabel="Tozalash" [step]="step()" [ngModel]="value()" (ngModelChange)="value.set($event)" />`,
 })
 class Host {
   value = signal<Date | null>(new Date(2000, 0, 1, 9, 30));

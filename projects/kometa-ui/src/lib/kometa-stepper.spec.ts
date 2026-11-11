@@ -5,7 +5,7 @@ import { KometaStepper } from './kometa-stepper';
 
 @Component({
   imports: [KometaStepper],
-  template: `<kometa-stepper [(value)]="value" [min]="min()" [max]="max()" [step]="step()" [unit]="unit()"
+  template: `<k-stepper [(value)]="value" [min]="min()" [max]="max()" [step]="step()" [unit]="unit()"
     [disabled]="disabled()" ariaLabel="Davomiyligi" decrementLabel="Kamaytirish" incrementLabel="Oshirish" />`,
 })
 class Host {
@@ -19,7 +19,7 @@ class Host {
 
 @Component({
   imports: [KometaStepper, FormField],
-  template: `<kometa-stepper [formField]="f.minutes" [step]="5" />`,
+  template: `<k-stepper [formField]="f.minutes" [step]="5" />`,
 })
 class FormsHost {
   model = signal({ minutes: 30 });
@@ -33,7 +33,7 @@ describe('KometaStepper', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const el = f.nativeElement.querySelector('kometa-stepper') as HTMLElement;
+    const el = f.nativeElement.querySelector('k-stepper') as HTMLElement;
     const [minus, plus] = Array.from(el.querySelectorAll('button')) as HTMLButtonElement[];
     const fig = el.querySelector('.fig') as HTMLElement;
     return { f, el, minus, plus, fig };

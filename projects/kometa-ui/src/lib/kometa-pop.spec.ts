@@ -6,10 +6,10 @@ import { KometaPop } from './kometa-pop';
   imports: [KometaPop],
   template: `
     <button class="anchor" type="button" (click)="pop.toggle($event)">Open</button>
-    <kometa-pop #pop ariaLabel="Shop" [width]="240" [focusOnShow]="focus()" [(open)]="open" (opened)="opened = opened + 1">
+    <k-pop #pop ariaLabel="Shop" [width]="240" [focusOnShow]="focus()" [(open)]="open" (opened)="opened = opened + 1">
       <button class="first" type="button">One</button>
       <button class="second" type="button" (click)="pop.hide(true)">Two</button>
-    </kometa-pop>
+    </k-pop>
     <button class="elsewhere" type="button">Elsewhere</button>
   `,
 })

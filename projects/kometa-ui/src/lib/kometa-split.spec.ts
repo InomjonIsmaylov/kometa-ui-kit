@@ -4,7 +4,7 @@ import { KometaSplit, KometaSplitSide } from './kometa-split';
 
 @Component({
   imports: [KometaSplit],
-  template: `<kometa-split [left]="left()" [right]="right()" />`,
+  template: `<k-split [left]="left()" [right]="right()" />`,
 })
 class Host {
   left = signal<KometaSplitSide>({ amount: '12 000', label: 'Naqd' });
@@ -15,7 +15,7 @@ describe('KometaSplit', () => {
   it('shows the caller amounts and labels without reformatting', () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const el = fixture.nativeElement.querySelector('kometa-split') as HTMLElement;
+    const el = fixture.nativeElement.querySelector('k-split') as HTMLElement;
     const amounts = [...el.querySelectorAll('.amount')].map((node) => node.textContent!.trim());
     const labels = [...el.querySelectorAll('.label')].map((node) => node.textContent!.trim());
     expect(amounts).toEqual(['12 000', '8 500']);

@@ -11,7 +11,7 @@ export interface KometaDateNames {
   dayNamesMin: readonly string[];
   prev: string;
   next: string;
-  /** The word for taking a value away; `kometa-time` uses it. */
+  /** The word for taking a value away; `k-time` uses it. */
   clear?: string;
 }
 
@@ -42,7 +42,7 @@ let nextId = 0;
  * Spec: kometa-date.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Month).
  */
 @Component({
-  selector: 'kometa-date',
+  selector: 'k-date',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet],
   host: {

@@ -5,11 +5,11 @@ export type KometaTagTone = 'now' | 'wait' | 'book' | 'done' | 'warn' | 'error';
 /**
  * A status mark: a state-coloured dot and a word, no container (round 14, S Dot and word: a column of them reads as words, not boxes). Not a button.
  * `now` is amber (a dot, never a fill), `wait` blue, `book` muted, `done` green, `warn` and `error` red.
- * The word is projected: `<kometa-tag tone="wait">Kutmoqda</kometa-tag>`.
+ * The word is projected: `<k-tag tone="wait">Kutmoqda</k-tag>`.
  * Spec: kometa-tag.spec.ts.
  */
 @Component({
-  selector: 'kometa-tag',
+  selector: 'k-tag',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-tone]': 'tone()' },
   styles: `

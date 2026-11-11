@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
  *
  */
 @Component({
-  selector: 'kometa-chip',
+  selector: 'k-chip',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-selected]': "selected() ? '' : null" },
   styles: `

@@ -4,7 +4,7 @@ import { KometaNotes } from './kometa-notes';
 
 @Component({
   imports: [KometaNotes],
-  template: `<kometa-notes ariaLabel="Reply" inputId="reply-id" placeholder="Say thanks" [rows]="3" [maxlength]="max()" [count]="count()" [disabled]="disabled()" [(value)]="value" />`,
+  template: `<k-notes ariaLabel="Reply" inputId="reply-id" placeholder="Say thanks" [rows]="3" [maxlength]="max()" [count]="count()" [disabled]="disabled()" [(value)]="value" />`,
 })
 class Host {
   value = signal('Hello');
@@ -17,7 +17,7 @@ describe('KometaNotes', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-notes') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-notes') as HTMLElement;
     const ta = root.querySelector('textarea') as HTMLTextAreaElement;
     const type = (text: string) => { ta.value = text; ta.dispatchEvent(new Event('input')); f.detectChanges(); };
     return { f, root, ta, type, count: () => root.querySelector('.count') as HTMLElement | null };

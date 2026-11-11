@@ -4,7 +4,7 @@ import { KometaWait } from './kometa-wait';
 
 @Component({
   imports: [KometaWait],
-  template: `<kometa-wait [label]="label()" />`,
+  template: `<k-wait [label]="label()" />`,
 })
 class Host {
   label = signal('Yuklanmoqda');
@@ -14,7 +14,7 @@ describe('KometaWait', () => {
   it('keeps the label as a status while the line can hold still', () => {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const el = f.nativeElement.querySelector('kometa-wait') as HTMLElement;
+    const el = f.nativeElement.querySelector('k-wait') as HTMLElement;
     expect(el.getAttribute('role')).toBe('status');
     expect(el.textContent).toContain('Yuklanmoqda');
     const css = stylesheet(KometaWait);

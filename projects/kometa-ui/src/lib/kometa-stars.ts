@@ -10,7 +10,7 @@ const STAR = 'M12 2.6l2.7 6.1 6.6.6-5 4.4 1.5 6.5L12 16.9 6.2 20.2 7.7 13.7 2.7 
  *
  */
 @Component({
-  selector: 'kometa-stars',
+  selector: 'k-stars',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     role: 'img',

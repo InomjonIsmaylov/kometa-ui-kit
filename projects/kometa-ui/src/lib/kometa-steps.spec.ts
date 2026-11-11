@@ -4,7 +4,7 @@ import { KometaSteps } from './kometa-steps';
 
 @Component({
   imports: [KometaSteps],
-  template: `<kometa-steps [steps]="steps()" [current]="current()" [ariaLabel]="label()" />`,
+  template: `<k-steps [steps]="steps()" [current]="current()" [ariaLabel]="label()" />`,
 })
 class Host {
   steps = signal(['Raqam', 'Kod', 'Salon', 'Manzil', 'Xizmat', 'Tayyor']);
@@ -16,7 +16,7 @@ describe('KometaSteps', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const el = f.nativeElement.querySelector('kometa-steps') as HTMLElement;
+    const el = f.nativeElement.querySelector('k-steps') as HTMLElement;
     const rows = () => [...el.querySelectorAll('li')] as HTMLElement[];
     return { f, el, rows };
   }

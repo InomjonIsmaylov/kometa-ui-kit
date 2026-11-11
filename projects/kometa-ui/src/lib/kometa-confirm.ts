@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  *
  */
 @Component({
-  selector: 'kometa-confirm',
+  selector: 'k-confirm',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }

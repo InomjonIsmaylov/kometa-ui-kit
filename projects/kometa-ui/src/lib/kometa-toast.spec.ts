@@ -4,7 +4,7 @@ import { KometaToast, KometaToastItem } from './kometa-toast';
 
 @Component({
   imports: [KometaToast],
-  template: `<kometa-toast [items]="items()" (dismiss)="gone.push($event); items.set(items().filter((i) => i.id !== $event))" />`,
+  template: `<k-toast [items]="items()" (dismiss)="gone.push($event); items.set(items().filter((i) => i.id !== $event))" />`,
 })
 class Host {
   items = signal<KometaToastItem[]>([]);

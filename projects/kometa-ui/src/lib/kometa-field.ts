@@ -8,7 +8,7 @@ let nextId = 0;
  * one 1px hairline under it, and on focus a cream line draws in from the left. Under it an optional
  * "4 / 40" counter and a muted-red error line (`role="alert"`).
  *
- * A Signal Forms custom control (`FormValueControl<string>`): `<kometa-field [formField]="f.name" label="…" />`
+ * A Signal Forms custom control (`FormValueControl<string>`): `<k-field [formField]="f.name" label="…" />`
  * binds value, disabled, readonly, required, name, touched, invalid, errors and maxLength by itself.
  * Outside Signal Forms it is a plain control: `[(value)]` and an explicit `error` string.
  *
@@ -16,7 +16,7 @@ let nextId = 0;
  * docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
-  selector: 'kometa-field',
+  selector: 'k-field',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-size]': 'size()' },
   styles: `

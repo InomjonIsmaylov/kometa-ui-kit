@@ -4,7 +4,7 @@ import { KometaMeter } from './kometa-meter';
 
 @Component({
   imports: [KometaMeter],
-  template: `<kometa-meter [value]="value()" [max]="max()" label="bepul lid qoldi" ariaLabel="Lidlar" />`,
+  template: `<k-meter [value]="value()" [max]="max()" label="bepul lid qoldi" ariaLabel="Lidlar" />`,
 })
 class Host {
   value = signal(17);
@@ -15,7 +15,7 @@ describe('KometaMeter', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const el = f.nativeElement.querySelector('kometa-meter') as HTMLElement;
+    const el = f.nativeElement.querySelector('k-meter') as HTMLElement;
     const ticks = () => Array.from(el.querySelectorAll('.ticks i')) as HTMLElement[];
     const bright = () => ticks().filter((t) => t.classList.contains('on')).length;
     return { f, el, ticks, bright };

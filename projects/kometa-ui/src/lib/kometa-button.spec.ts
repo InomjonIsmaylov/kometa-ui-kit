@@ -6,9 +6,9 @@ import { KometaButton } from './kometa-button';
 @Component({
   imports: [KometaButton],
   template: `
-    <kometa-button id="a" label="Save" [disabled]="off()" [loading]="busy()" (clicked)="hits.set(hits() + 1)" />
-    <kometa-button id="b" label="Cancel" severity="secondary" [outlined]="true" size="small" styleClass="mine" />
-    <kometa-button id="c" label="Delete" severity="danger" [fluid]="true" type="submit" ariaLabel="Delete it" />
+    <k-button id="a" label="Save" [disabled]="off()" [loading]="busy()" (clicked)="hits.set(hits() + 1)" />
+    <k-button id="b" label="Cancel" severity="secondary" [outlined]="true" size="small" styleClass="mine" />
+    <k-button id="c" label="Delete" severity="danger" [fluid]="true" type="submit" ariaLabel="Delete it" />
   `,
 })
 class Host {
@@ -66,7 +66,7 @@ describe('KometaButton', () => {
 
 @Component({
   imports: [KometaButton],
-  template: `<kometa-button id="l" label="Go" icon="+" /><kometa-button id="r" label="Go" icon="→" iconPos="right" />`,
+  template: `<k-button id="l" label="Go" icon="+" /><k-button id="r" label="Go" icon="→" iconPos="right" />`,
 })
 class IconHost {}
 

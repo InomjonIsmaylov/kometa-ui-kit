@@ -12,7 +12,7 @@ export interface KometaSplitSide {
  *
  */
 @Component({
-  selector: 'kometa-split',
+  selector: 'k-split',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[attr.data-align]': 'align()' },
   styles: `

@@ -25,7 +25,7 @@ const RESUME_MS = 1500;
  * Spec: kometa-toast.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Thread).
  */
 @Component({
-  selector: 'kometa-toast',
+  selector: 'k-toast',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .thread {

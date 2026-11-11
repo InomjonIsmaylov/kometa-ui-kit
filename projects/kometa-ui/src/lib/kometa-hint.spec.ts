@@ -4,7 +4,7 @@ import { KometaHint } from './kometa-hint';
 
 @Component({
   imports: [KometaHint],
-  template: `<kometa-hint [term]="term()" [(open)]="open">{{ text() }}</kometa-hint>`,
+  template: `<k-hint [term]="term()" [(open)]="open">{{ text() }}</k-hint>`,
 })
 class Host {
   term = signal('Lid toʻlovi');
@@ -16,7 +16,7 @@ describe('KometaHint', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-hint') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-hint') as HTMLElement;
     return {
       f,
       root,

@@ -9,8 +9,8 @@ import { Signal, WritableSignal, computed, linkedSignal, signal } from '@angular
  *     sorts: { name: (a, b) => sortText(a.name, b.name), date: (a, b) => sortNum(a.at, b.at) },
  *     sort: 'date', dirs: { date: 'desc' }, pageSize: 10,
  *   });
- *   // template: @for (r of view.rows(); ...)  <kometa-pager [total]="view.total()" [(page)]="view.page" [(pageSize)]="view.pageSize" />
- *   //           <kometa-sort [options]="..." [key]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)" />
+ *   // template: @for (r of view.rows(); ...)  <k-pager [total]="view.total()" [(page)]="view.page" [(pageSize)]="view.pageSize" />
+ *   //           <k-sort [options]="..." [key]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)" />
  *
  * - `filter` is a Signal of a predicate (rebuild it in a `computed`); a new predicate resets to page 1.
  * - A changed sort, direction or page size resets to page 1. A shorter list clamps the page (a reload
@@ -18,7 +18,7 @@ import { Signal, WritableSignal, computed, linkedSignal, signal } from '@angular
  * - `pickSort(key)` flips the direction when `key` is already active, else switches (to `dirs[key]`, default asc).
  * - A key missing from `sorts` leaves the source order alone.
  * - For a list the SERVER pages, skip `listView`: hold `page`/`pageSize` signals yourself and feed
- *   `total` (the server's count) to `<kometa-pager>`.
+ *   `total` (the server's count) to `<k-pager>`.
  */
 export type SortDir = 'asc' | 'desc';
 

@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * A list of things in the order they happened, one `kometa-step` each. The time is a large figure; the content is
+ * A list of things in the order they happened, one `k-step` each. The time is a large figure; the content is
  * whatever the page projects; and the wait to the next step is written on the dashed line that joins them
  * (`gap`, e.g. "32 min"): the wait is the story. The steps rise in one after another when the trail appears.
  * Spec: kometa-trail.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Gaps).
  */
 @Component({
-  selector: 'kometa-trail',
+  selector: 'k-trail',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { role: 'list' },
   styles: `:host { display: block; }`,
@@ -15,9 +15,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class KometaTrail {}
 
-/** One step of a `kometa-trail`. Content is projected after the time; `gap` is drawn under the step. */
+/** One step of a `k-trail`. Content is projected after the time; `gap` is drawn under the step. */
 @Component({
-  selector: 'kometa-step',
+  selector: 'k-step',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { role: 'listitem' },
   styles: `

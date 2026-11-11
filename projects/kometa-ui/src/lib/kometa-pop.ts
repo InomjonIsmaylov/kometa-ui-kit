@@ -8,7 +8,7 @@ import {
  * The caller owns the button and the words; the panel is whatever is projected into it.
  *
  *     <button (click)="pop.toggle($event)">…</button>
- *     <kometa-pop #pop ariaLabel="Shop">…</kometa-pop>
+ *     <k-pop #pop ariaLabel="Shop">…</k-pop>
  *
  * `toggle(event)` anchors to the element the event is on (`show(el)` and `hide()` do the same by hand); `open` is
  * two-way. Escape closes and hands focus back to the button, and does not reach a drawer behind it; a click outside,
@@ -19,7 +19,7 @@ import {
  * Spec: kometa-pop.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-9.html (Glass).
  */
 @Component({
-  selector: 'kometa-pop',
+  selector: 'k-pop',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:resize)': 'hide(false)',

@@ -1,5 +1,5 @@
 /*
- * Blend fields and tables for the consoles: native fields in a `.field` and kometa-table.
+ * Blend fields and tables for the consoles: native fields in a `.field` and k-table.
  * Imported by blend.scss (the customer app never loads this file). Unlayered, so it beats `legacy`
  * and `components`. Everything is token-driven (`--glass`, `--glass-line`, `--display-ink`), so the
  * light twins in tokens.scss apply with no second copy; the few values that have no token are the
@@ -32,13 +32,13 @@
   }
 }
 
-/* ===================================================================== kometa-table ======
+/* ===================================================================== k-table ======
  * The panel is the HOST each page already draws (`.tcard`, `.client-table-wrap`, `.table-wrap`,
  * services' `.table-container.panel`): the pages switch it on and off per breakpoint, so painting it
  * here would double the border below the breakpoint. The pages paint it from `--card`, `--border` and
  * `--r-card`, so the host takes the glass by redeclaring those three; the radius is a literal 12px
  * on two of them, hence the one !important.
- * Inside, `.ktable` (the kometa-table host) makes `--card` transparent (every cell the pages paint with var(--card)
+ * Inside, `.ktable` (the k-table host) makes `--card` transparent (every cell the pages paint with var(--card)
  * lets the glass through), the hairlines `--glass-line` and the hover/zebra wash faint.
  * Custom properties inherit, so a card a page draws INSIDE the table (the stacked services row, a
  * branch row on a phone) takes the glass back below.

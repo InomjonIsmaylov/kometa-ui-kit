@@ -11,7 +11,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } f
  *
  */
 @Component({
-  selector: 'kometa-pair',
+  selector: 'k-pair',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: flex; gap: 10px; width: 100%; }

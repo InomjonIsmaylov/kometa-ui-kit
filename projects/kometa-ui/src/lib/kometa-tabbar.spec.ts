@@ -12,7 +12,7 @@ const links: KometaTab[] = buttons.map((t) => ({ ...t, link: '/' + t.value }));
 
 @Component({
   imports: [KometaTabbar],
-  template: `<kometa-tabbar [tabs]="tabs()" [(value)]="value" ariaLabel="Asosiy" />`,
+  template: `<k-tabbar [tabs]="tabs()" [(value)]="value" ariaLabel="Asosiy" />`,
 })
 class Host {
   tabs = signal<KometaTab[]>(buttons);

@@ -5,10 +5,10 @@ import { KometaConfirm } from './kometa-confirm';
 @Component({
   imports: [KometaConfirm],
   template: `
-    <kometa-confirm [asking]="asking()">
+    <k-confirm [asking]="asking()">
       <span data-row>Mark paid cash</span>
       <span data-question>Sure? <button type="button">Yo'q</button><button type="button">Ha</button></span>
-    </kometa-confirm>
+    </k-confirm>
   `,
 })
 class Host {
@@ -27,7 +27,7 @@ describe('KometaConfirm', () => {
     const fixture = TestBed.createComponent(Host);
     fixture.componentInstance.asking.set(asking);
     fixture.detectChanges();
-    return fixture.nativeElement.querySelector('kometa-confirm') as HTMLElement;
+    return fixture.nativeElement.querySelector('k-confirm') as HTMLElement;
   }
 
   it('shows the row and not the question while not asking', () => {

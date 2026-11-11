@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 /**
- * A destructive action that lives inline: a red underlined word. `<button kometa-erase>Delete service</button>`.
- * It is deliberately quiet; the loud red button belongs to the confirm step (`kometa-pair`), so the list itself
+ * A destructive action that lives inline: a red underlined word. `<button k-erase>Delete service</button>`.
+ * It is deliberately quiet; the loud red button belongs to the confirm step (`k-pair`), so the list itself
  * never shouts. Not for the one thing a screen is for, and not for a row's everyday action.
  * Spec: kometa-erase.spec.ts. Lab: docs/superpowers/labs/2026-10-14-blend-ui-lab-round-11.html (D).
  *
  *
  */
 @Component({
-  selector: 'button[kometa-erase]',
+  selector: 'button[k-erase]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {

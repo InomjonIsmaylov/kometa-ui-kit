@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
-  selector: 'kometa-wait',
+  selector: 'k-wait',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { role: 'status' },
   styles: `

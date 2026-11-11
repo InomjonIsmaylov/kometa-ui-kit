@@ -10,13 +10,13 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation, booleanAttribute
  * Spec: kometa-button.spec.ts.
  */
 @Component({
-  selector: 'kometa-button',
+  selector: 'k-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { '[class.kbtn-fluid]': 'fluid()' },
   styles: `
-    kometa-button { display: block; }
-    kometa-button.kbtn-fluid { width: 100%; }
+    k-button { display: block; }
+    k-button.kbtn-fluid { width: 100%; }
     :where(.kbtn) {
       display: inline-flex; align-items: center; justify-content: center; gap: var(--kbtn-gap, 8px); box-sizing: border-box; min-height: 48px; padding: 6px 10px;
       border: 1px solid var(--amber); border-radius: var(--kbtn-radius, var(--r-pill, 9999px)); background: var(--amber); color: var(--on-amber, #121414);

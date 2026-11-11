@@ -4,7 +4,7 @@ import { KometaReveal } from './kometa-reveal';
 
 @Component({
   imports: [KometaReveal],
-  template: `<kometa-reveal before="/b.webp" after="/a.webp" beforeLabel="Before" afterLabel="After" ariaLabel="Before and after" [(position)]="pos" />`,
+  template: `<k-reveal before="/b.webp" after="/a.webp" beforeLabel="Before" afterLabel="After" ariaLabel="Before and after" [(position)]="pos" />`,
 })
 class Host {
   pos = signal(50);
@@ -14,7 +14,7 @@ describe('KometaReveal', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-reveal') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-reveal') as HTMLElement;
     const ticks = root.querySelector('.ticks') as HTMLElement;
     const key = (k: string, shiftKey = false) => {
       const e = new KeyboardEvent('keydown', { key: k, shiftKey, bubbles: true, cancelable: true });

@@ -13,7 +13,7 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
  * `<dialog>`: the page behind goes inert, Escape and the dark area are the browser's, and the top layer keeps a
  * drawer above any card.
  *
- *     <kometa-drawer [visible]="open()" (visibleChange)="open.set($event)" [position]="…" styleClass="kometa-sheet">…
+ *     <k-drawer [visible]="open()" (visibleChange)="open.set($event)" [position]="…" styleClass="kometa-sheet">…
  *
  * `visible` is two-way. `dismissible` (default true) lets a click on the dark area close it; Escape has its own switch,
  * `closeOnEscape` (default true), so a sheet can refuse the dark area mid-save and still hand its save to the page on Escape. `opened` fires once it is open, `closing` as the close starts and `kometaSheetClosed` once the
@@ -27,7 +27,7 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
  * Spec: kometa-drawer.spec.ts.
  */
 @Component({
-  selector: 'kometa-drawer',
+  selector: 'k-drawer',
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,

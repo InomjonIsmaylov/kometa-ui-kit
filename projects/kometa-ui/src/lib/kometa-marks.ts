@@ -13,7 +13,7 @@ export interface KometaMarkDay {
  *
  */
 @Component({
-  selector: 'kometa-marks',
+  selector: 'k-marks',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: flex; gap: var(--marks-gap, 12px); }

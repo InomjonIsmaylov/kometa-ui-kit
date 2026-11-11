@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input
 
 /**
  * The "choose a file" half of an upload: it opens the OS chooser and reports the files, nothing more
- * (progress is `kometa-upload`'s, the presigned PUT is the page's). Two shapes, one frame language:
+ * (progress is `k-upload`'s, the presigned PUT is the page's). Two shapes, one frame language:
  * `zone` is a corner-marked frame with a title and a hint, `button` is a small framed chip.
  * The label wraps a real file input, so keyboard, focus and the accessible name are the browser's.
  * The input is emptied after every pick, so choosing the same file twice still fires `picked`.
@@ -11,7 +11,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input
  * Spec: kometa-picker.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-6.html (Frame).
  */
 @Component({
-  selector: 'kometa-picker',
+  selector: 'k-picker',
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.zone]': "variant() === 'zone'", '[class.over]': 'over()', '[class.off]': 'disabled()' },

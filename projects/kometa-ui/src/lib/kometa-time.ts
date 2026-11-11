@@ -8,7 +8,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 let nextId = 0;
 
 /**
- * A time of day. The time is a figure with a hairline under it, like `kometa-date`; it opens a glass list of times in
+ * A time of day. The time is a figure with a hairline under it, like `k-date`; it opens a glass list of times in
  * the browser's top layer (so a drawer cannot clip it), flips above when there is no room below and is kept in the
  * viewport. `step` is the minutes between the times listed (15 unless set); a time already held that is off the grid
  * (09:07) is listed too, so nothing is lost by opening it. Arrow keys move over the list, Enter picks, Escape, Tab, a
@@ -19,7 +19,7 @@ let nextId = 0;
  *
  */
 @Component({
-  selector: 'kometa-time',
+  selector: 'k-time',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => KometaTime), multi: true }],
   host: {

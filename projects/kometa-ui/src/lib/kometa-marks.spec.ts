@@ -4,7 +4,7 @@ import { KometaMarkDay, KometaMarks } from './kometa-marks';
 
 @Component({
   imports: [KometaMarks],
-  template: `<kometa-marks [days]="days()" />`,
+  template: `<k-marks [days]="days()" />`,
 })
 class Host {
   days = signal<KometaMarkDay[]>([

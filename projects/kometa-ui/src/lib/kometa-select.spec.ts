@@ -14,7 +14,7 @@ const GROUPS = [
 
 @Component({
   imports: [KometaSelect],
-  template: `<kometa-select ariaLabel="Service" inputId="svc" placeholder="Pick one" prefix="" [options]="options()" [group]="group()"
+  template: `<k-select ariaLabel="Service" inputId="svc" placeholder="Pick one" prefix="" [options]="options()" [group]="group()"
                             [disabled]="disabled()" [pill]="pill()" [(value)]="value" />`,
 })
 class Host {
@@ -29,7 +29,7 @@ describe('KometaSelect', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-select') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-select') as HTMLElement;
     const btn = root.querySelector('button') as HTMLButtonElement;
     const rows = () => [...root.querySelectorAll<HTMLElement>('.opt')];
     const key = (k: string) => (document.activeElement ?? root).dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));

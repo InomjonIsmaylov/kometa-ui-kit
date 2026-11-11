@@ -11,7 +11,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input, model } fr
  *
  */
 @Component({
-  selector: 'kometa-check',
+  selector: 'k-check',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }

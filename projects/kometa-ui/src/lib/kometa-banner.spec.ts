@@ -5,9 +5,9 @@ import { KometaBanner, KometaBannerTone } from './kometa-banner';
 @Component({
   imports: [KometaBanner],
   template: `
-    <kometa-banner [tone]="tone()" [surface]="surface()" [dismissible]="dismissible()" [closeLabel]="closeLabel()" (dismissed)="count.set(count() + 1)">
+    <k-banner [tone]="tone()" [surface]="surface()" [dismissible]="dismissible()" [closeLabel]="closeLabel()" (dismissed)="count.set(count() + 1)">
       {{ text() }}
-    </kometa-banner>
+    </k-banner>
   `,
 })
 class Host {
@@ -21,7 +21,7 @@ class Host {
 
 @Component({
   imports: [KometaBanner],
-  template: `<kometa-banner id="bare" tone="warn" dismissible closeLabel="Yopish">A</kometa-banner><kometa-banner id="calm" tone="warn" roleOverride="status">B</kometa-banner>`,
+  template: `<k-banner id="bare" tone="warn" dismissible closeLabel="Yopish">A</k-banner><k-banner id="calm" tone="warn" roleOverride="status">B</k-banner>`,
 })
 class BareHost {}
 
@@ -29,7 +29,7 @@ describe('KometaBanner', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-banner') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-banner') as HTMLElement;
     return { f, root, close: () => root.querySelector('button.close') as HTMLButtonElement | null };
   }
 

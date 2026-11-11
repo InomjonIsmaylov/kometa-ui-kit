@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 /**
- * An action that is only a word and an arrow, for the end of a row: `<button kometa-word>Nudge</button>`. No box,
+ * An action that is only a word and an arrow, for the end of a row: `<button k-word>Nudge</button>`. No box,
  * so a column of them stays calm; the arrow leans on hover. Amber ink by default, `quiet` for a secondary word
  * beside it (muted until hovered). `lead` is the page's one call to action (the old `kometa-line`): ink, a hairline under
  * it and the arrow pushed to the end; `busy` swaps the rule for a marching one and the button ignores clicks until it
- * clears. Never a destructive one (that is `kometa-erase`). 44px tall on a touch screen, whatever it draws.
+ * clears. Never a destructive one (that is `k-erase`). 44px tall on a touch screen, whatever it draws.
  * Spec: kometa-word.spec.ts. Lab: docs/superpowers/labs/2026-10-14-blend-ui-lab-round-11.html (C).
  *
  *
  */
 @Component({
-  selector: 'button[kometa-word]',
+  selector: 'button[k-word]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.bare]': '!arrow()', '[class.quiet]': 'quiet()', '[class.lead]': 'lead()', '[class.busy]': 'busy()', '[attr.aria-busy]': "busy() ? 'true' : null" },
   styles: `

@@ -27,7 +27,7 @@ export interface KometaFilmDay {
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Day: film".
  */
 @Component({
-  selector: 'kometa-film',
+  selector: 'k-film',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     role: 'group',

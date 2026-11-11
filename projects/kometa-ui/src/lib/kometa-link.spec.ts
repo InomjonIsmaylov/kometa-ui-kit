@@ -5,7 +5,7 @@ import { KometaLink } from './kometa-link';
 
 @Component({
   imports: [KometaLink],
-  template: `<kometa-link [text]="text()" [copyLabel]="copyLabel()" [copiedLabel]="copiedLabel()" />`,
+  template: `<k-link [text]="text()" [copyLabel]="copyLabel()" [copiedLabel]="copiedLabel()" />`,
 })
 class Host {
   text = signal('https://kometa.com.uz/book/chilonzor');
@@ -15,7 +15,7 @@ class Host {
 
 @Component({
   imports: [KometaLink],
-  template: `<code>https://kometa.com.uz/book/x</code><kometa-link [flashValue]="flash()" text="x" copyLabel="Nusxa" copiedLabel="Nusxalandi" />`,
+  template: `<code>https://kometa.com.uz/book/x</code><k-link [flashValue]="flash()" text="x" copyLabel="Nusxa" copiedLabel="Nusxalandi" />`,
 })
 class HostWithValue {
   flash = signal(true);

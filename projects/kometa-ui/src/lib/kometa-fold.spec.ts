@@ -6,10 +6,10 @@ import { KometaFold, KometaFoldBody, KometaFoldMark } from './kometa-fold';
 @Component({
   imports: [KometaFold],
   template: `
-    <kometa-fold [(open)]="open">
+    <k-fold [(open)]="open">
       <span fold-title>Dushanba</span>
       <ng-template><p class="made">{{ built() }}</p></ng-template>
-    </kometa-fold>
+    </k-fold>
   `,
 })
 class Host {
@@ -20,7 +20,7 @@ class Host {
 
 @Component({
   imports: [KometaFoldBody, KometaFoldMark],
-  template: `<kometa-fold-mark [open]="open()" /><kometa-fold-body [open]="open()"><ng-template><i class="b">x</i></ng-template></kometa-fold-body>`,
+  template: `<k-fold-mark [open]="open()" /><k-fold-body [open]="open()"><ng-template><i class="b">x</i></ng-template></k-fold-body>`,
 })
 class Bare {
   open = signal(false);
@@ -32,7 +32,7 @@ function setup<T>(type: new () => T) {
   return f;
 }
 const q = (f: { nativeElement: HTMLElement }, sel: string) => f.nativeElement.querySelector(sel) as HTMLElement | null;
-const phase = (f: { nativeElement: HTMLElement }, tag = 'kometa-fold-body') => q(f, tag)!.getAttribute('data-phase');
+const phase = (f: { nativeElement: HTMLElement }, tag = 'k-fold-body') => q(f, tag)!.getAttribute('data-phase');
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 afterEach(() => vi.unstubAllGlobals());
@@ -102,7 +102,7 @@ describe('KometaFold', () => {
 describe('the parts on their own', () => {
   it('draws the mark with two hairlines and no chevron: the vertical one scales away when open', () => {
     const f = setup(Bare);
-    const mark = q(f, 'kometa-fold-mark')!;
+    const mark = q(f, 'k-fold-mark')!;
     expect(mark.getAttribute('aria-hidden')).toBe('true');
     expect(mark.querySelector('svg')).toBeNull();
     expect(mark.classList.contains('open')).toBe(false);
@@ -127,7 +127,7 @@ describe('the parts on their own', () => {
   });
 
   it('can appear: created already open, it animates in', () => {
-    @Component({ imports: [KometaFoldBody], template: `<kometa-fold-body [open]="true" [appear]="true"><ng-template>hi</ng-template></kometa-fold-body>` })
+    @Component({ imports: [KometaFoldBody], template: `<k-fold-body [open]="true" [appear]="true"><ng-template>hi</ng-template></k-fold-body>` })
     class Appear {}
     const f = setup(Appear);
     expect(phase(f)).toBe('opening');

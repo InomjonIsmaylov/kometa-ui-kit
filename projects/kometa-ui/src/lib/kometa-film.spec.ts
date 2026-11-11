@@ -4,7 +4,7 @@ import { KometaFilm } from './kometa-film';
 
 @Component({
   imports: [KometaFilm],
-  template: `<kometa-film [days]="days()" [(value)]="value" [ariaLabel]="ariaLabel()" />`,
+  template: `<k-film [days]="days()" [(value)]="value" [ariaLabel]="ariaLabel()" />`,
 })
 class Host {
   days = signal([
@@ -20,7 +20,7 @@ describe('KometaFilm', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-film') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-film') as HTMLElement;
     const buttons = [...root.querySelectorAll('button')] as HTMLButtonElement[];
     return { f, root, buttons };
   }

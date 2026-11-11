@@ -12,7 +12,7 @@ const RU: KometaDateNames = {
 
 @Component({
   imports: [KometaDate],
-  template: `<kometa-date ariaLabel="Start" inputId="start-id" [min]="min()" [max]="max()" [names]="names()" [disabled]="disabled()" [(value)]="value" />`,
+  template: `<k-date ariaLabel="Start" inputId="start-id" [min]="min()" [max]="max()" [names]="names()" [disabled]="disabled()" [(value)]="value" />`,
 })
 class Host {
   value = signal<Date | null>(new Date(2026, 9, 13));
@@ -26,7 +26,7 @@ describe('KometaDate', () => {
   async function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-date') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-date') as HTMLElement;
     const btn = root.querySelector('button.btn') as HTMLButtonElement;
     const settle = async () => { f.detectChanges(); await f.whenStable(); f.detectChanges(); };
     const open = async () => { btn.click(); await settle(); };
@@ -172,7 +172,7 @@ describe('KometaDate', () => {
 
 @Component({
   imports: [KometaDate],
-  template: `<kometa-date inline range [(rangeValue)]="range" />`,
+  template: `<k-date inline range [(rangeValue)]="range" />`,
 })
 class RangeHost {
   range = signal<(Date | null)[] | null>([new Date(2026, 9, 13), new Date(2026, 9, 14)]);
@@ -180,7 +180,7 @@ class RangeHost {
 
 @Component({
   imports: [KometaDate],
-  template: `<kometa-date inline [weekStart]="0" />`,
+  template: `<k-date inline [weekStart]="0" />`,
 })
 class SundayHost {}
 

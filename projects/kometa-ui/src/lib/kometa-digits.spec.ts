@@ -4,7 +4,7 @@ import { KometaDigits } from './kometa-digits';
 
 @Component({
   imports: [KometaDigits],
-  template: `<kometa-digits [(value)]="value" />`,
+  template: `<k-digits [(value)]="value" />`,
 })
 class Host {
   value = signal('');
@@ -14,7 +14,7 @@ describe('KometaDigits', () => {
   function render() {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const el = fixture.nativeElement.querySelector('kometa-digits') as HTMLElement;
+    const el = fixture.nativeElement.querySelector('k-digits') as HTMLElement;
     const input = el.querySelector('input') as HTMLInputElement;
     return { fixture, el, input };
   }

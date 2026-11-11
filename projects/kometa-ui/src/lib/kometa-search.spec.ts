@@ -4,7 +4,7 @@ import { KometaSearch } from './kometa-search';
 
 @Component({
   imports: [KometaSearch],
-  template: `<kometa-search [(value)]="value" placeholder="Kim?" ariaLabel="Search clients" clearLabel="Clear" [size]="size()" (keydown.enter)="enters = enters + 1" />`,
+  template: `<k-search [(value)]="value" placeholder="Kim?" ariaLabel="Search clients" clearLabel="Clear" [size]="size()" (keydown.enter)="enters = enters + 1" />`,
 })
 class Host {
   value = signal('');
@@ -16,7 +16,7 @@ describe('KometaSearch', () => {
   function render() {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const el = fixture.nativeElement.querySelector('kometa-search') as HTMLElement;
+    const el = fixture.nativeElement.querySelector('k-search') as HTMLElement;
     return { fixture, el, input: el.querySelector('input') as HTMLInputElement };
   }
 
@@ -60,7 +60,7 @@ describe('KometaSearch', () => {
   });
 
   it('opens with the cursor in the question only when asked', async () => {
-    @Component({ imports: [KometaSearch], template: `<kometa-search ariaLabel="Q" autofocus />` })
+    @Component({ imports: [KometaSearch], template: `<k-search ariaLabel="Q" autofocus />` })
     class Focused {}
     const fixture = TestBed.createComponent(Focused);
     document.body.appendChild(fixture.nativeElement);

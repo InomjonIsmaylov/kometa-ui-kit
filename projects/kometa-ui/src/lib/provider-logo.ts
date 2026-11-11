@@ -20,7 +20,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  * `ic_provider_*` drawables (blur filters dropped; see `docs/claude/web.md`, lane H).
  */
 @Component({
-  selector: 'kometa-provider-logo',
+  selector: 'k-provider-logo',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { 'aria-hidden': 'true' },
   styles: `

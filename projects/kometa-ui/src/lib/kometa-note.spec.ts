@@ -4,7 +4,7 @@ import { KometaNote } from './kometa-note';
 
 @Component({
   imports: [KometaNote],
-  template: `<kometa-note [label]="label()" [(open)]="open">{{ text() }}</kometa-note>`,
+  template: `<k-note [label]="label()" [(open)]="open">{{ text() }}</k-note>`,
 })
 class Host {
   label = signal('Daromad nima?');
@@ -16,7 +16,7 @@ describe('KometaNote', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-note') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-note') as HTMLElement;
     const mk = root.querySelector('button.mk') as HTMLButtonElement;
     const tip = root.querySelector('[role="tooltip"]') as HTMLElement;
     const pointer = (type: string, pointerType: string) => {

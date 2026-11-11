@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input }
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
-  selector: 'kometa-person',
+  selector: 'k-person',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: flex; align-items: center; gap: 10px; min-width: 0; }

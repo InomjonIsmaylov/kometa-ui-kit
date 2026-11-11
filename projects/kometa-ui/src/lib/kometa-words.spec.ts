@@ -4,7 +4,7 @@ import { KometaWords } from './kometa-words';
 
 @Component({
   imports: [KometaWords],
-  template: `<kometa-words [options]="options()" [(value)]="value" [ariaLabel]="ariaLabel()" />`,
+  template: `<k-words [options]="options()" [(value)]="value" [ariaLabel]="ariaLabel()" />`,
 })
 class Host {
   options = signal([
@@ -20,7 +20,7 @@ describe('KometaWords', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-words') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-words') as HTMLElement;
     const buttons = [...root.querySelectorAll('button')] as HTMLButtonElement[];
     return { f, root, buttons };
   }
@@ -75,7 +75,7 @@ describe('KometaWords', () => {
     @Component({
       imports: [KometaWords],
       template: `
-        <kometa-words [options]="options" [(value)]="value" [optionTemplate]="word" />
+        <k-words [options]="options" [(value)]="value" [optionTemplate]="word" />
         <ng-template #word let-opt><i class="mark"></i>{{ opt.label }}</ng-template>`,
     })
     class TemplatedHost {
@@ -84,7 +84,7 @@ describe('KometaWords', () => {
     }
     const f = TestBed.createComponent(TemplatedHost);
     f.detectChanges();
-    const buttons = [...f.nativeElement.querySelectorAll('kometa-words button')] as HTMLButtonElement[];
+    const buttons = [...f.nativeElement.querySelectorAll('k-words button')] as HTMLButtonElement[];
     expect(buttons.map((b) => b.textContent?.trim())).toEqual(['Alpha', 'Beta']);
     expect(buttons.every((b) => b.querySelector('.mark'))).toBe(true);
   });
@@ -92,7 +92,7 @@ describe('KometaWords', () => {
   it('in tabs mode speaks tablist/tab, keeps one tab stop and moves with the arrow keys', () => {
     @Component({
       imports: [KometaWords],
-      template: `<kometa-words tabs [options]="options" [(value)]="value" ariaLabel="Tabs" />`,
+      template: `<k-words tabs [options]="options" [(value)]="value" ariaLabel="Tabs" />`,
     })
     class TabsHost {
       options = [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }, { value: 'c', label: 'C' }];
@@ -100,7 +100,7 @@ describe('KometaWords', () => {
     }
     const f = TestBed.createComponent(TabsHost);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-words') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-words') as HTMLElement;
     const tabs = [...root.querySelectorAll('button')] as HTMLButtonElement[];
     expect(root.getAttribute('role')).toBe('tablist');
     expect(tabs.map((t) => t.getAttribute('role'))).toEqual(['tab', 'tab', 'tab']);

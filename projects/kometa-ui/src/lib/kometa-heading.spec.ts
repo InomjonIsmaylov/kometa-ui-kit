@@ -5,9 +5,9 @@ import { KometaHeading } from './kometa-heading';
 @Component({
   imports: [KometaHeading],
   template: `
-    <kometa-heading [title]="title()" [level]="level()" headingId="near-h">
+    <k-heading [title]="title()" [level]="level()" headingId="near-h">
       @if (action()) { <button action type="button">Hammasi</button> }
-    </kometa-heading>
+    </k-heading>
   `,
 })
 class Host {
@@ -20,7 +20,7 @@ describe('KometaHeading', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const el = () => f.nativeElement.querySelector('kometa-heading') as HTMLElement;
+    const el = () => f.nativeElement.querySelector('k-heading') as HTMLElement;
     return { f, el };
   }
 

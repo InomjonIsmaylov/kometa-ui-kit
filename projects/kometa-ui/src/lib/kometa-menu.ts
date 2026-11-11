@@ -26,7 +26,7 @@ let nextId = 0;
  *
  */
 @Component({
-  selector: 'kometa-menu',
+  selector: 'k-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.open]': 'open()', '(keydown)': 'onKey($event)' },
   styles: `

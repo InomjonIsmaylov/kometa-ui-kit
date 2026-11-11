@@ -4,7 +4,7 @@ import { KometaTick } from './kometa-tick';
 
 @Component({
   imports: [KometaTick],
-  template: `<kometa-tick ariaLabel="Accept the terms" inputId="terms" [disabled]="disabled()" [invalid]="invalid()" [(checked)]="checked" />`,
+  template: `<k-tick ariaLabel="Accept the terms" inputId="terms" [disabled]="disabled()" [invalid]="invalid()" [(checked)]="checked" />`,
 })
 class Host {
   checked = signal(false);
@@ -58,7 +58,7 @@ describe('KometaTick', () => {
 
 describe('KometaTick readonly', () => {
   it('ignores presses and says so', () => {
-    @Component({ imports: [KometaTick], template: `<kometa-tick ariaLabel="x" readonly [(checked)]="checked" />` })
+    @Component({ imports: [KometaTick], template: `<k-tick ariaLabel="x" readonly [(checked)]="checked" />` })
     class RoHost { checked = signal(false); }
     const f = TestBed.createComponent(RoHost);
     f.detectChanges();

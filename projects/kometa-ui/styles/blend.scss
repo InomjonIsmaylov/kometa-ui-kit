@@ -3,9 +3,9 @@
  * the `legacy` layer. The customer app imports blend-public.scss only; this file pulls that in so
  * the consoles keep the title and the edge.
  *
- * `kometa-drawer` puts the position on its dialog (`kdrawer` + `kdrawer-right` /
+ * `k-drawer` puts the position on its dialog (`kdrawer` + `kdrawer-right` /
  * `kdrawer-bottom`) and owns the slide and the dim; this file only paints the glass.
- * The phone menu is `dialog.nav-drawer` in the vendor shell, not a kometa-drawer, so it is glass here
+ * The phone menu is `dialog.nav-drawer` in the vendor shell, not a k-drawer, so it is glass here
  * too. A bottom sheet keeps its grabber and its edge; it takes the same glass and the same spring.
  *
  * One rule set serves both schemes. The glass, the blur, the highlight and the shade are tokens,

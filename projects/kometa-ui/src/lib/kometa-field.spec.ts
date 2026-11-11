@@ -6,7 +6,7 @@ import { KometaField } from './kometa-field';
 @Component({
   imports: [KometaField],
   template: `
-    <kometa-field
+    <k-field
       [(value)]="value"
       [label]="label()"
       [type]="type()"
@@ -39,7 +39,7 @@ class Host {
 
 @Component({
   imports: [KometaField, FormField],
-  template: `<kometa-field [formField]="f.name" label="Salon nomi" showCount />`,
+  template: `<k-field [formField]="f.name" label="Salon nomi" showCount />`,
 })
 class FormsHost {
   model = signal({ name: '' });
@@ -54,7 +54,7 @@ describe('KometaField', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-field') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-field') as HTMLElement;
     const input = root.querySelector('input') as HTMLInputElement;
     return { f, root, input };
   }
@@ -211,7 +211,7 @@ describe('KometaField inside Signal Forms', () => {
   function render() {
     const f = TestBed.createComponent(FormsHost);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-field') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-field') as HTMLElement;
     const input = root.querySelector('input') as HTMLInputElement;
     return { f, root, input };
   }

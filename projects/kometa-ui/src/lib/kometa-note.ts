@@ -8,12 +8,12 @@ let nextId = 0;
  * Hover (mouse), focus and a tap open it; blur, leaving with the mouse and Escape close it. The tab
  * sits above the marker, flips below near the top edge and is kept inside the viewport. `open` is a
  * model. The sentence is projected:
- * `<kometa-note label="Daromad">Davr uchun tushum, to'lovlargacha.</kometa-note>`.
+ * `<k-note label="Daromad">Davr uchun tushum, to'lovlargacha.</k-note>`.
  * `label` is the marker's accessible name; when it is empty the tab describes the marker instead.
  * Spec: kometa-note.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-6.html (Ink).
  */
 @Component({
-  selector: 'kometa-note',
+  selector: 'k-note',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(pointerenter)': 'onEnter($event)',

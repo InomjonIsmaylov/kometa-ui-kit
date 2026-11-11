@@ -8,19 +8,19 @@ let nextPanel = 0;
 
 /**
  * The Blend glass panel that holds rows: a small muted caps `label` above it, a 1px hairline
- * between the rows, inset 16px from the left. Rows are `kometa-row`.
+ * between the rows, inset 16px from the left. Rows are `k-row`.
  *
  * Semantics: a panel is `role="list"` and a row `role="listitem"`. A native `<dl>` cannot hold a
  * custom element between itself and its `dt`/`dd`, so a fact row marks its label `term` and its
  * value `definition` instead. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
-  selector: 'kometa-rows',
+  selector: 'k-rows',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   styles: `
-    kometa-rows { display: block; }
-    kometa-rows .cap {
+    k-rows { display: block; }
+    k-rows .cap {
       margin: 0 0 var(--sp-4, 8px) var(--sp-2, 4px);
       font-size: var(--t-tiny, 11px);
       font-weight: var(--w-bold, 700);
@@ -28,7 +28,7 @@ let nextPanel = 0;
       text-transform: uppercase;
       color: var(--muted);
     }
-    kometa-rows .panel {
+    k-rows .panel {
       overflow: hidden;
       background: var(--glass, var(--card));
       border: 1px solid var(--glass-line, var(--border));
@@ -38,7 +38,7 @@ let nextPanel = 0;
       backdrop-filter: blur(8px) saturate(1.2);
     }
     @media (prefers-reduced-transparency: reduce) {
-      kometa-rows .panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
+      k-rows .panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
     }
   `,
   template: `
@@ -53,11 +53,11 @@ export class KometaRows {
   readonly label = input('');
   /** The panel's name when it has no visible heading. */
   readonly ariaLabel = input('');
-  protected readonly capId = `kometa-rows-${nextPanel++}`;
+  protected readonly capId = `k-rows-${nextPanel++}`;
 }
 
 /**
- * One row of a `kometa-rows` panel, in one of two modes.
+ * One row of a `k-rows` panel, in one of two modes.
  *
  * Fact: `label` plus the projected value, right-aligned and wrapping from the right edge.
  * Setting: `title`, optional `meta` line, an optional leading tile (project `<… rowIcon>`; `tone`
@@ -67,7 +67,7 @@ export class KometaRows {
  * may hold its own controls (words, a switch). `tone="danger"` also reddens the title.
  */
 @Component({
-  selector: 'kometa-row',
+  selector: 'k-row',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   imports: [NgTemplateOutlet, RouterLink],
@@ -78,8 +78,8 @@ export class KometaRows {
     '[class.danger]': "tone() === 'danger'",
   },
   styles: `
-    kometa-row { display: block; position: relative; }
-    kometa-row:not(:first-child)::before {
+    k-row { display: block; position: relative; }
+    k-row:not(:first-child)::before {
       content: '';
       position: absolute;
       top: 0; right: 0; left: 16px;
@@ -87,7 +87,7 @@ export class KometaRows {
       background: var(--glass-line, var(--border));
       pointer-events: none;
     }
-    kometa-row .r {
+    k-row .r {
       box-sizing: border-box;
       display: flex;
       flex-wrap: wrap;
@@ -105,14 +105,14 @@ export class KometaRows {
       text-align: start;
       text-decoration: none;
     }
-    kometa-row .r.fact { min-height: 48px; align-items: baseline; flex-wrap: nowrap; gap: 16px; }
-    kometa-row.act .r { cursor: pointer; flex-wrap: nowrap; transition: background-color .12s ease; }
-    kometa-row.act .r:hover { background: var(--row-wash, rgba(128, 128, 128, .1)); }
-    kometa-row.act .r:active { background: var(--row-wash-press, rgba(128, 128, 128, .18)); }
-    kometa-row .r:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
-    kometa-row .r:disabled { cursor: default; opacity: .6; }
-    kometa-row .r:disabled:hover { background: none; }
-    kometa-row .ico {
+    k-row .r.fact { min-height: 48px; align-items: baseline; flex-wrap: nowrap; gap: 16px; }
+    k-row.act .r { cursor: pointer; flex-wrap: nowrap; transition: background-color .12s ease; }
+    k-row.act .r:hover { background: var(--row-wash, rgba(128, 128, 128, .1)); }
+    k-row.act .r:active { background: var(--row-wash-press, rgba(128, 128, 128, .18)); }
+    k-row .r:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+    k-row .r:disabled { cursor: default; opacity: .6; }
+    k-row .r:disabled:hover { background: none; }
+    k-row .ico {
       display: inline-flex;
       flex: none;
       align-items: center;
@@ -127,20 +127,20 @@ export class KometaRows {
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-    kometa-row .ico:empty { display: none; }
-    kometa-row .ico > * { width: 18px; height: 18px; margin: 0; }
-    kometa-row[data-tone='amber'] .ico { background: rgba(255, 191, 0, .14); color: var(--amber-ink); }
-    kometa-row[data-tone='blue'] .ico { background: var(--blue-bg); color: var(--blue); }
-    kometa-row[data-tone='green'] .ico { background: var(--green-bg); color: var(--green); }
-    kometa-row[data-tone='violet'] .ico { background: var(--violet-bg); color: var(--violet); }
-    kometa-row[data-tone='telegram'] .ico { background: rgba(42, 171, 238, .15); /* on brand */ }
-    kometa-row[data-tone='red'] .ico,
-    kometa-row.danger .ico { background: var(--red-bg); color: var(--red); }
-    kometa-row .txt { display: flex; flex: 1 1 0; flex-direction: column; gap: 2px; min-width: 6rem; }
-    kometa-row .t { font-weight: var(--w-bold, 700); overflow-wrap: anywhere; }
-    kometa-row.danger .t { color: var(--red); }
-    kometa-row .m { font-size: var(--t-sm, 13px); color: var(--muted); }
-    kometa-row .end {
+    k-row .ico:empty { display: none; }
+    k-row .ico > * { width: 18px; height: 18px; margin: 0; }
+    k-row[data-tone='amber'] .ico { background: rgba(255, 191, 0, .14); color: var(--amber-ink); }
+    k-row[data-tone='blue'] .ico { background: var(--blue-bg); color: var(--blue); }
+    k-row[data-tone='green'] .ico { background: var(--green-bg); color: var(--green); }
+    k-row[data-tone='violet'] .ico { background: var(--violet-bg); color: var(--violet); }
+    k-row[data-tone='telegram'] .ico { background: rgba(42, 171, 238, .15); /* on brand */ }
+    k-row[data-tone='red'] .ico,
+    k-row.danger .ico { background: var(--red-bg); color: var(--red); }
+    k-row .txt { display: flex; flex: 1 1 0; flex-direction: column; gap: 2px; min-width: 6rem; }
+    k-row .t { font-weight: var(--w-bold, 700); overflow-wrap: anywhere; }
+    k-row.danger .t { color: var(--red); }
+    k-row .m { font-size: var(--t-sm, 13px); color: var(--muted); }
+    k-row .end {
       display: flex;
       flex: none;
       align-items: center;
@@ -151,8 +151,8 @@ export class KometaRows {
       font-weight: var(--w-semi, 600);
       color: var(--muted);
     }
-    kometa-row .end:empty { display: none; }
-    kometa-row .chev {
+    k-row .end:empty { display: none; }
+    k-row .chev {
       flex: none;
       width: 16px; height: 16px;
       fill: none;
@@ -164,11 +164,11 @@ export class KometaRows {
     /* A fact: the label is a muted caption, the value takes the rest and wraps from the right edge. */
     /* The label breaks only between words: \`overflow-wrap: anywhere\` shrinks the column's min-content to
        one letter, and the label then wrapped "Service" into "Se / rvi / ce". */
-    kometa-row .fact .t { overflow-wrap: normal; font-size: var(--t-sm, 13px); font-weight: var(--w-semi, 600); color: var(--muted); }
+    k-row .fact .t { overflow-wrap: normal; font-size: var(--t-sm, 13px); font-weight: var(--w-semi, 600); color: var(--muted); }
     /* No dotted leader between label and value: the panel already draws a rule under every row, and the
        two together read as a conflict (2026-10-19). */
-    kometa-row .fact .txt { flex: 1 1 auto; flex-direction: row; align-items: baseline; gap: 8px; min-width: 0; }
-    kometa-row .fact .end {
+    k-row .fact .txt { flex: 1 1 auto; flex-direction: row; align-items: baseline; gap: 8px; min-width: 0; }
+    k-row .fact .end {
       display: block;
       flex: 0 1 auto;
       max-width: 60%;
@@ -181,7 +181,7 @@ export class KometaRows {
       color: var(--text);
     }
     @media (prefers-reduced-motion: reduce) {
-      kometa-row.act .r { transition: none; }
+      k-row.act .r { transition: none; }
     }
   `,
   template: `

@@ -4,7 +4,7 @@ import { KometaQuiet } from './kometa-quiet';
 
 @Component({
   imports: [KometaQuiet],
-  template: `<kometa-quiet [title]="title()" [hint]="hint()" />`,
+  template: `<k-quiet [title]="title()" [hint]="hint()" />`,
 })
 class Host {
   title = signal('Hali boʻsh');
@@ -20,7 +20,7 @@ describe('KometaQuiet', () => {
 
   it('renders a Syne title and no picture', () => {
     const f = render();
-    const el = f.nativeElement.querySelector('kometa-quiet') as HTMLElement;
+    const el = f.nativeElement.querySelector('k-quiet') as HTMLElement;
     const title = el.querySelector('.title') as HTMLElement;
     expect(title.textContent).toContain('Hali boʻsh');
     expect(el.querySelector('img')).toBeNull();
@@ -30,7 +30,7 @@ describe('KometaQuiet', () => {
   });
 
   it('omits the hint sentence when hint is empty', () => {
-    const el = render().nativeElement.querySelector('kometa-quiet') as HTMLElement;
+    const el = render().nativeElement.querySelector('k-quiet') as HTMLElement;
     expect(el.querySelector('.hint')).toBeNull();
   });
 
@@ -38,7 +38,7 @@ describe('KometaQuiet', () => {
     const f = render();
     f.componentInstance.hint.set('Birinchi yozuv shu yerda chiqadi.');
     f.detectChanges();
-    const hint = (f.nativeElement.querySelector('kometa-quiet') as HTMLElement).querySelector('.hint') as HTMLElement;
+    const hint = (f.nativeElement.querySelector('k-quiet') as HTMLElement).querySelector('.hint') as HTMLElement;
     expect(hint.textContent).toContain('Birinchi yozuv shu yerda chiqadi.');
     expect(stylesheet(KometaQuiet)).toContain('var(--muted)');
   });

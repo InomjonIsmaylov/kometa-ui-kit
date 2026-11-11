@@ -14,14 +14,14 @@ const TICKS = 48;
 
 /**
  * One bar of how a whole divides, drawn as ticks: every slice is a run of ticks in its own colour, as
- * `kometa-meter` draws its units. A legend under it lists every slice with its share and amount, so a
+ * `k-meter` draws its units. A legend under it lists every slice with its share and amount, so a
  * slice too thin to see and a negative one the bar cannot draw are both still read. The legend is the
  * truth, the colour is decoration. Hovering a legend row steps the other rows back.
  * Read-only. `label` is the bar's accessible name.
  * Spec: kometa-share.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-7.html (Ticks).
  */
 @Component({
-  selector: 'kometa-share',
+  selector: 'k-share',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }

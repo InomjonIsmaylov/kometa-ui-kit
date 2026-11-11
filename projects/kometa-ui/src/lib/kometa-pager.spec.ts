@@ -4,7 +4,7 @@ import { KometaPager, pageWindow } from './kometa-pager';
 
 @Component({
   imports: [KometaPager],
-  template: `<kometa-pager [total]="total()" [(page)]="page" [(pageSize)]="size" />`,
+  template: `<k-pager [total]="total()" [(page)]="page" [(pageSize)]="size" />`,
 })
 class Host {
   total = signal(134);
@@ -27,7 +27,7 @@ describe('KometaPager', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-pager') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-pager') as HTMLElement;
     const q = (s: string) => [...root.querySelectorAll(s)] as HTMLButtonElement[];
     return { f, root, q };
   }

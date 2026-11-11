@@ -4,7 +4,7 @@ import type { FormValueControl } from '@angular/forms/signals';
 /**
  * The rating, as the lab's "numerals" draws it: Syne 26px numerals in a radiogroup, the chosen one
  * cream with a 5px bead under it, the others muted, and the word for the score below in Syne 18px.
- * The caller supplies the words (Uzbek, Russian and English differ). `kometa-stars` still only
+ * The caller supplies the words (Uzbek, Russian and English differ). `k-stars` still only
  * displays a score; this one is how a score is given.
  *
  * A Signal Forms number control (`FormValueControl<number>`): 0 is "nothing chosen yet".
@@ -14,7 +14,7 @@ import type { FormValueControl } from '@angular/forms/signals';
  * docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
-  selector: 'kometa-rating',
+  selector: 'k-rating',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }

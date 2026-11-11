@@ -13,7 +13,7 @@ const BAND = 'linear-gradient(90deg, transparent 0 33.4%, color-mix(in srgb, var
  *
  */
 @Component({
-  selector: 'kometa-link',
+  selector: 'k-link',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: inline-flex; }

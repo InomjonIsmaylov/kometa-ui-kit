@@ -5,10 +5,10 @@ import { KometaPicker } from './kometa-picker';
 @Component({
   imports: [KometaPicker],
   template: `
-    <kometa-picker [label]="label()" [hint]="hint()" [variant]="variant()" [accept]="accept()" [multiple]="multiple()"
+    <k-picker [label]="label()" [hint]="hint()" [variant]="variant()" [accept]="accept()" [multiple]="multiple()"
                    [disabled]="disabled()" [plus]="plus()" [over]="over()" (picked)="got.push($event)">
       <b class="extra">Pro</b>
-    </kometa-picker>
+    </k-picker>
   `,
 })
 class Host {
@@ -27,7 +27,7 @@ describe('KometaPicker', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-picker') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-picker') as HTMLElement;
     const input = () => root.querySelector('input[type=file]') as HTMLInputElement;
     const pick = (...files: File[]) => {
       Object.defineProperty(input(), 'files', { value: files, configurable: true });

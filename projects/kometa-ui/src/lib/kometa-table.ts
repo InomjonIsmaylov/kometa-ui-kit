@@ -5,26 +5,26 @@ import { ChangeDetectionStrategy, Component, TemplateRef, ViewEncapsulation, con
  * A plain `<table>` drawn with our classes, for the lists the consoles show: it keeps the
  * part of its API the pages used, so a page changes its tag and keeps its templates.
  *
- *     <kometa-table class="tbl" [value]="rows" dataKey="id">
+ *     <k-table class="tbl" [value]="rows" dataKey="id">
  *       <ng-template #header><tr><th>…</th></tr></ng-template>
  *       <ng-template #body let-row><tr><td>{{ row.name }}</td></tr></ng-template>
  *       <ng-template #emptymessage><tr><td colspan="3">Nothing yet</td></tr></ng-template>
- *     </kometa-table>
+ *     </k-table>
  *
  * The templates write their own `<tr>`s. `dataKey` (a dotted path) keys the rows; `groupRowsBy` draws a `#groupheader`
  * row whenever that field changes; `tableStyleClass` and `tableStyle` land on the `<table>`; `scrollHeight` caps the
- * height, scrolls inside it and pins the header. Sorting and paging stay the pages' own (`kometaSortHeader`, `kometa-pager`).
+ * height, scrolls inside it and pins the header. Sorting and paging stay the pages' own (`kometaSortHeader`, `k-pager`).
  * Hairlines, the quiet header and the tabular figures are base rules at no specificity, so a page's own cell rules win.
  * Spec: kometa-table.spec.ts.
  */
 @Component({
-  selector: 'kometa-table',
+  selector: 'k-table',
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   host: { class: 'ktable', '[class.is-striped]': 'striped()', '[class.is-compact]': "size() === 'sm'", '[class.is-hover]': 'hoverable()' },
   styles: `
-    :where(kometa-table.ktable) { display: block; position: relative; font-variant-numeric: tabular-nums; }
+    :where(k-table.ktable) { display: block; position: relative; font-variant-numeric: tabular-nums; }
     :where(.ktable-scroll) { overflow-x: auto; }
     :where(.ktable-scroll.is-capped) { overflow: auto; }
     :where(.ktable-table) { width: 100%; border-collapse: collapse; }
@@ -34,9 +34,9 @@ import { ChangeDetectionStrategy, Component, TemplateRef, ViewEncapsulation, con
     }
     :where(.ktable-table td) { padding: var(--ktable-pad-y, .75rem) var(--ktable-pad-x, 1rem); border-bottom: 1px solid var(--glass-line, var(--border)); }
     :where(.ktable-table tbody > tr) { transition: background-color .12s ease; }
-    :where(kometa-table.is-compact) { --ktable-pad-y: .4rem; --ktable-pad-x: .75rem; }
-    :where(kometa-table.is-striped .ktable-table tbody > tr:nth-child(even)) { background: var(--ktable-stripe, color-mix(in srgb, var(--text) 4%, transparent)); }
-    :where(kometa-table.is-hover .ktable-table tbody > tr:hover) { background: var(--ktable-hover, color-mix(in srgb, var(--text) 7%, transparent)); }
+    :where(k-table.is-compact) { --ktable-pad-y: .4rem; --ktable-pad-x: .75rem; }
+    :where(k-table.is-striped .ktable-table tbody > tr:nth-child(even)) { background: var(--ktable-stripe, color-mix(in srgb, var(--text) 4%, transparent)); }
+    :where(k-table.is-hover .ktable-table tbody > tr:hover) { background: var(--ktable-hover, color-mix(in srgb, var(--text) 7%, transparent)); }
     :where(.ktable-scroll.is-capped .ktable-table thead th) { position: sticky; top: 0; z-index: 1; background: var(--k-solid, var(--card)); }
   `,
   template: `

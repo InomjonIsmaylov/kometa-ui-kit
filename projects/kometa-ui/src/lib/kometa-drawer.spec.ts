@@ -10,7 +10,7 @@ class Today {}
 @Component({
   imports: [KometaDrawer],
   template: `
-    <kometa-drawer
+    <k-drawer
       [visible]="open()"
       styleClass="kometa-sheet"
       (visibleChange)="onVisible($event)" />
@@ -101,12 +101,12 @@ describe('a kometa-sheet drawer and browser back', () => {
     @if (withOpener()) {
       <button type="button" id="opener" (click)="open.set(true)">Open</button>
     }
-    <kometa-drawer [visible]="open()" styleClass="kometa-sheet" (visibleChange)="open.set($event)">
+    <k-drawer [visible]="open()" styleClass="kometa-sheet" (visibleChange)="open.set($event)">
       @if (withHeading) {
         <h2>Title</h2>
       }
       <input id="first-field" />
-    </kometa-drawer>
+    </k-drawer>
   `,
 })
 class FocusHost {
@@ -118,9 +118,9 @@ class FocusHost {
 @Component({
   imports: [KometaDrawer],
   template: `
-    <kometa-drawer [visible]="open()" styleClass="kometa-sheet" (visibleChange)="open.set($event)">
+    <k-drawer [visible]="open()" styleClass="kometa-sheet" (visibleChange)="open.set($event)">
       <h2 id="own-title">Title</h2>
-    </kometa-drawer>
+    </k-drawer>
   `,
 })
 class NamedHost {
@@ -131,9 +131,9 @@ class NamedHost {
 @Component({
   imports: [KometaDrawer],
   template: `
-    <kometa-drawer [visible]="open()" styleClass="kometa-sheet" (visibleChange)="open.set($event)">
+    <k-drawer [visible]="open()" styleClass="kometa-sheet" (visibleChange)="open.set($event)">
       @if (ready()) { <h2>Late</h2> } @else { <p>Loading</p> }
-    </kometa-drawer>
+    </k-drawer>
   `,
 })
 class LateHost {
@@ -261,10 +261,10 @@ describe('a kometa-sheet drawer and focus', () => {
 @Component({
   imports: [KometaDrawer],
   template: `
-    <kometa-drawer [visible]="open()" [dismissible]="dismissible()" ariaLabel="Named" position="bottom" (visibleChange)="open.set($event)"
+    <k-drawer [visible]="open()" [dismissible]="dismissible()" ariaLabel="Named" position="bottom" (visibleChange)="open.set($event)"
                    (kometaSheetClosed)="gone.set(gone() + 1)" (opened)="shown.set(shown() + 1)">
       <h2>Title</h2>
-    </kometa-drawer>
+    </k-drawer>
   `,
 })
 class DismissHost {
@@ -277,14 +277,14 @@ class DismissHost {
 @Component({
   imports: [KometaDrawer],
   template: `
-    <kometa-drawer [visible]="true" [style]="{ width: '321px' }">
+    <k-drawer [visible]="true" [style]="{ width: '321px' }">
       <ng-template #headless><div class="mine">own head</div></ng-template>
-    </kometa-drawer>
+    </k-drawer>
   `,
 })
 class HeadlessHost {}
 
-describe('kometa-drawer on the native dialog', () => {
+describe('k-drawer on the native dialog', () => {
   async function mount() {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({ imports: [DismissHost], providers: [provideKometaUi()] });

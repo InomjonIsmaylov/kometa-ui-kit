@@ -15,7 +15,7 @@ export interface KometaPhoto {
  * Spec: kometa-photos.spec.ts.
  */
 @Component({
-  selector: 'kometa-photos',
+  selector: 'k-photos',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     dialog {

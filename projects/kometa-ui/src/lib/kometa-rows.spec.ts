@@ -6,16 +6,16 @@ import { KometaRow, KometaRows } from './kometa-rows';
 @Component({
   imports: [KometaRows, KometaRow],
   template: `
-    <kometa-rows label="Visit" id="facts">
-      <kometa-row label="Service">Haircut</kometa-row>
-      <kometa-row label="Time">Mon · <span class="num">14:00</span></kometa-row>
-    </kometa-rows>
-    <kometa-rows ariaLabel="Settings" id="list">
-      <kometa-row title="Edit" meta="Name and address" tone="amber" link="/profile/edit"><svg rowIcon></svg></kometa-row>
-      <kometa-row title="Help" href="/help.html"><span class="val">3</span></kometa-row>
-      <kometa-row title="Out" tone="danger" button [disabled]="busy()" (activated)="taps.update(n => n + 1)"><svg rowIcon></svg></kometa-row>
-      <kometa-row title="Theme"><button class="own" type="button">Dark</button></kometa-row>
-    </kometa-rows>
+    <k-rows label="Visit" id="facts">
+      <k-row label="Service">Haircut</k-row>
+      <k-row label="Time">Mon · <span class="num">14:00</span></k-row>
+    </k-rows>
+    <k-rows ariaLabel="Settings" id="list">
+      <k-row title="Edit" meta="Name and address" tone="amber" link="/profile/edit"><svg rowIcon></svg></k-row>
+      <k-row title="Help" href="/help.html"><span class="val">3</span></k-row>
+      <k-row title="Out" tone="danger" button [disabled]="busy()" (activated)="taps.update(n => n + 1)"><svg rowIcon></svg></k-row>
+      <k-row title="Theme"><button class="own" type="button">Dark</button></k-row>
+    </k-rows>
   `,
 })
 class Host {
@@ -38,11 +38,11 @@ describe('KometaRows', () => {
     expect(panel.getAttribute('aria-labelledby')).toBe(el.querySelector('#facts .cap')!.id);
     expect(el.querySelector('#facts .cap')!.textContent).toBe('Visit');
     expect(getComputedStyle(panel).borderRadius).toMatch(/20px/); // jsdom leaves var(--rows-radius, 20px) unresolved
-    const rows = el.querySelectorAll('#facts kometa-row');
+    const rows = el.querySelectorAll('#facts k-row');
     expect(rows[0].getAttribute('role')).toBe('listitem');
     // jsdom draws no pseudo-elements: the hairline is the rule on every row but the first.
     const css = [...document.querySelectorAll('style')].map((n) => n.textContent).join('');
-    expect(css).toMatch(/kometa-row:not\(:first-child\)::before\s*\{[^}]*left: 16px;[^}]*height: 1px;[^}]*var\(--glass-line/);
+    expect(css).toMatch(/k-row:not\(:first-child\)::before\s*\{[^}]*left: 16px;[^}]*height: 1px;[^}]*var\(--glass-line/);
     expect(rows).toHaveLength(2);
   });
 
@@ -54,7 +54,7 @@ describe('KometaRows', () => {
 
   it('makes a fact a term and a definition, the value right-aligned', () => {
     const { el } = render();
-    const row = el.querySelector('#facts kometa-row')!;
+    const row = el.querySelector('#facts k-row')!;
     expect(row.querySelector('.t')!.getAttribute('role')).toBe('term');
     const value = row.querySelector('.end') as HTMLElement;
     expect(value.getAttribute('role')).toBe('definition');
@@ -70,7 +70,7 @@ describe('KometaRows', () => {
     expect(a.querySelector('.m')!.textContent).toBe('Name and address');
     expect(a.querySelector('.ico svg')).not.toBeNull();
     expect(a.querySelector('.chev')).not.toBeNull();
-    expect(a.closest('kometa-row')!.getAttribute('data-tone')).toBe('amber');
+    expect(a.closest('k-row')!.getAttribute('data-tone')).toBe('amber');
     expect([...document.querySelectorAll('style')].map((s) => s.textContent).join('')).toContain('var(--row-min-height, 56px)'); // jsdom cannot resolve var()
   });
 
@@ -84,7 +84,7 @@ describe('KometaRows', () => {
   it('emits activated from a button row, and a disabled one does not', () => {
     const { fixture, el } = render();
     const b = el.querySelector('#list button.r') as HTMLButtonElement;
-    expect(b.closest('kometa-row')!.classList.contains('danger')).toBe(true);
+    expect(b.closest('k-row')!.classList.contains('danger')).toBe(true);
     b.click();
     expect(fixture.componentInstance.taps()).toBe(1);
     fixture.componentInstance.busy.set(true);
@@ -96,7 +96,7 @@ describe('KometaRows', () => {
 
   it('keeps a static row free of links, chevron and wash so it can hold its own control', () => {
     const { el } = render();
-    const row = el.querySelector('#list .own')!.closest('kometa-row')!;
+    const row = el.querySelector('#list .own')!.closest('k-row')!;
     expect(row.querySelector('a, .chev')).toBeNull();
     expect(row.classList.contains('act')).toBe(false);
     expect(row.querySelector('.r')!.tagName).toBe('DIV');

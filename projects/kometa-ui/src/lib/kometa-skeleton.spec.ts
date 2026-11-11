@@ -4,7 +4,7 @@ import { KometaSkeleton } from './kometa-skeleton';
 
 @Component({
   imports: [KometaSkeleton],
-  template: `<kometa-skeleton [rows]="rows()" [shape]="shape()" [width]="width()" [delay]="delay()" ariaLabel="Yuklanmoqda" />`,
+  template: `<k-skeleton [rows]="rows()" [shape]="shape()" [width]="width()" [delay]="delay()" ariaLabel="Yuklanmoqda" />`,
 })
 class Host {
   rows = signal(3);
@@ -17,7 +17,7 @@ describe('KometaSkeleton', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const el = () => f.nativeElement.querySelector('kometa-skeleton') as HTMLElement;
+    const el = () => f.nativeElement.querySelector('k-skeleton') as HTMLElement;
     return { f, el };
   }
 
@@ -120,7 +120,7 @@ function stylesheet(component: unknown): string {
 
 describe('KometaSkeleton row options', () => {
   it('avatar=false drops the disc and lines sets the hairlines per row', () => {
-    @Component({ imports: [KometaSkeleton], template: `<kometa-skeleton [rows]="2" [avatar]="false" [lines]="3" />` })
+    @Component({ imports: [KometaSkeleton], template: `<k-skeleton [rows]="2" [avatar]="false" [lines]="3" />` })
     class H {}
     const f = TestBed.createComponent(H);
     f.detectChanges();

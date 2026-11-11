@@ -4,7 +4,7 @@ import { KometaShare, type KometaShareSegment } from './kometa-share';
 
 @Component({
   imports: [KometaShare],
-  template: `<kometa-share [segments]="segments()" label="Taken this month" />`,
+  template: `<k-share [segments]="segments()" label="Taken this month" />`,
 })
 class Host {
   segments = signal<KometaShareSegment[]>([
@@ -19,7 +19,7 @@ describe('KometaShare', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-share') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-share') as HTMLElement;
     const colours = () => [...root.querySelectorAll<HTMLElement>('.ticks i')].map((i) => i.style.getPropertyValue('--k'));
     return { f, root, colours };
   }
@@ -70,7 +70,7 @@ describe('KometaShare options', () => {
   it('tickCount sets the bar and legend/percents can be hidden', () => {
     @Component({
       imports: [KometaShare],
-      template: `<kometa-share [segments]="s" label="x" [tickCount]="10" [legend]="false" />`,
+      template: `<k-share [segments]="s" label="x" [tickCount]="10" [legend]="false" />`,
     })
     class H { s = [{ label: 'a', value: 1, text: '1', color: 'red' }, { label: 'b', value: 1, text: '1', color: 'blue' }]; }
     const f = TestBed.createComponent(H);

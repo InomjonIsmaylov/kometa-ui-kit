@@ -6,8 +6,8 @@ import { KometaChip } from './kometa-chip';
   imports: [KometaChip],
   template: `
     <div role="group" aria-label="Filtr">
-      <kometa-chip [(selected)]="open" [disabled]="off()"><i class="icon"></i>Hozir ochiq</kometa-chip>
-      <kometa-chip [(selected)]="rated">4.5+<span chip-count>12</span></kometa-chip>
+      <k-chip [(selected)]="open" [disabled]="off()"><i class="icon"></i>Hozir ochiq</k-chip>
+      <k-chip [(selected)]="rated">4.5+<span chip-count>12</span></k-chip>
     </div>
   `,
 })

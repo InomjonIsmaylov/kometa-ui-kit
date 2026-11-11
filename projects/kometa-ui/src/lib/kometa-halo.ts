@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
  * An icon-only button with no drawn box: 44px, muted glyph, and a disc of light that appears on hover and focus.
- * `<button kometa-halo aria-label="Close">✕</button>`; the caller always supplies the `aria-label`, because the glyph
+ * `<button k-halo aria-label="Close">✕</button>`; the caller always supplies the `aria-label`, because the glyph
  * is the only content. One shape for the close, previous/next and more buttons that were each their own size.
  * Spec: kometa-halo.spec.ts. Lab: docs/superpowers/labs/2026-10-14-blend-ui-lab-round-11.html (E).
  *
  *
  */
 @Component({
-  selector: 'button[kometa-halo]',
+  selector: 'button[k-halo]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {

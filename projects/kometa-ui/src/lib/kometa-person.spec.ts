@@ -4,7 +4,7 @@ import { KometaPerson } from './kometa-person';
 
 @Component({
   imports: [KometaPerson],
-  template: `<kometa-person [name]="name()" [meta]="meta()" [size]="size()"><a class="trail" href="#">Ochish</a></kometa-person>`,
+  template: `<k-person [name]="name()" [meta]="meta()" [size]="size()"><a class="trail" href="#">Ochish</a></k-person>`,
 })
 class Host {
   name = signal('Aziz Karimov');
@@ -19,7 +19,7 @@ describe('KometaPerson', () => {
     fixture.componentInstance.meta.set(meta);
     fixture.componentInstance.size.set(size);
     fixture.detectChanges();
-    return fixture.nativeElement.querySelector('kometa-person') as HTMLElement;
+    return fixture.nativeElement.querySelector('k-person') as HTMLElement;
   }
 
   it('shows the initials of the first two words, the name, and the meta line', () => {

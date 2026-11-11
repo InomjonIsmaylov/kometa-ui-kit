@@ -11,7 +11,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
  *
  */
 @Component({
-  selector: 'kometa-steps',
+  selector: 'k-steps',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {

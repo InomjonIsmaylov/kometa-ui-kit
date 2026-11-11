@@ -12,7 +12,7 @@ h1 {
 .k-edge { box-shadow: inset 2px 0 0 var(--amber); }
 
 .k-whisper {
-  /* The whisper for a field that is not `kometa-search`: a link that opens /search, or the top bar's
+  /* The whisper for a field that is not `k-search`: a link that opens /search, or the top bar's
      own form. No box; the question is the type, with a hairline under it that thickens on focus. */
   display: flex;
   align-items: center;

@@ -5,7 +5,7 @@ import { KometaPhotos, type KometaPhoto } from './kometa-photos';
 
 @Component({
   imports: [KometaPhotos],
-  template: `<kometa-photos [photos]="photos" [(open)]="open" [(index)]="index" closeLabel="Yopish" />`,
+  template: `<k-photos [photos]="photos" [(open)]="open" [(index)]="index" closeLabel="Yopish" />`,
 })
 class Host {
   photos: KometaPhoto[] = [1, 2, 3].map((n) => ({ url: `/f${n}.webp`, thumbUrl: `/t${n}.webp` }));

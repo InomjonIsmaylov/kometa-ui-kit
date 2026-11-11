@@ -16,7 +16,7 @@ let nextId = 0;
 
 /**
  * The "more" menu: a ⋯ button that opens a short list of actions. Not a value chooser (that is
- * `kometa-menu`): each row does something and the list closes. The list is words under a hairline, with a bar that
+ * `k-menu`): each row does something and the list closes. The list is words under a hairline, with a bar that
  * slides to the row you are on; it opens in the browser's top layer, so a card or table cell cannot clip it, flips
  * above the button when there is no room below and is kept inside the viewport.
  * Arrow keys, Home and End move between rows; Enter runs one; Escape, a click outside, Tab, resize and scroll close it.
@@ -24,7 +24,7 @@ let nextId = 0;
  * Spec: kometa-actions.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-7.html (Rail).
  */
 @Component({
-  selector: 'kometa-actions',
+  selector: 'k-actions',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:resize)': 'close(false)',

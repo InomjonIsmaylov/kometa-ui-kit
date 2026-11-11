@@ -8,11 +8,11 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
  * a close word (`closeLabel`, supplied by the caller) collapses it (rows 1fr to 0fr, instant under
  * reduced motion) and emits `dismissed`. `ok` and `info` are `role="status"`, `warn` and `error`
  * `role="alert"`. `actionLabel` adds one word beside the sentence (`action` fires), replacing the old
- * inline-alert and load-error retry buttons. The sentence is projected: `<kometa-banner tone="warn">Internet yoq.</kometa-banner>`.
+ * inline-alert and load-error retry buttons. The sentence is projected: `<k-banner tone="warn">Internet yoq.</k-banner>`.
  * Spec: kometa-banner.spec.ts.
  */
 @Component({
-  selector: 'kometa-banner',
+  selector: 'k-banner',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [KometaWord],
   host: {
@@ -83,7 +83,7 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
         @if (icon()) { <span class="icon" aria-hidden="true">{{ icon() }}</span> }
         <div class="text"><ng-content /></div>
         @if (actionLabel()) {
-          <button kometa-word type="button" (click)="action.emit()">{{ actionLabel() }}</button>
+          <button k-word type="button" (click)="action.emit()">{{ actionLabel() }}</button>
         }
         @if (dismissible()) {
           <button class="close" type="button" (click)="dismiss()">{{ closeLabel() }}</button>

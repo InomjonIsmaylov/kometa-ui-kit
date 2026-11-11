@@ -4,11 +4,11 @@ import { docLang } from './paging';
 /**
  * Two small sort controls in the Blend.
  *
- * `kometa-sort`: for a list of cards. Options are words (like `kometa-words`); the active one is
+ * `k-sort`: for a list of cards. Options are words (like `k-words`); the active one is
  * `--text` with a 2px cream line, followed by ↑ or ↓. Tapping the active word asks for the other
  * direction; tapping another asks for that key. It holds no state, it only says what was tapped:
  *
- *   <kometa-sort [options]="sortOptions" [key]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)" />
+ *   <k-sort [options]="sortOptions" [key]="view.sort()" [dir]="view.dir()" (pick)="view.pickSort($event)" />
  *
  * `th[kometaSortHeader]`: for a table column the user can sort. It puts a button inside the `<th>`
  * (so the name stays the column's text), sets `aria-sort` on the th, and draws the glyph while this
@@ -31,7 +31,7 @@ const SPOKEN = {
 } as const;
 
 @Component({
-  selector: 'kometa-sort',
+  selector: 'k-sort',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { role: 'group', '[attr.aria-label]': 'ariaLabel() || spoken().sort' },
   styles: `

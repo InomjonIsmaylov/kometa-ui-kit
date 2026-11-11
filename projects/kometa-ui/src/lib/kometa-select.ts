@@ -23,7 +23,7 @@ let nextId = 0;
  * Spec: kometa-select.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-9.html (Pane).
  */
 @Component({
-  selector: 'kometa-select',
+  selector: 'k-select',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.pill]': 'pill()',

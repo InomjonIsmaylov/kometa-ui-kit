@@ -13,7 +13,7 @@ export interface KometaConfirmation {
   reject?: () => void;
 }
 
-/** Asks the page's `<kometa-tray>` a question. */
+/** Asks the page's `<k-tray>` a question. */
 @Injectable({ providedIn: 'root' })
 export class KometaConfirmationService {
   private readonly asks = new Subject<KometaConfirmation | null>();
@@ -41,7 +41,7 @@ let nextId = 0;
  *
  */
 @Component({
-  selector: 'kometa-tray',
+  selector: 'k-tray',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: contents; }
@@ -80,7 +80,7 @@ let nextId = 0;
     @media (prefers-reduced-motion: reduce) { dialog, dialog::backdrop, button { transition: none; } }
   `,
   template: `
-    <dialog #dlg class="kometa-tray" role="alertdialog" [attr.aria-labelledby]="id" (cancel)="onCancel($event)" (click)="onBackdrop($event)">
+    <dialog #dlg class="k-tray" role="alertdialog" [attr.aria-labelledby]="id" (cancel)="onCancel($event)" (click)="onBackdrop($event)">
       @if (ask(); as c) {
         <h2 #head [id]="id" tabindex="-1">{{ c.header || c.message }}</h2>
         @if (c.header && c.message) { <p>{{ c.message }}</p> }

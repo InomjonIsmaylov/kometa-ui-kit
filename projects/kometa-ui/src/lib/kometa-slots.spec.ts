@@ -4,7 +4,7 @@ import { KometaSlots } from './kometa-slots';
 
 @Component({
   imports: [KometaSlots],
-  template: `<kometa-slots [slots]="slots()" [(value)]="value" [clearable]="clearable()" [ariaLabel]="'Vaqt'" />`,
+  template: `<k-slots [slots]="slots()" [(value)]="value" [clearable]="clearable()" [ariaLabel]="'Vaqt'" />`,
 })
 class Host {
   slots = signal([
@@ -20,7 +20,7 @@ describe('KometaSlots', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-slots') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-slots') as HTMLElement;
     const buttons = [...root.querySelectorAll('button')] as HTMLButtonElement[];
     return { f, root, buttons };
   }
@@ -73,7 +73,7 @@ describe('KometaSlots', () => {
   it('a second tap on the chosen chip clears it only when clearable', () => {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const slots = f.nativeElement.querySelector('kometa-slots') as HTMLElement;
+    const slots = f.nativeElement.querySelector('k-slots') as HTMLElement;
     const second = () => (slots.querySelectorAll('button')[1] as HTMLButtonElement);
     second().click();
     second().click();
@@ -90,7 +90,7 @@ describe('KometaSlots', () => {
 
 describe('KometaSlots disabled', () => {
   it('disabled disables every chip', () => {
-    @Component({ imports: [KometaSlots], template: `<kometa-slots [slots]="s" disabled />` })
+    @Component({ imports: [KometaSlots], template: `<k-slots [slots]="s" disabled />` })
     class H { s = [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }]; }
     const f = TestBed.createComponent(H);
     f.detectChanges();

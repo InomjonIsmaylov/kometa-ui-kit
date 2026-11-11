@@ -4,7 +4,7 @@ import { KometaStars } from './kometa-stars';
 
 @Component({
   imports: [KometaStars],
-  template: `<kometa-stars [value]="value()" [label]="label()" />`,
+  template: `<k-stars [value]="value()" [label]="label()" />`,
 })
 class Host {
   value = signal(4);
@@ -17,7 +17,7 @@ describe('KometaStars', () => {
     fixture.componentInstance.value.set(value);
     fixture.componentInstance.label.set(label);
     fixture.detectChanges();
-    return fixture.nativeElement.querySelector('kometa-stars') as HTMLElement;
+    return fixture.nativeElement.querySelector('k-stars') as HTMLElement;
   }
 
   function counts(el: HTMLElement) {
@@ -43,14 +43,14 @@ describe('KometaStars', () => {
   });
 });
 
-@Component({ imports: [KometaStars], template: `<kometa-stars [value]="7" [max]="10" [size]="24" label="x" />` })
+@Component({ imports: [KometaStars], template: `<k-stars [value]="7" [max]="10" [size]="24" label="x" />` })
 class MaxHost {}
 
 describe('KometaStars max and size', () => {
   it('draws `max` stars, clamps to it, and sets the size', () => {
     const f = TestBed.createComponent(MaxHost);
     f.detectChanges();
-    const el = f.nativeElement.querySelector('kometa-stars') as HTMLElement;
+    const el = f.nativeElement.querySelector('k-stars') as HTMLElement;
     expect(el.querySelectorAll('svg').length).toBe(10);
     expect(el.querySelectorAll('svg[data-fill="filled"]').length).toBe(7);
     expect(el.style.getPropertyValue('--stars-size')).toBe('24px');

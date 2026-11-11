@@ -14,7 +14,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
  * Spec: kometa-number.spec.ts.
  */
 @Component({
-  selector: 'kometa-number',
+  selector: 'k-number',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => KometaNumber), multi: true }],
   styles: `

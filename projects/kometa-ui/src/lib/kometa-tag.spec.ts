@@ -4,7 +4,7 @@ import { KometaTag, KometaTagTone } from './kometa-tag';
 
 @Component({
   imports: [KometaTag],
-  template: `<kometa-tag [tone]="tone()">{{ word() }}</kometa-tag>`,
+  template: `<k-tag [tone]="tone()">{{ word() }}</k-tag>`,
 })
 class Host {
   tone = signal<KometaTagTone>('now');
@@ -15,7 +15,7 @@ describe('KometaTag', () => {
   function render() {
     const f = TestBed.createComponent(Host);
     f.detectChanges();
-    const root = f.nativeElement.querySelector('kometa-tag') as HTMLElement;
+    const root = f.nativeElement.querySelector('k-tag') as HTMLElement;
     return { f, root };
   }
 
@@ -80,7 +80,7 @@ ${fromDoc}`.replaceAll('%NS%', '');
 
 describe('KometaTag dot', () => {
   it('can leave the dot out', () => {
-    @Component({ imports: [KometaTag], template: `<kometa-tag [dot]="false">Word</kometa-tag>` })
+    @Component({ imports: [KometaTag], template: `<k-tag [dot]="false">Word</k-tag>` })
     class NoDot {}
     const f = TestBed.createComponent(NoDot);
     f.detectChanges();
