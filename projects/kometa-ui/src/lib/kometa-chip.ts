@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, model, output } from '@angular/core';
 
 /**
  * A glass pill that is a multi-select toggle. Chosen: a 2px inset amber edge, never an amber fill.
  * Project the words (and an optional leading icon) as content, and a count as `<span chip-count>`.
+ * `controlled` stops the chip flipping itself: a click only emits `toggled` with the wanted value, and the chip
+ * shows whatever `[selected]` the parent binds (a radio group, or a parent that may refuse the change).
  * The page owns the group: wrap several chips in `role="group"` with an aria-label.
  * Spec: kometa-chip.spec.ts.
  *
@@ -44,7 +46,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
   `,
   template: `
     <button type="button" [attr.aria-pressed]="selected() ? 'true' : 'false'" [disabled]="disabled()" [attr.aria-label]="ariaLabel() || null"
-            (click)="selected.set(!selected())">
+            (click)="toggle()">
       <ng-content />
       <span class="count"><ng-content select="[chip-count]" /></span>
     </button>
@@ -53,6 +55,16 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } fr
 export class KometaChip {
   readonly selected = model(false);
   readonly disabled = input(false, { transform: booleanAttribute });
+  /** The parent owns `selected`; a click only emits `toggled`. */
+  readonly controlled = input(false, { transform: booleanAttribute });
+  /** Every click, with the value the user asked for. */
+  readonly toggled = output<boolean>();
   /** Overrides the projected words as the accessible name. */
   readonly ariaLabel = input('');
+
+  protected toggle(): void {
+    const next = !this.selected();
+    this.toggled.emit(next);
+    if (!this.controlled()) this.selected.set(next);
+  }
 }

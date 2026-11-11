@@ -1482,7 +1482,7 @@
       @case ('upload') {
         <app-doc id="states" heading="States" about="Running with progress, done, and failed with a retry action.">
           <k-upload name="receipt.pdf" sizeLabel="1.2 MB" [progress]="0.45" state="running" statusLabel="45%" />
-          <k-upload name="photo.jpg" sizeLabel="820 KB" [progress]="100" state="done" statusLabel="Uploaded" />
+          <k-upload name="photo.jpg" sizeLabel="820 KB" [progress]="1" state="done" statusLabel="Uploaded" />
           <k-upload name="scan.png" sizeLabel="4.1 MB" state="failed" statusLabel="Too large" actionLabel="Retry" (action)="log.set('Upload retry')" />
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Importing clients from a spreadsheet: the upload shows progress, then a banner offers the next step.">

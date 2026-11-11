@@ -63,7 +63,7 @@ export class KometaSlots {
   readonly value = model('');
   readonly ariaLabel = input('');
   /** A second tap on the chosen chip clears it (`value` becomes ''), for a grid that holds a time before it commits. */
-  readonly clearable = input(false);
+  readonly clearable = input(false, { transform: booleanAttribute });
   /** Disables every chip. */
   readonly disabled = input(false, { transform: booleanAttribute });
 

@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Injector, OnDestroy, TemplateRef, ViewEncapsulation,
-  afterNextRender, computed, contentChild, effect, inject, input, model, output, signal, untracked, viewChild,
+  afterNextRender, computed, contentChild, effect, inject, booleanAttribute, input, model, output, signal, untracked, viewChild,
 } from '@angular/core';
 
 let nextDrawerToken = 0;
@@ -89,8 +89,8 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
 export class KometaDrawer implements OnDestroy {
   readonly visible = model(false);
   readonly position = input<'right' | 'bottom' | 'left'>('right');
-  readonly dismissible = input(true);
-  readonly closeOnEscape = input(true);
+  readonly dismissible = input(true, { transform: booleanAttribute });
+  readonly closeOnEscape = input(true, { transform: booleanAttribute });
   readonly styleClass = input('');
   readonly style = input<{ width?: string } | null>(null);
   readonly ariaLabel = input('');

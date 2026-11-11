@@ -111,3 +111,36 @@ function ownStyles(component: unknown): string {
   return css.replace(/%NS%/g, '').replace(/\[_ng(?:content|host)-%COMP%\]/g, '').replace(/["']/g, '').replace(/\s+/g, ' ');
 }
 
+
+@Component({
+  imports: [KometaChip],
+  template: `
+    @for (o of options; track o) {
+      <k-chip controlled [selected]="picked() === o" (toggled)="asked.set(o)">{{ o }}</k-chip>
+    }
+  `,
+})
+class ControlledHost {
+  options = ['a', 'b'];
+  picked = signal('a');
+  asked = signal('');
+}
+
+describe('KometaChip controlled', () => {
+  it('emits toggled and keeps showing what the parent binds when it refuses', () => {
+    const f = TestBed.createComponent(ControlledHost);
+    f.detectChanges();
+    const [a, b] = [...(f.nativeElement as HTMLElement).querySelectorAll('button')] as HTMLButtonElement[];
+    b.click();
+    f.detectChanges();
+    expect(f.componentInstance.asked()).toBe('b');
+    expect(b.getAttribute('aria-pressed')).toBe('false');
+    a.click(); // a radio parent refuses to unselect
+    f.detectChanges();
+    expect(a.getAttribute('aria-pressed')).toBe('true');
+    f.componentInstance.picked.set('b');
+    f.detectChanges();
+    expect(a.getAttribute('aria-pressed')).toBe('false');
+    expect(b.getAttribute('aria-pressed')).toBe('true');
+  });
+});

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, booleanAttribute, input, signal } from '@angular/core';
 
 /**
  * A Syne figure "17 / 25" over one tick per unit: a spent tick is dim and short, a remaining one bright
@@ -24,7 +24,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
     }
     .fig b { display: inline-block; font-weight: 700; }
     .rolled .fig b { animation: roll .42s var(--ease-spring, ease); }
-    .fig span { color: var(--muted); font-size: 18px; }
+    .fig span { color: var(--muted); font-size: .5625em; }
     .ticks { display: flex; gap: 3px; height: var(--meter-height, 28px); }
     .ticks i {
       flex: 1;
@@ -71,7 +71,7 @@ export class KometaMeter {
   readonly label = input('');
   readonly ariaLabel = input('');
   /** False hides the big figure and leaves the ticks (the value is still read aloud). */
-  readonly showFigure = input(true);
+  readonly showFigure = input(true, { transform: booleanAttribute });
 
   /** True from the first change on, so mounting never rolls the figure. */
   protected readonly rolled = signal(false);

@@ -100,7 +100,7 @@ export class KometaWords implements AfterViewChecked {
   readonly options = input.required<readonly KometaWordOption[]>();
   readonly value = model('');
   readonly ariaLabel = input('');
-  readonly disabled = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   /** Draws each word itself (an icon beside the label, say); the context's `$implicit` is the option. */
   /** A real tab strip (its words switch panels): tablist/tab roles, aria-selected, one tab stop, arrow keys. */
   readonly tabs = input(false, { transform: booleanAttribute });

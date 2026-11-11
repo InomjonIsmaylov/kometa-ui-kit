@@ -6,7 +6,7 @@ import {
   afterNextRender,
   computed,
   inject,
-  input,
+  booleanAttribute, input,
   model,
   signal,
   viewChild,
@@ -143,7 +143,7 @@ export class KometaMenu {
   readonly label = input('');
   /** Names the control for a screen reader when the prefix word alone is not enough. */
   readonly ariaLabel = input('');
-  readonly disabled = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   /** Shown as the chosen word while nothing is chosen. */
   readonly placeholder = input('');
 

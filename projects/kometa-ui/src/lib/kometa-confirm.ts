@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 /**
  * The row crossfades to the caller's question while `asking` is true. The question,
@@ -38,5 +38,5 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   `,
 })
 export class KometaConfirm {
-  readonly asking = input(false);
+  readonly asking = input(false, { transform: booleanAttribute });
 }

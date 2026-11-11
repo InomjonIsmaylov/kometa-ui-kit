@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, model, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, booleanAttribute, input, model, output, signal } from '@angular/core';
 import type { FormValueControl } from '@angular/forms/signals';
 
 /**
@@ -86,13 +86,13 @@ export class KometaStepper implements FormValueControl<number> {
   readonly ariaLabel = input('');
   readonly decrementLabel = input('');
   readonly incrementLabel = input('');
-  readonly disabled = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   /** Keeps the figure focusable and announced but stops every change. */
-  readonly readonly = input(false);
+  readonly readonly = input(false, { transform: booleanAttribute });
   /** The glyphs inside the two circles. */
   readonly decrementIcon = input('−');
   readonly incrementIcon = input('+');
-  readonly touched = input(false);
+  readonly touched = input(false, { transform: booleanAttribute });
   /** Emitted when focus leaves a circle or the figure, which is what marks a Signal Forms field touched. */
   readonly touch = output<void>();
 

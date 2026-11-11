@@ -40,7 +40,7 @@ export class KometaLink {
   /** Names what is copied when the visible word alone is ambiguous (one per table row). */
   readonly ariaLabel = input('');
   /** False where the element before the link is not the copied value (admin's poster button). */
-  readonly flashValue = input(true);
+  readonly flashValue = input(true, { transform: booleanAttribute });
   /** How long `copiedLabel` shows, in ms. */
   readonly copiedMs = input(900);
   readonly disabled = input(false, { transform: booleanAttribute });

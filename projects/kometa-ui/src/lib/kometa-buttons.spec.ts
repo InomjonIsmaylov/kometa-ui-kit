@@ -78,3 +78,42 @@ describe('the round 11 buttons', () => {
     expect(go.getAttribute('aria-busy')).toBe('true');
   });
 });
+
+@Component({
+  imports: [KometaPair],
+  template: `<k-pair keep="Back" confirm="Save" tone="primary" [busy]="busy()" [confirmDisabled]="invalid()"
+    (kept)="kept.set(kept() + 1)" (confirmed)="saved.set(saved() + 1)" />`,
+})
+class PairHost {
+  busy = signal(false);
+  invalid = signal(true);
+  kept = signal(0);
+  saved = signal(0);
+}
+
+describe('KometaPair confirmDisabled and busy', () => {
+  function render() {
+    const f = TestBed.createComponent(PairHost);
+    f.detectChanges();
+    const [keep, go] = Array.from(f.nativeElement.querySelectorAll('k-pair button')) as HTMLButtonElement[];
+    return { f, keep, go };
+  }
+
+  it('confirmDisabled greys out only the confirm button', () => {
+    const { f, keep, go } = render();
+    expect(go.disabled).toBe(true);
+    expect(keep.disabled).toBe(false);
+    keep.click();
+    expect(f.componentInstance.kept()).toBe(1);
+  });
+
+  it('busy disables the confirm button, so a second tap cannot confirm again', () => {
+    const { f, go } = render();
+    f.componentInstance.invalid.set(false);
+    f.componentInstance.busy.set(true);
+    f.detectChanges();
+    expect(go.disabled).toBe(true);
+    go.click();
+    expect(f.componentInstance.saved()).toBe(0);
+  });
+});

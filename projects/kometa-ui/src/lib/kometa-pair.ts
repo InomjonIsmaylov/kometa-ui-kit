@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } f
  * The footer of a confirm that destroys something: an equal pair, a quiet "keep it" beside a red "delete". The red is
  * the primary because the action removes data, so no amber appears on that screen. The caller supplies both words
  * (`keep`, `confirm`) in its language; the pair emits `kept` and `confirmed` and never decides anything. `busy` spins
- * the red button and locks both while the request runs. Use it in a dialog, tray or sheet footer; a non-destructive
+ * the red button and locks both (so a double tap cannot confirm twice) while the request runs. Use it in a dialog, tray or sheet footer; a non-destructive
  * save and cancel keeps the filled amber button.
  * Spec: kometa-pair.spec.ts. Lab: docs/superpowers/labs/2026-10-14-blend-ui-lab-round-11.html (B).
  *
@@ -27,7 +27,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } f
     button:active:not(:disabled) { transform: scale(.98); }
     button:focus-visible { outline: 2px solid var(--amber-ink, var(--amber)); outline-offset: 2px; }
     button:disabled { opacity: .45; cursor: not-allowed; }
-    .go.busy { color: transparent; pointer-events: none; }
+    .go.busy { color: transparent; pointer-events: none; opacity: 1; }
     .go.busy::after {
       content: ''; position: absolute; box-sizing: border-box; left: 50%; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px;
       border: 2px solid #fff; border-color: #fff transparent #fff transparent; border-radius: 50%; animation: kometa-pair-spin 700ms linear infinite;
@@ -39,7 +39,7 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input, output } f
   host: { '[attr.data-tone]': 'tone()' },
   template: `
     <button type="button" class="keep" [disabled]="busy() || disabled()" (click)="kept.emit()">{{ keep() }}</button>
-    <button type="button" class="go" [class.busy]="busy()" [attr.aria-busy]="busy() ? 'true' : null" [disabled]="disabled()"
+    <button type="button" class="go" [class.busy]="busy()" [attr.aria-busy]="busy() ? 'true' : null" [disabled]="busy() || disabled() || confirmDisabled()"
             (click)="confirmed.emit()">{{ confirm() }}</button>
   `,
 })
@@ -49,7 +49,10 @@ export class KometaPair {
   /** The red side: "Delete", "Remove". */
   readonly confirm = input.required<string>();
   readonly busy = input(false, { transform: booleanAttribute });
+  /** Locks both buttons. */
   readonly disabled = input(false, { transform: booleanAttribute });
+  /** Locks only the confirm button, so "keep" still works (a form greying out Save). */
+  readonly confirmDisabled = input(false, { transform: booleanAttribute });
   /** `primary` draws the confirm side in amber, for a pair that does not destroy anything. */
   readonly tone = input<'danger' | 'primary'>('danger');
   readonly kept = output<void>();
