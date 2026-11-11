@@ -149,7 +149,7 @@ describe('KometaDate', () => {
     expect(btn.disabled).toBe(true);
   });
 
-  it('inline range: two taps hold a period (an earlier second tap swaps), the days between are tinted', async () => {
+  it('inline range: two taps hold a period (an earlier second tap swaps), the ends are discs and a line joins them', async () => {
     const f = TestBed.createComponent(RangeHost);
     f.detectChanges();
     await f.whenStable();
@@ -167,6 +167,9 @@ describe('KometaDate', () => {
     expect(root.querySelectorAll('button.d.mid').length).toBe(7);
     expect(day(12).getAttribute('aria-pressed')).toBe('true');
     expect(day(20).getAttribute('aria-pressed')).toBe('true');
+    expect(day(12).classList.contains('from')).toBe(true);
+    expect(day(20).classList.contains('to')).toBe(true);
+    expect(root.querySelector('.grid')!.classList.contains('range')).toBe(true);
   });
 });
 

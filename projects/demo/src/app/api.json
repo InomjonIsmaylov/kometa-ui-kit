@@ -155,6 +155,24 @@
    "default": "''"
   }
  },
+ "KometaBadge": {
+  "count": {
+   "type": "number",
+   "default": "0"
+  },
+  "max": {
+   "type": "number",
+   "default": "99"
+  },
+  "showZero": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "label": {
+   "type": "string",
+   "default": "'{n} new'"
+  }
+ },
  "KometaWord": {
   "quiet": {
    "type": "boolean",
@@ -357,6 +375,19 @@
   "asking": {
    "type": "boolean",
    "default": "false"
+  }
+ },
+ "KometaContext": {
+  "items": {
+   "type": "(KometaContextItem | null)[]",
+   "required": true
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "'Actions'"
+  },
+  "picked": {
+   "type": "KometaContextItem"
   }
  },
  "KometaCountdown": {
@@ -649,6 +680,54 @@
   "disabled": {
    "type": "boolean",
    "default": "false"
+  }
+ },
+ "KometaHue": {
+  "value": {
+   "type": "string",
+   "default": "'#E7C255'"
+  },
+  "count": {
+   "type": "number",
+   "default": "24"
+  },
+  "saturation": {
+   "type": "number",
+   "default": "75"
+  },
+  "lightness": {
+   "type": "number",
+   "default": "62"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "showValue": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaInplace": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
   }
  },
  "KometaKeys": {
@@ -1000,6 +1079,28 @@
    "type": "void"
   }
  },
+ "KometaPanes": {
+  "size": {
+   "type": "number",
+   "default": "50"
+  },
+  "snaps": {
+   "type": "number[]",
+   "default": "[25, 33, 50, 66, 75]"
+  },
+  "min": {
+   "type": "number",
+   "default": "15"
+  },
+  "max": {
+   "type": "number",
+   "default": "85"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "'Resize panes'"
+  }
+ },
  "KometaPhotos": {
   "photos": {
    "type": "KometaPhoto[]",
@@ -1223,6 +1324,24 @@
   "position": {
    "type": "number",
    "default": "50"
+  }
+ },
+ "KometaRules": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "rules": {
+   "type": "KometaRule[]",
+   "required": true
+  },
+  "doneLabel": {
+   "type": "string",
+   "default": "'done'"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
   }
  },
  "KometaRows": {

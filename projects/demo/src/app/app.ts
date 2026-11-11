@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, Type, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaAvatars, KometaCrumb, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaTreeNode, KometaBanner, KometaButton, KometaCheck, KometaChip,
+  KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaAvatars, KometaCrumb, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaTreeNode, KometaHue, KometaRule, KometaRules, KometaInplace, KometaBadge, KometaPanes, KometaContext, KometaContextItem, KometaBanner, KometaButton, KometaCheck, KometaChip,
   KometaCode, KometaConfirm, KometaConfirmationService, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField,
   KometaFilm, KometaFilmDay, KometaFold, KometaFoldBody, KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint,
   KometaLink, KometaMarkDay, KometaMarks, KometaMenu, KometaMeter, KometaMulti, KometaNote, KometaNotes, KometaNumber,
@@ -27,6 +27,12 @@ import apiMeta from './api.json';
 /** The part of Angular's compiled component metadata the API tables read. */
 interface ApiDef { inputs: Record<string, unknown>; outputs: Record<string, string>; selectors: string[][] }
 
+/** Local midnight, n days from today. */
+function dateIn(n: number): Date {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+}
+
 /** A flat SVG picture as a data URL, so the demo needs no image files. */
 function picture(from: string, to: string, text: string): string {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">`
@@ -38,7 +44,7 @@ function picture(from: string, to: string, text: string): string {
 @Component({
   imports: [
     BookingScreen, ClientsScreen, Cosmos, DashboardScreen, DocSection, FormsModule, Home, Playground, PropsPanel, SettingsScreen,
-    KometaAccordion, KometaAccordionItem, KometaActions, KometaAnimate, KometaAvatars, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
+    KometaAccordion, KometaAccordionItem, KometaActions, KometaAnimate, KometaAvatars, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaHue, KometaRules, KometaInplace, KometaBadge, KometaPanes, KometaContext, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
     KometaConfirm, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField, KometaFilm, KometaFold, KometaFoldBody,
     KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint, KometaLink, KometaMarks, KometaMenu, KometaMeter,
     KometaMulti, KometaNote, KometaNotes, KometaNumber, KometaPager, KometaPair, KometaPerson, KometaPhotos, KometaPicker,
@@ -81,6 +87,9 @@ export class App {
       { id: 'digits', label: 'Digits', about: 'PIN and phone digit entry.' },
       { id: 'number', label: 'Number', about: 'Formatted numbers and money.' },
       { id: 'slider', label: 'Slider', about: 'A value dragged along a row of ticks.' },
+      { id: 'hue', label: 'Hue', about: 'A colour picked from a row of hue ticks.' },
+      { id: 'rules', label: 'Rules', about: 'What a value still needs, struck through as it is met.' },
+      { id: 'inplace', label: 'Inplace', about: 'A value edited where it stands, the old one struck above.' },
       { id: 'stepper', label: 'Stepper', about: 'A large +/- stepper for small counts.' },
       { id: 'select', label: 'Select', about: 'Single choice dropdown.' },
       { id: 'multi', label: 'Multi', about: 'Multiple choice dropdown with chips.' },
@@ -125,6 +134,7 @@ export class App {
       { id: 'accordion', label: 'Accordion', about: 'Stacked questions that open one by one.' },
       { id: 'fold', label: 'Fold', about: 'A collapsible block, and its parts on their own.' },
       { id: 'heading', label: 'Heading', about: 'Section heading with an action.' },
+      { id: 'panes', label: 'Panes', about: 'Two panes split by a line that snaps to ticks.' },
     ] },
     { label: 'Overlay', items: [
       { id: 'drawer', label: 'Drawer', about: 'Side drawer and bottom sheet.' },
@@ -132,6 +142,7 @@ export class App {
       { id: 'tip', label: 'Tip', about: 'A tooltip directive.' },
       { id: 'hint', label: 'Hint', about: 'A term that explains itself.' },
       { id: 'note', label: 'Note', about: 'A small info button.' },
+      { id: 'context', label: 'Context', about: 'A right-click menu on a glass card.' },
     ] },
     { label: 'Menu', items: [
       { id: 'tabbar', label: 'Tabbar', about: 'Bottom tab navigation.' },
@@ -139,6 +150,7 @@ export class App {
     ] },
     { label: 'Messages', items: [
       { id: 'tag', label: 'Tag', about: 'Status tags in every tone.' },
+      { id: 'badge', label: 'Badge', about: 'A count on the corner of an icon.' },
       { id: 'banner', label: 'Banner', about: 'Inline messages, dismissible or with an action.' },
       { id: 'toast', label: 'Toast', about: 'Short-lived messages in a corner.' },
       { id: 'upload', label: 'Upload', about: 'Progress of a file upload.' },
@@ -168,7 +180,7 @@ export class App {
   private readonly apis: Record<string, Record<string, Type<unknown>>> = {
     motion: { KometaAnimate },
     field: { KometaField }, search: { KometaSearch }, notes: { KometaNotes }, code: { KometaCode }, digits: { KometaDigits },
-    number: { KometaNumber }, stepper: { KometaStepper }, slider: { KometaSlider }, select: { KometaSelect }, multi: { KometaMulti }, menu: { KometaMenu },
+    number: { KometaNumber }, stepper: { KometaStepper }, slider: { KometaSlider }, hue: { KometaHue }, rules: { KometaRules }, inplace: { KometaInplace }, badge: { KometaBadge }, panes: { KometaPanes }, context: { KometaContext }, select: { KometaSelect }, multi: { KometaMulti }, menu: { KometaMenu },
     suggest: { KometaSuggest },
     toggle: { KometaToggle }, check: { KometaCheck }, tick: { KometaTick }, chip: { KometaChip },
     words: { KometaWords }, rating: { KometaRating },
@@ -372,6 +384,25 @@ export const appConfig: ApplicationConfig = {
   // #region stepper/basic
   protected readonly seats = signal(2);
   protected readonly distance = signal(12);
+  protected readonly stay = signal<(Date | null)[] | null>([dateIn(2), dateIn(8)]);
+  protected readonly shopColour = signal('#E7C255');
+  protected readonly shopName = signal('Usta Barber');
+  protected readonly unread = signal(3);
+  protected readonly paneSize = signal(33);
+  protected readonly visitActions: (KometaContextItem | null)[] = [
+    { label: 'Reschedule', shortcut: 'R' },
+    { label: 'Duplicate', shortcut: 'Ctrl D' },
+    { label: 'Send reminder' },
+    null,
+    { label: 'Cancel visit', shortcut: 'Del', danger: true },
+  ];
+  protected readonly password = signal('');
+  protected readonly passwordRules: KometaRule[] = [
+    { label: '8 letters', test: (v) => v.length >= 8 },
+    { label: 'a number', test: /\d/ },
+    { label: 'a capital', test: /[A-Z]/ },
+    { label: 'a symbol', test: /[^\w\s]/ },
+  ];
   protected readonly menuTree: KometaTreeNode[] = [
     { label: 'Services', children: [
       { label: 'Hair', children: [{ label: 'Haircut' }, { label: 'Fade' }, { label: 'Kids cut' }] },

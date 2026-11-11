@@ -24,7 +24,7 @@ const EN: KometaDateNames = {
   next: 'Next month',
 };
 
-interface Cell { n: number; date: Date; off: boolean; selected: boolean; mid: boolean; today: boolean }
+interface Cell { n: number; date: Date; off: boolean; selected: boolean; mid: boolean; today: boolean; from: boolean; to: boolean }
 
 const day = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 let nextId = 0;
@@ -37,7 +37,7 @@ let nextId = 0;
  * outside, resize and scroll close it. `value` is local midnight (or `null`); `min` and `max` grey out the days beyond.
  * `names` is the caller's language (English when unset); `inputId` lets a `<label for>` name the button.
  * `range` turns it into a period picker: the first tap holds the start,
- * the second the end (an earlier second tap swaps them), the days between are tinted. `rangeValue` is `[start, null]`
+ * the second the end (an earlier second tap swaps them). The two ends are cream discs and a cream line joins them under the days between. `rangeValue` is `[start, null]`
  * after the first tap and `[start, end]` after the second. `inline` draws the month in place,
  * with no button and no popup, for a panel that already floats (the console's period picker).
  * Spec: kometa-date.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Month).
@@ -96,7 +96,17 @@ let nextId = 0;
     .d:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
     .d[aria-pressed='true'] { color: var(--display-ink, var(--text)); font-weight: 600; box-shadow: inset 0 0 0 2px var(--display-ink, var(--text)); }
     .d.today::after { content: ''; position: absolute; left: 50%; bottom: 5px; width: 12px; height: 1px; margin-left: -6px; background: var(--display-ink, var(--text)); }
-    .d.mid { background: var(--amber-tint, var(--glass-line)); border-radius: 0; }
+    /* Range: the ends are filled discs, a 1px line runs under the days between and half into each end. */
+    .d.mid { color: var(--display-ink, var(--text)); border-radius: 0; box-shadow: inset 0 -1px 0 var(--display-ink, var(--text)); }
+    .grid.range .d[aria-pressed='true'] { isolation: isolate; color: var(--bg); box-shadow: none; }
+    .grid.range .d[aria-pressed='true']::before {
+      content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px; border-radius: 50%;
+      background: var(--display-ink, var(--text));
+    }
+    .d.from, .d.to { border-radius: 0; background: linear-gradient(var(--display-ink, var(--text)), var(--display-ink, var(--text))) no-repeat bottom / 50% 1px; }
+    .d.from { background-position: right bottom; }
+    .d.to { background-position: left bottom; }
+    .grid.range .d.today::after { bottom: 3px; }
     .d:disabled { opacity: .3; cursor: default; }
     @media (prefers-reduced-motion: reduce) { .btn::after, .pop, .d { transition: none; } .pop { animation: none; } }
   `,
@@ -110,10 +120,10 @@ let nextId = 0;
       <div class="dow" aria-hidden="true">
         @for (w of weekdays(); track $index) { <span>{{ w }}</span> }
       </div>
-      <div class="grid" role="group" [attr.aria-label]="ariaLabel() || null">
+      <div class="grid" [class.range]="range()" role="group" [attr.aria-label]="ariaLabel() || null">
         @for (c of cells(); track $index) {
           @if (c) {
-            <button class="d" type="button" [class.today]="c.today" [class.mid]="c.mid" [disabled]="c.off" [attr.aria-pressed]="c.selected"
+            <button class="d" type="button" [class.today]="c.today" [class.mid]="c.mid" [class.from]="c.from" [class.to]="c.to" [disabled]="c.off" [attr.aria-pressed]="c.selected"
                     [attr.aria-current]="c.today ? 'date' : null" [attr.aria-label]="c.n + ' ' + n().monthNames[c.date.getMonth()] + ' ' + c.date.getFullYear()"
                     (click)="pick(c)">{{ c.n }}</button>
           } @else { <span></span> }
@@ -190,7 +200,8 @@ export class KometaDate implements OnInit {
     for (let i = 1, last = new Date(v.getFullYear(), v.getMonth() + 1, 0).getDate(); i <= last; i++) {
       const date = new Date(v.getFullYear(), v.getMonth(), i), t = day(date);
       out.push({ n: i, date, off: (!!min && t < day(min)) || (!!max && t > day(max)), selected: rng ? (!!r0 && t === day(r0)) || (!!r1 && t === day(r1)) : !!sel && t === day(sel),
-        mid: rng && !!r0 && !!r1 && t > day(r0) && t < day(r1), today: t === today });
+        mid: rng && !!r0 && !!r1 && t > day(r0) && t < day(r1), today: t === today,
+        from: rng && !!r0 && !!r1 && t === day(r0) && t !== day(r1), to: rng && !!r0 && !!r1 && t === day(r1) && t !== day(r0) });
     }
     return out;
   });

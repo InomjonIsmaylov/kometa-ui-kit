@@ -300,6 +300,94 @@
           <k-slider [value]="14" ariaLabel="Custom" style="--slider-figure-size: 32px; --slider-height: 40px; --slider-on: var(--amber)" />
         </app-doc>
       }
+      @case ('hue') {
+        <app-doc id="basic" heading="Basic" about="Drag along the hues, or focus them and use the arrow keys. value is #RRGGBB.">
+          <k-hue [(value)]="shopColour" ariaLabel="Shop colour" />
+        </app-doc>
+        <app-doc id="hue-family" heading="Count, saturation and lightness" about="Fewer, deeper hues: every pick stays in one family.">
+          <k-hue [count]="12" [saturation]="55" [lightness]="45" ariaLabel="Label colour" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--hue-height.">
+          <k-hue style="--hue-height: 44px" [showValue]="false" ariaLabel="Tall hues" />
+        </app-doc>
+      }
+      @case ('rules') {
+        <app-doc id="basic" heading="Basic" about="Each rule strikes through as the value meets it.">
+          <div class="field"><k-field label="Password" type="password" [(value)]="password" /></div>
+          <k-rules [value]="password()" [rules]="passwordRules" ariaLabel="Password needs" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--rules-size.">
+          <k-rules value="Kometa1" [rules]="passwordRules" style="--rules-size: 15px" />
+        </app-doc>
+      }
+      @case ('inplace') {
+        <app-doc id="basic" heading="Basic" about="Click the name to edit it. While you type, the old value sits above, struck. Enter or leaving the field saves, Escape cancels.">
+          <k-inplace [(value)]="shopName" ariaLabel="Shop name" />
+        </app-doc>
+        <app-doc id="inplace-states" heading="Placeholder and disabled" about="An empty value shows the placeholder, muted; disabled locks it.">
+          <k-inplace placeholder="Add a nickname" ariaLabel="Nickname" />
+          <k-inplace value="Main branch" disabled ariaLabel="Branch" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--inplace-size.">
+          <k-inplace value="Saturday hours" ariaLabel="Title" style="--inplace-size: 28px" />
+        </app-doc>
+      }
+      @case ('badge') {
+        <app-doc id="basic" heading="Basic" about="A cream disc on the corner of whatever it wraps. It pops each time the count changes and is gone at zero.">
+          <div class="badges">
+            <button k-halo aria-label="Notifications"><k-badge [count]="unread()" label="{n} unread"><svg class="bell" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0" /></svg></k-badge></button>
+            <button k-word (click)="unread.set(unread() + 1)">Add one</button>
+            <button k-word quiet (click)="unread.set(0)">Clear</button>
+          </div>
+        </app-doc>
+        <app-doc id="badge-max" heading="Max and zero" about="Over max it reads max+; showZero keeps it at zero.">
+          <div class="badges">
+            <button k-halo aria-label="Messages"><k-badge [count]="140">✉</k-badge></button>
+            <button k-halo aria-label="Waitlist"><k-badge [count]="12" [max]="9">☰</k-badge></button>
+            <button k-halo aria-label="Reviews"><k-badge [count]="0" showZero>★</k-badge></button>
+          </div>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--badge-size, --badge-bg, --badge-ink, --badge-ring, --badge-top and --badge-right.">
+          <div class="badges">
+            <button k-halo aria-label="Alerts"><k-badge [count]="5" style="--badge-bg: var(--amber); --badge-ink: #12110e; --badge-size: 20px">⚑</k-badge></button>
+          </div>
+        </app-doc>
+      }
+      @case ('panes') {
+        <app-doc id="basic" heading="Basic" about="Drag the line: it grows on hover and rests on 25, 33, 50, 66 or 75%, marked by the ticks above. Focus it and use the arrows to step between them.">
+          <k-panes [(size)]="paneSize" class="panes-demo">
+            <nav kStart class="pane-list"><b>Clients</b><span>Anvar K.</span><span>Malika R.</span><span>Aziz T.</span></nav>
+            <article class="pane-body"><b>Anvar K.</b><span>12 visits · last on 2 Nov</span><span>Prefers a fade, no beard trim.</span></article>
+          </k-panes>
+        </app-doc>
+        <app-doc id="panes-free" heading="Without snaps" about="An empty snaps lets it rest anywhere between min and max.">
+          <k-panes [snaps]="[]" [min]="20" [max]="80" class="panes-demo">
+            <div kStart class="pane-body">Left</div>
+            <div class="pane-body">Right</div>
+          </k-panes>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--panes-height, --panes-line and --panes-radius.">
+          <k-panes [snaps]="[40, 60]" [size]="40" style="--panes-height: 120px; --panes-radius: 4px; --panes-line: var(--amber)">
+            <div kStart class="pane-body">40</div>
+            <div class="pane-body">60</div>
+          </k-panes>
+        </app-doc>
+      }
+      @case ('context') {
+        <app-doc id="basic" heading="Basic" about="Right-click a visit, or focus it and press Shift+F10. Shortcuts sit on the right in mono; destructive actions are red.">
+          <k-context [items]="visitActions" (picked)="log.set($event.label)">
+            <div class="ctx-rows">
+              <button type="button" class="ctx-row"><b>10:00</b> Anvar K. · Haircut</button>
+              <button type="button" class="ctx-row"><b>11:30</b> Malika R. · Colour</button>
+            </div>
+          </k-context>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--context-width and --context-radius; animation takes a motion preset.">
+          <k-context [items]="visitActions" animation="scale" style="--context-width: 240px; --context-radius: 6px" (picked)="log.set($event.label)">
+            <div class="ctx-zone">Right-click here</div>
+          </k-context>
+        </app-doc>
+      }
       @case ('stepper') {
         <app-doc id="basic" heading="Basic" about="A larger stepper with a unit, for small counts like seats.">
           <k-stepper [(value)]="seats" [min]="1" [max]="6" unit="seats" ariaLabel="Seats" decrementLabel="Fewer" incrementLabel="More" />
@@ -632,6 +720,9 @@
         </app-doc>
         <app-doc id="range" heading="Range" about="Pick a start and an end date.">
           <k-date range [(rangeValue)]="period" ariaLabel="Period" />
+        </app-doc>
+        <app-doc id="range-inline" heading="Inline range" about="The two ends are cream discs and a line joins them under the days between.">
+          <k-date inline range [(rangeValue)]="stay" ariaLabel="Stay" />
         </app-doc>
         <app-doc id="inline" heading="Inline" about="The calendar drawn in place, without an input.">
           <k-date inline [(value)]="day" ariaLabel="Inline day" />

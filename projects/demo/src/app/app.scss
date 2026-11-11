@@ -732,3 +732,22 @@ k-frame img { display: block; width: 100%; height: auto; }
 .work p { position: absolute; left: 16px; bottom: 14px; margin: 0; color: var(--display-ink); font: 700 18px var(--font-display); }
 .work p span { display: block; color: var(--text2); font: 600 12px var(--font-sans); }
 // #endregion
+
+// #region badge/basic badge/badge-max badge/customizing
+.badges { display: flex; align-items: center; gap: 18px; }
+.bell { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; }
+// #endregion
+
+// #region panes/basic panes/panes-free
+.panes-demo { --panes-height: 180px; }
+.pane-list, .pane-body { display: grid; align-content: start; gap: 6px; padding: 12px 14px; color: var(--text2); font-size: 13px; }
+.pane-list b, .pane-body b { color: var(--display-ink); font: 700 15px var(--font-display); }
+// #endregion
+
+// #region context/basic context/customizing
+.ctx-rows { display: grid; gap: 4px; max-width: 360px; }
+.ctx-row { display: flex; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: none; color: var(--text2); font: inherit; font-size: 14px; text-align: left; cursor: context-menu; }
+.ctx-row b { color: var(--display-ink); font-family: var(--font-display); }
+.ctx-row:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.ctx-zone { display: grid; place-items: center; height: 110px; max-width: 360px; border: 1px dashed var(--border); border-radius: 12px; color: var(--muted); font-size: 13px; cursor: context-menu; }
+// #endregion
