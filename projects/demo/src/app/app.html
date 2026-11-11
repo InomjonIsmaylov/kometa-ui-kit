@@ -2039,6 +2039,105 @@
           <k-steps style="--steps-ink-current: var(--amber); --steps-bead: var(--amber); --steps-bead-size: 12px; --steps-font-size: 13px" [steps]="['Service', 'Time', 'Details', 'Done']" [current]="2" ariaLabel="Booking progress" />
         </app-doc>
       }
+      @case ('reorder') {
+        <app-doc id="basic" heading="Basic" about="Drag a row by its grip: it lifts and tilts while the others slide aside. From the keys: Space on a grip picks it up, the arrows move it, Space drops it, Escape puts it back.">
+          <k-reorder [(items)]="serviceOrder" class="reorder-demo" ariaLabel="Service order" (moved)="log.set('Moved from ' + ($event.from + 1) + ' to ' + ($event.to + 1))">
+            <ng-template let-s><span class="reorder-name">{{ s }}</span></ng-template>
+          </k-reorder>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="The walk-in queue: lift someone up when their master is free.">
+          <div class="ic-card">
+            <p class="ic-card-title">Waiting · {{ waitlist().length }}</p>
+            <k-reorder [(items)]="waitlist" [labelOf]="nameOf" ariaLabel="Walk-in queue">
+              <ng-template let-c let-i="index"><k-person [name]="c.name" [meta]="(i === 0 ? 'Next · ' : '') + c.meta" size="sm" /></ng-template>
+            </k-reorder>
+          </div>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--reorder-gap, --reorder-radius, --reorder-line, --reorder-bg and --reorder-lift-bg.">
+          <k-reorder [(items)]="serviceOrder" class="reorder-demo" style="--reorder-gap: 2px; --reorder-radius: 4px; --reorder-lift-bg: color-mix(in srgb, var(--amber) 14%, var(--bg))">
+            <ng-template let-s>{{ s }}</ng-template>
+          </k-reorder>
+        </app-doc>
+      }
+      @case ('swipe') {
+        <app-doc id="basic" heading="Basic" about="Pull a visit right: the ticks fill, and with them full it is done. Pull it left: the ring grows and turns red past 45%, and the visit slides away. Tab reaches both actions as buttons.">
+          <div class="swipe-list">
+            @for (v of swipeVisits(); track v.time) {
+              <k-swipe rightLabel="Done" leftLabel="Cancel visit" (swipedRight)="finishSwipe(v.time)" (swipedLeft)="dropSwipe(v.time)">
+                <div class="swipe-row" [class.done]="v.done"><time>{{ v.time }}</time><b>{{ v.name }}</b>{{ v.service }}</div>
+              </k-swipe>
+            }
+          </div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="The day's list: done visits strike through and count toward the total.">
+          <div class="ic-card">
+            <div class="ic-line"><p class="ic-card-title">Today</p><span class="ic-muted">{{ visitsDone() }} of {{ swipeVisits().length }} done</span></div>
+            <div class="swipe-list">
+              @for (v of swipeVisits(); track v.time) {
+                <k-swipe rightLabel="Done" leftLabel="Cancel visit" (swipedRight)="finishSwipe(v.time)" (swipedLeft)="dropSwipe(v.time)">
+                  <div class="swipe-row" [class.done]="v.done"><time>{{ v.time }}</time><b>{{ v.name }}</b>
+                    @if (v.done) {<k-tag tone="done">Done</k-tag>}</div>
+                </k-swipe>
+              }
+            </div>
+          </div>
+        </app-doc>
+        <app-doc id="swipe-one" heading="One side" about="Only the labelled side moves: here only a swipe right, with more ticks.">
+          <k-swipe rightLabel="Paid" [ticks]="20" class="swipe-list" (swipedRight)="log.set('Marked paid')">
+            <div class="swipe-row"><time>80 000</time><b>Anvar K.</b>Cash</div>
+          </k-swipe>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--swipe-radius, --swipe-bg, --swipe-on, --swipe-off and --swipe-danger.">
+          <k-swipe rightLabel="Done" leftLabel="Delete" class="swipe-list" style="--swipe-radius: 4px; --swipe-on: var(--amber); --swipe-danger: #b14a3a" (swipedLeft)="log.set('Deleted')">
+            <div class="swipe-row"><time>09:00</time><b>Break</b>30 min</div>
+          </k-swipe>
+        </app-doc>
+      }
+      @case ('tally') {
+        <app-doc id="basic" heading="Basic" about="Change the value and it counts there, the ticks filling toward max.">
+          <div class="tally-row">
+            <k-tally [value]="monthVisits()" [max]="240" unit="of 240 visits" />
+            <button k-word (click)="addVisit()">Add visits</button>
+          </div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A month at a glance: the figures count up each time the month fills.">
+          <div class="ic-card">
+            <p class="ic-card-title">November</p>
+            <k-tally [value]="monthTakings()" unit="k so'm" locale="ru-RU" />
+            <k-tally [value]="monthVisits()" [max]="240" unit="visits of 240" style="--tally-size: 24px" />
+            <button k-word quiet (click)="addVisit()">A busy day</button>
+          </div>
+        </app-doc>
+        <app-doc id="tally-plain" heading="Without ticks" about="No max, no ticks: just the figure, counting for longer.">
+          <k-tally [value]="monthTakings()" unit="k so'm" [duration]="1600" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--tally-size, --tally-height, --tally-on and --tally-off.">
+          <k-tally [value]="monthVisits()" [max]="240" [ticks]="48" style="--tally-size: 64px; --tally-height: 16px; --tally-on: var(--amber)" />
+        </app-doc>
+      }
+      @case ('fab') {
+        <app-doc id="basic" heading="Basic" about="Press the cream button: the page dims, the + turns to a ×, and the actions rise as words. Arrows move between them; Escape closes. Here fixed is false, so it sits in the frame instead of the screen.">
+          <div class="fab-stage">
+            <k-fab [actions]="fabActions" [fixed]="false" ariaLabel="Create" (picked)="log.set('Picked ' + $event.label)" />
+          </div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A phone schedule: the one way to add anything sits under your thumb.">
+          <div class="fab-stage">
+            <div class="ic-card">
+              <p class="ic-card-title">Today · {{ swipeVisits().length }} visits</p>
+              @for (v of swipeVisits(); track v.time) {
+                <div class="swipe-row"><time>{{ v.time }}</time><b>{{ v.name }}</b>{{ v.service }}</div>
+              }
+            </div>
+            <k-fab [actions]="fabActions" [fixed]="false" ariaLabel="Add to today" (picked)="log.set($event.label)" />
+          </div>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--fab-size, --fab-bg, --fab-ink, --fab-right, --fab-bottom, --fab-word-size, --fab-hover, --fab-scrim and --fab-z.">
+          <div class="fab-stage">
+            <k-fab [actions]="fabActions" [fixed]="false" icon="+" style="--fab-bg: var(--amber); --fab-size: 60px; --fab-word-size: 30px; --fab-hover: var(--display-ink); --fab-bottom: 28px" />
+          </div>
+        </app-doc>
+      }
       @case ('countdown') {
         <app-doc id="basic" heading="Basic" about="A tick drains each second; done fires at zero.">
           <k-countdown [duration]="60" label="to confirm" ariaLabel="Time to confirm" (done)="log.set('Countdown done')" />

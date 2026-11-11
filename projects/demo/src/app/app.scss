@@ -778,3 +778,18 @@ k-frame img { display: block; width: 100%; height: auto; }
 .ic-pane-list button:hover, .ic-pane-list button.on { background: color-mix(in srgb, var(--display-ink) 7%, transparent); color: var(--display-ink); }
 .ic-pane-list button:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
 // #endregion
+
+// #region reorder/basic reorder/in-context reorder/customizing swipe/basic swipe/in-context swipe/swipe-one swipe/customizing tally/basic tally/in-context tally/tally-plain tally/customizing fab/basic fab/in-context fab/customizing
+.reorder-demo { max-width: 380px; }
+.reorder-name { color: var(--display-ink); font: 700 15px var(--font-display); }
+.swipe-list { display: grid; gap: 6px; max-width: 420px; }
+.swipe-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; color: var(--text2); font-size: 14px; }
+.swipe-row time { color: var(--muted); font: 600 13px var(--font-mono); }
+.swipe-row b { color: var(--display-ink); font-family: var(--font-display); transition: color .3s; }
+.swipe-row.done b { color: var(--muted); text-decoration: line-through; }
+.swipe-row k-tag { margin-left: auto; }
+.tally-row { display: flex; flex-wrap: wrap; align-items: end; gap: 28px; }
+.tally-row k-tally { min-width: 220px; }
+.fab-stage { position: relative; height: 320px; max-width: 380px; overflow: hidden; border: 1px solid var(--border); border-radius: 18px; }
+.fab-stage .ic-card { border: 0; background: none; }
+// #endregion

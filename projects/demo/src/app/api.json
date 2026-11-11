@@ -543,6 +543,27 @@
    "type": "void"
   }
  },
+ "KometaFab": {
+  "actions": {
+   "type": "KometaFabAction[]",
+   "required": true
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "'Actions'"
+  },
+  "icon": {
+   "type": "string",
+   "default": "'+'"
+  },
+  "fixed": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "picked": {
+   "type": "KometaFabAction"
+  }
+ },
  "KometaField": {
   "value": {
    "type": "string",
@@ -1292,6 +1313,30 @@
    "type": "void"
   }
  },
+ "KometaReorder": {
+  "items": {
+   "type": "T[]",
+   "required": true
+  },
+  "labelOf": {
+   "type": "(item: T) => string",
+   "default": "(item) => String(item)"
+  },
+  "grabLabel": {
+   "type": "string",
+   "default": "'Move'"
+  },
+  "messages": {
+   "type": "Partial<KometaReorderMessages>"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "moved": {
+   "type": "{ from: number; to: number; }"
+  }
+ },
  "KometaReveal": {
   "before": {
    "type": "string",
@@ -1832,6 +1877,30 @@
    "type": "KometaSuggestion<unknown>"
   }
  },
+ "KometaSwipe": {
+  "rightLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "leftLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "leftIcon": {
+   "type": "string",
+   "default": "'✕'"
+  },
+  "ticks": {
+   "type": "number",
+   "default": "12"
+  },
+  "swipedRight": {
+   "type": "void"
+  },
+  "swipedLeft": {
+   "type": "void"
+  }
+ },
  "KometaTabbar": {
   "tabs": {
    "type": "readonly KometaTab[]",
@@ -1894,6 +1963,32 @@
   "ariaLabel": {
    "type": "string",
    "default": "''"
+  }
+ },
+ "KometaTally": {
+  "value": {
+   "type": "number",
+   "default": "0"
+  },
+  "max": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "ticks": {
+   "type": "number",
+   "default": "30"
+  },
+  "unit": {
+   "type": "string",
+   "default": "''"
+  },
+  "duration": {
+   "type": "number",
+   "default": "900"
+  },
+  "locale": {
+   "type": "string | undefined",
+   "default": "undefined"
   }
  },
  "KometaTag": {

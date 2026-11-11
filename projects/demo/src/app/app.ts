@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, Type, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaAvatars, KometaCrumb, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaTreeNode, KometaHue, KometaRule, KometaRules, KometaInplace, KometaBadge, KometaPanes, KometaContext, KometaContextItem, KometaBanner, KometaButton, KometaCheck, KometaChip,
+  KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaAvatars, KometaCrumb, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaTreeNode, KometaHue, KometaRule, KometaRules, KometaInplace, KometaBadge, KometaPanes, KometaContext, KometaContextItem, KometaReorder, KometaSwipe, KometaTally, KometaFab, KometaFabAction, KometaBanner, KometaButton, KometaCheck, KometaChip,
   KometaCode, KometaConfirm, KometaConfirmationService, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField,
   KometaFilm, KometaFilmDay, KometaFold, KometaFoldBody, KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint,
   KometaLink, KometaMarkDay, KometaMarks, KometaMenu, KometaMeter, KometaMulti, KometaNote, KometaNotes, KometaNumber,
@@ -44,7 +44,7 @@ function picture(from: string, to: string, text: string): string {
 @Component({
   imports: [
     BookingScreen, ClientsScreen, Cosmos, DashboardScreen, DocSection, FormsModule, Home, Playground, PropsPanel, SettingsScreen,
-    KometaAccordion, KometaAccordionItem, KometaActions, KometaAnimate, KometaAvatars, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaHue, KometaRules, KometaInplace, KometaBadge, KometaPanes, KometaContext, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
+    KometaAccordion, KometaAccordionItem, KometaActions, KometaAnimate, KometaAvatars, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaHue, KometaRules, KometaInplace, KometaBadge, KometaPanes, KometaContext, KometaReorder, KometaSwipe, KometaTally, KometaFab, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
     KometaConfirm, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField, KometaFilm, KometaFold, KometaFoldBody,
     KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint, KometaLink, KometaMarks, KometaMenu, KometaMeter,
     KometaMulti, KometaNote, KometaNotes, KometaNumber, KometaPager, KometaPair, KometaPerson, KometaPhotos, KometaPicker,
@@ -115,6 +115,7 @@ export class App {
       { id: 'word', label: 'Word', about: 'A text-like button, quiet or leading.' },
       { id: 'erase', label: 'Erase', about: 'A destructive text button.' },
       { id: 'halo', label: 'Halo', about: 'A round icon button.' },
+      { id: 'fab', label: 'Fab', about: 'The main action: a round button that raises words.' },
       { id: 'actions', label: 'Actions menu', about: 'A button that opens a list of actions.' },
       { id: 'confirm', label: 'Confirm', about: 'A row that turns into a question in place.' },
       { id: 'pair', label: 'Pair', about: 'Keep and confirm side by side.' },
@@ -125,6 +126,8 @@ export class App {
       { id: 'sort', label: 'Sort', about: 'Sort choices and sortable table headers.' },
       { id: 'pager', label: 'Pager', about: 'Page and page size control.' },
       { id: 'rows', label: 'Rows', about: 'Label/value and clickable list rows.' },
+      { id: 'reorder', label: 'Reorder', about: 'A list put in order by lifting rows by their grip.' },
+      { id: 'swipe', label: 'Swipe', about: 'Rows swiped right to finish or left to remove.' },
       { id: 'tree', label: 'Tree', about: 'A tree drawn as columns that slide in.' },
       { id: 'trail', label: 'Trail', about: 'Timeline of steps with gaps.' },
       { id: 'share', label: 'Share', about: 'A stacked share bar with a legend.' },
@@ -168,6 +171,7 @@ export class App {
       { id: 'meter', label: 'Meter', about: 'Progress toward a limit.' },
       { id: 'stars', label: 'Stars', about: 'A read-only score.' },
       { id: 'steps', label: 'Steps', about: 'Where the user is in a flow.' },
+      { id: 'tally', label: 'Tally', about: 'A figure that counts up to its new value.' },
       { id: 'countdown', label: 'Countdown', about: 'Time running out, as draining ticks.' },
       { id: 'keys', label: 'Keys', about: 'A keyboard shortcut that presses itself.' },
       { id: 'wait', label: 'Wait', about: 'A spinner with a screen-reader label.' },
@@ -185,16 +189,16 @@ export class App {
     toggle: { KometaToggle }, check: { KometaCheck }, tick: { KometaTick }, chip: { KometaChip },
     words: { KometaWords }, rating: { KometaRating },
     picker: { KometaPicker }, date: { KometaDate }, time: { KometaTime }, film: { KometaFilm }, slots: { KometaSlots }, marks: { KometaMarks },
-    button: { KometaButton }, word: { KometaWord }, erase: { KometaErase }, halo: { KometaHalo }, actions: { KometaActions },
+    button: { KometaButton }, word: { KometaWord }, erase: { KometaErase }, halo: { KometaHalo }, fab: { KometaFab }, actions: { KometaActions },
     confirm: { KometaConfirm, KometaConfirmationService }, pair: { KometaPair }, tray: { KometaTray },
     table: { KometaTable }, sort: { KometaSort, KometaSortHeader }, pager: { KometaPager }, rows: { KometaRows, KometaRow },
-    trail: { KometaTrail, KometaStep }, tree: { KometaTree }, share: { KometaShare }, split: { KometaSplit },
+    trail: { KometaTrail, KometaStep }, reorder: { KometaReorder }, swipe: { KometaSwipe }, tree: { KometaTree }, share: { KometaShare }, split: { KometaSplit },
     accordion: { KometaAccordion, KometaAccordionItem }, fold: { KometaFold, KometaFoldMark, KometaFoldBody },
     heading: { KometaHeading }, drawer: { KometaDrawer }, pop: { KometaPop }, tip: { KometaTip }, hint: { KometaHint }, note: { KometaNote },
     tabbar: { KometaTabbar }, crumbs: { KometaCrumbs }, tag: { KometaTag }, banner: { KometaBanner }, toast: { KometaToast },
     upload: { KometaUpload }, photos: { KometaPhotos }, frame: { KometaFrame }, reveal: { KometaReveal }, carousel: { KometaCarousel, KometaSlide },
     person: { KometaPerson }, avatars: { KometaAvatars }, logo: { ProviderLogo }, meter: { KometaMeter }, stars: { KometaStars }, steps: { KometaSteps },
-    wait: { KometaWait }, countdown: { KometaCountdown }, keys: { KometaKeys }, skeleton: { KometaSkeleton }, quiet: { KometaQuiet }, link: { KometaLink },
+    wait: { KometaWait }, tally: { KometaTally }, countdown: { KometaCountdown }, keys: { KometaKeys }, skeleton: { KometaSkeleton }, quiet: { KometaQuiet }, link: { KometaLink },
   };
   private readonly pages = this.nav.flatMap((g) => g.items);
   protected readonly screens = this.nav.find((g) => g.label === 'Screens')!.items;
@@ -423,6 +427,40 @@ export const appConfig: ApplicationConfig = {
   protected readonly crumbs: KometaCrumb[] = [{ label: 'Shops' }, { label: 'Usta Barber' }, { label: 'Schedule' }];
   protected readonly guests = ['Aziza Karimova', 'Dilshod Saidov', 'Malika Rashidova', 'Zafar Tursunov', 'Nodira Bakirova', 'Umid Olimov']
     .map((name) => ({ name }));
+  // #endregion
+  // #region reorder/basic reorder/in-context reorder/customizing swipe/basic swipe/in-context swipe/swipe-one swipe/customizing tally/basic tally/in-context tally/tally-plain tally/customizing fab/basic fab/in-context fab/customizing
+  protected readonly serviceOrder = signal(['Haircut', 'Fade', 'Beard trim', 'Hot towel shave', 'Kids cut']);
+  protected readonly waitlist = signal([
+    { name: 'Malika Rashidova', meta: 'Haircut · waiting 12 min' },
+    { name: 'Aziz Tursunov', meta: 'Beard trim · waiting 8 min' },
+    { name: 'Nodira Bakirova', meta: 'Fade · waiting 3 min' },
+  ]);
+  protected readonly nameOf = (c: { name: string }) => c.name;
+  protected readonly swipeVisits = signal([
+    { time: '10:00', name: 'Anvar K.', service: 'Haircut', done: false },
+    { time: '11:30', name: 'Dilnoza S.', service: 'Fade', done: false },
+    { time: '13:00', name: 'Jasur M.', service: 'Beard trim', done: false },
+    { time: '15:00', name: 'Madina A.', service: 'Kids cut', done: false },
+  ]);
+  protected finishSwipe(time: string): void {
+    this.swipeVisits.update((list) => list.map((v) => (v.time === time ? { ...v, done: !v.done } : v)));
+  }
+  protected dropSwipe(time: string): void {
+    this.swipeVisits.update((list) => list.filter((v) => v.time !== time));
+    this.log.set(`Visit at ${time} cancelled`);
+  }
+  protected readonly visitsDone = computed(() => this.swipeVisits().filter((v) => v.done).length);
+  protected readonly monthVisits = signal(184);
+  protected readonly monthTakings = signal(12480);
+  protected addVisit(): void {
+    this.monthVisits.update((n) => Math.min(240, n + 1 + Math.floor(Math.random() * 12)));
+    this.monthTakings.update((n) => n + 60 + Math.floor(Math.random() * 400));
+  }
+  protected readonly fabActions: KometaFabAction[] = [
+    { label: 'New visit', value: 'visit' },
+    { label: 'Block time', value: 'block' },
+    { label: 'Add client', value: 'client' },
+  ];
   // #endregion
   // #region toggle/basic
   protected readonly on = signal(true);

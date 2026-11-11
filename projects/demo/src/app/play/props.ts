@@ -6,7 +6,7 @@ import {
   KometaBanner, KometaButton, KometaCheck, KometaChip, KometaField, KometaHeading, KometaMeter, KometaNumber, KometaPerson, KometaQuiet,
   KometaRating, KometaSearch, KometaSelect, KometaSkeleton, KometaStars, KometaStepper, KometaSteps, KometaTag, KometaToggle, KometaUpload,
   KometaWait, KometaWords, KometaSlider, KometaHue, KometaRules, KometaInplace, KometaBadge, KometaContext, KometaCrumbs, KometaAvatars,
-  KometaTree, KometaKeys, KometaCountdown,
+  KometaTree, KometaKeys, KometaCountdown, KometaTally, KometaSwipe, KometaFab,
 } from 'kometa-ui';
 import { highlight } from '../docs';
 import { PlayStore } from './store';
@@ -69,6 +69,9 @@ export const PLAY: Record<string, PlayConfig> = {
   avatars: { type: KometaAvatars, seed: { people: [{ name: 'Anvar K.' }, { name: 'Malika R.' }, { name: 'Aziz T.' }, { name: 'Dilnoza S.' }, { name: 'Bekzod U.' }] }, choices: { size: ['sm', 'md', 'lg'] } },
   tree: { type: KometaTree, seed: { nodes: [{ label: 'Hair', children: [{ label: 'Haircut' }, { label: 'Fade' }] }, { label: 'Beard', children: [{ label: 'Trim' }] }] } },
   keys: { type: KometaKeys, seed: { keys: 'Ctrl+Shift+P' }, choices: { play: ['hover', 'loop', 'off'] } },
+  tally: { type: KometaTally, seed: { value: 1240, max: 2400, unit: 'visits' } },
+  swipe: { type: KometaSwipe, seed: { rightLabel: 'Done', leftLabel: 'Cancel visit' }, content: 'Swipe this row' },
+  fab: { type: KometaFab, seed: { actions: [{ label: 'New visit' }, { label: 'Block time' }, { label: 'Add client' }], fixed: false } },
   countdown: { type: KometaCountdown, seed: { duration: 30, label: 'to resend the code' } },
 };
 
