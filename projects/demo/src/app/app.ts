@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, Type, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaBanner, KometaButton, KometaCheck, KometaChip,
+  KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaAvatars, KometaCrumb, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaTreeNode, KometaBanner, KometaButton, KometaCheck, KometaChip,
   KometaCode, KometaConfirm, KometaConfirmationService, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField,
   KometaFilm, KometaFilmDay, KometaFold, KometaFoldBody, KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint,
   KometaLink, KometaMarkDay, KometaMarks, KometaMenu, KometaMeter, KometaMulti, KometaNote, KometaNotes, KometaNumber,
@@ -37,7 +37,7 @@ function picture(from: string, to: string, text: string): string {
 @Component({
   imports: [
     BookingScreen, ClientsScreen, Cosmos, DashboardScreen, DocSection, FormsModule, Home, Playground, PropsPanel, SettingsScreen,
-    KometaAccordion, KometaAccordionItem, KometaActions, KometaAnimate, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
+    KometaAccordion, KometaAccordionItem, KometaActions, KometaAnimate, KometaAvatars, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaBanner, KometaButton, KometaCheck, KometaChip, KometaCode,
     KometaConfirm, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField, KometaFilm, KometaFold, KometaFoldBody,
     KometaFoldMark, KometaFrame, KometaHalo, KometaHeading, KometaHint, KometaLink, KometaMarks, KometaMenu, KometaMeter,
     KometaMulti, KometaNote, KometaNotes, KometaNumber, KometaPager, KometaPair, KometaPerson, KometaPhotos, KometaPicker,
@@ -79,6 +79,7 @@ export class App {
       { id: 'code', label: 'Code', about: 'One-time code entry, one box per character.' },
       { id: 'digits', label: 'Digits', about: 'PIN and phone digit entry.' },
       { id: 'number', label: 'Number', about: 'Formatted numbers and money.' },
+      { id: 'slider', label: 'Slider', about: 'A value dragged along a row of ticks.' },
       { id: 'stepper', label: 'Stepper', about: 'A large +/- stepper for small counts.' },
       { id: 'select', label: 'Select', about: 'Single choice dropdown.' },
       { id: 'multi', label: 'Multi', about: 'Multiple choice dropdown with chips.' },
@@ -114,6 +115,7 @@ export class App {
       { id: 'sort', label: 'Sort', about: 'Sort choices and sortable table headers.' },
       { id: 'pager', label: 'Pager', about: 'Page and page size control.' },
       { id: 'rows', label: 'Rows', about: 'Label/value and clickable list rows.' },
+      { id: 'tree', label: 'Tree', about: 'A tree drawn as columns that slide in.' },
       { id: 'trail', label: 'Trail', about: 'Timeline of steps with gaps.' },
       { id: 'share', label: 'Share', about: 'A stacked share bar with a legend.' },
       { id: 'split', label: 'Split', about: 'Two amounts side by side.' },
@@ -132,6 +134,7 @@ export class App {
     ] },
     { label: 'Menu', items: [
       { id: 'tabbar', label: 'Tabbar', about: 'Bottom tab navigation.' },
+      { id: 'crumbs', label: 'Crumbs', about: 'Where you are, as a path that walks down the page.' },
     ] },
     { label: 'Messages', items: [
       { id: 'tag', label: 'Tag', about: 'Status tags in every tone.' },
@@ -142,14 +145,18 @@ export class App {
     { label: 'Media', items: [
       { id: 'photos', label: 'Photos', about: 'Full-screen photo viewer.' },
       { id: 'frame', label: 'Frame', about: 'Captioned picture with rounded corners.' },
+      { id: 'carousel', label: 'Carousel', about: 'Slides with a tick pager and clickable edges.' },
       { id: 'reveal', label: 'Reveal', about: 'Before/after comparison slider.' },
       { id: 'person', label: 'Person', about: 'Avatars with initials or a picture.' },
+      { id: 'avatars', label: 'Avatars', about: 'A few people as overlapping discs.' },
       { id: 'logo', label: 'Provider logo', about: 'Payment provider marks.' },
     ] },
     { label: 'Misc', items: [
       { id: 'meter', label: 'Meter', about: 'Progress toward a limit.' },
       { id: 'stars', label: 'Stars', about: 'A read-only score.' },
       { id: 'steps', label: 'Steps', about: 'Where the user is in a flow.' },
+      { id: 'countdown', label: 'Countdown', about: 'Time running out, as draining ticks.' },
+      { id: 'keys', label: 'Keys', about: 'A keyboard shortcut that presses itself.' },
       { id: 'wait', label: 'Wait', about: 'A spinner with a screen-reader label.' },
       { id: 'skeleton', label: 'Skeleton', about: 'Placeholder rows, cards and lines while data loads.' },
       { id: 'quiet', label: 'Quiet', about: 'An empty state with a title and a hint.' },
@@ -160,7 +167,7 @@ export class App {
   private readonly apis: Record<string, Record<string, Type<unknown>>> = {
     motion: { KometaAnimate },
     field: { KometaField }, search: { KometaSearch }, notes: { KometaNotes }, code: { KometaCode }, digits: { KometaDigits },
-    number: { KometaNumber }, stepper: { KometaStepper }, select: { KometaSelect }, multi: { KometaMulti }, menu: { KometaMenu },
+    number: { KometaNumber }, stepper: { KometaStepper }, slider: { KometaSlider }, select: { KometaSelect }, multi: { KometaMulti }, menu: { KometaMenu },
     suggest: { KometaSuggest },
     toggle: { KometaToggle }, check: { KometaCheck }, tick: { KometaTick }, chip: { KometaChip },
     words: { KometaWords }, rating: { KometaRating },
@@ -168,13 +175,13 @@ export class App {
     button: { KometaButton }, word: { KometaWord }, erase: { KometaErase }, halo: { KometaHalo }, actions: { KometaActions },
     confirm: { KometaConfirm, KometaConfirmationService }, pair: { KometaPair }, tray: { KometaTray },
     table: { KometaTable }, sort: { KometaSort, KometaSortHeader }, pager: { KometaPager }, rows: { KometaRows, KometaRow },
-    trail: { KometaTrail, KometaStep }, share: { KometaShare }, split: { KometaSplit },
+    trail: { KometaTrail, KometaStep }, tree: { KometaTree }, share: { KometaShare }, split: { KometaSplit },
     accordion: { KometaAccordion, KometaAccordionItem }, fold: { KometaFold, KometaFoldMark, KometaFoldBody },
     heading: { KometaHeading }, drawer: { KometaDrawer }, pop: { KometaPop }, tip: { KometaTip }, hint: { KometaHint }, note: { KometaNote },
-    tabbar: { KometaTabbar }, tag: { KometaTag }, banner: { KometaBanner }, toast: { KometaToast },
-    upload: { KometaUpload }, photos: { KometaPhotos }, frame: { KometaFrame }, reveal: { KometaReveal },
-    person: { KometaPerson }, logo: { ProviderLogo }, meter: { KometaMeter }, stars: { KometaStars }, steps: { KometaSteps },
-    wait: { KometaWait }, skeleton: { KometaSkeleton }, quiet: { KometaQuiet }, link: { KometaLink },
+    tabbar: { KometaTabbar }, crumbs: { KometaCrumbs }, tag: { KometaTag }, banner: { KometaBanner }, toast: { KometaToast },
+    upload: { KometaUpload }, photos: { KometaPhotos }, frame: { KometaFrame }, reveal: { KometaReveal }, carousel: { KometaCarousel, KometaSlide },
+    person: { KometaPerson }, avatars: { KometaAvatars }, logo: { ProviderLogo }, meter: { KometaMeter }, stars: { KometaStars }, steps: { KometaSteps },
+    wait: { KometaWait }, countdown: { KometaCountdown }, keys: { KometaKeys }, skeleton: { KometaSkeleton }, quiet: { KometaQuiet }, link: { KometaLink },
   };
   private readonly pages = this.nav.flatMap((g) => g.items);
   protected readonly screens = this.nav.find((g) => g.label === 'Screens')!.items;
@@ -362,6 +369,27 @@ export const appConfig: ApplicationConfig = {
   // #endregion
   // #region stepper/basic
   protected readonly seats = signal(2);
+  protected readonly distance = signal(12);
+  protected readonly menuTree: KometaTreeNode[] = [
+    { label: 'Services', children: [
+      { label: 'Hair', children: [{ label: 'Haircut' }, { label: 'Fade' }, { label: 'Kids cut' }] },
+      { label: 'Beard', children: [{ label: 'Trim' }, { label: 'Hot towel shave' }] },
+    ] },
+    { label: 'Team', children: [{ label: 'Masters' }, { label: 'Roles' }, { label: 'Schedule' }] },
+    { label: 'Shop page' },
+  ];
+  protected readonly treePath = signal<number[]>([0, 0]);
+  protected readonly slide = signal(0);
+  protected readonly works = [
+    { title: 'Low fade', by: 'Aziza · 40 min', image: picture('#3a2f22', '#14120e', 'Low fade') },
+    { title: 'Beard trim', by: 'Dilshod · 25 min', image: picture('#22303a', '#0e1214', 'Beard trim') },
+    { title: 'Kids cut', by: 'Malika · 30 min', image: picture('#2f3a22', '#11140e', 'Kids cut') },
+    { title: 'Hot towel shave', by: 'Zafar · 35 min', image: picture('#3a2228', '#140e10', 'Shave') },
+  ];
+  protected readonly budget = signal(60000);
+  protected readonly crumbs: KometaCrumb[] = [{ label: 'Shops' }, { label: 'Usta Barber' }, { label: 'Schedule' }];
+  protected readonly guests = ['Aziza Karimova', 'Dilshod Saidov', 'Malika Rashidova', 'Zafar Tursunov', 'Nodira Bakirova', 'Umid Olimov']
+    .map((name) => ({ name }));
   // #endregion
   // #region toggle/basic
   protected readonly on = signal(true);

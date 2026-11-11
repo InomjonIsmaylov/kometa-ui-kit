@@ -285,6 +285,21 @@
           <k-number [value]="42" style="--number-size: 40px; --number-color: var(--amber)" ariaLabel="Big number" />
         </app-doc>
       }
+      @case ('slider') {
+        <app-doc id="basic" heading="Basic" about="Drag along the ticks, or focus them and use the arrow keys.">
+          <k-slider [(value)]="distance" [max]="20" unit="km" ariaLabel="Distance" />
+        </app-doc>
+        <app-doc id="slider-steps" heading="Range and step" about="min, max and step set the range; above 40 steps it draws 25 ticks and the figure stays exact.">
+          <k-slider [(value)]="budget" [min]="10000" [max]="200000" [step]="5000" unit="so'm" ariaLabel="Budget" />
+        </app-doc>
+        <app-doc id="slider-bare" heading="Ticks only" about="showFigure false hides the number; disabled locks it.">
+          <k-slider [value]="8" [showFigure]="false" ariaLabel="Volume" />
+          <k-slider [value]="5" [max]="10" disabled ariaLabel="Locked" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--slider-figure-size, --slider-height, --slider-on and --slider-off.">
+          <k-slider [value]="14" ariaLabel="Custom" style="--slider-figure-size: 32px; --slider-height: 40px; --slider-on: var(--amber)" />
+        </app-doc>
+      }
       @case ('stepper') {
         <app-doc id="basic" heading="Basic" about="A larger stepper with a unit, for small counts like seats.">
           <k-stepper [(value)]="seats" [min]="1" [max]="6" unit="seats" ariaLabel="Seats" decrementLabel="Fewer" incrementLabel="More" />
@@ -1102,6 +1117,14 @@
           </k-rows>
         </app-doc>
       }
+      @case ('tree') {
+        <app-doc id="basic" heading="Basic" about="Pick a word and its children slide in as the next column. Arrow keys move through it.">
+          <k-tree [nodes]="menuTree" [(path)]="treePath" ariaLabel="Settings" (picked)="log.set('Tree: ' + $event.label)" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--tree-col, --tree-gap and --tree-size.">
+          <k-tree [nodes]="menuTree" [path]="[1]" ariaLabel="Team" style="--tree-col: 160px; --tree-gap: 24px; --tree-size: 16px" />
+        </app-doc>
+      }
       @case ('trail') {
         <app-doc id="basic" heading="Basic" about="A timeline; gap labels the time between two steps.">
           <k-trail>
@@ -1444,6 +1467,17 @@
       }
 
       <!-- ============================================================ Menu -->
+      @case ('crumbs') {
+        <app-doc id="basic" heading="Basic" about="Each level steps further in and a size up; the last is the page.">
+          <k-crumbs [items]="crumbs" (picked)="log.set('Crumb: ' + $event.label)" />
+        </app-doc>
+        <app-doc id="crumbs-links" heading="Links" about="A crumb with href is a plain link; without one it is a button that emits picked.">
+          <k-crumbs [items]="[{ label: 'Home', href: '#home' }, { label: 'Data', href: '#table' }, { label: 'Table' }]" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--crumbs-indent and --crumbs-size.">
+          <k-crumbs [items]="crumbs" style="--crumbs-indent: 24px; --crumbs-size: 26px" />
+        </app-doc>
+      }
       @case ('tabbar') {
         <app-doc id="basic" heading="Basic" about="Bottom navigation for phones; tabs can also be router links.">
           <k-tabbar [tabs]="tabs" [(value)]="tab" ariaLabel="Demo tabs" />
@@ -1630,6 +1664,29 @@
           <k-frame style="--frame-radius: 4px; --frame-caption-color: var(--amber); --frame-caption-size: 16px" caption="Square corners"><img [src]="frame" alt="Sample" /></k-frame>
         </app-doc>
       }
+      @case ('carousel') {
+        <app-doc id="basic" heading="Basic" about="Click the left or right third of a slide, a tick, or focus it and use the arrow keys.">
+          <k-carousel [(index)]="slide" ariaLabel="Works">
+            @for (w of works; track w.title) {
+              <div kSlide class="work"><img [src]="w.image" [alt]="w.title" /><p>{{ w.title }}<span>{{ w.by }}</span></p></div>
+            }
+          </k-carousel>
+        </app-doc>
+        <app-doc id="carousel-plain" heading="Ticks only" about="edges false leaves the slides alone, for slides full of their own buttons.">
+          <k-carousel [edges]="false" ariaLabel="Works" slideLabel="Work">
+            @for (w of works; track w.title) {
+              <div kSlide class="work"><img [src]="w.image" [alt]="w.title" /><p>{{ w.title }}<span>{{ w.by }}</span></p></div>
+            }
+          </k-carousel>
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--carousel-radius, --carousel-tick, --carousel-on and --carousel-off.">
+          <k-carousel ariaLabel="Works" style="--carousel-radius: 4px; --carousel-tick: 28px; --carousel-on: var(--amber)">
+            @for (w of works; track w.title) {
+              <div kSlide class="work"><img [src]="w.image" [alt]="w.title" /><p>{{ w.title }}<span>{{ w.by }}</span></p></div>
+            }
+          </k-carousel>
+        </app-doc>
+      }
       @case ('reveal') {
         <app-doc id="basic" heading="Basic" about="Drag the handle to compare before and after.">
           <k-reveal [before]="before" [after]="after" ariaLabel="Before and after" />
@@ -1644,6 +1701,18 @@
         </app-doc>
         <app-doc id="reveal-options" heading="Options" about="aspectRatio sets the shape of the picture; showLabels false hides the before/after labels.">
           <k-reveal [before]="before" [after]="after" aspectRatio="16/9" [showLabels]="false" ariaLabel="Wide, unlabelled" />
+        </app-doc>
+      }
+      @case ('avatars') {
+        <app-doc id="basic" heading="Basic" about="Hover or tab into it and the discs fan apart.">
+          <k-avatars [people]="guests" ariaLabel="Coming" moreLabel="and {n} others" />
+        </app-doc>
+        <app-doc id="avatars-size" heading="Size and max" about="size matches k-person; max is how many discs show before the +N.">
+          <k-avatars [people]="guests" [max]="3" size="sm" />
+          <k-avatars [people]="guests" [max]="6" size="lg" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--avatars-overlap, --avatars-gap, --avatars-ring and --avatars-bg.">
+          <k-avatars [people]="guests" style="--avatars-overlap: 16px; --avatars-gap: 10px; --avatars-ring: var(--amber)" />
         </app-doc>
       }
       @case ('person') {
@@ -1770,6 +1839,29 @@
         </app-doc>
         <app-doc id="steps-custom" heading="Customizing" about="--steps-ink, --steps-ink-current, --steps-font-size, --steps-font-size-current, --steps-line, --steps-bead and --steps-bead-size.">
           <k-steps style="--steps-ink-current: var(--amber); --steps-bead: var(--amber); --steps-bead-size: 12px; --steps-font-size: 13px" [steps]="['Service', 'Time', 'Details', 'Done']" [current]="2" ariaLabel="Booking progress" />
+        </app-doc>
+      }
+      @case ('countdown') {
+        <app-doc id="basic" heading="Basic" about="A tick drains each second; done fires at zero.">
+          <k-countdown [duration]="60" label="to confirm" ariaLabel="Time to confirm" (done)="log.set('Countdown done')" />
+        </app-doc>
+        <app-doc id="countdown-short" heading="Short" about="Up to 40 seconds, one tick per second.">
+          <k-countdown [duration]="15" label="to resend the code" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--countdown-figure-size, --countdown-height, --countdown-on and --countdown-off.">
+          <k-countdown [duration]="30" style="--countdown-figure-size: 36px; --countdown-height: 8px; --countdown-on: var(--amber)" />
+        </app-doc>
+      }
+      @case ('keys') {
+        <app-doc id="basic" heading="Basic" about="Hover or focus it and the keys press themselves in order.">
+          <k-keys keys="Ctrl+Shift+P" />
+        </app-doc>
+        <app-doc id="keys-play" heading="Play" about="play loop runs all the time, off never; keys also takes an array.">
+          <k-keys keys="Ctrl+K" play="loop" />
+          <k-keys [keys]="['⌘', 'Enter']" play="off" />
+        </app-doc>
+        <app-doc id="customizing" heading="Customizing" about="--keys-size, --keys-ink, --keys-dim and --keys-step.">
+          <k-keys keys="Alt+Shift+F" play="loop" separator="then" style="--keys-size: 22px; --keys-ink: var(--amber); --keys-step: 250ms" />
         </app-doc>
       }
       @case ('wait') {
