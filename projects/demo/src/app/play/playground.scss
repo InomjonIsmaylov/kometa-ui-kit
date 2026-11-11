@@ -21,6 +21,15 @@
 }
 .pg-code pre { pointer-events: none; color: var(--text); }
 .pg-code pre ::ng-deep .line { display: block; min-height: 1.6em; }
+/* Same token colours as docs.scss, repeated because that unencapsulated sheet only loads once a doc page has rendered. */
+.pg-code pre ::ng-deep {
+  .tk-c { color: var(--muted); font-style: italic; }
+  .tk-t { color: var(--blue); }
+  .tk-s { color: var(--green); }
+  .tk-i { color: var(--violet); }
+  .tk-k { color: var(--red); }
+  .tk-a { color: var(--amber-ink); }
+}
 .pg-code textarea {
   resize: none; background: transparent; color: transparent; caret-color: var(--amber); outline: none;
   &::selection { background: color-mix(in srgb, var(--amber) 30%, transparent); color: transparent; }
