@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Kometa's Angular 22 UI kit (no PrimeNG dependency), extracted from the `mening` project
-(`C:\Users\i_ismaylov\source\personal\mening`, `web/projects/shared/ui` and `web/projects/shared/styles`).
-The `mening` repo still has its own copy; **nothing here is linked back to it**, so a fix in one does not reach the other.
-Git repo on `main`, pushed to the private GitHub repo `InomjonIsmaylov/kometa-ui-kit`.
+Kometa's Angular 22 UI kit (no PrimeNG dependency), extracted from an app that still keeps its own copy;
+**nothing here is linked back to it**, so a fix in one does not reach the other.
+Git repo on `main`, pushed to the GitHub repo `InomjonIsmaylov/kometa-ui-kit`. MIT licensed; the fonts in
+`styles/fonts` are OFL 1.1 (`OFL.txt` beside them). Every push to `main` runs `.github/workflows/pages.yml`:
+the specs, then the demo built with `--base-href /<repo>/` and deployed to GitHub Pages.
 
 ## Commands
 
