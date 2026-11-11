@@ -20,6 +20,8 @@
   font: 13px/1.6 var(--font-mono, ui-monospace, 'Cascadia Code', Consolas, monospace); tab-size: 2; white-space: pre; overflow-wrap: normal;
 }
 .pg-code pre { pointer-events: none; color: var(--text); }
+/* <code> defaults to plain `monospace`, which has a different glyph width than the textarea and pushes the caret off the text. */
+.pg-code pre ::ng-deep code { font: inherit; letter-spacing: inherit; }
 .pg-code pre ::ng-deep .line { display: block; min-height: 1.6em; }
 /* Same token colours as docs.scss, repeated because that unencapsulated sheet only loads once a doc page has rendered. */
 .pg-code pre ::ng-deep {
