@@ -27,13 +27,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     :host {
       display: inline-block;
       flex: none;
-      width: 1.25em;
-      height: 1.25em;
+      width: var(--provider-logo-size, 1.25em);
+      height: var(--provider-logo-size, 1.25em);
       padding: 0.125em;
-      margin-inline-end: 0.5em;
+      margin-inline-end: var(--provider-logo-gap, 0.5em);
       box-sizing: border-box;
-      border-radius: 0.3em;
-      background: #fff;
+      border-radius: var(--provider-logo-radius, 0.3em);
+      background: var(--provider-logo-plate, #fff);
       vertical-align: -0.3em;
       line-height: 0;
     }

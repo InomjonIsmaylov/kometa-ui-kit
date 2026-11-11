@@ -97,7 +97,7 @@ describe('KometaTabbar', () => {
   it('draws the glass capsule from tokens and opens the word with the spring', () => {
     render();
     const css = stylesheet(KometaTabbar);
-    for (const t of ['var(--glass', 'var(--glass-line', 'inset 0 1px 0', 'var(--r-pill', 'var(--ease-spring', '680ms', 'max-width: 70px']) {
+    for (const t of ['var(--glass', 'var(--glass-line', 'inset 0 1px 0', 'var(--r-pill', 'var(--ease-spring', '680ms', '--tabbar-word-max, 70px']) {
       expect(css).toContain(t);
     }
     expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);

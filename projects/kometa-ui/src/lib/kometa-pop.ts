@@ -28,9 +28,9 @@ import {
   styles: `
     :host { display: contents; }
     .pop {
-      inset: auto; margin: 0; padding: 6px; max-width: calc(100vw - 16px); max-height: min(70vh, calc(100dvh - 24px)); overflow: auto;
-      border: 1px solid var(--glass-line); border-radius: 18px; color: var(--text);
-      background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+      inset: auto; margin: 0; padding: var(--pop-padding, 6px); max-width: calc(100vw - 16px); max-height: var(--pop-max-height, min(70vh, calc(100dvh - 24px))); overflow: auto;
+      border: 1px solid var(--glass-line); border-radius: var(--pop-radius, 18px); color: var(--text);
+      background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: var(--pop-shadow, 0 12px 30px rgba(0, 0, 0, .35));
       transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
     }
     @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
@@ -50,6 +50,10 @@ export class KometaPop {
   readonly ariaLabelledBy = input('');
   readonly width = input<number | null>(null);
   readonly focusOnShow = input(true);
+  /** Gap in pixels between the button and the panel. */
+  readonly offset = input(8);
+  /** Which edge of the button the panel lines up with. */
+  readonly align = input<'start' | 'end'>('start');
   readonly open = model(false);
   /** The panel is in place and visible. */
   readonly opened = output<void>();
@@ -101,9 +105,11 @@ export class KometaPop {
     if (b) {
       const l = pop.getBoundingClientRect();
       const pad = 8;
-      const below = b.bottom + 8 + l.height <= window.innerHeight - pad;
-      this.y.set(below ? b.bottom + 8 : Math.max(pad, b.top - 8 - l.height));
-      this.x.set(Math.max(pad, Math.min(b.left, window.innerWidth - pad - l.width)));
+      const gap = this.offset();
+      const below = b.bottom + gap + l.height <= window.innerHeight - pad;
+      this.y.set(below ? b.bottom + gap : Math.max(pad, b.top - gap - l.height));
+      const left = this.align() === 'end' ? b.right - l.width : b.left;
+      this.x.set(Math.max(pad, Math.min(left, window.innerWidth - pad - l.width)));
     }
     if (this.focusOnShow()) {
       const first = pop.querySelector<HTMLElement>('a[href], button:not(:disabled), input:not(:disabled), select, textarea, [tabindex]:not([tabindex="-1"])');

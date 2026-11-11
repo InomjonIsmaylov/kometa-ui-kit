@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, booleanAttribute, input, signal } from '@angular/core';
 
 /** A cream band, a third of the animated size wide, swept left to right over the copied value. */
 const BAND = 'linear-gradient(90deg, transparent 0 33.4%, color-mix(in srgb, var(--display-ink) 32%, transparent) 33.4% 66.6%, transparent 66.6%)';
@@ -21,15 +21,16 @@ const BAND = 'linear-gradient(90deg, transparent 0 33.4%, color-mix(in srgb, var
       background: none;
       border: 0;
       padding: 0;
-      color: inherit;
+      color: var(--link-color, inherit);
       font: inherit;
       cursor: pointer;
     }
     button:focus-visible { outline: 2px solid var(--amber); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
     @media (pointer: coarse) { button { min-height: 44px; } }
   `,
   template: `
-    <button type="button" [attr.aria-label]="ariaLabel() || null" (click)="copy()">{{ copied() ? copiedLabel() : copyLabel() }}</button>
+    <button type="button" [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()" (click)="copy()">{{ copied() ? copiedLabel() : copyLabel() }}</button>
   `,
 })
 export class KometaLink {
@@ -40,6 +41,9 @@ export class KometaLink {
   readonly ariaLabel = input('');
   /** False where the element before the link is not the copied value (admin's poster button). */
   readonly flashValue = input(true);
+  /** How long `copiedLabel` shows, in ms. */
+  readonly copiedMs = input(900);
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   protected readonly copied = signal(false);
@@ -59,7 +63,7 @@ export class KometaLink {
         this.copied.set(true);
         this.flash();
         clearTimeout(this.resetTimer);
-        this.resetTimer = setTimeout(() => this.copied.set(false), 900);
+        this.resetTimer = setTimeout(() => this.copied.set(false), this.copiedMs());
       },
       () => this.copied.set(false),
     );

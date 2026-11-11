@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 export type KometaTagTone = 'now' | 'wait' | 'book' | 'done' | 'warn' | 'error';
 
@@ -18,10 +18,10 @@ export type KometaTagTone = 'now' | 'wait' | 'book' | 'done' | 'warn' | 'error';
       --ink: var(--muted);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: var(--tag-gap, 6px);
       padding: 0;
       color: var(--ink);
-      font-size: 12px;
+      font-size: var(--tag-font-size, 12px);
       font-weight: 600;
       line-height: 1.3;
       overflow-wrap: anywhere;
@@ -33,14 +33,16 @@ export type KometaTagTone = 'now' | 'wait' | 'book' | 'done' | 'warn' | 'error';
     :host([data-tone='error']) { --dot: var(--error); --ink: var(--error); }
     .dot {
       flex: none;
-      width: 6px;
-      height: 6px;
+      width: var(--tag-dot-size, 6px);
+      height: var(--tag-dot-size, 6px);
       border-radius: 50%;
       background: var(--dot);
     }
   `,
-  template: `<span class="dot" aria-hidden="true"></span><ng-content />`,
+  template: `@if (dot()) { <span class="dot" aria-hidden="true"></span> }<ng-content />`,
 })
 export class KometaTag {
   readonly tone = input<KometaTagTone>('book');
+  /** `false` leaves the word alone, coloured by its tone. */
+  readonly dot = input(true, { transform: booleanAttribute });
 }

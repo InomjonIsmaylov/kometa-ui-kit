@@ -14,13 +14,15 @@ export interface KometaSplitSide {
 @Component({
   selector: 'kometa-split',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[attr.data-align]': 'align()' },
   styles: `
-    :host { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    :host { display: grid; grid-template-columns: 1fr 1fr; gap: var(--split-gap, 16px); }
+    :host([data-align='center']) { text-align: center; }
     .amount {
       display: block;
       font-family: var(--font-display, 'Syne'), sans-serif;
       font-weight: 700;
-      font-size: 28px;
+      font-size: var(--split-amount-size, 28px);
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.03em;
     }
@@ -40,4 +42,5 @@ export interface KometaSplitSide {
 export class KometaSplit {
   readonly left = input.required<KometaSplitSide>();
   readonly right = input.required<KometaSplitSide>();
+  readonly align = input<'start' | 'center'>('start');
 }

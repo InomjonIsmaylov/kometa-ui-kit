@@ -38,15 +38,16 @@ import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, boolea
       color: var(--display-ink, var(--text));
       font-family: var(--font-display, 'Syne'), sans-serif;
       font-weight: 700;
-      font-size: 22px;
+      font-size: var(--search-size, 22px);
       letter-spacing: -0.03em;
       line-height: 1.15;
       -webkit-appearance: none;
       appearance: none;
     }
-    :host([data-size='lg']) input { font-size: 42px; line-height: 1; padding: 12px 0 14px; letter-spacing: -0.04em; }
+    :host([data-size='lg']) input { font-size: var(--search-size-lg, 42px); line-height: 1; padding: 12px 0 14px; letter-spacing: -0.04em; }
     :host([data-size='lg']) .whisper { min-height: 64px; }
-    input::placeholder { color: var(--text); opacity: 0.32; }
+    input::placeholder { color: var(--text); opacity: var(--search-placeholder-opacity, 0.32); }
+    input:disabled { opacity: .5; cursor: not-allowed; }
     input::-webkit-search-cancel-button,
     input::-webkit-search-decoration { -webkit-appearance: none; display: none; }
     .clear {
@@ -96,12 +97,14 @@ import { ChangeDetectionStrategy, Component, ElementRef, afterNextRender, boolea
         [attr.name]="name() || null"
         [attr.inputmode]="inputmode() || null"
         [attr.maxlength]="maxlength() || null"
+        [disabled]="disabled()"
+        [readOnly]="readonly()"
         [attr.aria-label]="ariaLabel()"
         [placeholder]="placeholder()"
         [value]="value()"
         (input)="value.set(field.value)"
       />
-      @if (value()) {
+      @if (value() && clearable() && !disabled() && !readonly()) {
         <button
           type="button"
           class="clear"
@@ -128,6 +131,10 @@ export class KometaSearch {
   readonly name = input('');
   readonly inputmode = input('');
   readonly maxlength = input<number | null>(null);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
+  /** The "×" button once there is text. */
+  readonly clearable = input(true, { transform: booleanAttribute });
   /** The page that IS a search (`/search`) opens with the cursor in the question. */
   readonly autofocus = input(false, { transform: booleanAttribute });
 

@@ -25,4 +25,12 @@ describe('KometaMarks', () => {
     expect(days[1].querySelector('.label')!.textContent!.trim()).toBe('Se');
     expect(days[1].querySelector('.mark')!.textContent!.trim()).toBe('10–19');
   });
+
+  it('draws `empty` for a closed day', () => {
+    const fixture = TestBed.createComponent(KometaMarks);
+    fixture.componentRef.setInput('days', [{ label: 'Du', mark: null }]);
+    fixture.componentRef.setInput('empty', 'off');
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.mark')!.textContent!.trim()).toBe('off');
+  });
 });

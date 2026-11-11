@@ -177,3 +177,18 @@ describe('KometaDate', () => {
 class RangeHost {
   range = signal<(Date | null)[] | null>([new Date(2026, 9, 13), new Date(2026, 9, 14)]);
 }
+
+@Component({
+  imports: [KometaDate],
+  template: `<kometa-date inline [weekStart]="0" />`,
+})
+class SundayHost {}
+
+describe('KometaDate weekStart', () => {
+  it('starts the week on Sunday when asked', () => {
+    const f = TestBed.createComponent(SundayHost);
+    f.detectChanges();
+    const first = f.nativeElement.querySelector('.dow span') as HTMLElement;
+    expect(first.textContent).toBe('Su');
+  });
+});

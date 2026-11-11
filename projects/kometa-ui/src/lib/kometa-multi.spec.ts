@@ -35,6 +35,19 @@ describe('KometaMulti', () => {
     return { f, root, input, btn, rows, chips, key, type };
   }
 
+  it('stops adding at `max` but still lets a choice go', () => {
+    const f = TestBed.createComponent(KometaMulti);
+    f.componentRef.setInput('options', ['x', 'y', 'z']);
+    f.componentRef.setInput('max', 2);
+    f.componentInstance.value.set(['x', 'y']);
+    f.detectChanges();
+    const c = f.componentInstance as unknown as { toggleItem(it: unknown): void };
+    c.toggleItem({ label: 'z', value: 'z', dot: null, i: 2 });
+    expect(f.componentInstance.value()).toEqual(['x', 'y']);
+    c.toggleItem({ label: 'x', value: 'x', dot: null, i: 0 });
+    expect(f.componentInstance.value()).toEqual(['y']);
+  });
+
   it('shows what is chosen as words with a cross, in the order chosen', () => {
     const { chips, input } = render();
     expect(chips()).toEqual(['Chilonzor', 'Sergeli']);

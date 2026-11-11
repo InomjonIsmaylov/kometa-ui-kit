@@ -15,7 +15,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     .stack { display: grid; }
     .pane {
       grid-area: 1 / 1;
-      transition: opacity 200ms ease;
+      transition: opacity var(--confirm-dur, 200ms) ease;
     }
     .pane.off {
       opacity: 0;

@@ -19,14 +19,14 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
       padding: 0 0 4px;
       border: 0;
       background: transparent;
-      color: var(--muted);
+      color: var(--toggle-ink-off, var(--muted));
       font-family: var(--font-display, 'Syne', sans-serif);
       font-weight: 700;
-      font-size: 15px;
+      font-size: var(--toggle-font-size, 15px);
       cursor: pointer;
       transition: color 420ms;
     }
-    button[aria-checked='true'] { color: var(--display-ink, #f4efe6); }
+    button[aria-checked='true'] { color: var(--toggle-ink-on, var(--display-ink, #f4efe6)); }
     button::after {
       content: '';
       position: absolute;
@@ -47,7 +47,7 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
   `,
   template: `
     <button type="button" role="switch" [attr.aria-checked]="checked() ? 'true' : 'false'"
-            [attr.aria-label]="ariaLabel() || null" [attr.aria-describedby]="ariaDescribedBy() || null" [disabled]="disabled()" (click)="checked.set(!checked())">
+            [attr.aria-label]="ariaLabel() || null" [attr.aria-labelledby]="ariaLabelledBy() || null" [attr.aria-describedby]="ariaDescribedBy() || null" [disabled]="disabled()" (click)="checked.set(!checked())">
       {{ checked() ? onLabel() : offLabel() }}
     </button>
   `,
@@ -61,4 +61,6 @@ export class KometaToggle {
   readonly ariaLabel = input('');
   /** The id of the element that explains the switch. */
   readonly ariaDescribedBy = input('');
+  /** The id of the element that names the switch. */
+  readonly ariaLabelledBy = input('');
 }

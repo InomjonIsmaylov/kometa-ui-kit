@@ -34,8 +34,8 @@ let nextId = 0;
   styles: `
     :host { display: inline-flex; }
     .more {
-      display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0;
-      border: 1px solid transparent; border-radius: 50%; background: none;
+      display: inline-grid; place-items: center; width: var(--actions-size, 36px); height: var(--actions-size, 36px); padding: 0;
+      border: 1px solid transparent; border-radius: var(--actions-radius, 50%); background: none;
       color: var(--display-ink, var(--text)); font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
       transition: border-color 200ms ease;
     }
@@ -44,7 +44,7 @@ let nextId = 0;
     .more:disabled { opacity: .4; cursor: not-allowed; }
     @media (pointer: coarse) { .more { width: 44px; height: 44px; } }
     .list {
-      inset: auto; width: max-content; min-width: 200px; max-width: calc(100vw - 16px); margin: 0; padding: 4px 0;
+      inset: auto; width: max-content; min-width: var(--actions-min-width, 200px); max-width: calc(100vw - 16px); margin: 0; padding: 4px 0;
       border: 0; border-left: 1px solid var(--display-ink, var(--text)); border-radius: 0;
       background: var(--bg); color: var(--text); box-shadow: 0 10px 28px rgba(0, 0, 0, .35);
       transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
@@ -69,7 +69,7 @@ let nextId = 0;
     <button #btn class="more" type="button" aria-haspopup="menu" [disabled]="disabled()" [attr.aria-label]="label()"
             [attr.aria-expanded]="open()" [attr.aria-controls]="id" (click)="toggle()"><ng-content>&#8943;</ng-content></button>
     <div #list class="list" popover="manual" role="menu" [id]="id" [attr.aria-label]="label()"
-         [style.left.px]="x()" [style.top.px]="y()" (keydown)="onKey($event)">
+         [attr.data-align]="align()" [style.left.px]="x()" [style.top.px]="y()" (keydown)="onKey($event)">
       @if (open()) {
         @for (it of items(); track $index) {
           <button class="row" type="button" role="menuitem" tabindex="-1" [class.danger]="it.danger" [disabled]="it.disabled"
@@ -86,6 +86,8 @@ export class KometaActions {
   readonly label = input.required<string>();
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly open = model(false);
+  /** Which edge of the button the list lines up with. */
+  readonly align = input<'end' | 'start'>('end');
 
   protected readonly x = signal(0);
   protected readonly y = signal(0);
@@ -117,7 +119,7 @@ export class KometaActions {
     const pad = 8;
     const below = b.bottom + 6 + l.height <= window.innerHeight - pad;
     this.y.set(below ? b.bottom + 6 : Math.max(pad, b.top - 6 - l.height));
-    this.x.set(Math.max(pad, Math.min(b.right - l.width, window.innerWidth - pad - l.width)));
+    this.x.set(Math.max(pad, Math.min(this.align() === 'start' ? b.left : b.right - l.width, window.innerWidth - pad - l.width)));
     this.rows()[0]?.focus({ preventScroll: true });
   }
 

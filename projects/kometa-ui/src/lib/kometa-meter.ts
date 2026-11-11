@@ -16,7 +16,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
       margin: 0 0 8px;
       color: var(--display-ink, #f4efe6);
       font-family: var(--font-display, 'Syne', sans-serif);
-      font-size: 32px;
+      font-size: var(--meter-figure-size, 32px);
       font-weight: 700;
       letter-spacing: -0.03em;
       font-variant-numeric: tabular-nums;
@@ -24,16 +24,16 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
     .fig b { display: inline-block; font-weight: 700; }
     .rolled .fig b { animation: roll .42s var(--ease-spring, ease); }
     .fig span { color: var(--muted); font-size: 18px; }
-    .ticks { display: flex; gap: 3px; height: 28px; }
+    .ticks { display: flex; gap: 3px; height: var(--meter-height, 28px); }
     .ticks i {
       flex: 1;
       border-radius: 2px;
-      background: var(--glass-line);
+      background: var(--meter-off, var(--glass-line));
       transform: scaleY(.45);
       transform-origin: bottom;
       transition: background .42s ease, transform .42s var(--ease-spring, ease);
     }
-    .ticks i.on { background: var(--display-ink, #f4efe6); transform: none; }
+    .ticks i.on { background: var(--meter-on, var(--display-ink, #f4efe6)); transform: none; }
     .note { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
     @keyframes roll { from { transform: translateY(-12px); opacity: .3; } }
     @media (prefers-reduced-motion: reduce) {
@@ -45,11 +45,13 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, signal } f
     <div role="meter" [class.rolled]="rolled()" [attr.aria-label]="ariaLabel() || label() || null"
          aria-valuemin="0" [attr.aria-valuemax]="max()" [attr.aria-valuenow]="clamped()"
          [attr.aria-valuetext]="text()">
+      @if (showFigure()) {
       <p class="fig">
         @for (v of [clamped()]; track v) {
           <b>{{ v }}</b>
         }<span> / {{ max() }}</span>
       </p>
+      }
       <div class="ticks" aria-hidden="true">
         @for (t of ticks(); track $index) {
           <i [class.on]="t"></i>
@@ -67,6 +69,8 @@ export class KometaMeter {
   /** The muted line under the ticks, e.g. "bepul lid qoldi". */
   readonly label = input('');
   readonly ariaLabel = input('');
+  /** False hides the big figure and leaves the ticks (the value is still read aloud). */
+  readonly showFigure = input(true);
 
   /** True from the first change on, so mounting never rolls the figure. */
   protected readonly rolled = signal(false);

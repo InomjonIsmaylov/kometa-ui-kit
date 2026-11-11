@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  booleanAttribute,
   TemplateRef,
   computed,
   contentChild,
@@ -34,8 +35,8 @@ import {
       position: relative;
       display: inline-block;
       flex: none;
-      width: 12px;
-      height: 12px;
+      width: var(--fold-mark-size, 12px);
+      height: var(--fold-mark-size, 12px);
       color: var(--muted);
       transition: color 280ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1));
     }
@@ -171,13 +172,14 @@ let nextId = 0;
       transition: background-color 0.12s ease;
     }
     .trigger:hover { background: var(--fold-hover, transparent); }
+    .trigger:disabled { opacity: .5; cursor: default; }
     .trigger:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
     .title { flex: 1; min-width: 0; }
     @media (prefers-reduced-motion: reduce) { .trigger { transition: none; } }
   `,
   template: `
     <div class="head">
-      <button type="button" class="trigger" [id]="id + '-h'" [attr.aria-expanded]="open()" [attr.aria-controls]="id"
+      <button type="button" class="trigger" [id]="id + '-h'" [attr.aria-expanded]="open()" [attr.aria-controls]="id" [disabled]="disabled()"
               (click)="open.set(!open())">
         <span class="title"><ng-content select="[fold-title]" /></span>
         <kometa-fold-mark [open]="open()" />
@@ -190,5 +192,6 @@ let nextId = 0;
 export class KometaFold {
   protected readonly id = `kometa-fold-${nextId++}`;
   readonly open = model(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   protected readonly body = contentChild(TemplateRef);
 }

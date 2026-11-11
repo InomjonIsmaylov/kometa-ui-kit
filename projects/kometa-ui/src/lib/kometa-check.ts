@@ -26,7 +26,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input, model } fr
       background: transparent;
       color: var(--display-ink, #f4efe6);
       font: inherit;
-      font-size: 15px;
+      font-size: var(--check-size, 15px);
       text-align: left;
       cursor: pointer;
     }
@@ -36,7 +36,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input, model } fr
     .label {
       min-width: 0;
       overflow-wrap: break-word;
-      background-image: linear-gradient(var(--display-ink, #f4efe6), var(--display-ink, #f4efe6));
+      background-image: linear-gradient(var(--check-line, var(--display-ink, #f4efe6)), var(--check-line, var(--display-ink, #f4efe6)));
       background-repeat: no-repeat;
       background-position: 0 55%;
       background-size: 0 1px;
@@ -52,11 +52,15 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input, model } fr
     }
   `,
   template: `
-    <button type="button" role="checkbox" [attr.aria-checked]="checked() ? 'true' : 'false'" [disabled]="disabled()"
-            (click)="checked.set(!checked())"><span class="label"><ng-content /></span></button>
+    <button type="button" role="checkbox" [attr.aria-checked]="checked() ? 'true' : 'false'" [disabled]="disabled()" [attr.aria-label]="ariaLabel() || null" [attr.aria-readonly]="readonly() ? 'true' : null"
+            (click)="readonly() || checked.set(!checked())"><span class="label"><ng-content /></span></button>
   `,
 })
 export class KometaCheck {
   readonly checked = model(false);
   readonly disabled = input(false, { transform: booleanAttribute });
+  /** Shows the state but ignores presses. */
+  readonly readonly = input(false, { transform: booleanAttribute });
+  /** Overrides the projected label as the accessible name. */
+  readonly ariaLabel = input('');
 }

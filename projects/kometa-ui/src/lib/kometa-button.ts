@@ -18,8 +18,8 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation, booleanAttribute
     kometa-button { display: block; }
     kometa-button.kbtn-fluid { width: 100%; }
     :where(.kbtn) {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box; min-height: 48px; padding: 6px 10px;
-      border: 1px solid var(--amber); border-radius: var(--r-pill, 9999px); background: var(--amber); color: var(--on-amber, #121414);
+      display: inline-flex; align-items: center; justify-content: center; gap: var(--kbtn-gap, 8px); box-sizing: border-box; min-height: 48px; padding: 6px 10px;
+      border: 1px solid var(--amber); border-radius: var(--kbtn-radius, var(--r-pill, 9999px)); background: var(--amber); color: var(--on-amber, #121414);
       font: inherit; font-size: 14px; font-weight: 500; line-height: 21px; cursor: pointer;
       transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
     }
@@ -51,7 +51,9 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation, booleanAttribute
             [disabled]="disabled() || loading()" [attr.aria-label]="ariaLabel() || null" [attr.aria-busy]="loading() ? 'true' : null"
             (click)="clicked.emit($event)">
       @if (loading()) { <span class="kbtn-spin" aria-hidden="true"></span> }
+      @if (icon() && iconPos() === 'left') { <span class="kbtn-icon" aria-hidden="true">{{ icon() }}</span> }
       <span class="kbtn-label"><ng-content>{{ label() }}</ng-content></span>
+      @if (icon() && iconPos() === 'right') { <span class="kbtn-icon" aria-hidden="true">{{ icon() }}</span> }
     </button>
   `,
 })
@@ -67,5 +69,8 @@ export class KometaButton {
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly ariaLabel = input('');
   readonly styleClass = input('');
+  /** A decorative glyph or emoji beside the label; name the button with `label` or `ariaLabel`. */
+  readonly icon = input('');
+  readonly iconPos = input<'left' | 'right'>('left');
   readonly clicked = output<MouseEvent>();
 }

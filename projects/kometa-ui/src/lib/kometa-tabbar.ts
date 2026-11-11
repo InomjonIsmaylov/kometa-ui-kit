@@ -34,8 +34,8 @@ export interface KometaTab {
     .bar {
       display: flex;
       gap: 2px;
-      padding: 6px;
-      border-radius: var(--r-pill, 999px);
+      padding: var(--tabbar-pad, 6px);
+      border-radius: var(--tabbar-radius, var(--r-pill, 999px));
       background: var(--glass, var(--card));
       border: 1px solid var(--glass-line, var(--border));
       box-shadow: inset 0 1px 0 var(--glass-hi, rgba(255, 255, 255, .1));
@@ -46,7 +46,7 @@ export interface KometaTab {
       margin: 0;
       padding: 10px 12px;
       border: 0;
-      border-radius: var(--r-pill, 999px);
+      border-radius: var(--tabbar-tab-radius, var(--r-pill, 999px));
       background: transparent;
       color: var(--muted);
       font: inherit;
@@ -57,9 +57,9 @@ export interface KometaTab {
       transition: color 420ms;
     }
     .tab:hover { color: var(--text, inherit); }
-    .tab.on { color: var(--display-ink, var(--text)); }
+    .tab.on { color: var(--tabbar-ink-on, var(--display-ink, var(--text))); }
     .tab:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
-    .ico { display: inline-flex; font-size: 22px; line-height: 1; }
+    .ico { display: inline-flex; font-size: var(--tabbar-icon-size, 22px); line-height: 1; }
     .word {
       max-width: 0;
       margin-left: 0;
@@ -70,7 +70,7 @@ export interface KometaTab {
       font-weight: 600;
       transition: max-width 680ms var(--ease-spring, ease), opacity 280ms, margin 420ms;
     }
-    .on .word { max-width: 70px; margin-left: 8px; opacity: 1; }
+    .on .word, .bar.all .word { max-width: var(--tabbar-word-max, 70px); margin-left: 8px; opacity: 1; }
     @media (pointer: coarse) { .tab { min-height: 44px; min-width: 44px; justify-content: center; } }
     @media (prefers-reduced-motion: reduce) {
       .tab, .word { transition: none; }
@@ -80,7 +80,7 @@ export interface KometaTab {
     }
   `,
   template: `
-    <div class="bar" [attr.role]="linked() ? 'navigation' : 'tablist'" [attr.aria-label]="ariaLabel() || null">
+    <div class="bar" [class.all]="labels() === 'all'" [attr.role]="linked() ? 'navigation' : 'tablist'" [attr.aria-label]="ariaLabel() || null">
       @for (tab of tabs(); track tab.value) {
         @if (tab.link) {
           <a #item class="tab" [class.on]="tab.value === value()" [routerLink]="tab.link"
@@ -113,6 +113,8 @@ export class KometaTabbar {
   /** The chosen tab's `value`. A link bar is driven by the router: the caller sets this from the URL. */
   readonly value = model('');
   readonly ariaLabel = input('');
+  /** `active` opens only the chosen tab's word; `all` keeps every word open. */
+  readonly labels = input<'active' | 'all'>('active');
   /** Draws a tab's icon (the customer's `app-icon`, say); the context's `$implicit` is the tab. */
   readonly iconTemplate = input<TemplateRef<{ $implicit: KometaTab }> | null>(null);
 

@@ -66,7 +66,7 @@ describe('KometaSlots', () => {
     render();
     const css = [...document.querySelectorAll('style')].map((s) => s.textContent ?? '').join('\n');
     const edge = css.match(/button\.edge[^{]*\{[^}]*\}/)?.[0] ?? '';
-    expect(edge).toContain('inset 2px 0 0 var(--amber)');
+    expect(edge).toContain('inset 2px 0 0 var(--slot-edge, var(--amber))');
     expect(edge).not.toMatch(/background/);
   });
 
@@ -85,5 +85,17 @@ describe('KometaSlots', () => {
     second().click();
     f.detectChanges();
     expect(f.componentInstance.value()).toBe('');
+  });
+});
+
+describe('KometaSlots disabled', () => {
+  it('disabled disables every chip', () => {
+    @Component({ imports: [KometaSlots], template: `<kometa-slots [slots]="s" disabled />` })
+    class H { s = [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }]; }
+    const f = TestBed.createComponent(H);
+    f.detectChanges();
+    const b = [...(f.nativeElement as HTMLElement).querySelectorAll('button')];
+    expect(b.length).toBe(2);
+    expect(b.every((x) => x.disabled)).toBe(true);
   });
 });

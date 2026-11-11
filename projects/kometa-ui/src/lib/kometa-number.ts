@@ -32,7 +32,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     :host(.bad) .nfield::after { background: var(--red); transform: none; opacity: 1; }
     input {
       box-sizing: content-box; width: 3ch; min-height: 28px; padding: 0; border: 0; border-radius: 0; outline: 0; background: transparent;
-      color: var(--display-ink, var(--text)); font-family: var(--font-display, inherit); font-size: 24px; letter-spacing: -.02em;
+      color: var(--number-color, var(--display-ink, var(--text))); font-family: var(--font-display, inherit); font-size: var(--number-size, 24px); letter-spacing: -.02em;
       font-variant-numeric: tabular-nums;
     }
     input:disabled { opacity: .4; cursor: not-allowed; }
@@ -48,19 +48,19 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   host: { '[class.bad]': 'bad()', '[class.money]': 'money()' },
   template: `
     @if (buttons()) {
-      <button type="button" class="step" tabindex="-1" aria-hidden="true" [disabled]="isDisabled() || atMin()" (click)="nudge(-1)">&minus;</button>
+      <button type="button" class="step" tabindex="-1" aria-hidden="true" [disabled]="isDisabled() || readonly() || atMin()" (click)="nudge(-1)">&minus;</button>
     }
     <span class="nfield">
       <input type="text" inputmode="numeric" autocomplete="off" role="spinbutton" [id]="inputId() || null"
              [attr.aria-label]="ariaLabel() || null" [placeholder]="placeholder()"
              [attr.aria-valuemin]="ariaMin()" [attr.aria-valuemax]="ariaMax()"
              [attr.aria-valuenow]="value()" [attr.aria-invalid]="bad() || null"
-             [style.width.ch]="width()" [disabled]="isDisabled()" [value]="shown()"
+             [style.width.ch]="width()" [disabled]="isDisabled()" [readOnly]="readonly()" [value]="shown()"
              (input)="onInput($event)" (blur)="onBlur()" (keydown)="onKey($event)" />
       @if (suffix()) { <span class="suf">{{ suffix() }}</span> }
     </span>
     @if (buttons()) {
-      <button type="button" class="step" tabindex="-1" aria-hidden="true" [disabled]="isDisabled() || atMax()" (click)="nudge(1)">+</button>
+      <button type="button" class="step" tabindex="-1" aria-hidden="true" [disabled]="isDisabled() || readonly() || atMax()" (click)="nudge(1)">+</button>
     }
   `,
 })
@@ -77,6 +77,9 @@ export class KometaNumber implements ControlValueAccessor {
   /** Draws the minus and plus circles either side of the figure. */
   readonly buttons = input(false, { transform: booleanAttribute });
   readonly disabled = input(false, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
+  /** The locale `money` groups digits by. */
+  readonly locale = input('ru-RU');
 
   private readonly formDisabled = signal(false);
   protected readonly isDisabled = computed(() => this.disabled() || this.formDisabled());
@@ -92,7 +95,7 @@ export class KometaNumber implements ControlValueAccessor {
     if (d !== null) return d;
     const v = this.value();
     if (v === null) return '';
-    return this.money() ? new Intl.NumberFormat('ru-RU').format(v) : String(v);
+    return this.money() ? new Intl.NumberFormat(this.locale()).format(v) : String(v);
   });
   protected readonly width = computed(() => Math.max(3, this.shown().length + 1));
   /** The typed number is outside the range (the model holds the nearest end meanwhile). */
@@ -132,7 +135,7 @@ export class KometaNumber implements ControlValueAccessor {
   }
 
   protected onKey(e: KeyboardEvent): void {
-    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+    if ((e.key !== 'ArrowUp' && e.key !== 'ArrowDown') || this.readonly()) return;
     e.preventDefault();
     this.nudge(e.key === 'ArrowUp' ? 1 : -1, e.shiftKey ? 10 : 1);
   }

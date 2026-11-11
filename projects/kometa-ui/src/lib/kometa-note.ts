@@ -30,9 +30,9 @@ let nextId = 0;
     @media (pointer: coarse) { .mk { box-sizing: content-box; padding: 15px; margin: -15px; } }
     .tip {
       /* the popover UA style centres it with inset 0 and margin auto; position is set from the marker */
-      inset: auto; margin: 0; width: max-content; max-width: min(260px, calc(100vw - 16px));
-      padding: 8px 12px; border: 0; border-radius: 8px;
-      background: var(--display-ink, var(--text)); color: var(--bg); font-size: 13.5px; font-weight: 500; line-height: 1.45;
+      inset: auto; margin: 0; width: max-content; max-width: min(var(--note-max-width, 260px), calc(100vw - 16px));
+      padding: 8px 12px; border: 0; border-radius: var(--note-radius, 8px);
+      background: var(--note-bg, var(--display-ink, var(--text))); color: var(--note-color, var(--bg)); font-size: 13.5px; font-weight: 500; line-height: 1.45;
       overflow-wrap: anywhere; white-space: normal; text-align: left; pointer-events: none;
       transition: opacity 200ms ease, translate 320ms var(--ease-spring, ease);
     }
@@ -54,6 +54,8 @@ export class KometaNote {
   /** The marker's accessible name. */
   readonly label = input('');
   readonly open = model(false);
+  /** Where the tab sits; `auto` is above, flipping below near the top edge. */
+  readonly placement = input<'auto' | 'above' | 'below'>('auto');
 
   protected readonly x = signal(0);
   protected readonly y = signal(0);
@@ -72,7 +74,7 @@ export class KometaNote {
       const m = this.mk().nativeElement.getBoundingClientRect();
       const t = tip.getBoundingClientRect();
       const pad = 8;
-      const above = m.top - t.height - pad >= pad;
+      const above = this.placement() === 'auto' ? m.top - t.height - pad >= pad : this.placement() === 'above';
       this.y.set(above ? m.top - t.height - pad : m.bottom + pad);
       this.x.set(Math.max(pad, Math.min(m.left + m.width / 2 - t.width / 2, window.innerWidth - pad - t.width)));
     });

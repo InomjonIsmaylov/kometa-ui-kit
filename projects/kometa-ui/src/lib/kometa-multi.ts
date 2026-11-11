@@ -42,7 +42,7 @@ let nextId = 0;
     .field.off { opacity: .5; cursor: not-allowed; }
     .chip {
       display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px 0 12px; border: 1px solid var(--glass-line);
-      border-radius: 999px; background: none; color: var(--display-ink, var(--text)); font: inherit; font-size: 14px; cursor: pointer;
+      border-radius: var(--multi-chip-radius, 999px); background: none; color: var(--display-ink, var(--text)); font: inherit; font-size: 14px; cursor: pointer;
     }
     .chip span { color: var(--muted); font-size: 16px; line-height: 1; }
     .chip:hover:not(:disabled) span { color: var(--display-ink, var(--text)); }
@@ -67,8 +67,8 @@ let nextId = 0;
     .btn[aria-expanded='true'] .chev { transform: rotate(225deg); margin-top: 4px; }
     @media (pointer: coarse) { .field, .btn { min-height: 44px; } }
     .pop {
-      inset: auto; margin: 0; padding: 6px; min-width: 180px; max-width: calc(100vw - 16px); max-height: 300px; overflow: auto;
-      border: 1px solid var(--glass-line); border-radius: 16px; color: var(--text);
+      inset: auto; margin: 0; padding: 6px; min-width: 180px; max-width: calc(100vw - 16px); max-height: var(--multi-pop-max-height, 300px); overflow: auto;
+      border: 1px solid var(--glass-line); border-radius: var(--multi-pop-radius, 16px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
       transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
     }
@@ -134,6 +134,8 @@ export class KometaMulti {
   readonly noMatch = input('');
   readonly removeLabel = input('Remove');
   readonly pill = input(false, { transform: booleanAttribute });
+  /** The most choices allowed; null is no limit. A full set can still be reduced. */
+  readonly max = input<number | null>(null);
   readonly ariaLabel = input('');
   readonly inputId = input('');
   readonly disabled = input(false, { transform: booleanAttribute });
@@ -222,7 +224,8 @@ export class KometaMulti {
   protected toggleItem(it: Item, e?: Event): void {
     e?.stopPropagation();
     const v = this.value();
-    this.value.set(v.includes(it.value) ? v.filter((x) => x !== it.value) : [...v, it.value]);
+    const full = !v.includes(it.value) && this.max() !== null && v.length >= this.max()!;
+    if (!full) this.value.set(v.includes(it.value) ? v.filter((x) => x !== it.value) : [...v, it.value]);
     if (!this.pill()) {
       this.query.set('');
       this.entry()?.nativeElement.focus();

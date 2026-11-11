@@ -31,7 +31,7 @@ let nextId = 0;
 /**
  * One calendar day. The date is a figure with a hairline under it; it opens a glass month in the browser's top layer
  * (so a drawer or a card cannot clip it), flips above when there is no room below and is kept inside the viewport.
- * Days are bare figures: the chosen day takes the 2px edge, today a small line. The week starts on Monday.
+ * Days are bare figures: the chosen day takes the 2px edge, today a small line. The week starts on Monday (`weekStart` 0 for Sunday).
  * Arrow keys move by day and week (across months), PageUp and PageDown by month; Enter picks; Escape, Tab, a click
  * outside, resize and scroll close it. `value` is local midnight (or `null`); `min` and `max` grey out the days beyond.
  * `names` is the caller's language (English when unset); `inputId` lets a `<label for>` name the button.
@@ -65,12 +65,12 @@ let nextId = 0;
     .btn:hover:not(:disabled)::after, .btn[aria-expanded='true']::after, .btn:focus-visible::after { transform: none; opacity: 1; }
     .btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     .btn:disabled { opacity: .4; cursor: not-allowed; }
-    .fig { min-height: 28px; font-family: var(--font-display, inherit); font-size: 24px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+    .fig { min-height: 28px; font-family: var(--font-display, inherit); font-size: var(--date-size, 24px); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
     .fig.empty { color: var(--muted); }
     @media (pointer: coarse) { .btn { min-height: 44px; align-items: center; } }
     .pop {
-      inset: auto; width: 296px; max-width: calc(100vw - 16px); margin: 0; padding: 12px;
-      border: 1px solid var(--glass-line); border-radius: 18px; color: var(--text);
+      inset: auto; width: var(--date-pop-width, 296px); max-width: calc(100vw - 16px); margin: 0; padding: 12px;
+      border: 1px solid var(--glass-line); border-radius: var(--date-pop-radius, 18px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
       transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
     }
@@ -87,7 +87,7 @@ let nextId = 0;
     .dow, .grid { display: grid; grid-template-columns: repeat(7, 1fr); }
     .dow span { padding: 4px 0; text-align: center; font-size: 12px; letter-spacing: .06em; color: var(--muted); }
     .d {
-      position: relative; height: 38px; border: 0; border-radius: 10px; background: none; color: var(--text);
+      position: relative; height: var(--date-cell, 38px); border: 0; border-radius: 10px; background: none; color: var(--text);
       font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; cursor: pointer; transition: box-shadow 200ms ease;
     }
     @media (pointer: coarse) { .d { height: 44px; } }
@@ -148,6 +148,8 @@ export class KometaDate implements OnInit {
   /** A period, not a day: see the class note. */
   readonly range = input(false, { transform: booleanAttribute });
   readonly inline = input(false, { transform: booleanAttribute });
+  /** The first column: 1 Monday (default) or 0 Sunday. */
+  readonly weekStart = input<0 | 1>(1);
   readonly rangeValue = model<(Date | null)[] | null>(null);
 
   protected readonly x = signal(0);
@@ -166,7 +168,7 @@ export class KometaDate implements OnInit {
     const v = this.value();
     return v ? this.fmt(v) : this.placeholder();
   });
-  protected readonly weekdays = computed(() => [1, 2, 3, 4, 5, 6, 0].map((i) => this.n().dayNamesMin[i]));
+  protected readonly weekdays = computed(() => Array.from({ length: 7 }, (_, k) => this.n().dayNamesMin[(this.weekStart() + k) % 7]));
   protected readonly canPrev = computed(() => {
     const min = this.min(), v = this.view();
     return !min || day(new Date(v.getFullYear(), v.getMonth(), 0)) >= day(min);
@@ -181,7 +183,7 @@ export class KometaDate implements OnInit {
     const rng = this.range();
     const [r0, r1] = this.rangeValue() ?? [];
     const sel = rng ? null : this.value();
-    const out: (Cell | null)[] = Array.from({ length: (v.getDay() + 6) % 7 }, () => null);
+    const out: (Cell | null)[] = Array.from({ length: (v.getDay() - this.weekStart() + 7) % 7 }, () => null);
     for (let i = 1, last = new Date(v.getFullYear(), v.getMonth() + 1, 0).getDate(); i <= last; i++) {
       const date = new Date(v.getFullYear(), v.getMonth(), i), t = day(date);
       out.push({ n: i, date, off: (!!min && t < day(min)) || (!!max && t > day(max)), selected: rng ? (!!r0 && t === day(r0)) || (!!r1 && t === day(r1)) : !!sel && t === day(sel),

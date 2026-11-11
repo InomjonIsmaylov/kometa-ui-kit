@@ -72,7 +72,7 @@ describe('KometaHeading', () => {
     const css = stylesheet(KometaHeading);
     expect(css).toContain('font-family: var(--font-display, "Syne", sans-serif)');
     expect(css).toContain('font-weight: 700');
-    expect(css).toContain('font-size: 22px');
+    expect(css).toContain('var(--heading-size, 22px)');
     expect(css).toContain('var(--glass-line');
     expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
   });

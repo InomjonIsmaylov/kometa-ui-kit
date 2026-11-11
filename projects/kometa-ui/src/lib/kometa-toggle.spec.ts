@@ -109,7 +109,7 @@ describe('KometaToggle', () => {
 
   it('is cream not amber when on', () => {
     const css = ownStyles(KometaToggle);
-    expect(css).toMatch(/aria-checked=true\] \{ color: var\(--display-ink/);
+    expect(css).toMatch(/aria-checked=true\] \{ color: var\(--toggle-ink-on, var\(--display-ink/);
     expect(css).not.toMatch(/background:\s*var\(--amber\)/);
   });
 

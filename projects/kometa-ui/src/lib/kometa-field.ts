@@ -35,20 +35,20 @@ let nextId = 0;
       color: var(--display-ink, var(--text));
       font-family: var(--font-display, 'Syne', sans-serif);
       font-weight: 700;
-      font-size: 24px;
+      font-size: var(--field-size, 24px);
       letter-spacing: -0.03em;
       line-height: 1.15;
       -webkit-appearance: none;
       appearance: none;
     }
-    :host([data-size='sm']) input { font-size: 18px; padding: 4px 0 6px; }
+    :host([data-size='sm']) input { font-size: var(--field-size-sm, 18px); padding: 4px 0 6px; }
     @media (pointer: coarse) { input { min-height: 44px; } }
     input::placeholder { color: var(--muted); opacity: 0.7; }
     input:disabled { opacity: 0.5; cursor: default; }
     .rule {
       position: relative;
       height: 1px;
-      background: var(--glass-line, var(--border));
+      background: var(--field-line, var(--glass-line, var(--border)));
       pointer-events: none;
     }
     .rule i {
@@ -96,7 +96,7 @@ let nextId = 0;
         [attr.aria-required]="required() ? 'true' : null"
         [attr.aria-invalid]="bad() ? 'true' : null"
         [attr.aria-describedby]="message() ? errId : null"
-        [placeholder]="label()"
+        [placeholder]="placeholder() || label()"
         [value]="value()"
         [disabled]="disabled()"
         [readOnly]="readonly()"
@@ -115,6 +115,8 @@ export class KometaField implements FormValueControl<string> {
   readonly value = model('');
   /** The placeholder AND the accessible name: the field has no other label. */
   readonly label = input.required<string>();
+  /** Overrides the placeholder (the label by default); the accessible name stays `label`. */
+  readonly placeholder = input('');
   readonly type = input<'text' | 'email' | 'tel' | 'url' | 'password'>('text');
   /** `md` is Syne 24px; `sm` is 18px for a form row 24px does not fit. */
   readonly size = input<'md' | 'sm'>('md');

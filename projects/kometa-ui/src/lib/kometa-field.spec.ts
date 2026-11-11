@@ -161,8 +161,8 @@ describe('KometaField', () => {
     f.detectChanges();
     expect(root.getAttribute('data-size')).toBe('sm');
     const css = stylesheet(KometaField);
-    expect(css).toContain('font-size: 24px');
-    expect(css).toMatch(/\[data-size=sm\] input \{ font-size: 18px/);
+    expect(css).toContain('font-size: var(--field-size, 24px)');
+    expect(css).toContain("[data-size=sm] input { font-size: var(--field-size-sm, 18px)");
   });
 
   it('forwards focus() to the input', () => {

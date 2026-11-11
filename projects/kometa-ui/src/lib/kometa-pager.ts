@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, computed, effect, input, model } from '@angular/core';
 import { docLang } from './paging';
 
 /**
@@ -51,7 +51,7 @@ export function pageWindow(page: number, count: number): (number | null)[] {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[hidden]': '!visible()' },
   styles: `
-    :host { display: block; container-type: inline-size; margin-top: 16px; }
+    :host { display: block; container-type: inline-size; margin-top: var(--pager-margin, 16px); }
     :host([hidden]) { display: none; }
     nav {
       display: flex;
@@ -88,7 +88,7 @@ export function pageWindow(page: number, count: number): (number | null)[] {
     button:hover:not(:disabled) { color: var(--text); }
     button[aria-current='page'], button[aria-pressed='true'] {
       color: var(--text);
-      border-bottom-color: var(--display-ink, #f4efe6);
+      border-bottom-color: var(--pager-active-color, var(--display-ink, #f4efe6));
     }
     button:disabled { opacity: .35; cursor: default; }
     button:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
@@ -116,7 +116,7 @@ export function pageWindow(page: number, count: number): (number | null)[] {
   `,
   template: `
     <nav [attr.aria-label]="t().nav">
-      <span class="cap">{{ from() }}–{{ to() }} / {{ total() }}</span>
+      @if (caption()) { <span class="cap">{{ from() }}–{{ to() }} / {{ total() }}</span> }
       <div class="pages">
         <button type="button" class="arrow" [attr.aria-label]="t().prev" [disabled]="current() <= 1" (click)="go(current() - 1)">‹</button>
         @for (p of numbers(); track $index) {
@@ -146,6 +146,8 @@ export class KometaPager {
   readonly pageSize = model(10);
   readonly sizes = input<readonly number[]>([10, 25, 50]);
   readonly labels = input<Partial<KometaPagerLabels>>({});
+  /** False hides the "1–25 / 134" caption. */
+  readonly caption = input(true, { transform: booleanAttribute });
 
   protected readonly t = computed(() => ({ ...WORDS[docLang()], ...this.labels() }));
   protected readonly count = computed(() => Math.max(1, Math.ceil(this.total() / Math.max(1, this.pageSize()))));

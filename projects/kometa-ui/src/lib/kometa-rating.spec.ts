@@ -194,9 +194,9 @@ describe('KometaRating', () => {
   it('draws a Syne 26px numeral with a 5px bead and an 18px word', () => {
     const css = stylesheet(KometaRating);
     expect(css).toContain('font-family: var(--font-display, Syne, sans-serif)');
-    expect(css).toContain('font-size: 26px');
+    expect(css).toContain('var(--rating-size, 26px)');
     expect(css).toContain('width: 5px');
-    expect(css).toContain('font-size: 18px');
+    expect(css).toContain('var(--rating-word-size, 18px)');
     expect(css).toContain('var(--muted)');
     expect(css).toContain('--drawer-ease');
   });

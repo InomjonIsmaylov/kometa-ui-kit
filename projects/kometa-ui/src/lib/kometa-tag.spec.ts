@@ -77,3 +77,13 @@ function stylesheet(component: unknown): string {
   return `${fromDef}
 ${fromDoc}`.replaceAll('%NS%', '');
 }
+
+describe('KometaTag dot', () => {
+  it('can leave the dot out', () => {
+    @Component({ imports: [KometaTag], template: `<kometa-tag [dot]="false">Word</kometa-tag>` })
+    class NoDot {}
+    const f = TestBed.createComponent(NoDot);
+    f.detectChanges();
+    expect(f.nativeElement.querySelector('.dot')).toBeNull();
+  });
+});

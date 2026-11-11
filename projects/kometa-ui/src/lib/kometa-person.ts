@@ -19,8 +19,8 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input }
       border-radius: 50%;
       display: grid;
       place-items: center;
-      background: var(--glass, rgba(28, 26, 22, .82));
-      color: var(--display-ink, #f4efe6);
+      background: var(--person-bg, var(--glass, rgba(28, 26, 22, .82)));
+      color: var(--person-fg, var(--display-ink, #f4efe6));
       font-family: var(--font-display, 'Syne'), sans-serif;
       font-size: 13px;
       font-weight: 700;
@@ -65,8 +65,10 @@ export class KometaPerson {
   readonly imageAlt = input('');
   /** Only the figure, no name beside it (the name still names it to a screen reader). */
   readonly bare = input(false, { transform: booleanAttribute });
+  /** Overrides the letters drawn in the disc (otherwise taken from `name`). */
+  readonly initialsText = input('');
 
-  protected readonly initials = computed(() => initialsOf(this.name()));
+  protected readonly initials = computed(() => this.initialsText() || initialsOf(this.name()));
 }
 
 /** First letter of each of the first two words, uppercased. */

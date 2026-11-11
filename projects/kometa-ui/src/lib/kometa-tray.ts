@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injectable, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injectable, inject, input, signal, viewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 
 /** One question for the tray. A `key` marks it as another dialog's, which the tray ignores. */
@@ -46,9 +46,9 @@ let nextId = 0;
   styles: `
     :host { display: contents; }
     dialog {
-      box-sizing: border-box; width: min(380px, calc(100vw - 20px)); margin: auto; padding: 22px 20px 18px;
+      box-sizing: border-box; width: min(var(--tray-width, 380px), calc(100vw - 20px)); margin: auto; padding: 22px 20px 18px;
       display: flex; flex-direction: column; gap: 10px;
-      border: 1px solid var(--glass-line, var(--border)); border-radius: 22px; color: var(--text);
+      border: 1px solid var(--glass-line, var(--border)); border-radius: var(--tray-radius, 22px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .4);
       text-align: center; translate: 0 0; opacity: 1;
       transition: translate 420ms var(--ease-spring, ease), opacity 200ms ease, display 420ms allow-discrete, overlay 420ms allow-discrete;
@@ -67,7 +67,7 @@ let nextId = 0;
     p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
     .acts { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
     button {
-      min-height: 50px; padding: 0 20px; border: 1px solid transparent; border-radius: 16px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+      min-height: 50px; padding: 0 20px; border: 1px solid transparent; border-radius: var(--tray-button-radius, 16px); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
       transition: transform 160ms var(--ease-spring, ease), background-color 160ms ease;
     }
     button:active { transform: scale(.98); }
@@ -93,6 +93,8 @@ let nextId = 0;
   `,
 })
 export class KometaTray {
+  /** `false` keeps the question open when the dark area is clicked (Escape and the quiet answer still reject). */
+  readonly backdropClose = input(true);
   protected readonly id = `kometa-tray-${nextId++}`;
   protected readonly ask = signal<KometaConfirmation | null>(null);
   private readonly dlg = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');
@@ -124,7 +126,7 @@ export class KometaTray {
 
   /** A click on the dialog box itself, outside its content, is the dark area. */
   protected onBackdrop(e: MouseEvent): void {
-    if (e.target === this.dlg().nativeElement) this.answer(false);
+    if (this.backdropClose() && e.target === this.dlg().nativeElement) this.answer(false);
   }
 
   private hide(): void {

@@ -37,7 +37,7 @@ describe('KometaRows', () => {
     expect(panel.getAttribute('role')).toBe('list');
     expect(panel.getAttribute('aria-labelledby')).toBe(el.querySelector('#facts .cap')!.id);
     expect(el.querySelector('#facts .cap')!.textContent).toBe('Visit');
-    expect(getComputedStyle(panel).borderRadius).toBe('20px');
+    expect(getComputedStyle(panel).borderRadius).toMatch(/20px/); // jsdom leaves var(--rows-radius, 20px) unresolved
     const rows = el.querySelectorAll('#facts kometa-row');
     expect(rows[0].getAttribute('role')).toBe('listitem');
     // jsdom draws no pseudo-elements: the hairline is the rule on every row but the first.
@@ -71,7 +71,7 @@ describe('KometaRows', () => {
     expect(a.querySelector('.ico svg')).not.toBeNull();
     expect(a.querySelector('.chev')).not.toBeNull();
     expect(a.closest('kometa-row')!.getAttribute('data-tone')).toBe('amber');
-    expect(parseFloat(getComputedStyle(a).minHeight)).toBeGreaterThanOrEqual(44);
+    expect([...document.querySelectorAll('style')].map((s) => s.textContent).join('')).toContain('var(--row-min-height, 56px)'); // jsdom cannot resolve var()
   });
 
   it('draws a plain href row, with its trailing value before the chevron', () => {

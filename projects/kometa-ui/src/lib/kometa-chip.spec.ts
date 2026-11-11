@@ -75,7 +75,7 @@ describe('KometaChip', () => {
 
   it('gives a chosen chip the amber edge and never an amber fill', () => {
     const css = ownStyles(KometaChip);
-    expect(css).toContain("button[aria-pressed=true] { box-shadow: inset 2px 0 0 var(--amber)");
+    expect(css).toContain("button[aria-pressed=true] { box-shadow: inset 2px 0 0 var(--chip-accent, var(--amber))");
     expect(css).not.toMatch(/background:\s*var\(--amber\)/);
   });
 

@@ -38,14 +38,14 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
       color: var(--text); background: var(--glass-drawer, var(--card));
     }
     :where(dialog.kdrawer[open]) { display: flex; flex-direction: column; }
-    :where(dialog.kdrawer-right) { top: 0; right: 0; bottom: 0; width: min(460px, calc(100vw - 24px)); }
-    :where(dialog.kdrawer-left) { top: 0; left: 0; bottom: 0; width: min(460px, calc(100vw - 24px)); }
-    :where(dialog.kdrawer-bottom) { left: 0; right: 0; bottom: 0; width: 100%; max-height: 90dvh; }
+    :where(dialog.kdrawer-right) { top: 0; right: 0; bottom: 0; width: min(var(--drawer-width, 460px), calc(100vw - 24px)); }
+    :where(dialog.kdrawer-left) { top: 0; left: 0; bottom: 0; width: min(var(--drawer-width, 460px), calc(100vw - 24px)); }
+    :where(dialog.kdrawer-bottom) { left: 0; right: 0; bottom: 0; width: 100%; max-height: var(--drawer-max-height, 90dvh); }
     :where(.kdrawer-content) { flex: 1; min-height: 0; overflow-y: auto; }
     .kdrawer:focus { outline: none; }
-    .kdrawer::backdrop { background: rgba(0, 0, 0, .55); }
-    :root[data-theme='light'] .kdrawer::backdrop { background: rgba(26, 28, 28, .32); }
-    @media (prefers-color-scheme: light) { :root:not([data-theme='dark']) .kdrawer::backdrop { background: rgba(26, 28, 28, .32); } }
+    .kdrawer::backdrop { background: var(--drawer-backdrop, rgba(0, 0, 0, .55)); }
+    :root[data-theme='light'] .kdrawer::backdrop { background: var(--drawer-backdrop, rgba(26, 28, 28, .32)); }
+    @media (prefers-color-scheme: light) { :root:not([data-theme='dark']) .kdrawer::backdrop { background: var(--drawer-backdrop, rgba(26, 28, 28, .32)); } }
     :root:has(dialog.kdrawer[open]) { overflow: hidden; }
 
     @keyframes kd-enter-right { from { transform: translateX(calc(100% + 24px)); } }

@@ -22,23 +22,26 @@ import { ChangeDetectionStrategy, Component, TemplateRef, ViewEncapsulation, con
   imports: [NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  host: { class: 'ktable' },
+  host: { class: 'ktable', '[class.is-striped]': 'striped()', '[class.is-compact]': "size() === 'sm'", '[class.is-hover]': 'hoverable()' },
   styles: `
     :where(kometa-table.ktable) { display: block; position: relative; font-variant-numeric: tabular-nums; }
     :where(.ktable-scroll) { overflow-x: auto; }
     :where(.ktable-scroll.is-capped) { overflow: auto; }
     :where(.ktable-table) { width: 100%; border-collapse: collapse; }
     :where(.ktable-table th) {
-      padding: .75rem 1rem; text-align: left; font-weight: 600; color: var(--muted);
+      padding: var(--ktable-pad-y, .75rem) var(--ktable-pad-x, 1rem); text-align: left; font-weight: 600; color: var(--muted);
       border-bottom: 1px solid var(--glass-line, var(--border));
     }
-    :where(.ktable-table td) { padding: .75rem 1rem; border-bottom: 1px solid var(--glass-line, var(--border)); }
+    :where(.ktable-table td) { padding: var(--ktable-pad-y, .75rem) var(--ktable-pad-x, 1rem); border-bottom: 1px solid var(--glass-line, var(--border)); }
     :where(.ktable-table tbody > tr) { transition: background-color .12s ease; }
+    :where(kometa-table.is-compact) { --ktable-pad-y: .4rem; --ktable-pad-x: .75rem; }
+    :where(kometa-table.is-striped .ktable-table tbody > tr:nth-child(even)) { background: var(--ktable-stripe, color-mix(in srgb, var(--text) 4%, transparent)); }
+    :where(kometa-table.is-hover .ktable-table tbody > tr:hover) { background: var(--ktable-hover, color-mix(in srgb, var(--text) 7%, transparent)); }
     :where(.ktable-scroll.is-capped .ktable-table thead th) { position: sticky; top: 0; z-index: 1; background: var(--k-solid, var(--card)); }
   `,
   template: `
     <div class="ktable-scroll" [class.is-capped]="!!scrollHeight()" [style.max-height]="scrollHeight()">
-      <table class="ktable-table" [class]="tableStyleClass()" [style]="tableStyle()">
+      <table class="ktable-table" [class]="tableStyleClass()" [style]="tableStyle()" [attr.aria-label]="ariaLabel() || null">
         <thead>
           @if (header(); as tpl) { <ng-container [ngTemplateOutlet]="tpl" /> }
         </thead>
@@ -66,6 +69,12 @@ export class KometaTable {
   readonly tableStyleClass = input('');
   readonly tableStyle = input<Record<string, string> | null>(null);
   readonly scrollHeight = input<string | null>(null);
+  /** `sm` tightens cell padding. */
+  readonly size = input<'md' | 'sm'>('md');
+  readonly striped = input(false);
+  /** Tints the row under the pointer. */
+  readonly hoverable = input(false);
+  readonly ariaLabel = input('');
 
   protected readonly header = contentChild('header', { read: TemplateRef });
   protected readonly body = contentChild('body', { read: TemplateRef });

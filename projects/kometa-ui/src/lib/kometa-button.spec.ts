@@ -63,3 +63,19 @@ describe('KometaButton', () => {
     expect((f.nativeElement.querySelector('#c') as HTMLElement).classList.contains('kbtn-fluid')).toBe(true);
   });
 });
+
+@Component({
+  imports: [KometaButton],
+  template: `<kometa-button id="l" label="Go" icon="+" /><kometa-button id="r" label="Go" icon="→" iconPos="right" />`,
+})
+class IconHost {}
+
+describe('KometaButton icon', () => {
+  it('puts the icon before or after the label', () => {
+    const f = TestBed.createComponent(IconHost);
+    f.detectChanges();
+    const kids = (id: string) => [...f.nativeElement.querySelector(`#${id} button`).children].map((c: HTMLElement) => c.className);
+    expect(kids('l')).toEqual(['kbtn-icon', 'kbtn-label']);
+    expect(kids('r')).toEqual(['kbtn-label', 'kbtn-icon']);
+  });
+});

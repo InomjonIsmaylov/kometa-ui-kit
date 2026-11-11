@@ -25,10 +25,10 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
       justify-content: center;
       gap: 6px;
       min-width: 0;
-      min-height: 112px;
+      min-height: var(--upload-min-height, 112px);
       padding: 12px;
       border: 1px dashed var(--glass-line, var(--border));
-      border-radius: 18px;
+      border-radius: var(--upload-radius, 18px);
       overflow: hidden;
       text-align: center;
       color: var(--text);
@@ -51,7 +51,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
       color: var(--display-ink, var(--text));
       font-family: var(--font-display, 'Syne', sans-serif);
       font-weight: 700;
-      font-size: 44px;
+      font-size: var(--upload-fig-size, 44px);
       line-height: 1;
       letter-spacing: -0.03em;
       font-variant-numeric: tabular-nums;
@@ -61,7 +61,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
     .track i {
       display: block;
       height: 100%;
-      background: var(--glass-drawer, var(--glass-line));
+      background: var(--upload-fill, var(--glass-drawer, var(--glass-line)));
       border-top: 1px solid var(--display-ink, var(--text));
       transform-origin: bottom;
       transition: transform 200ms linear;
@@ -95,7 +95,9 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
         <span>{{ sizeLabel() }}</span>
       }
     </p>
-    <p class="fig" aria-hidden="true"><b>{{ percent() }}</b><span> %</span></p>
+    @if (showPercent()) {
+      <p class="fig" aria-hidden="true"><b>{{ percent() }}</b><span> %</span></p>
+    }
     <div
       class="track"
       role="progressbar"
@@ -132,6 +134,8 @@ export class KometaUpload {
   readonly actionLabel = input('');
   /** The progressbar's accessible name; the file name when empty. */
   readonly ariaLabel = input('');
+  /** `false` hides the big percentage (the fill and the progressbar remain). */
+  readonly showPercent = input(true);
   /** The button was pressed. Cancel or retry is the page's decision. */
   readonly action = output<void>();
 

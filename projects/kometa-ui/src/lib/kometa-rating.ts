@@ -19,7 +19,7 @@ import type { FormValueControl } from '@angular/forms/signals';
   styles: `
     :host { display: block; }
     .rt { display: flex; flex-direction: column; gap: 12px; }
-    .row { display: flex; flex-wrap: wrap; gap: 20px; }
+    .row { display: flex; flex-wrap: wrap; gap: var(--rating-gap, 20px); }
     button {
       position: relative;
       margin: 0;
@@ -29,7 +29,7 @@ import type { FormValueControl } from '@angular/forms/signals';
       color: var(--muted);
       font-family: var(--font-display, 'Syne', sans-serif);
       font-weight: 700;
-      font-size: 26px;
+      font-size: var(--rating-size, 26px);
       letter-spacing: -0.03em;
       line-height: 1.15;
       font-variant-numeric: tabular-nums;
@@ -62,7 +62,7 @@ import type { FormValueControl } from '@angular/forms/signals';
       color: var(--display-ink, var(--text));
       font-family: var(--font-display, 'Syne', sans-serif);
       font-weight: 700;
-      font-size: 18px;
+      font-size: var(--rating-word-size, 18px);
       letter-spacing: -0.02em;
     }
     @media (prefers-reduced-motion: reduce) {
@@ -95,7 +95,7 @@ import type { FormValueControl } from '@angular/forms/signals';
           >{{ n }}</button>
         }
       </div>
-      <p class="word" aria-hidden="true">{{ words()[value() - 1] ?? '' }}</p>
+      @if (showWord()) { <p class="word" aria-hidden="true">{{ words()[value() - 1] ?? '' }}</p> }
     </div>
   `,
 })
@@ -107,6 +107,8 @@ export class KometaRating implements FormValueControl<number> {
   /** One word per score, in order: `['Yomon', 'Past', 'Oʻrtacha', 'Yaxshi', 'Aʼlo']`. */
   readonly words = input<readonly string[]>([]);
   readonly ariaLabel = input('');
+  /** The word for the score under the numerals. */
+  readonly showWord = input(true, { transform: booleanAttribute });
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly required = input(false, { transform: booleanAttribute });

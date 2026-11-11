@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } from '@angular/core';
 
 /**
  * A glass pill that is a multi-select toggle. Chosen: a 2px inset amber edge, never an amber fill.
@@ -16,13 +16,13 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
     :host { display: inline-flex; max-width: 100%; }
     button {
       margin: 0;
-      padding: 9px 14px;
+      padding: var(--chip-pad, 9px 14px);
       max-width: 100%;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       border: 1px solid var(--glass-line, rgba(244, 239, 230, .14));
-      border-radius: var(--r-pill, 9999px);
+      border-radius: var(--chip-radius, var(--r-pill, 9999px));
       background: var(--glass, rgba(28, 26, 22, .82));
       box-shadow: inset 0 1px 0 var(--glass-hi, rgba(255, 255, 255, .1));
       color: var(--text);
@@ -32,7 +32,7 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
       cursor: pointer;
       transition: box-shadow 420ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1));
     }
-    button[aria-pressed='true'] { box-shadow: inset 2px 0 0 var(--amber), inset 0 1px 0 var(--glass-hi, rgba(255, 255, 255, .1)); }
+    button[aria-pressed='true'] { box-shadow: inset 2px 0 0 var(--chip-accent, var(--amber)), inset 0 1px 0 var(--glass-hi, rgba(255, 255, 255, .1)); }
     button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
     button:disabled { cursor: default; opacity: .5; }
     .count { color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -42,7 +42,7 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
     @media (prefers-reduced-transparency: reduce) { button { background: var(--card); } }
   `,
   template: `
-    <button type="button" [attr.aria-pressed]="selected() ? 'true' : 'false'" [disabled]="disabled()"
+    <button type="button" [attr.aria-pressed]="selected() ? 'true' : 'false'" [disabled]="disabled()" [attr.aria-label]="ariaLabel() || null"
             (click)="selected.set(!selected())">
       <ng-content />
       <span class="count"><ng-content select="[chip-count]" /></span>
@@ -51,5 +51,7 @@ import { ChangeDetectionStrategy, Component, input, model } from '@angular/core'
 })
 export class KometaChip {
   readonly selected = model(false);
-  readonly disabled = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  /** Overrides the projected words as the accessible name. */
+  readonly ariaLabel = input('');
 }

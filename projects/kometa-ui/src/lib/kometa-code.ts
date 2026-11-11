@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  booleanAttribute,
   ElementRef,
   computed,
   input,
@@ -28,10 +29,10 @@ import {
     .cells {
       position: relative;
       display: flex;
-      gap: 8px;
+      gap: var(--code-gap, 8px);
     }
     input {
-      width: 2rem;
+      width: var(--code-cell-width, 2rem);
       margin: 0;
       padding: 8px 0;
       border: 0;
@@ -39,10 +40,11 @@ import {
       background: transparent;
       color: var(--text, inherit);
       font-family: var(--font-display, 'Syne', sans-serif);
-      font-size: 1.25rem;
+      font-size: var(--code-size, 1.25rem);
       font-weight: 700;
       text-align: center;
     }
+    input::placeholder { color: var(--muted); opacity: .6; }
     input:focus-visible { outline: 2px solid var(--amber); }
     .underline {
       position: absolute;
@@ -65,11 +67,13 @@ import {
       @for (i of slots(); track i) {
         <input
           #cell
-          type="text"
+          [type]="mask() ? 'password' : 'text'"
           inputmode="numeric"
           maxlength="1"
           [attr.autocomplete]="i === 0 ? 'one-time-code' : null"
           [disabled]="disabled()"
+          [placeholder]="placeholder()"
+          [attr.aria-label]="cellLabel() ? cellLabel() + ' ' + (i + 1) : null"
           [value]="digit(i)"
           (input)="onInput(i, $event)"
           (keydown)="onKeydown(i, $event)"
@@ -85,6 +89,12 @@ export class KometaCode {
   readonly length = input(6);
   readonly disabled = input(false);
   readonly label = input('');
+  /** Shown in each empty cell, e.g. `·`. */
+  readonly placeholder = input('');
+  /** Hides the digits (a PIN). */
+  readonly mask = input(false, { transform: booleanAttribute });
+  /** Names each cell "<cellLabel> 1", "<cellLabel> 2"…; the caller owns the language. */
+  readonly cellLabel = input('');
 
   private readonly cells = viewChildren<ElementRef<HTMLInputElement>>('cell');
   private readonly underline = viewChild<ElementRef<HTMLElement>>('underline');

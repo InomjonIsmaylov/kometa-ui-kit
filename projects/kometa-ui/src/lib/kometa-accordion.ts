@@ -54,28 +54,29 @@ let nextId = 0;
       width: 100%;
       min-height: 44px;
       margin: 0;
-      padding: 14px 0;
+      padding: var(--accordion-pad, 14px 0);
       border: 0;
       background: transparent;
       color: var(--display-ink, #f4efe6);
       font-family: var(--font-display, 'Syne', sans-serif);
       font-weight: 700;
-      font-size: 16px;
+      font-size: var(--accordion-size, 16px);
       letter-spacing: -0.02em;
       text-align: left;
       overflow-wrap: break-word;
       cursor: pointer;
     }
     .t { flex: 1; min-width: 0; }
+    .q:disabled { opacity: 0.5; cursor: default; }
     .q:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
-    .a { padding: 0 0 14px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .a { padding: var(--accordion-body-pad, 0 0 14px); color: var(--accordion-body-ink, var(--muted)); font-size: 14px; line-height: 1.45; }
     @media (prefers-reduced-motion: reduce) {
       :host::after { transition: none; }
     }
   `,
   template: `
     <div class="h" role="heading" [attr.aria-level]="level()">
-      <button #q type="button" class="q" [id]="id + '-h'" [attr.aria-expanded]="open()" [attr.aria-controls]="id"
+      <button #q type="button" class="q" [id]="id + '-h'" [attr.aria-expanded]="open()" [attr.aria-controls]="id" [disabled]="disabled()"
               (click)="open.set(!open())"><span class="t">{{ heading() }}</span></button>
     </div>
     <kometa-fold-body role="region" [id]="id" [attr.aria-labelledby]="id + '-h'" [open]="open()" [tpl]="body" />
@@ -92,6 +93,8 @@ export class KometaAccordionItem {
   readonly open = model(false);
   /** The `aria-level` of the question's heading. */
   readonly level = input(3);
+  /** The question cannot be pressed. */
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   constructor() {
     effect(() => {

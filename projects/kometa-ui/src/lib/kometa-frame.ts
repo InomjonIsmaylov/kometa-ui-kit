@@ -13,7 +13,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     :host { display: block; }
     .frame {
       position: relative;
-      border-radius: 16px;
+      border-radius: var(--frame-radius, 16px);
       overflow: hidden;
       background:
         linear-gradient(180deg, var(--glass-line, rgba(244, 239, 230, .14)), transparent 32%),
@@ -27,7 +27,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       pointer-events: none;
       box-shadow: inset 0 1px 0 var(--glass-line, rgba(244, 239, 230, .28));
     }
-    .caption { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .caption { margin: 8px 0 0; color: var(--frame-caption-color, var(--muted)); font-size: var(--frame-caption-size, 13px); }
   `,
   template: `
     <div class="frame">
@@ -36,6 +36,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     @if (caption()) {
       <p class="caption">{{ caption() }}</p>
     }
+    <ng-content select="[caption]" />
   `,
 })
 export class KometaFrame {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input } from '@angular/core';
 
 export interface KometaShareSegment {
   label: string;
@@ -25,7 +25,7 @@ const TICKS = 48;
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host { display: block; }
-    .ticks { display: flex; gap: 2px; height: 22px; }
+    .ticks { display: flex; gap: var(--share-gap, 2px); height: var(--share-height, 22px); }
     .ticks i { flex: 1; border-radius: 1px; background: var(--k, var(--glass-line)); opacity: .85; }
     .ticks.none i { opacity: 1; }
     .legend { display: flex; flex-direction: column; gap: 2px; margin: 8px 0 0; }
@@ -45,29 +45,38 @@ const TICKS = 48;
         <i [style.--k]="c"></i>
       }
     </div>
+    @if (legend()) {
     <dl class="legend">
       @for (s of segments(); track s.label) {
         <div [class.zero]="s.value === 0">
-          <dt><i [style.--k]="s.color" aria-hidden="true"></i>{{ s.label }}<em>{{ percent(s) }}</em></dt>
+          <dt><i [style.--k]="s.color" aria-hidden="true"></i>{{ s.label }}@if (percents()) { <em>{{ percent(s) }}</em> }</dt>
           <dd [class.negative]="s.value < 0">{{ s.text }}</dd>
         </div>
       }
     </dl>
+    }
   `,
 })
 export class KometaShare {
   readonly segments = input.required<KometaShareSegment[]>();
   readonly label = input.required<string>();
+  /** The list of slices under the bar. */
+  readonly legend = input(true, { transform: booleanAttribute });
+  /** The share ("42%") in each legend row. */
+  readonly percents = input(true, { transform: booleanAttribute });
+  /** How many ticks the bar is made of. */
+  readonly tickCount = input(TICKS);
 
   private readonly total = computed(() => this.segments().reduce((sum, s) => sum + Math.max(0, s.value), 0));
   protected readonly none = computed(() => this.total() === 0);
   /** One colour per tick; a slice above zero always gets at least one, so a thin one is still a mark. */
   protected readonly ticks = computed(() => {
     const total = this.total();
-    if (total === 0) return Array.from({ length: TICKS }, () => '');
+    const n = Math.max(1, Math.floor(this.tickCount()));
+    if (total === 0) return Array.from({ length: n }, () => '');
     return this.segments().flatMap((s) => {
       if (s.value <= 0) return [];
-      return Array.from({ length: Math.max(1, Math.round((s.value / total) * TICKS)) }, () => s.color);
+      return Array.from({ length: Math.max(1, Math.round((s.value / total) * n)) }, () => s.color);
     });
   });
 

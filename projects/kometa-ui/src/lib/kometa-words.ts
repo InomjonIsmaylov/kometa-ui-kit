@@ -40,13 +40,13 @@ export interface KometaWordOption {
     .row {
       position: relative;
       display: flex;
-      gap: 16px;
+      gap: var(--words-gap, 16px);
       width: max-content;
       min-width: 100%;
     }
     button {
       margin: 0;
-      padding: 8px 0 10px;
+      padding: var(--words-pad, 8px 0 10px);
       border: 0;
       background: transparent;
       color: var(--muted);
@@ -60,7 +60,7 @@ export interface KometaWordOption {
     .cnt { font-size: 11.5px; font-weight: 500; color: var(--muted); }
     .cnt.hot { align-self: flex-start; margin-top: 4px; margin-left: -3px; font-size: 10.5px; font-weight: 700; color: var(--amber-ink, var(--amber)); }
     button:hover:not(:disabled) { color: var(--text, inherit); }
-    button[aria-pressed='true'], button[aria-selected='true'] { color: var(--text, inherit); }
+    button[aria-pressed='true'], button[aria-selected='true'] { color: var(--words-ink-on, var(--text, inherit)); }
     button:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
     button:disabled { cursor: default; opacity: .5; }
     @media (pointer: coarse) { button { min-height: 44px; } }
@@ -68,8 +68,8 @@ export interface KometaWordOption {
       position: absolute;
       left: 0;
       bottom: 0;
-      height: 2px;
-      background: var(--display-ink, #f4efe6);
+      height: var(--words-line-height, 2px);
+      background: var(--words-line, var(--display-ink, #f4efe6));
       pointer-events: none;
       transition: transform .28s var(--ease-spring, ease), width .28s var(--ease-spring, ease);
     }

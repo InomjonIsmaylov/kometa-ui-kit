@@ -32,7 +32,7 @@ let nextPanel = 0;
       overflow: hidden;
       background: var(--glass, var(--card));
       border: 1px solid var(--glass-line, var(--border));
-      border-radius: 20px;
+      border-radius: var(--rows-radius, 20px);
       box-shadow: inset 0 1px 0 var(--glass-hi, rgba(255, 255, 255, .1));
       -webkit-backdrop-filter: blur(8px) saturate(1.2);
       backdrop-filter: blur(8px) saturate(1.2);
@@ -94,9 +94,9 @@ export class KometaRows {
       align-items: center;
       gap: 4px 12px;
       width: 100%;
-      min-height: 56px;
+      min-height: var(--row-min-height, 56px);
       margin: 0;
-      padding: 10px 16px;
+      padding: 10px var(--row-pad-x, 16px);
       border: 0;
       background: none;
       color: var(--text);
@@ -117,8 +117,8 @@ export class KometaRows {
       flex: none;
       align-items: center;
       justify-content: center;
-      width: 36px; height: 36px;
-      border-radius: 12px;
+      width: var(--row-icon-size, 36px); height: var(--row-icon-size, 36px);
+      border-radius: var(--row-icon-radius, 12px);
       background: var(--input);
       color: var(--text2);
       fill: none;
@@ -186,11 +186,11 @@ export class KometaRows {
   `,
   template: `
     @if (link() !== null) {
-      <a class="r" [routerLink]="$any(link())"><ng-container [ngTemplateOutlet]="body" /></a>
+      <a class="r" [routerLink]="$any(link())" [attr.aria-label]="ariaLabel() || null"><ng-container [ngTemplateOutlet]="body" /></a>
     } @else if (href()) {
-      <a class="r" [href]="href()"><ng-container [ngTemplateOutlet]="body" /></a>
+      <a class="r" [href]="href()" [attr.target]="target() || null" [attr.rel]="target() === '_blank' ? 'noopener' : null" [attr.aria-label]="ariaLabel() || null"><ng-container [ngTemplateOutlet]="body" /></a>
     } @else if (button()) {
-      <button class="r" type="button" [disabled]="disabled()" (click)="activated.emit()"><ng-container [ngTemplateOutlet]="body" /></button>
+      <button class="r" type="button" [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()" (click)="activated.emit()"><ng-container [ngTemplateOutlet]="body" /></button>
     } @else {
       <div class="r" [class.fact]="!!label()"><ng-container [ngTemplateOutlet]="body" /></div>
     }
@@ -213,6 +213,10 @@ export class KometaRow {
   /** Setting mode: the bold title. */
   readonly title = input('');
   readonly meta = input('');
+  /** Overrides the accessible name of a row that is a link or a button. */
+  readonly ariaLabel = input('');
+  /** Where an `href` row opens (`_blank` adds `rel=noopener`). */
+  readonly target = input('');
   /** Tints the leading tile; `red` is a red tile, `danger` a red tile and a red title. */
   readonly tone = input<KometaRowTone>('neutral');
   /** Router commands (or a path): the whole row becomes a `routerLink` anchor. */

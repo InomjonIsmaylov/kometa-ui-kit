@@ -22,7 +22,7 @@ describe('KometaFrame', () => {
     const frame = el.querySelector('.frame') as HTMLElement;
     expect(frame.querySelector('img')!.getAttribute('alt')).toBe("Do'kon");
     expect(el.querySelector('.caption')).toBeNull();
-    expect(getComputedStyle(frame).borderRadius).toBe('16px');
+    expect(getComputedStyle(frame).borderRadius).toBe('var(--frame-radius, 16px)');
   });
 
   it('puts a caption under the frame when one is set', () => {

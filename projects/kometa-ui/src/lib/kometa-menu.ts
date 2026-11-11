@@ -51,7 +51,7 @@ let nextId = 0;
     .chosen {
       color: var(--display-ink, #f4efe6);
       font-family: var(--font-display, 'Syne', sans-serif);
-      font-size: 18px;
+      font-size: var(--menu-chosen-size, 18px);
       font-weight: 700;
       letter-spacing: -0.02em;
     }
@@ -87,14 +87,14 @@ let nextId = 0;
       background: transparent;
       color: var(--muted);
       font-family: var(--font-display, 'Syne', sans-serif);
-      font-size: 22px;
+      font-size: var(--menu-option-size, 22px);
       font-weight: 700;
       letter-spacing: -0.03em;
       text-align: left;
       cursor: pointer;
       transition: color 420ms;
     }
-    .option[aria-selected='true'] { color: var(--display-ink, #f4efe6); }
+    .option[aria-selected='true'] { color: var(--menu-active-color, var(--display-ink, #f4efe6)); }
     .option[aria-selected='true']::after {
       content: '';
       flex: none;
@@ -113,7 +113,7 @@ let nextId = 0;
             [attr.aria-controls]="id" [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()"
             (click)="open.set(!open())">
       <span class="prefix">{{ label() }}</span>
-      <b class="chosen">{{ chosenLabel() }}</b>
+      <b class="chosen">{{ chosenLabel() || placeholder() }}</b>
       <svg class="caret" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5" /></svg>
     </button>
     <div class="stack">
@@ -137,6 +137,8 @@ export class KometaMenu {
   /** Names the control for a screen reader when the prefix word alone is not enough. */
   readonly ariaLabel = input('');
   readonly disabled = input(false);
+  /** Shown as the chosen word while nothing is chosen. */
+  readonly placeholder = input('');
 
   protected readonly open = signal(false);
   protected readonly chosenLabel = computed(() => this.options().find((o) => o.value === this.value())?.label ?? '');

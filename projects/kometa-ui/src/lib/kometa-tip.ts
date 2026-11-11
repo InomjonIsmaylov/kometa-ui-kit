@@ -5,10 +5,10 @@ let nextId = 0;
 
 const CSS = `
 .kometa-tip {
-  inset: auto; margin: 0; box-sizing: border-box; width: max-content; max-width: min(260px, calc(100vw - 16px)); padding: 9px 14px 9px 13px;
-  border: 1px solid var(--glass-line, rgba(244, 239, 230, .14)); border-left: 2px solid var(--display-ink, var(--text, #f4efe6)); border-radius: 4px 12px 12px 4px;
-  background: var(--glass-drawer, var(--bg, #1c1a16)); color: var(--text, #e8e2d6); backdrop-filter: blur(14px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, .4); font-size: 13px; line-height: 1.35; pointer-events: none; overflow: visible;
+  inset: auto; margin: 0; box-sizing: border-box; width: max-content; max-width: min(var(--tip-max-width, 260px), calc(100vw - 16px)); padding: 9px 14px 9px 13px;
+  border: 1px solid var(--glass-line, rgba(244, 239, 230, .14)); border-left: 2px solid var(--display-ink, var(--text, #f4efe6)); border-radius: var(--tip-radius, 4px 12px 12px 4px);
+  background: var(--tip-bg, var(--glass-drawer, var(--bg, #1c1a16))); color: var(--text, #e8e2d6); backdrop-filter: blur(14px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .4); font-size: var(--tip-font-size, 13px); line-height: 1.35; pointer-events: none; overflow: visible;
   transition: opacity 140ms ease, translate 240ms var(--ease-spring, ease);
 }
 @starting-style { .kometa-tip:popover-open { opacity: 0; translate: -6px 0; } }
@@ -139,6 +139,8 @@ export class KometaTipHost {
 export class KometaTip implements OnDestroy {
   readonly kometaTip = input<string | null | undefined>('');
   readonly kometaTipSub = input<string | null | undefined>('');
+  /** Milliseconds of hover before the tip shows (none when moving between neighbours). */
+  readonly kometaTipDelay = input(380);
 
   private readonly host = inject(KometaTipHost);
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
@@ -162,7 +164,7 @@ export class KometaTip implements OnDestroy {
   protected onEnter(e: PointerEvent): void {
     if (e.pointerType === 'touch' || !this.kometaTip()) return;
     clearTimeout(this.timer);
-    this.timer = setTimeout(() => this.show(), this.host.warm ? 0 : 380);
+    this.timer = setTimeout(() => this.show(), this.host.warm ? 0 : this.kometaTipDelay());
   }
 
   protected onDown(e: PointerEvent): void {

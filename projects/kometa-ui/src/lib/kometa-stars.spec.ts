@@ -42,3 +42,17 @@ describe('KometaStars', () => {
     expect(counts(render(-2))).toEqual({ filled: 0, outline: 5 });
   });
 });
+
+@Component({ imports: [KometaStars], template: `<kometa-stars [value]="7" [max]="10" [size]="24" label="x" />` })
+class MaxHost {}
+
+describe('KometaStars max and size', () => {
+  it('draws `max` stars, clamps to it, and sets the size', () => {
+    const f = TestBed.createComponent(MaxHost);
+    f.detectChanges();
+    const el = f.nativeElement.querySelector('kometa-stars') as HTMLElement;
+    expect(el.querySelectorAll('svg').length).toBe(10);
+    expect(el.querySelectorAll('svg[data-fill="filled"]').length).toBe(7);
+    expect(el.style.getPropertyValue('--stars-size')).toBe('24px');
+  });
+});

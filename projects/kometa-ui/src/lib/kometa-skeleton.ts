@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input } from '@angular/core';
 
 /**
  * Loading placeholder with no blocks: a hairline disc and hairlines that draw themselves, row by row.
@@ -21,11 +21,11 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
     .r { display: flex; align-items: center; gap: 12px; }
     .disc {
       flex: none;
-      width: 40px;
-      height: 40px;
+      width: var(--hair-disc, 40px);
+      height: var(--hair-disc, 40px);
       box-sizing: border-box;
       border-radius: 50%;
-      border: 1px solid var(--display-ink, #f4efe6);
+      border: 1px solid var(--hair-ink, var(--display-ink, #f4efe6));
       opacity: .25;
     }
     .lines { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
@@ -33,7 +33,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
       display: block;
       height: 1px;
       margin: 4px 0;
-      background: var(--display-ink, #f4efe6);
+      background: var(--hair-ink, var(--display-ink, #f4efe6));
       opacity: .55;
       transform-origin: left;
       animation: k-skh 1.8s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)) infinite;
@@ -67,7 +67,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
       position: absolute;
       inset: 0;
       width: 28%;
-      background: var(--display-ink, #f4efe6);
+      background: var(--hair-ink, var(--display-ink, #f4efe6));
       opacity: .7;
       animation: k-skg 1.5s var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1)) infinite;
       animation-delay: var(--d, 0s);
@@ -89,10 +89,9 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
     } @else {
       @for (i of list(); track i) {
         <div class="r">
-          <i class="disc"></i>
+          @if (avatar()) { <i class="disc"></i> }
           <div class="lines">
-            <i class="l" [style.--d]="i * 0.2 + 's'"></i>
-            <i class="l" [style.--d]="i * 0.2 + 's'"></i>
+            @for (j of lineList(); track j) { <i class="l" [style.--d]="i * 0.2 + 's'"></i> }
           </div>
         </div>
       }
@@ -102,6 +101,10 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 export class KometaSkeleton {
   /** List rows to draw (shape `rows` only; a card is always one frame). */
   readonly rows = input(3);
+  /** The leading disc of a row (shape `rows`). */
+  readonly avatar = input(true, { transform: booleanAttribute });
+  /** Hairlines per row (shape `rows`). */
+  readonly lines = input(2);
   readonly shape = input<'rows' | 'card' | 'line'>('rows');
   /** The hairline's width (shape `line` only), as a CSS length: a share of the cell, say `72%`. */
   readonly width = input('100%');
@@ -110,6 +113,7 @@ export class KometaSkeleton {
   /** The caller's word for "loading" ("Yuklanmoqda"); the component holds no text. */
   readonly ariaLabel = input('');
 
+  protected readonly lineList = computed(() => Array.from({ length: Math.max(1, Math.floor(this.lines())) }, (_, i) => i));
   protected readonly three = [0, 1, 2];
   protected readonly list = computed(() => Array.from({ length: Math.max(0, Math.floor(this.rows())) }, (_, i) => i));
 }

@@ -55,3 +55,17 @@ describe('KometaTick', () => {
     expect(btn.getAttribute('aria-invalid')).toBe('true');
   });
 });
+
+describe('KometaTick readonly', () => {
+  it('ignores presses and says so', () => {
+    @Component({ imports: [KometaTick], template: `<kometa-tick ariaLabel="x" readonly [(checked)]="checked" />` })
+    class RoHost { checked = signal(false); }
+    const f = TestBed.createComponent(RoHost);
+    f.detectChanges();
+    const btn = f.nativeElement.querySelector('button') as HTMLButtonElement;
+    btn.click();
+    f.detectChanges();
+    expect(f.componentInstance.checked()).toBe(false);
+    expect(btn.getAttribute('aria-readonly')).toBe('true');
+  });
+});

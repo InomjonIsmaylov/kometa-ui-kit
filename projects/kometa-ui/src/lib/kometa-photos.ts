@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, effect, inject, input, model, signal, untracked, viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, booleanAttribute, computed, effect, inject, input, model, signal, untracked, viewChild,
 } from '@angular/core';
 
 export interface KometaPhoto {
@@ -20,7 +20,7 @@ export interface KometaPhoto {
   styles: `
     dialog {
       width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0; overflow: hidden;
-      background: rgba(8, 8, 10, .94); color: #fff;
+      background: var(--photos-bg, rgba(8, 8, 10, .94)); color: var(--photos-ink, #fff);
     }
     dialog[open] { display: flex; flex-direction: column; }
     dialog::backdrop { background: #000; }
@@ -48,8 +48,8 @@ export interface KometaPhoto {
     .arrow.prev { left: 12px; }
     .arrow.next { right: 12px; }
     .strip { display: flex; gap: 8px; justify-content: center; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); overflow-x: auto; }
-    .th { flex: none; width: 56px; height: 56px; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; opacity: .6; background: none; cursor: pointer; }
-    .th.on { border-color: #fff; opacity: 1; }
+    .th { flex: none; width: var(--photos-thumb, 56px); height: var(--photos-thumb, 56px); padding: 0; border: 2px solid transparent; border-radius: var(--photos-thumb-radius, 10px); overflow: hidden; opacity: .6; background: none; cursor: pointer; }
+    .th.on { border-color: var(--photos-ink, #fff); opacity: 1; }
     .th img { width: 100%; height: 100%; object-fit: cover; display: block; }
     @media (max-width: 767.98px) { .arrow { display: none; } }
   `,
@@ -63,7 +63,7 @@ export interface KometaPhoto {
             <button type="button" class="tool" [attr.aria-label]="rotateRightLabel()" (click)="turn(90)">&#8635;</button>
             <button type="button" class="tool" [attr.aria-label]="zoomOutLabel()" [attr.aria-disabled]="zoom() <= MIN_ZOOM || null" (click)="zoomBy(-0.25)">&minus;</button>
             <button type="button" class="tool" [attr.aria-label]="zoomInLabel()" [attr.aria-disabled]="zoom() >= MAX_ZOOM || null" (click)="zoomBy(0.25)">+</button>
-            <a class="tool" [href]="p.url" download target="_blank" rel="noopener" [attr.aria-label]="downloadLabel()">&#8595;</a>
+            @if (downloadable()) { <a class="tool" [href]="p.url" download target="_blank" rel="noopener" [attr.aria-label]="downloadLabel()">&#8595;</a> }
             <button type="button" class="close" (click)="open.set(false)">{{ closeLabel() }}</button>
           </div>
         </div>
@@ -74,7 +74,7 @@ export interface KometaPhoto {
             <button type="button" class="arrow next" [attr.aria-label]="nextLabel()" (click)="go(1)">&#8250;</button>
           }
         </div>
-        @if (photos().length > 1) {
+        @if (photos().length > 1 && thumbs()) {
           <div class="strip">
             @for (t of photos(); track $index) {
               <button type="button" class="th" [class.on]="$index === index()" [attr.aria-current]="$index === index()" (click)="index.set($index)">
@@ -100,6 +100,10 @@ export class KometaPhotos {
   readonly zoomOutLabel = input('Zoom out');
   readonly zoomInLabel = input('Zoom in');
   readonly downloadLabel = input('Download');
+  /** The download link in the toolbar. */
+  readonly downloadable = input(true, { transform: booleanAttribute });
+  /** The strip of thumbnails under the photo. */
+  readonly thumbs = input(true, { transform: booleanAttribute });
 
   protected readonly MIN_ZOOM = 0.5;
   protected readonly MAX_ZOOM = 3;

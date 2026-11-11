@@ -54,22 +54,22 @@ let nextId = 0;
     }
     .btn[aria-expanded='true'] .chev { transform: rotate(225deg); margin-top: 4px; }
     :host(.pill) .btn {
-      width: auto; min-height: 36px; padding: 0 12px; border: 1px solid var(--glass-line); border-radius: 999px; background: var(--glass);
+      width: auto; min-height: 36px; padding: 0 12px; border: 1px solid var(--glass-line); border-radius: var(--select-pill-radius, 999px); background: var(--glass);
     }
     :host(.pill) .btn::after { display: none; }
     :host(.pill) .btn:hover:not(:disabled), :host(.pill) .btn[aria-expanded='true'] { border-color: var(--display-ink, var(--text)); }
     :host(.pill) .val { font-weight: 600; }
     @media (pointer: coarse) { .btn { min-height: 44px; } }
     .pop {
-      inset: auto; margin: 0; padding: 6px; min-width: 160px; max-width: calc(100vw - 16px); max-height: 300px; overflow: auto;
-      border: 1px solid var(--glass-line); border-radius: 16px; color: var(--text);
+      inset: auto; margin: 0; padding: 6px; min-width: 160px; max-width: calc(100vw - 16px); max-height: var(--select-max-height, 300px); overflow: auto;
+      border: 1px solid var(--glass-line); border-radius: var(--select-radius, 16px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(18px); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
       transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
     }
     @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
     .gh { padding: 8px 12px 4px; color: var(--muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
     .opt {
-      display: block; padding: 9px 12px; border-radius: 10px; color: var(--text); font-size: 15px; cursor: pointer;
+      display: block; padding: 9px 12px; border-radius: var(--select-opt-radius, 10px); color: var(--text); font-size: var(--select-font-size, 15px); cursor: pointer;
       overflow-wrap: anywhere; transition: background 160ms ease;
     }
     .opt:hover { background: var(--glass-line); }
@@ -90,6 +90,7 @@ let nextId = 0;
     <div #pop class="pop" popover="manual" [id]="id" [style.left.px]="x()" [style.top.px]="y()" [style.min-width.px]="w()" (keydown)="onKey($event)">
       @if (open()) {
         <div role="listbox" [attr.aria-label]="ariaLabel() || null" [attr.aria-labelledby]="ariaLabelledBy() || null">
+          @if (emptyLabel() && !hasOptions()) { <div class="gh">{{ emptyLabel() }}</div> }
           @for (b of blocks(); track $index) {
             @if (b.heading !== null) {
               <div class="gh" aria-hidden="true">{{ b.heading }}</div>
@@ -119,6 +120,8 @@ export class KometaSelect {
   readonly ariaLabel = input('');
   readonly ariaLabelledBy = input('');
   readonly inputId = input('');
+  /** A muted line in the list when there are no options ("No results"). */
+  readonly emptyLabel = input('');
   readonly disabled = input(false, { transform: booleanAttribute });
 
   protected readonly open = signal(false);
@@ -139,6 +142,7 @@ export class KometaSelect {
     const gl = this.optionGroupLabel(), gc = this.optionGroupChildren();
     return opts.map((g) => ({ heading: String(g[gl]), items: ((g[gc] as unknown[] | undefined) ?? []).map(item) }));
   });
+  protected readonly hasOptions = computed(() => this.blocks().some((b) => b.items.length > 0));
   protected readonly chosen = computed(() => {
     const v = this.value();
     for (const b of this.blocks()) for (const it of b.items) if (it.value === v) return it;

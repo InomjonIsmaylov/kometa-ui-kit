@@ -16,7 +16,7 @@ import {
     :host { display: block; }
     .area { position: relative; padding-bottom: 8px; }
     .area::after {
-      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--display-ink, var(--text));
+      content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--notes-line, var(--display-ink, var(--text)));
       transform: scaleX(.3); transform-origin: left; opacity: .5; transition: transform 420ms var(--ease-spring, ease), opacity 200ms ease;
     }
     .area:focus-within::after { transform: none; opacity: 1; }
@@ -28,14 +28,14 @@ import {
     textarea:disabled { opacity: .4; cursor: not-allowed; }
     @media (pointer: coarse) { textarea { font-size: 16px; } }
     .count { display: block; margin-top: 2px; text-align: right; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-    .count.warn { color: var(--amber); }
+    .count.warn { color: var(--notes-warn, var(--amber)); }
     .count.over { color: var(--red); }
     @media (prefers-reduced-motion: reduce) { .area::after { transition: none; } }
   `,
   template: `
     <div class="area">
       <textarea #ta [id]="inputId() || null" [rows]="rows()" [value]="value()" [attr.maxlength]="maxlength()" [placeholder]="placeholder()"
-                [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()" (input)="onInput($event)"></textarea>
+                [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()" [readOnly]="readonly()" (input)="onInput($event)"></textarea>
     </div>
     @if (counting()) {
       <span class="count" [class.warn]="left() <= 30 && left() > 0" [class.over]="left() <= 0" aria-live="polite">{{ value().length }} / {{ maxlength() }}</span>
@@ -52,6 +52,7 @@ export class KometaNotes {
   readonly disabled = input(false, { transform: booleanAttribute });
   /** Draw the near-the-limit count. Off for a page that has its own counter. */
   readonly count = input(true, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
 
   protected readonly left = computed(() => (this.maxlength() ?? Infinity) - this.value().length);
   protected readonly counting = computed(() => this.count() && this.maxlength() !== null && this.left() <= 30);

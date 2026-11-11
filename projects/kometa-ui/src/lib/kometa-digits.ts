@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, computed, input, model } from '@angular/core';
 
 /**
  * A `+998` national number. The model is digits only, at most 9, shown as `90 123 45 67`.
@@ -19,11 +19,11 @@ import { ChangeDetectionStrategy, Component, computed, input, model } from '@ang
       gap: 8px;
       font-family: var(--font-display, 'Syne'), sans-serif;
       font-weight: 600;
-      font-size: 32px;
+      font-size: var(--digits-size, 32px);
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.03em;
     }
-    :host([data-size='sm']) .phone { font-size: 16px; font-weight: 500; letter-spacing: 0; }
+    :host([data-size='sm']) .phone { font-size: var(--digits-size-sm, 16px); font-weight: 500; letter-spacing: 0; }
     .prefix { user-select: none; }
     input {
       border: 0;
@@ -35,16 +35,19 @@ import { ChangeDetectionStrategy, Component, computed, input, model } from '@ang
       font: inherit;
       font-variant-numeric: tabular-nums;
     }
+    input:disabled { opacity: .5; }
     input:focus-visible { outline: 2px solid var(--amber); }
   `,
   template: `
     <label class="phone">
-      <span class="prefix">+998</span>
+      <span class="prefix">{{ prefix() }}</span>
       <input
         type="tel"
         inputmode="numeric"
         autocomplete="tel-national"
         [attr.aria-label]="ariaLabel() || null"
+        [placeholder]="placeholder()"
+        [disabled]="disabled()"
         [value]="grouped()"
         (input)="onInput($event)"
       />
@@ -57,6 +60,10 @@ export class KometaDigits {
   /** `sm` sits in a 44px form row; `md` is the big figure. */
   readonly size = input<'md' | 'sm'>('md');
   readonly ariaLabel = input('');
+  /** The country prefix shown before the number (display only). */
+  readonly prefix = input('+998');
+  readonly placeholder = input('');
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   protected readonly grouped = computed(() => groupNational(this.value()));
 

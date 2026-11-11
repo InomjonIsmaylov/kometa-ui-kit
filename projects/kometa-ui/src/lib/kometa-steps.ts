@@ -16,6 +16,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   styles: `
     :host {
       --steps-row: 30px;
+      --steps-bead-size: 9px;
       position: relative;
       display: block;
       max-width: 100%;
@@ -32,7 +33,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
       top: calc(var(--steps-row) / 2);
       bottom: calc(var(--steps-row) / 2);
       width: 1px;
-      background: var(--muted);
+      background: var(--steps-line, var(--muted));
       opacity: 0.4;
     }
     li {
@@ -40,26 +41,26 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
       display: flex;
       align-items: center;
       padding-left: 28px;
-      color: var(--muted);
-      font-size: 15px;
+      color: var(--steps-ink, var(--muted));
+      font-size: var(--steps-font-size, 15px);
       white-space: nowrap;
       transition: color 420ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1));
     }
     li.done { color: var(--muted); opacity: 0.6; }
     li.cur {
-      color: var(--display-ink, #f4efe6);
+      color: var(--steps-ink-current, var(--display-ink, #f4efe6));
       font-family: var(--font-display, 'Syne', sans-serif);
       font-weight: 700;
-      font-size: 17px;
+      font-size: var(--steps-font-size-current, 17px);
     }
     .bead {
       position: absolute;
       left: 0;
-      top: calc((var(--steps-row) - 9px) / 2);
-      width: 9px;
-      height: 9px;
+      top: calc((var(--steps-row) - var(--steps-bead-size)) / 2);
+      width: var(--steps-bead-size);
+      height: var(--steps-bead-size);
       border-radius: 50%;
-      background: var(--display-ink, #f4efe6);
+      background: var(--steps-bead, var(--display-ink, #f4efe6));
       transform: translateY(calc(var(--steps-cur, 0) * var(--steps-row)));
       transition: transform 680ms cubic-bezier(0.22, 1.35, 0.32, 1);
     }

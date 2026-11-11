@@ -182,10 +182,10 @@ describe('KometaMenu', () => {
 
   it('sets the options as Syne 22px words with a trailing bead on the chosen one', () => {
     const css = ownStyles(KometaMenu);
-    expect(css).toContain('font-size: 22px');
+    expect(css).toContain('var(--menu-option-size, 22px)');
     expect(css).toContain("font-family: var(--font-display, Syne, sans-serif)");
     expect(css).toMatch(/aria-selected=true\]::after/);
-    expect(css).toMatch(/aria-selected=true\] \{ color: var\(--display-ink/);
+    expect(css).toMatch(/aria-selected=true\] \{ color: var\(--menu-active-color, var\(--display-ink/);
   });
 
   it('uses tokens and no colour literal outside a var fallback', () => {

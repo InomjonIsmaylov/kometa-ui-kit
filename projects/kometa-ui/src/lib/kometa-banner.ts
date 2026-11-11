@@ -37,7 +37,7 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
       margin-bottom: 0;
       padding: 10px 12px 10px 14px;
       border: 1px solid var(--glass-line);
-      border-radius: 12px;
+      border-radius: var(--banner-radius, 12px);
       background: var(--glass);
       box-shadow: inset 3px 0 0 var(--c);
       -webkit-backdrop-filter: blur(12px) saturate(1.2);
@@ -50,7 +50,7 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
     .bn {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: var(--banner-gap, 10px);
       margin-bottom: 10px;
       padding-left: 12px;
       border-left: 2px solid var(--c);
@@ -58,6 +58,7 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
       font-size: 14px;
       line-height: 1.4;
     }
+    .icon { flex: none; color: var(--c); }
     .text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
     .close {
       flex: none;
@@ -79,6 +80,7 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
   template: `
     <div class="clip" [attr.inert]="gone() ? '' : null">
       <div class="bn">
+        @if (icon()) { <span class="icon" aria-hidden="true">{{ icon() }}</span> }
         <div class="text"><ng-content /></div>
         @if (actionLabel()) {
           <button kometa-word type="button" (click)="action.emit()">{{ actionLabel() }}</button>
@@ -101,6 +103,8 @@ export class KometaBanner {
   readonly closeLabel = input('');
   /** An action word after the sentence (a Retry); the caller owns the dictionary. */
   readonly actionLabel = input('');
+  /** A leading glyph in the tone colour (decorative; the sentence carries the meaning). */
+  readonly icon = input('');
   readonly action = output<void>();
   readonly dismissed = output<void>();
 

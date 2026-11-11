@@ -14,23 +14,23 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       flex-direction: column;
       align-items: stretch;
       gap: 6px;
-      color: var(--muted);
-      font-size: 13px;
+      color: var(--wait-ink, var(--muted));
+      font-size: var(--wait-font-size, 13px);
     }
     .label { margin: 0; }
     .track {
       position: relative;
-      height: 2px;
+      height: var(--wait-line-height, 2px);
       overflow: hidden;
     }
     .line {
       position: absolute;
       top: 0;
       left: 0;
-      height: 2px;
+      height: var(--wait-line-height, 2px);
       width: 28%;
-      background: var(--display-ink, #f4efe6);
-      animation: k-wait 1.2s ease-in-out infinite;
+      background: var(--wait-line, var(--display-ink, #f4efe6));
+      animation: k-wait var(--wait-duration, 1.2s) ease-in-out infinite;
     }
     @keyframes k-wait {
       from { transform: translateX(0); }

@@ -35,7 +35,7 @@ const SPOKEN = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { role: 'group', '[attr.aria-label]': 'ariaLabel() || spoken().sort' },
   styles: `
-    :host { display: inline-flex; flex-wrap: wrap; gap: 0 16px; align-items: center; }
+    :host { display: inline-flex; flex-wrap: wrap; gap: 0 var(--sort-gap, 16px); align-items: center; }
     button {
       margin: 0;
       padding: 8px 0 8px;
@@ -62,7 +62,7 @@ const SPOKEN = {
       <button type="button" [attr.aria-pressed]="o.value === key() ? 'true' : 'false'" (click)="pick.emit(o.value)">
         {{ o.label }}
         @if (o.value === key()) {
-          <span class="glyph" aria-hidden="true">{{ dir() === 'desc' ? '↓' : '↑' }}</span>
+          <span class="glyph" aria-hidden="true">{{ dir() === 'desc' ? descGlyph() : ascGlyph() }}</span>
           <span class="sr">{{ dir() === 'desc' ? spoken().desc : spoken().asc }}</span>
         }
       </button>
@@ -74,6 +74,9 @@ export class KometaSort {
   readonly key = input('');
   readonly dir = input<'asc' | 'desc'>('asc');
   readonly ariaLabel = input('');
+  /** The glyphs after the active word. */
+  readonly ascGlyph = input('↑');
+  readonly descGlyph = input('↓');
   readonly pick = output<string>();
   protected readonly spoken = computed(() => SPOKEN[docLang()]);
 }
@@ -104,7 +107,7 @@ export class KometaSort {
     @media (pointer: coarse) { button { min-height: 44px; } }
   `,
   template: `
-    <button type="button" (click)="pick.emit(kometaSortHeader())"><ng-content />@if (on()) {<span class="glyph" aria-hidden="true">{{ dir() === 'desc' ? '↓' : '↑' }}</span>}</button>
+    <button type="button" (click)="pick.emit(kometaSortHeader())"><ng-content />@if (on()) {<span class="glyph" aria-hidden="true">{{ dir() === 'desc' ? descGlyph() : ascGlyph() }}</span>}</button>
   `,
 })
 export class KometaSortHeader {
@@ -113,6 +116,8 @@ export class KometaSortHeader {
   /** The key the list is sorted by now. */
   readonly active = input('');
   readonly dir = input<'asc' | 'desc'>('asc');
+  readonly ascGlyph = input('↑');
+  readonly descGlyph = input('↓');
   readonly pick = output<string>();
   protected readonly on = computed(() => this.active() === this.kometaSortHeader());
   protected readonly sort = computed(() => (this.on() ? (this.dir() === 'desc' ? 'descending' : 'ascending') : 'none'));

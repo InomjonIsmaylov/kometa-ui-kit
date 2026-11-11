@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, model, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input, model, viewChild } from '@angular/core';
 
 let nextId = 0;
 
@@ -21,7 +21,7 @@ let nextId = 0;
       padding: 0;
       border: 0;
       background: transparent;
-      color: var(--display-ink, var(--text));
+      color: var(--hint-term-color, var(--display-ink, var(--text)));
       font: inherit;
       letter-spacing: inherit;
       text-align: left;
@@ -48,12 +48,13 @@ let nextId = 0;
       background: var(--display-ink, var(--text));
       transition: width 420ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1));
     }
-    .on .line { width: 24px; }
+    .on .line { width: var(--hint-thread-width, 24px); }
+    .term:disabled { cursor: default; opacity: .5; }
     .sentence {
       margin: 0;
       padding-bottom: 2px;
-      color: var(--muted);
-      font-size: 14px;
+      color: var(--hint-text-color, var(--muted));
+      font-size: var(--hint-text-size, 14px);
       line-height: 1.45;
       opacity: 0;
       overflow-wrap: anywhere;
@@ -65,7 +66,8 @@ let nextId = 0;
   `,
   template: `
     <button #btn class="term" type="button" [attr.aria-expanded]="open()" [attr.aria-controls]="id"
-            [attr.aria-describedby]="id" (click)="open.set(!open())">{{ term() }}</button>
+            [attr.aria-describedby]="id" [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()"
+            (click)="open.set(!open())">{{ term() }}</button>
     <div class="reveal" [class.on]="open()">
       <div class="thread">
         <i class="line" aria-hidden="true"></i>
@@ -78,6 +80,8 @@ export class KometaHint {
   protected readonly id = `kometa-hint-${nextId++}`;
   readonly term = input.required<string>();
   readonly open = model(false);
+  readonly ariaLabel = input('');
+  readonly disabled = input(false, { transform: booleanAttribute });
   private readonly btn = viewChild.required<ElementRef<HTMLButtonElement>>('btn');
 
   protected onEscape(e: Event): void {

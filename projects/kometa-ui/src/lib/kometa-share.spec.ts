@@ -65,3 +65,18 @@ describe('KometaShare', () => {
     expect(colours().every((x) => x === '')).toBe(true);
   });
 });
+
+describe('KometaShare options', () => {
+  it('tickCount sets the bar and legend/percents can be hidden', () => {
+    @Component({
+      imports: [KometaShare],
+      template: `<kometa-share [segments]="s" label="x" [tickCount]="10" [legend]="false" />`,
+    })
+    class H { s = [{ label: 'a', value: 1, text: '1', color: 'red' }, { label: 'b', value: 1, text: '1', color: 'blue' }]; }
+    const f = TestBed.createComponent(H);
+    f.detectChanges();
+    const el = f.nativeElement as HTMLElement;
+    expect(el.querySelectorAll('.ticks i').length).toBe(10);
+    expect(el.querySelector('dl')).toBeNull();
+  });
+});

@@ -117,3 +117,16 @@ function stylesheet(component: unknown): string {
   const fromDoc = [...document.querySelectorAll('style')].map((s) => s.textContent ?? '').join('\n');
   return `${fromDef}\n${fromDoc}`;
 }
+
+describe('KometaSkeleton row options', () => {
+  it('avatar=false drops the disc and lines sets the hairlines per row', () => {
+    @Component({ imports: [KometaSkeleton], template: `<kometa-skeleton [rows]="2" [avatar]="false" [lines]="3" />` })
+    class H {}
+    const f = TestBed.createComponent(H);
+    f.detectChanges();
+    const el = f.nativeElement as HTMLElement;
+    expect(el.querySelector('.disc')).toBeNull();
+    expect(el.querySelectorAll('.r').length).toBe(2);
+    expect(el.querySelectorAll('.l').length).toBe(6);
+  });
+});

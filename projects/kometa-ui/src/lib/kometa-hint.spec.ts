@@ -102,7 +102,7 @@ describe('KometaHint', () => {
   it('grows a 1px thread to 24px then fades the sentence in after it', () => {
     const css = stylesheet(KometaHint);
     expect(css).toMatch(/height:\s*1px/);
-    expect(css).toMatch(/width:\s*24px/);
+    expect(css).toMatch(/width:\s*var\(--hint-thread-width, 24px\)/);
     expect(css).toMatch(/opacity 280ms ease 140ms/);
   });
 

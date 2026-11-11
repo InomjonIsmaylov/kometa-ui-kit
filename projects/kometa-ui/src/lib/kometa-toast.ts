@@ -31,13 +31,14 @@ const RESUME_MS = 1500;
     .thread {
       inset: auto; left: 50%; bottom: calc(16px + var(--kometa-toast-lift, 0px) + env(safe-area-inset-bottom, 0px)); translate: -50% 0; margin: 0; padding: 0;
       width: max-content; max-width: calc(100vw - 24px); border: 0; background: none; overflow: visible; pointer-events: none;
-      flex-direction: column-reverse; align-items: center; gap: 8px;
+      flex-direction: column-reverse; align-items: center; gap: var(--toast-gap, 8px);
     }
     .thread:popover-open { display: flex; }
+    .thread.top { bottom: auto; top: calc(16px + var(--kometa-toast-lift, 0px) + env(safe-area-inset-top, 0px)); flex-direction: column; }
     .t {
       position: relative; display: flex; align-items: center; gap: 10px; max-width: 100%; padding: 10px 14px 12px 12px; overflow: hidden;
-      border: 1px solid var(--glass-line); border-radius: 12px; background: var(--glass); backdrop-filter: blur(12px);
-      color: var(--display-ink, var(--text)); font-size: 14px; line-height: 1.35; box-shadow: 0 8px 22px rgba(0, 0, 0, .35);
+      border: 1px solid var(--glass-line); border-radius: var(--toast-radius, 12px); background: var(--toast-bg, var(--glass)); backdrop-filter: blur(12px);
+      color: var(--display-ink, var(--text)); font-size: var(--toast-font-size, 14px); line-height: 1.35; box-shadow: 0 8px 22px rgba(0, 0, 0, .35);
       pointer-events: auto; cursor: pointer; animation: k-ts-in 520ms var(--ease-spring, ease) backwards;
     }
     .t.out { animation: k-ts-out 300ms ease forwards; }
@@ -57,7 +58,7 @@ const RESUME_MS = 1500;
     @media (prefers-reduced-motion: reduce) { .t, .t.out { animation: none; } .t.out { opacity: 0; } .drain { animation: none; } }
   `,
   template: `
-    <div #thread class="thread" popover="manual" aria-live="polite">
+    <div #thread class="thread" [class.top]="position() === 'top'" popover="manual" aria-live="polite">
       @for (it of items(); track it.id) {
         <div class="t" [class]="'t ' + it.kind" [class.out]="leaving().has(it.id)" [class.hold]="held().has(it.id)"
              [attr.role]="it.kind === 'error' ? 'alert' : 'status'" (pointerenter)="hold(it.id)" (pointerleave)="release(it.id)" (click)="leave(it.id)">
@@ -72,6 +73,8 @@ const RESUME_MS = 1500;
 export class KometaToast {
   readonly items = input.required<KometaToastItem[]>();
   readonly dismiss = output<number>();
+  /** Which edge the thread stacks from. */
+  readonly position = input<'bottom' | 'top'>('bottom');
 
   protected readonly leaving = signal<ReadonlySet<number>>(new Set());
   protected readonly held = signal<ReadonlySet<number>>(new Set());

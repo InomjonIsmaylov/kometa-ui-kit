@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  booleanAttribute,
   input,
   model,
   viewChild,
@@ -42,7 +43,7 @@ export interface KometaFilmDay {
       margin: 0;
       padding: 8px 0 10px;
       border: 0;
-      border-radius: 14px;
+      border-radius: var(--film-radius, 14px);
       background: transparent;
       color: var(--muted);
       display: flex;
@@ -58,6 +59,7 @@ export interface KometaFilmDay {
       font-size: 12px;
       font-weight: 500;
     }
+    button:disabled { cursor: default; opacity: .5; }
     button[data-muted] { opacity: .6; }
     button[aria-pressed='true'] { color: var(--display-ink, #f4efe6); opacity: 1; }
     button:focus-visible { outline: 2px solid var(--amber); }
@@ -79,8 +81,8 @@ export interface KometaFilmDay {
       width: 0;
       height: 100%;
       box-sizing: border-box;
-      border-radius: 14px;
-      background: var(--glass, rgba(28, 26, 22, .82));
+      border-radius: var(--film-radius, 14px);
+      background: var(--film-thumb, var(--glass, rgba(28, 26, 22, .82)));
       border: 1px solid var(--glass-line, rgba(244, 239, 230, .14));
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);
       pointer-events: none;
@@ -96,7 +98,7 @@ export interface KometaFilmDay {
       <span #thumb class="film-thumb"></span>
       @for (day of days(); track day.value) {
         <button #day type="button" [attr.aria-pressed]="value() === day.value ? 'true' : 'false'"
-                [attr.data-muted]="day.muted ? '' : null" (click)="choose(day.value, $event)">
+                [disabled]="disabled()" [attr.data-muted]="day.muted ? '' : null" (click)="choose(day.value, $event)">
           {{ day.label }}
           @if (day.sub) { <small>{{ day.sub }}</small> }
           @if (day.dot) { <span class="dot" aria-hidden="true"></span> }
@@ -109,6 +111,7 @@ export class KometaFilm implements AfterViewChecked {
   readonly days = input.required<readonly KometaFilmDay[]>();
   readonly value = model('');
   readonly ariaLabel = input('');
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   private readonly buttons = viewChildren<ElementRef<HTMLButtonElement>>('day');
   private readonly thumb = viewChild<ElementRef<HTMLElement>>('thumb');

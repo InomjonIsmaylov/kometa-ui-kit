@@ -161,7 +161,7 @@ describe('KometaUpload', () => {
   it('draws a Syne 44px figure in a dashed zone that fills from the bottom', () => {
     const css = stylesheet(KometaUpload);
     expect(css).toContain('font-family: var(--font-display, Syne, sans-serif)');
-    expect(css).toContain('font-size: 44px');
+    expect(css).toContain('--upload-fig-size, 44px');
     expect(css).toContain('tabular-nums');
     expect(css).toContain('1px dashed');
     expect(css).toContain('transform-origin: bottom');

@@ -24,14 +24,14 @@ import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input
     :host(.off) .pk { opacity: .4; cursor: not-allowed; }
 
     /* button: a small framed chip */
-    .pk { min-height: 40px; padding: 0 16px; border: 1px solid var(--glass-line); border-radius: 6px; font-size: 14px; transition: border-color 280ms ease; }
+    .pk { min-height: 40px; padding: 0 16px; border: 1px solid var(--picker-line, var(--glass-line)); border-radius: var(--picker-radius, 6px); font-size: 14px; transition: border-color 280ms ease; }
     @media (pointer: coarse) { .pk { min-height: 44px; } }
     .pk:hover, :host(.over) .pk { border-color: var(--display-ink, var(--text)); }
     :host(.off) .pk:hover { border-color: var(--glass-line); }
     .plus { font-family: var(--font-display, inherit); line-height: 1; }
 
     /* zone: four corner marks that close in, and a veil that fills from the bottom while a file is over */
-    :host(.zone) .pk { display: grid; place-items: center; width: 100%; min-height: 148px; padding: 22px; border: 0; border-radius: 6px; text-align: center; overflow: hidden; }
+    :host(.zone) .pk { display: grid; place-items: center; width: 100%; min-height: var(--picker-zone-height, 148px); padding: 22px; border: 0; border-radius: var(--picker-radius, 6px); text-align: center; overflow: hidden; }
     .c { position: absolute; width: 18px; height: 18px; border: 0 solid var(--display-ink, var(--text)); opacity: .7; transition: transform 420ms var(--ease-spring, ease); }
     .c1 { left: 0; top: 0; border-width: 1px 0 0 1px; }
     .c2 { right: 0; top: 0; border-width: 1px 1px 0 0; }
@@ -50,7 +50,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, input
   `,
   template: `
     <label class="pk">
-      <input #file type="file" [accept]="accept()" [multiple]="multiple()" [disabled]="disabled()" (change)="onChange()" />
+      <input #file type="file" [attr.aria-label]="ariaLabel() || null" [attr.name]="name() || null" [accept]="accept()" [multiple]="multiple()" [disabled]="disabled()" (change)="onChange()" />
       @if (variant() === 'zone') {
         <i class="c c1" aria-hidden="true"></i><i class="c c2" aria-hidden="true"></i>
         <i class="c c3" aria-hidden="true"></i><i class="c c4" aria-hidden="true"></i>
@@ -76,6 +76,10 @@ export class KometaPicker {
   readonly hint = input('');
   readonly variant = input<'zone' | 'button'>('button');
   readonly accept = input('');
+  /** Overrides the accessible name (default: the visible label text). */
+  readonly ariaLabel = input('');
+  /** The file input's `name`, for a surrounding form. */
+  readonly name = input('');
   readonly multiple = input(false, { transform: booleanAttribute });
   readonly disabled = input(false, { transform: booleanAttribute });
   /** A "+" before the button's word, for the pickers that add to a list. */

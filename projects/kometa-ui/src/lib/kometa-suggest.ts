@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Injector, afterNextRender, booleanAttribute, effect, inject, input, model, output, signal, viewChild,
+  ChangeDetectionStrategy, Component, TemplateRef, DestroyRef, ElementRef, Injector, afterNextRender, booleanAttribute, effect, inject, input, model, output, signal, viewChild,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { KometaPerson } from './kometa-person';
 
 export interface KometaSuggestion<T = unknown> {
@@ -24,7 +25,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'kometa-suggest',
-  imports: [KometaPerson],
+  imports: [KometaPerson, NgTemplateOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:resize)': 'close()',
@@ -36,14 +37,14 @@ let nextId = 0;
     input { width: 100%; }
     .pop {
       inset: auto; margin: 0; padding: 6px; overflow-y: auto; overscroll-behavior: contain;
-      min-width: 240px; max-width: calc(100vw - 16px); max-height: min(320px, calc(100vh - 16px));
-      border: 1px solid var(--glass-line); border-radius: 18px; color: var(--text);
+      min-width: 240px; max-width: calc(100vw - 16px); max-height: min(var(--suggest-max-height, 320px), calc(100vh - 16px));
+      border: 1px solid var(--glass-line); border-radius: var(--suggest-radius, 18px); color: var(--text);
       background: var(--glass-drawer, var(--bg)); backdrop-filter: blur(24px) saturate(1.2); box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
       transition: opacity 180ms ease, translate 320ms var(--ease-spring, ease);
     }
     @starting-style { .pop:popover-open { opacity: 0; translate: 0 -4px; } }
     .opt {
-      display: flex; width: 100%; align-items: center; min-height: 52px; padding: 0 10px; border: 0; border-radius: 12px;
+      display: flex; width: 100%; align-items: center; min-height: var(--suggest-row-height, 52px); padding: 0 10px; border: 0; border-radius: 12px;
       background: none; color: inherit; font: inherit; text-align: left; cursor: pointer;
     }
     .opt + .opt { margin-top: 2px; }
@@ -53,14 +54,18 @@ let nextId = 0;
   template: `
     <input #field type="text" autocomplete="off" role="combobox" aria-autocomplete="list" [id]="inputId() || null" [placeholder]="placeholder()"
            [attr.aria-label]="ariaLabel() || null" [attr.aria-expanded]="open()" [attr.aria-controls]="id"
-           [attr.aria-activedescendant]="open() && active() >= 0 ? id + '-' + active() : null" [value]="value()"
+           [attr.aria-activedescendant]="open() && active() >= 0 ? id + '-' + active() : null" [value]="value()" [readOnly]="readonly()"
            (input)="onInput($any($event.target).value)" (keydown)="onKey($event)" />
     <div #pop class="pop" popover="manual" role="listbox" [id]="id" [style.left.px]="x()" [style.top.px]="y()" [style.width.px]="w()">
       @if (open()) {
         @for (s of suggestions(); track $index) {
           <button type="button" class="opt" role="option" tabindex="-1" [id]="id + '-' + $index" [class.on]="$index === active()"
                   [attr.aria-selected]="$index === active()" (mousedown)="$event.preventDefault()" (click)="pick(s)">
-            <kometa-person size="sm" [name]="s.label" [meta]="s.meta ?? ''" />
+            @if (optionTemplate(); as tpl) {
+              <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: s }" />
+            } @else {
+              <kometa-person size="sm" [name]="s.label" [meta]="s.meta ?? ''" />
+            }
           </button>
         }
       }
@@ -78,6 +83,9 @@ export class KometaSuggest {
   /** Milliseconds of quiet before `(query)` fires. */
   readonly delay = input(300);
   readonly disabled = input(false, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
+  /** Draws a row itself; the context's `$implicit` is the suggestion. */
+  readonly optionTemplate = input<TemplateRef<{ $implicit: KometaSuggestion }> | null>(null);
   readonly query = output<string>();
   readonly picked = output<KometaSuggestion>();
 

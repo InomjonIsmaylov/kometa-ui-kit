@@ -13,14 +13,14 @@ const STEP = 100 / (TICKS - 1);
 @Component({
   selector: 'kometa-reveal',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[style.--p]': "position() + '%'" },
+  host: { '[style.--p]': "position() + '%'", '[style.--reveal-ratio]': 'aspectRatio()' },
   styles: `
     :host { display: flex; flex-direction: column; gap: 8px; }
-    .frame { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: inherit; touch-action: pan-y; user-select: none; cursor: ew-resize; }
+    .frame { position: relative; aspect-ratio: var(--reveal-ratio, 1); overflow: hidden; border-radius: inherit; touch-action: pan-y; user-select: none; cursor: ew-resize; }
     .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
     .after { clip-path: inset(0 0 0 var(--p)); }
     .line { position: absolute; top: 0; bottom: 0; left: var(--p); width: 1px; background: var(--display-ink, #fff); opacity: .8; pointer-events: none; }
-    .ticks { display: flex; gap: 2px; height: 30px; align-items: flex-end; cursor: pointer; touch-action: none; }
+    .ticks { display: flex; gap: 2px; height: var(--reveal-ticks-height, 30px); align-items: flex-end; cursor: pointer; touch-action: none; }
     .ticks:focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; }
     .ticks i { flex: 1; height: 40%; border-radius: 1px; background: var(--glass-line); transition: background-color 160ms ease, height 240ms var(--ease-spring, ease); }
     .ticks i.on { height: 70%; background: var(--display-ink, var(--text)); }
@@ -40,7 +40,7 @@ const STEP = 100 / (TICKS - 1);
          (pointerdown)="down($event)" (pointermove)="move($event)" (pointerup)="up()" (pointercancel)="up()" (keydown)="onKey($event)">
       @for (t of ticks; track t) { <i [class.on]="t <= index()" [class.cur]="t === index()"></i> }
     </div>
-    <div class="ends"><span>{{ beforeLabel() }}</span><span>{{ afterLabel() }}</span></div>
+    @if (showLabels()) { <div class="ends"><span>{{ beforeLabel() }}</span><span>{{ afterLabel() }}</span></div> }
   `,
 })
 export class KometaReveal {
@@ -49,6 +49,10 @@ export class KometaReveal {
   readonly beforeLabel = input('Before');
   readonly afterLabel = input('After');
   readonly ariaLabel = input('');
+  /** The frame's CSS aspect-ratio (`4 / 3`, `1`). */
+  readonly aspectRatio = input('1');
+  /** The Before / After words under the ticks. */
+  readonly showLabels = input(true);
   readonly position = model(50);
 
   protected readonly ticks = Array.from({ length: TICKS }, (_, i) => i);

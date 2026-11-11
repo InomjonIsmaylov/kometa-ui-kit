@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 /**
  * A Syne title and a hairline that runs out to the action, which is any element with an `action`
@@ -9,16 +9,16 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   selector: 'kometa-heading',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
-    :host { display: flex; align-items: center; gap: 12px; }
+    :host { display: flex; align-items: center; gap: var(--heading-gap, 12px); }
     .t {
       margin: 0;
-      color: var(--text, inherit);
+      color: var(--heading-color, var(--text, inherit));
       font-family: var(--font-display, 'Syne', sans-serif);
-      font-size: 22px;
+      font-size: var(--heading-size, 22px);
       font-weight: 700;
       letter-spacing: -0.03em;
     }
-    .rule { flex: 1; min-width: 12px; height: 1px; background: var(--glass-line, rgba(244, 239, 230, .18)); }
+    .rule { flex: 1; min-width: 12px; height: 1px; background: var(--heading-rule-color, var(--glass-line, rgba(244, 239, 230, .18))); }
   `,
   template: `
     @switch (level()) {
@@ -26,7 +26,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       @case (4) { <h4 class="t" [attr.id]="headingId() || null">{{ title() }}</h4> }
       @default { <h2 class="t" [attr.id]="headingId() || null">{{ title() }}</h2> }
     }
-    <i class="rule" aria-hidden="true"></i>
+    @if (rule()) { <i class="rule" aria-hidden="true"></i> }
     <ng-content select="[action]" />
   `,
 })
@@ -35,4 +35,6 @@ export class KometaHeading {
   readonly level = input<2 | 3 | 4>(2);
   /** The id put on the heading element so a region can name itself with `aria-labelledby`. */
   readonly headingId = input('');
+  /** False draws no hairline, so the action sits next to the title. */
+  readonly rule = input(true, { transform: booleanAttribute });
 }

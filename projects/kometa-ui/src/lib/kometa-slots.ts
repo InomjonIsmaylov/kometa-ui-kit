@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, booleanAttribute, input, model } from '@angular/core';
 
 export interface KometaSlot {
   value: string;
@@ -24,11 +24,11 @@ export interface KometaSlot {
       display: flex;
       flex-direction: column;
       gap: 2px;
-      min-width: 72px;
+      min-width: var(--slot-min-width, 72px);
       margin: 0;
       padding: 10px 12px;
       border: 1px solid var(--glass-line, rgba(244, 239, 230, .14));
-      border-radius: 14px;
+      border-radius: var(--slot-radius, 14px);
       background: var(--glass, rgba(28, 26, 22, .82));
       color: var(--text, inherit);
       font: inherit;
@@ -38,7 +38,7 @@ export interface KometaSlot {
     }
     button small { color: var(--muted); font-size: 12px; }
     button.edge {
-      box-shadow: inset 2px 0 0 var(--amber), inset 0 1px 0 rgba(255, 255, 255, .1);
+      box-shadow: inset 2px 0 0 var(--slot-edge, var(--amber)), inset 0 1px 0 rgba(255, 255, 255, .1);
     }
     button:disabled { opacity: .5; cursor: not-allowed; }
     button:focus-visible { outline: 2px solid var(--amber); }
@@ -50,7 +50,7 @@ export interface KometaSlot {
     @for (slot of slots(); track slot.value) {
       <button type="button" [class.edge]="value() === slot.value"
               [attr.aria-pressed]="value() === slot.value ? 'true' : 'false'"
-              [disabled]="slot.disabled" (click)="choose(slot.value)">
+              [disabled]="disabled() || slot.disabled" (click)="choose(slot.value)">
         {{ slot.label }}
         @if (slot.note) { <small>{{ slot.note }}</small> }
       </button>
@@ -63,8 +63,11 @@ export class KometaSlots {
   readonly ariaLabel = input('');
   /** A second tap on the chosen chip clears it (`value` becomes ''), for a grid that holds a time before it commits. */
   readonly clearable = input(false);
+  /** Disables every chip. */
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   protected choose(next: string): void {
+    if (this.disabled()) return;
     this.value.set(this.clearable() && this.value() === next ? '' : next);
   }
 }
