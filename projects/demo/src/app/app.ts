@@ -22,6 +22,7 @@ import { ClientsScreen, USES as clientsUses } from './screens/clients/clients';
 import { DashboardScreen, USES as dashboardUses } from './screens/dashboard/dashboard';
 import { SettingsScreen, USES as settingsUses } from './screens/settings/settings';
 import { SCREEN_FILES } from './screens/sources';
+import apiMeta from './api.json';
 
 /** The part of Angular's compiled component metadata the API tables read. */
 interface ApiDef { inputs: Record<string, unknown>; outputs: Record<string, string>; selectors: string[][] }
@@ -228,10 +229,11 @@ export const appConfig: ApplicationConfig = {
     const def = (type as { ɵcmp?: ApiDef; ɵdir?: ApiDef }).ɵcmp ?? (type as { ɵdir?: ApiDef }).ɵdir;
     if (!def) return [];
     const outputs = Object.keys(def.outputs);
+    const meta = (apiMeta as Record<string, Record<string, { type: string; default?: string; required?: true }>>)[name] ?? {};
     const rows = [
       ...Object.keys(def.inputs).map((n) => ({ name: n, kind: outputs.includes(`${n}Change`) ? 'model' : 'input' })),
       ...outputs.filter((o) => !(o.endsWith('Change') && o.slice(0, -6) in def.inputs)).map((n) => ({ name: n, kind: 'output' })),
-    ];
+    ].map((r) => ({ ...r, ...meta[r.name] }));
     const selector = def.selectors.map(([tag, ...attrs]) =>
       tag + attrs.reduce((s, a, i) => (i % 2 ? s + (a ? `=${a}]` : ']') : `${s}[${a}`), '')).join(', ');
     return [{ name, selector, rows }];

@@ -1,0 +1,1993 @@
+{
+ "KometaFoldMark": {
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaFoldBody": {
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "appear": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "tpl": {
+   "type": "TemplateRef<unknown> | null",
+   "default": "null"
+  }
+ },
+ "KometaFold": {
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaAccordionItem": {
+  "heading": {
+   "type": "string",
+   "required": true
+  },
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "level": {
+   "type": "number",
+   "default": "3"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaAccordion": {
+  "multiple": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaMotion": {
+  "animation": {
+   "type": "\"\" | KometaAnimation",
+   "default": "''"
+  }
+ },
+ "KometaAnimate": {
+  "kAnimate": {
+   "type": "\"\" | KometaAnimation",
+   "default": "''"
+  },
+  "kAnimateOn": {
+   "type": "\"enter\" | \"view\"",
+   "default": "'enter'"
+  },
+  "kAnimateDelay": {
+   "type": "number",
+   "default": "0"
+  },
+  "kAnimateDuration": {
+   "type": "number",
+   "default": "600"
+  }
+ },
+ "KometaActions": {
+  "items": {
+   "type": "KometaAction[]",
+   "required": true
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "align": {
+   "type": "\"end\" | \"start\"",
+   "default": "'end'"
+  }
+ },
+ "KometaPerson": {
+  "name": {
+   "type": "string",
+   "required": true
+  },
+  "meta": {
+   "type": "string",
+   "default": "''"
+  },
+  "size": {
+   "type": "\"md\" | \"sm\" | \"lg\"",
+   "default": "'md'"
+  },
+  "shape": {
+   "type": "\"disc\" | \"square\"",
+   "default": "'disc'"
+  },
+  "image": {
+   "type": "string",
+   "default": "''"
+  },
+  "imageAlt": {
+   "type": "string",
+   "default": "''"
+  },
+  "bare": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "initialsText": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaAvatars": {
+  "people": {
+   "type": "{ name: string; image?: string; }[]",
+   "required": true
+  },
+  "max": {
+   "type": "number",
+   "default": "4"
+  },
+  "size": {
+   "type": "\"md\" | \"sm\" | \"lg\"",
+   "default": "'md'"
+  },
+  "moreLabel": {
+   "type": "string",
+   "default": "'{n} more'"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaWord": {
+  "quiet": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "lead": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "busy": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "arrow": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaBanner": {
+  "tone": {
+   "type": "KometaBannerTone",
+   "default": "'info'"
+  },
+  "surface": {
+   "type": "\"bare\" | \"glass\"",
+   "default": "'bare'"
+  },
+  "dismissible": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "roleOverride": {
+   "type": "\"\" | \"status\" | \"alert\"",
+   "default": "''"
+  },
+  "closeLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "actionLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "icon": {
+   "type": "string",
+   "default": "''"
+  },
+  "action": {
+   "type": "void"
+  },
+  "dismissed": {
+   "type": "void"
+  }
+ },
+ "KometaButton": {
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "type": {
+   "type": "\"button\" | \"submit\"",
+   "default": "'button'"
+  },
+  "severity": {
+   "type": "\"secondary\" | \"danger\" | null",
+   "default": "null"
+  },
+  "size": {
+   "type": "\"small\" | null",
+   "default": "null"
+  },
+  "outlined": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "text": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "fluid": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "loading": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "styleClass": {
+   "type": "string",
+   "default": "''"
+  },
+  "icon": {
+   "type": "string",
+   "default": "''"
+  },
+  "iconPos": {
+   "type": "\"left\" | \"right\"",
+   "default": "'left'"
+  },
+  "clicked": {
+   "type": "MouseEvent"
+  }
+ },
+ "KometaCarousel": {
+  "index": {
+   "type": "number",
+   "default": "0"
+  },
+  "edges": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "slideLabel": {
+   "type": "string",
+   "default": "'Slide'"
+  }
+ },
+ "KometaCheck": {
+  "checked": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaChip": {
+  "selected": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "controlled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "toggled": {
+   "type": "boolean"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaCode": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "length": {
+   "type": "number",
+   "default": "6"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "mask": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "cellLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaConfirm": {
+  "asking": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaCountdown": {
+  "duration": {
+   "type": "number",
+   "default": "60"
+  },
+  "until": {
+   "type": "string | number | Date | null",
+   "default": "null"
+  },
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "done": {
+   "type": "void"
+  }
+ },
+ "KometaCrumbs": {
+  "items": {
+   "type": "KometaCrumb[]",
+   "required": true
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "'Breadcrumb'"
+  },
+  "picked": {
+   "type": "KometaCrumb"
+  }
+ },
+ "KometaDate": {
+  "value": {
+   "type": "Date | null",
+   "default": "null"
+  },
+  "min": {
+   "type": "Date | null",
+   "default": "null"
+  },
+  "max": {
+   "type": "Date | null",
+   "default": "null"
+  },
+  "names": {
+   "type": "KometaDateNames | null",
+   "default": "null"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "'—'"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "range": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "inline": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "weekStart": {
+   "type": "0 | 1",
+   "default": "1"
+  },
+  "rangeValue": {
+   "type": "(Date | null)[] | null",
+   "default": "null"
+  }
+ },
+ "KometaDigits": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "size": {
+   "type": "\"md\" | \"sm\"",
+   "default": "'md'"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "prefix": {
+   "type": "string",
+   "default": "'+998'"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaDrawer": {
+  "visible": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "position": {
+   "type": "\"left\" | \"right\" | \"bottom\"",
+   "default": "'right'"
+  },
+  "dismissible": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "closeOnEscape": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "styleClass": {
+   "type": "string",
+   "default": "''"
+  },
+  "style": {
+   "type": "{ width?: string; } | null",
+   "default": "null"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "opened": {
+   "type": "void"
+  },
+  "closing": {
+   "type": "void"
+  },
+  "kometaSheetClosed": {
+   "type": "void"
+  }
+ },
+ "KometaField": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "type": {
+   "type": "\"text\" | \"email\" | \"tel\" | \"url\" | \"password\"",
+   "default": "'text'"
+  },
+  "size": {
+   "type": "\"md\" | \"sm\"",
+   "default": "'md'"
+  },
+  "inputmode": {
+   "type": "string",
+   "default": "''"
+  },
+  "autocomplete": {
+   "type": "string",
+   "default": "''"
+  },
+  "name": {
+   "type": "string",
+   "default": "''"
+  },
+  "maxLength": {
+   "type": "number | undefined",
+   "default": "undefined"
+  },
+  "showCount": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "error": {
+   "type": "string",
+   "default": "''"
+  },
+  "required": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "touched": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "invalid": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "errors": {
+   "type": "readonly ValidationError.WithOptionalFieldTree[]",
+   "default": "[]"
+  },
+  "touch": {
+   "type": "void"
+  }
+ },
+ "KometaFilm": {
+  "days": {
+   "type": "readonly KometaFilmDay[]",
+   "required": true
+  },
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaFrame": {
+  "caption": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaHalo": {
+  "size": {
+   "type": "\"md\" | \"sm\" | \"lg\"",
+   "default": "'md'"
+  }
+ },
+ "KometaHeading": {
+  "title": {
+   "type": "string",
+   "required": true
+  },
+  "level": {
+   "type": "3 | 4 | 2",
+   "default": "2"
+  },
+  "headingId": {
+   "type": "string",
+   "default": "''"
+  },
+  "rule": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaHint": {
+  "term": {
+   "type": "string",
+   "required": true
+  },
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaKeys": {
+  "keys": {
+   "type": "string | string[]",
+   "required": true
+  },
+  "play": {
+   "type": "\"hover\" | \"loop\" | \"off\"",
+   "default": "'hover'"
+  },
+  "separator": {
+   "type": "string",
+   "default": "'+'"
+  }
+ },
+ "KometaLink": {
+  "text": {
+   "type": "string",
+   "required": true
+  },
+  "copyLabel": {
+   "type": "string",
+   "required": true
+  },
+  "copiedLabel": {
+   "type": "string",
+   "required": true
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "flashValue": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "copiedMs": {
+   "type": "number",
+   "default": "900"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaMarks": {
+  "days": {
+   "type": "KometaMarkDay[]",
+   "required": true
+  },
+  "empty": {
+   "type": "string",
+   "default": "'—'"
+  }
+ },
+ "KometaWords": {
+  "options": {
+   "type": "readonly KometaWordOption[]",
+   "required": true
+  },
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "tabs": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "optionTemplate": {
+   "type": "TemplateRef<{ $implicit: KometaWordOption; }> | null",
+   "default": "null"
+  }
+ },
+ "KometaMenu": {
+  "options": {
+   "type": "readonly KometaWordOption[]",
+   "required": true
+  },
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaMeter": {
+  "value": {
+   "type": "number",
+   "default": "0"
+  },
+  "max": {
+   "type": "number",
+   "default": "25"
+  },
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "showFigure": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaMulti": {
+  "options": {
+   "type": "readonly unknown[] | null | undefined",
+   "default": "[]"
+  },
+  "optionLabel": {
+   "type": "string",
+   "default": "'label'"
+  },
+  "optionValue": {
+   "type": "string",
+   "default": "'value'"
+  },
+  "optionDot": {
+   "type": "string",
+   "default": "''"
+  },
+  "value": {
+   "type": "readonly any[]",
+   "default": "[]"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "summary": {
+   "type": "string",
+   "default": "''"
+  },
+  "noMatch": {
+   "type": "string",
+   "default": "''"
+  },
+  "removeLabel": {
+   "type": "string",
+   "default": "'Remove'"
+  },
+  "pill": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "max": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaNote": {
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "placement": {
+   "type": "\"auto\" | \"above\" | \"below\"",
+   "default": "'auto'"
+  }
+ },
+ "KometaNotes": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "rows": {
+   "type": "number",
+   "default": "2"
+  },
+  "maxlength": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "count": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaNumber": {
+  "value": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "min": {
+   "type": "number | undefined",
+   "default": "undefined"
+  },
+  "max": {
+   "type": "number | undefined",
+   "default": "undefined"
+  },
+  "step": {
+   "type": "number",
+   "default": "1"
+  },
+  "suffix": {
+   "type": "string",
+   "default": "''"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "money": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "buttons": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "locale": {
+   "type": "string",
+   "default": "'ru-RU'"
+  }
+ },
+ "KometaPager": {
+  "total": {
+   "type": "number",
+   "required": true
+  },
+  "page": {
+   "type": "number",
+   "default": "1"
+  },
+  "pageSize": {
+   "type": "number",
+   "default": "10"
+  },
+  "sizes": {
+   "type": "readonly number[]",
+   "default": "[10, 25, 50]"
+  },
+  "labels": {
+   "type": "Partial<KometaPagerLabels>"
+  },
+  "caption": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaPair": {
+  "keep": {
+   "type": "string",
+   "required": true
+  },
+  "confirm": {
+   "type": "string",
+   "required": true
+  },
+  "busy": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "confirmDisabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "tone": {
+   "type": "\"danger\" | \"primary\"",
+   "default": "'danger'"
+  },
+  "kept": {
+   "type": "void"
+  },
+  "confirmed": {
+   "type": "void"
+  }
+ },
+ "KometaPhotos": {
+  "photos": {
+   "type": "KometaPhoto[]",
+   "default": "[]"
+  },
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "index": {
+   "type": "number",
+   "default": "0"
+  },
+  "closeLabel": {
+   "type": "string",
+   "default": "'Close'"
+  },
+  "prevLabel": {
+   "type": "string",
+   "default": "'Previous'"
+  },
+  "nextLabel": {
+   "type": "string",
+   "default": "'Next'"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "rotateLeftLabel": {
+   "type": "string",
+   "default": "'Rotate left'"
+  },
+  "rotateRightLabel": {
+   "type": "string",
+   "default": "'Rotate right'"
+  },
+  "zoomOutLabel": {
+   "type": "string",
+   "default": "'Zoom out'"
+  },
+  "zoomInLabel": {
+   "type": "string",
+   "default": "'Zoom in'"
+  },
+  "downloadLabel": {
+   "type": "string",
+   "default": "'Download'"
+  },
+  "downloadable": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "thumbs": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaPicker": {
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "hint": {
+   "type": "string",
+   "default": "''"
+  },
+  "variant": {
+   "type": "\"button\" | \"zone\"",
+   "default": "'button'"
+  },
+  "accept": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "name": {
+   "type": "string",
+   "default": "''"
+  },
+  "multiple": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "plus": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "over": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "picked": {
+   "type": "File[]"
+  }
+ },
+ "KometaPop": {
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabelledBy": {
+   "type": "string",
+   "default": "''"
+  },
+  "width": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "focusOnShow": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "offset": {
+   "type": "number",
+   "default": "8"
+  },
+  "align": {
+   "type": "\"end\" | \"start\"",
+   "default": "'start'"
+  },
+  "open": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "opened": {
+   "type": "void"
+  }
+ },
+ "KometaQuiet": {
+  "title": {
+   "type": "string",
+   "required": true
+  },
+  "hint": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaRating": {
+  "value": {
+   "type": "number",
+   "default": "0"
+  },
+  "max": {
+   "type": "number | undefined",
+   "default": "undefined"
+  },
+  "words": {
+   "type": "readonly string[]",
+   "default": "[]"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "showWord": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "required": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "touched": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "invalid": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "touch": {
+   "type": "void"
+  }
+ },
+ "KometaReveal": {
+  "before": {
+   "type": "string",
+   "required": true
+  },
+  "after": {
+   "type": "string",
+   "required": true
+  },
+  "beforeLabel": {
+   "type": "string",
+   "default": "'Before'"
+  },
+  "afterLabel": {
+   "type": "string",
+   "default": "'After'"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "aspectRatio": {
+   "type": "string",
+   "default": "'1'"
+  },
+  "showLabels": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "position": {
+   "type": "number",
+   "default": "50"
+  }
+ },
+ "KometaRows": {
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaRow": {
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "title": {
+   "type": "string",
+   "default": "''"
+  },
+  "meta": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "target": {
+   "type": "string",
+   "default": "''"
+  },
+  "tone": {
+   "type": "KometaRowTone",
+   "default": "'neutral'"
+  },
+  "link": {
+   "type": "string | readonly unknown[] | null",
+   "default": "null"
+  },
+  "href": {
+   "type": "string",
+   "default": "''"
+  },
+  "button": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "chevron": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "activated": {
+   "type": "void"
+  }
+ },
+ "KometaSearch": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "required": true
+  },
+  "clearLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "size": {
+   "type": "\"md\" | \"lg\"",
+   "default": "'md'"
+  },
+  "name": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputmode": {
+   "type": "string",
+   "default": "''"
+  },
+  "maxlength": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "clearable": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "autofocus": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaSelect": {
+  "options": {
+   "type": "readonly unknown[] | null | undefined",
+   "default": "[]"
+  },
+  "optionLabel": {
+   "type": "string",
+   "default": "'label'"
+  },
+  "optionValue": {
+   "type": "string",
+   "default": "'value'"
+  },
+  "group": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "optionGroupLabel": {
+   "type": "string",
+   "default": "'label'"
+  },
+  "optionGroupChildren": {
+   "type": "string",
+   "default": "'items'"
+  },
+  "value": {
+   "type": "any",
+   "default": "null"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "prefix": {
+   "type": "string",
+   "default": "''"
+  },
+  "pill": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabelledBy": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "emptyLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaShare": {
+  "segments": {
+   "type": "KometaShareSegment[]",
+   "required": true
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "legend": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "percents": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "tickCount": {
+   "type": "number",
+   "default": "TICKS"
+  }
+ },
+ "KometaSkeleton": {
+  "rows": {
+   "type": "number",
+   "default": "3"
+  },
+  "avatar": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "lines": {
+   "type": "number",
+   "default": "2"
+  },
+  "shape": {
+   "type": "\"rows\" | \"card\" | \"line\"",
+   "default": "'rows'"
+  },
+  "width": {
+   "type": "string",
+   "default": "'100%'"
+  },
+  "delay": {
+   "type": "number",
+   "default": "0"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaSlider": {
+  "value": {
+   "type": "number",
+   "default": "0"
+  },
+  "min": {
+   "type": "number",
+   "default": "0"
+  },
+  "max": {
+   "type": "number",
+   "default": "20"
+  },
+  "step": {
+   "type": "number",
+   "default": "1"
+  },
+  "unit": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "showFigure": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabelledBy": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaSlots": {
+  "slots": {
+   "type": "readonly KometaSlot[]",
+   "required": true
+  },
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "clearable": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaSort": {
+  "options": {
+   "type": "readonly KometaSortOption[]",
+   "required": true
+  },
+  "key": {
+   "type": "string",
+   "default": "''"
+  },
+  "dir": {
+   "type": "\"asc\" | \"desc\"",
+   "default": "'asc'"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "ascGlyph": {
+   "type": "string",
+   "default": "'↑'"
+  },
+  "descGlyph": {
+   "type": "string",
+   "default": "'↓'"
+  },
+  "pick": {
+   "type": "string"
+  }
+ },
+ "KometaSortHeader": {
+  "kometaSortHeader": {
+   "type": "string",
+   "required": true
+  },
+  "active": {
+   "type": "string",
+   "default": "''"
+  },
+  "dir": {
+   "type": "\"asc\" | \"desc\"",
+   "default": "'asc'"
+  },
+  "ascGlyph": {
+   "type": "string",
+   "default": "'↑'"
+  },
+  "descGlyph": {
+   "type": "string",
+   "default": "'↓'"
+  },
+  "pick": {
+   "type": "string"
+  }
+ },
+ "KometaSplit": {
+  "left": {
+   "type": "KometaSplitSide",
+   "required": true
+  },
+  "right": {
+   "type": "KometaSplitSide",
+   "required": true
+  },
+  "align": {
+   "type": "\"start\" | \"center\"",
+   "default": "'start'"
+  }
+ },
+ "KometaStars": {
+  "value": {
+   "type": "number",
+   "default": "0"
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "max": {
+   "type": "number",
+   "default": "5"
+  },
+  "size": {
+   "type": "number | null",
+   "default": "null"
+  }
+ },
+ "KometaStepper": {
+  "value": {
+   "type": "number",
+   "default": "0"
+  },
+  "min": {
+   "type": "number | undefined",
+   "default": "0"
+  },
+  "max": {
+   "type": "number | undefined",
+   "default": "undefined"
+  },
+  "step": {
+   "type": "number",
+   "default": "1"
+  },
+  "unit": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "decrementLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "incrementLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "decrementIcon": {
+   "type": "string",
+   "default": "'−'"
+  },
+  "incrementIcon": {
+   "type": "string",
+   "default": "'+'"
+  },
+  "touched": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "touch": {
+   "type": "void"
+  }
+ },
+ "KometaSteps": {
+  "steps": {
+   "type": "readonly string[]",
+   "required": true
+  },
+  "current": {
+   "type": "number",
+   "default": "1"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaSuggest": {
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "suggestions": {
+   "type": "KometaSuggestion<unknown>[]",
+   "default": "[]"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "''"
+  },
+  "minLength": {
+   "type": "number",
+   "default": "2"
+  },
+  "delay": {
+   "type": "number",
+   "default": "300"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "optionTemplate": {
+   "type": "TemplateRef<{ $implicit: KometaSuggestion; }> | null",
+   "default": "null"
+  },
+  "query": {
+   "type": "string"
+  },
+  "picked": {
+   "type": "KometaSuggestion<unknown>"
+  }
+ },
+ "KometaTabbar": {
+  "tabs": {
+   "type": "readonly KometaTab[]",
+   "required": true
+  },
+  "value": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "labels": {
+   "type": "\"active\" | \"all\"",
+   "default": "'active'"
+  },
+  "iconTemplate": {
+   "type": "TemplateRef<{ $implicit: KometaTab; }> | null",
+   "default": "null"
+  }
+ },
+ "KometaTable": {
+  "value": {
+   "type": "any[]",
+   "default": "[]"
+  },
+  "dataKey": {
+   "type": "string",
+   "default": "''"
+  },
+  "groupRowsBy": {
+   "type": "string",
+   "default": "''"
+  },
+  "tableStyleClass": {
+   "type": "string",
+   "default": "''"
+  },
+  "tableStyle": {
+   "type": "Record<string, string> | null",
+   "default": "null"
+  },
+  "scrollHeight": {
+   "type": "string | null",
+   "default": "null"
+  },
+  "size": {
+   "type": "\"md\" | \"sm\"",
+   "default": "'md'"
+  },
+  "striped": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "hoverable": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaTag": {
+  "tone": {
+   "type": "KometaTagTone",
+   "default": "'book'"
+  },
+  "dot": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaTick": {
+  "checked": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabelledBy": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "invalid": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "readonly": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaTime": {
+  "step": {
+   "type": "number",
+   "default": "15"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "inputId": {
+   "type": "string",
+   "default": "''"
+  },
+  "placeholder": {
+   "type": "string",
+   "default": "'—'"
+  },
+  "clearable": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "clearLabel": {
+   "type": "string",
+   "default": "'Clear'"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaTip": {
+  "kometaTip": {
+   "type": "string | null | undefined",
+   "default": "''"
+  },
+  "kometaTipSub": {
+   "type": "string | null | undefined",
+   "default": "''"
+  },
+  "kometaTipDelay": {
+   "type": "number",
+   "default": "380"
+  },
+  "kometaTipAnimation": {
+   "type": "\"\" | KometaAnimation",
+   "default": "''"
+  }
+ },
+ "KometaToast": {
+  "items": {
+   "type": "KometaToastItem[]",
+   "required": true
+  },
+  "dismiss": {
+   "type": "number"
+  },
+  "position": {
+   "type": "\"bottom\" | \"top\"",
+   "default": "'bottom'"
+  }
+ },
+ "KometaToggle": {
+  "checked": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "onLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "offLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "disabled": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaDescribedBy": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabelledBy": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaStep": {
+  "time": {
+   "type": "string",
+   "required": true
+  },
+  "gap": {
+   "type": "string | null",
+   "default": "null"
+  }
+ },
+ "KometaTree": {
+  "nodes": {
+   "type": "KometaTreeNode[]",
+   "required": true
+  },
+  "path": {
+   "type": "number[]",
+   "default": "[]"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "picked": {
+   "type": "KometaTreeNode"
+  }
+ },
+ "KometaTray": {
+  "backdropClose": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaUpload": {
+  "name": {
+   "type": "string",
+   "required": true
+  },
+  "sizeLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "progress": {
+   "type": "number",
+   "default": "0"
+  },
+  "state": {
+   "type": "\"done\" | \"idle\" | \"running\" | \"failed\"",
+   "default": "'idle'"
+  },
+  "statusLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "actionLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "ariaLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "showPercent": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "action": {
+   "type": "void"
+  }
+ },
+ "KometaWait": {
+  "label": {
+   "type": "string",
+   "required": true
+  }
+ },
+ "ProviderLogo": {
+  "provider": {
+   "type": "string",
+   "required": true
+  }
+ }
+}

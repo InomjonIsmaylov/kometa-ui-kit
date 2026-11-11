@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve demo",
+    "api": "node scripts/gen-api.mjs",
+    "start": "npm run api && ng serve demo",
     "build": "ng build kometa-ui",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
