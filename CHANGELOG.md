@@ -12,7 +12,9 @@ Each release has full notes, with migration steps when needed, on
 - Accessibility fixes (see `ACCESSIBILITY.md`):
   - `k-toast`: each toast has a close button (`closeLabel`, default "Dismiss"), and its timer waits while focus is
     inside it as well as under the pointer. The role now sits on the toast's text, and the thread is no longer an
-    `aria-live` region as well, so a toast is not announced twice.
+    `aria-live` region as well, so a toast is not announced twice. The thread is a region named `label`
+    ("Notifications"); Alt+T (`hotkey`, `''` turns it off) jumps to the newest toast and Escape goes back. When a
+    focused toast leaves, focus moves to the next toast or back to where it came from, not to the page body.
   - `k-time`: Tab moves from the times to Clear and Shift+Tab back, so Clear is reachable by keyboard.
   - `k-banner`: `dismissible` without `closeLabel` draws × named "Dismiss" instead of an empty, unnamed button.
   - `k-confirm`: when focus was inside as the panes swap, it moves to the first focusable element of the pane shown.

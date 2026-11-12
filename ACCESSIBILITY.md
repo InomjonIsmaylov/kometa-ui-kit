@@ -116,7 +116,7 @@ Keys listed are the ones the component's own code handles.
 | Component | Keyboard | Screen reader | Notes |
 |---|---|---|---|
 | `k-banner` | Native | `role="status"`, or `alert` for warn/error (`roleOverride`) | `dismissible` without `closeLabel` draws × named "Dismiss". |
-| `k-toast` | Native (a close button per toast, named by `closeLabel`, default "Dismiss") | Each toast's text is `role="status"` or `alert` (no live container around them) | The timer waits while the pointer or focus is on a toast. |
+| `k-toast` | Alt+T (`hotkey`) jumps to the newest toast's close button (named by `closeLabel`, default "Dismiss"), Escape goes back | Region named `label` ("Notifications (Alt+T)"); each toast's text is `role="status"` or `alert` (no live container around them) | The timer waits while the pointer or focus is on a toast. When a focused toast leaves, focus moves to the next toast or back to where it came from. With several `k-toast`s on a page, Alt+T goes to the last one that has toasts. |
 | `k-wait` | None | `role="status"`, required `label` | |
 | `k-skeleton` | None | `role="status"` + `aria-busy` (line shape is `aria-hidden`) | Pass `ariaLabel`. |
 | `k-upload` | Native (action button) | `role="progressbar"`, `aria-valuetext`, status `role="status"` | |

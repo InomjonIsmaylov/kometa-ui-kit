@@ -1054,7 +1054,7 @@ A tooltip in place of the browser's slow, unstyled `title` box. Put it on the el
 
 ## `k-toast` — KometaToast
 
-The short word that confirms a save or reports a failure. A thread of glass pills stacks up from the foot of the page, in the browser's top layer so no drawer covers it; a hairline under each drains with the time it has left, and a toast under the pointer waits. The caller owns the list: it passes `items` and removes an item on `(dismiss)`, which fires when the time is up (after the leave), the pill is pressed or its close button is used. The text of an error is `role="alert"`, the rest `status`; the timer also waits while focus is inside the pill, so a keyboard user can reach the close button (named by `closeLabel`). A page with a bottom bar of its own sets `--kometa-toast-lift` to the bar's height so the thread rides above it. Spec: kometa-toast.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Thread).
+The short word that confirms a save or reports a failure. A thread of glass pills stacks up from the foot of the page, in the browser's top layer so no drawer covers it; a hairline under each drains with the time it has left, and a toast under the pointer waits. The caller owns the list: it passes `items` and removes an item on `(dismiss)`, which fires when the time is up (after the leave), the pill is pressed or its close button is used. The text of an error is `role="alert"`, the rest `status`; the timer also waits while focus is inside the pill, so a keyboard user can reach the close button (named by `closeLabel`). The thread is a region named `label`; Alt plus the `hotkey` letter (Alt+T unless set, `''` turns it off) jumps to the newest toast's close button, and Escape there goes back to where focus was. When a focused toast leaves, focus moves to the next toast, or back to where it came from. A page with a bottom bar of its own sets `--kometa-toast-lift` to the bar's height so the thread rides above it. Spec: kometa-toast.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Thread).
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -1062,6 +1062,8 @@ The short word that confirms a save or reports a failure. A thread of glass pill
 | `dismiss` | output | `number` |  |  |
 | `position` | input | `"bottom" \| "top"` | `'bottom'` | Which edge the thread stacks from. |
 | `closeLabel` | input | `string` | `'Dismiss'` | Accessible name of each toast's close button. |
+| `label` | input | `string` | `'Notifications'` | Name of the region the toasts sit in. |
+| `hotkey` | input | `string` | `'t'` | Alt plus this letter focuses the newest toast; `''` turns it off. |
 
 ## `k-toggle` — KometaToggle
 

@@ -4,7 +4,7 @@ import { KometaToast, KometaToastItem } from './kometa-toast';
 
 @Component({
   imports: [KometaToast],
-  template: `<k-toast [items]="items()" (dismiss)="gone.push($event); items.set(items().filter((i) => i.id !== $event))" />`,
+  template: `<button class="page">Save</button><k-toast [items]="items()" (dismiss)="gone.push($event); items.set(items().filter((i) => i.id !== $event))" />`,
 })
 class Host {
   items = signal<KometaToastItem[]>([]);
@@ -88,7 +88,7 @@ describe('KometaToast', () => {
     add({});
     const x = pills()[0].querySelector<HTMLButtonElement>('button.x')!;
     expect(x.getAttribute('aria-label')).toBe('Dismiss');
-    expect(x.closest('[role]')).toBeNull();
+    expect(x.closest('[role=status], [role=alert]')).toBeNull();
     x.click();
     vi.advanceTimersByTime(300);
     f.detectChanges();
@@ -110,5 +110,52 @@ describe('KometaToast', () => {
     vi.advanceTimersByTime(1500 + 300);
     f.detectChanges();
     expect(f.componentInstance.gone).toEqual([1]);
+  });
+
+  it('is a named region; Alt+T jumps to the newest toast, Escape goes back', () => {
+    const { f, root, add } = render();
+    document.body.appendChild(f.nativeElement);
+    add({ text: 'One' }, { text: 'Two' });
+    expect(root.querySelector('.thread')!.getAttribute('role')).toBe('region');
+    expect(root.querySelector('.thread')!.getAttribute('aria-label')).toBe('Notifications (Alt+T)');
+    const page = root.querySelector<HTMLButtonElement>('.page')!;
+    page.focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 't', code: 'KeyT', altKey: true }));
+    expect(document.activeElement?.closest('.t')?.textContent).toContain('Two');
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(document.activeElement).toBe(page);
+    f.nativeElement.remove();
+  });
+
+  it('passes focus to the next toast when the focused one leaves, then back to where it came from', () => {
+    const { f, root, add, pills } = render();
+    document.body.appendChild(f.nativeElement);
+    add({ text: 'One' }, { text: 'Two' });
+    const page = root.querySelector<HTMLButtonElement>('.page')!;
+    page.focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 't', code: 'KeyT', altKey: true }));
+    (document.activeElement as HTMLButtonElement).click();
+    expect(document.activeElement?.closest('.t')?.textContent).toContain('One');
+    vi.advanceTimersByTime(300);
+    f.detectChanges();
+    (document.activeElement as HTMLButtonElement).click();
+    expect(document.activeElement).toBe(page);
+    vi.advanceTimersByTime(300);
+    f.detectChanges();
+    expect(pills().length).toBe(0);
+    f.nativeElement.remove();
+  });
+
+  it('does not pass focus to a toast that has just started to leave', () => {
+    const { f, root, add } = render();
+    document.body.appendChild(f.nativeElement);
+    add({ text: 'One', life: 1000 }, { text: 'Two', life: 9000 });
+    const page = root.querySelector<HTMLButtonElement>('.page')!;
+    page.focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 't', code: 'KeyT', altKey: true }));
+    vi.advanceTimersByTime(1000); // One times out; no render yet, so it has no .out class
+    (document.activeElement as HTMLButtonElement).click();
+    expect(document.activeElement).toBe(page);
+    f.nativeElement.remove();
   });
 });

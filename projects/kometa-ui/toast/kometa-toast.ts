@@ -23,13 +23,16 @@ const RESUME_MS = 1500;
  * toast under the pointer waits. The caller owns the list: it passes `items` and removes an item on `(dismiss)`, which
  * fires when the time is up (after the leave), the pill is pressed or its close button is used. The text of an error is
  * `role="alert"`, the rest `status`; the timer also waits while focus is inside the pill, so a keyboard user can reach
- * the close button (named by `closeLabel`).
+ * the close button (named by `closeLabel`). The thread is a region named `label`; Alt plus the `hotkey` letter (Alt+T
+ * unless set, `''` turns it off) jumps to the newest toast's close button, and Escape there goes back to where focus
+ * was. When a focused toast leaves, focus moves to the next toast, or back to where it came from.
  * A page with a bottom bar of its own sets `--kometa-toast-lift` to the bar's height so the thread rides above it.
  * Spec: kometa-toast.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Thread).
  */
 @Component({
   selector: 'k-toast',
   hostDirectives: [{ directive: KometaMotion, inputs: ['animation'] }],
+  host: { '(document:keydown)': 'onKey($event)' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     .thread {
@@ -71,7 +74,8 @@ const RESUME_MS = 1500;
     @media (prefers-reduced-motion: reduce) { .t, .t.out, .t.m, .t.m.out { animation: none; } .t.out { opacity: 0; } .drain { animation: none; } }
   `,
   template: `
-    <div #thread class="thread" [style]="motion.vars()" [class.top]="position() === 'top'" popover="manual">
+    <div #thread class="thread" [style]="motion.vars()" [class.top]="position() === 'top'" popover="manual" role="region"
+         [attr.aria-label]="label() + (hotkey() ? ' (Alt+' + hotkey().toUpperCase() + ')' : '')">
       @for (it of items(); track it.id) {
         <div #pill class="t" [class]="'t ' + it.kind" [class.m]="!!motion.animation()" [class.out]="leaving().has(it.id)" [class.hold]="held().has(it.id)"
              (pointerenter)="hold(it.id)" (pointerleave)="pill.contains(doc.activeElement) || release(it.id)" (focusin)="hold(it.id)" (focusout)="release(it.id)" (click)="leave(it.id)">
@@ -94,6 +98,10 @@ export class KometaToast {
   readonly position = input<'bottom' | 'top'>('bottom');
   /** Accessible name of each toast's close button. */
   readonly closeLabel = input('Dismiss');
+  /** Name of the region the toasts sit in. */
+  readonly label = input('Notifications');
+  /** Alt plus this letter focuses the newest toast; `''` turns it off. */
+  readonly hotkey = input('t');
 
   protected readonly doc = inject(DOCUMENT);
   protected readonly leaving = signal<ReadonlySet<number>>(new Set());
@@ -137,6 +145,7 @@ export class KometaToast {
   /** Plays the leave, then asks the caller to drop the item. */
   protected leave(id: number): void {
     if (this.leaving().has(id)) return;
+    this.handOffFocus(id);
     const t = this.timers.get(id);
     if (t) clearTimeout(t.timer);
     this.timers.delete(id);
@@ -145,5 +154,43 @@ export class KometaToast {
       this.leaving.update((s) => { const n = new Set(s); n.delete(id); return n; });
       this.dismiss.emit(id);
     }, LEAVE_MS);
+  }
+
+  /** Where focus was before the hotkey brought it into the thread. */
+  private returnTo: HTMLElement | null = null;
+
+  protected onKey(e: KeyboardEvent): void {
+    const thread = this.thread().nativeElement;
+    const inside = thread.contains(this.doc.activeElement);
+    if (e.key === 'Escape' && inside) { e.preventDefault(); this.goBack(); return; }
+    const key = this.hotkey();
+    if (!key || !e.altKey || e.ctrlKey || e.metaKey || e.code !== `Key${key.toUpperCase()}`) return;
+    const xs = this.closeButtons();
+    if (!xs.length) return;
+    e.preventDefault();
+    if (!inside) this.returnTo = this.doc.activeElement as HTMLElement | null;
+    xs[xs.length - 1].focus();
+  }
+
+  /** A focused toast that leaves passes focus on, so it does not fall to the page body. */
+  private handOffFocus(id: number): void {
+    const pill = this.thread().nativeElement.querySelectorAll('.t')[this.items().findIndex((i) => i.id === id)];
+    if (!pill?.contains(this.doc.activeElement)) return;
+    const next = this.closeButtons(id);
+    if (next.length) next[next.length - 1].focus();
+    else this.goBack();
+  }
+
+  private goBack(): void {
+    const to = this.returnTo;
+    this.returnTo = null;
+    if (to?.isConnected) to.focus();
+    else (this.doc.activeElement as HTMLElement | null)?.blur();
+  }
+
+  /** Close buttons of the toasts that are staying (read from `leaving`, as the `out` class lands a render later). */
+  private closeButtons(except?: number): HTMLButtonElement[] {
+    const xs = this.thread().nativeElement.querySelectorAll<HTMLButtonElement>('.t .x');
+    return this.items().flatMap((it, i) => (it.id === except || this.leaving().has(it.id) || !xs[i] ? [] : [xs[i]]));
   }
 }
