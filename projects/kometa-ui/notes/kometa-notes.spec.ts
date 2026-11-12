@@ -59,6 +59,22 @@ describe('KometaNotes', () => {
     expect(count()?.classList.contains('warn')).toBe(false);
   });
 
+  it('announces the count only as it crosses 30, 20, 10 and 5 left and at the limit, not on every key', () => {
+    const { type, count, root } = render();
+    const live = () => root.querySelector('[aria-live]')!.textContent!.trim();
+    expect(live()).toBe('');
+    type('x'.repeat(270));
+    expect(live()).toBe('270 / 300');
+    expect(count()?.hasAttribute('aria-live')).toBe(false);
+    type('x'.repeat(275));
+    expect(count()?.textContent?.trim()).toBe('275 / 300');
+    expect(live()).toBe('270 / 300');
+    type('x'.repeat(281));
+    expect(live()).toBe('281 / 300');
+    type('x'.repeat(300));
+    expect(live()).toBe('300 / 300');
+  });
+
   it('draws no count without a limit or when the page draws its own', () => {
     const { f, type, count } = render();
     type('x'.repeat(290));

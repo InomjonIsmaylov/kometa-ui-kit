@@ -97,6 +97,15 @@ describe('KometaBanner', () => {
     expect(close()).toBeNull();
   });
 
+  it('names the close button "Dismiss" and draws × when no close word is given', () => {
+    const { f, close } = render();
+    expect(close()?.hasAttribute('aria-label')).toBe(false);
+    f.componentInstance.closeLabel.set('');
+    f.detectChanges();
+    expect(close()?.textContent?.trim()).toBe('×');
+    expect(close()?.getAttribute('aria-label')).toBe('Dismiss');
+  });
+
   it('collapses and emits dismissed once when the close word is pressed', () => {
     const { f, root, close } = render();
     expect(root.classList.contains('gone')).toBe(false);

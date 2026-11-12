@@ -1,6 +1,6 @@
 import { KometaMotion } from 'kometa-ui/motion';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, input, output, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, DOCUMENT, ElementRef, effect, inject, input, output, signal, viewChild,
 } from '@angular/core';
 
 export type KometaToastKind = 'success' | 'error' | 'info' | 'warn';
@@ -21,7 +21,9 @@ const RESUME_MS = 1500;
  * The short word that confirms a save or reports a failure. A thread of glass pills stacks up from the foot of the
  * page, in the browser's top layer so no drawer covers it; a hairline under each drains with the time it has left, and a
  * toast under the pointer waits. The caller owns the list: it passes `items` and removes an item on `(dismiss)`, which
- * fires when the time is up (after the leave) or the pill is pressed. An error is `role="alert"`, the rest `status`.
+ * fires when the time is up (after the leave), the pill is pressed or its close button is used. The text of an error is
+ * `role="alert"`, the rest `status`; the timer also waits while focus is inside the pill, so a keyboard user can reach
+ * the close button (named by `closeLabel`).
  * A page with a bottom bar of its own sets `--kometa-toast-lift` to the bar's height so the thread rides above it.
  * Spec: kometa-toast.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Thread).
  */
@@ -52,6 +54,12 @@ const RESUME_MS = 1500;
     .t.error .bar { background: var(--red); }
     .t.warn .bar { background: var(--amber); }
     .text { overflow-wrap: anywhere; }
+    .x {
+      flex: none; margin: -4px -6px -4px 2px; padding: 2px 6px; border: 0; border-radius: 6px; background: none;
+      color: inherit; font: inherit; line-height: 1; opacity: .7; cursor: pointer;
+    }
+    .x:hover, .x:focus-visible { opacity: 1; }
+    .x:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
     .drain {
       position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: var(--display-ink, var(--text)); opacity: .6;
       transform-origin: left; animation: k-ts-drain var(--life, 4000ms) linear forwards;
@@ -63,12 +71,14 @@ const RESUME_MS = 1500;
     @media (prefers-reduced-motion: reduce) { .t, .t.out, .t.m, .t.m.out { animation: none; } .t.out { opacity: 0; } .drain { animation: none; } }
   `,
   template: `
-    <div #thread class="thread" [style]="motion.vars()" [class.top]="position() === 'top'" popover="manual" aria-live="polite">
+    <div #thread class="thread" [style]="motion.vars()" [class.top]="position() === 'top'" popover="manual">
       @for (it of items(); track it.id) {
-        <div class="t" [class]="'t ' + it.kind" [class.m]="!!motion.animation()" [class.out]="leaving().has(it.id)" [class.hold]="held().has(it.id)"
-             [attr.role]="it.kind === 'error' ? 'alert' : 'status'" (pointerenter)="hold(it.id)" (pointerleave)="release(it.id)" (click)="leave(it.id)">
+        <div #pill class="t" [class]="'t ' + it.kind" [class.m]="!!motion.animation()" [class.out]="leaving().has(it.id)" [class.hold]="held().has(it.id)"
+             (pointerenter)="hold(it.id)" (pointerleave)="pill.contains(doc.activeElement) || release(it.id)" (focusin)="hold(it.id)" (focusout)="release(it.id)" (click)="leave(it.id)">
           <span class="bar"></span>
-          <span class="text">{{ it.text }}</span>
+          <!-- the role sits on the words alone, so the close button's name is not read with them -->
+          <span class="text" [attr.role]="it.kind === 'error' ? 'alert' : 'status'">{{ it.text }}</span>
+          <button class="x" type="button" [attr.aria-label]="closeLabel()"><span aria-hidden="true">×</span></button>
           <i class="drain" [style.--life.ms]="it.life"></i>
         </div>
       }
@@ -82,7 +92,10 @@ export class KometaToast {
   readonly dismiss = output<number>();
   /** Which edge the thread stacks from. */
   readonly position = input<'bottom' | 'top'>('bottom');
+  /** Accessible name of each toast's close button. */
+  readonly closeLabel = input('Dismiss');
 
+  protected readonly doc = inject(DOCUMENT);
   protected readonly leaving = signal<ReadonlySet<number>>(new Set());
   protected readonly held = signal<ReadonlySet<number>>(new Set());
   private readonly thread = viewChild.required<ElementRef<HTMLElement>>('thread');

@@ -54,6 +54,8 @@ describe('KometaLink', () => {
 
     expect(writeText).toHaveBeenCalledWith('https://kometa.com.uz/book/chilonzor');
     expect(button.textContent!.trim()).toBe('Nusxalandi');
+    const live = fixture.nativeElement.querySelector('[aria-live="polite"]') as HTMLElement;
+    expect(live.textContent!.trim()).toBe('Nusxalandi');
 
     await vi.advanceTimersByTimeAsync(899);
     fixture.detectChanges();
@@ -62,6 +64,7 @@ describe('KometaLink', () => {
     await vi.advanceTimersByTimeAsync(1);
     fixture.detectChanges();
     expect(button.textContent!.trim()).toBe('Nusxa');
+    expect(live.textContent!.trim()).toBe('');
   });
 
   it('sweeps a band over the value before it, unless told not to', async () => {

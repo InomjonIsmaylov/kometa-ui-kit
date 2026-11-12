@@ -33,6 +33,18 @@ describe('KometaPhotos', () => {
     fixture.destroy();
   });
 
+  it('names a thumbnail by its number when the photo has no alt, and by the alt when it has one', async () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.photos[1].alt = 'Front door';
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const th = [...(fixture.nativeElement as HTMLElement).querySelectorAll('.th')];
+    expect(th.map((b) => b.getAttribute('aria-label'))).toEqual(['Photo 1', null, 'Photo 3']);
+    expect(th[1].querySelector('img')!.getAttribute('alt')).toBe('Front door');
+    fixture.destroy();
+  });
+
   it('a thumbnail jumps, Arrow keys move, and the Close word closes', async () => {
     const { fixture, el, host } = await mount();
     (el.querySelectorAll('.th')[1] as HTMLButtonElement).click();

@@ -133,7 +133,7 @@ An action that is only a word and an arrow, for the end of a row: `<button k-wor
 
 ## `k-banner` — KometaBanner
 
-A notice with no box: a 2px state-coloured hairline stands beside the sentence. With `dismissible` a close word (`closeLabel`, supplied by the caller) collapses it (rows 1fr to 0fr, instant under reduced motion) and emits `dismissed`. `ok` and `info` are `role="status"`, `warn` and `error` `role="alert"`. `actionLabel` adds one word beside the sentence (`action` fires), replacing the old inline-alert and load-error retry buttons. The sentence is projected: `<k-banner tone="warn">Internet yoq.</k-banner>`. Spec: kometa-banner.spec.ts.
+A notice with no box: a 2px state-coloured hairline stands beside the sentence. With `dismissible` a close word (`closeLabel`, supplied by the caller; × named "Dismiss" without one) collapses it (rows 1fr to 0fr, instant under reduced motion) and emits `dismissed`. `ok` and `info` are `role="status"`, `warn` and `error` `role="alert"`. `actionLabel` adds one word beside the sentence (`action` fires), replacing the old inline-alert and load-error retry buttons. The sentence is projected: `<k-banner tone="warn">Internet yoq.</k-banner>`. Spec: kometa-banner.spec.ts.
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -141,7 +141,7 @@ A notice with no box: a 2px state-coloured hairline stands beside the sentence. 
 | `surface` | input | `"bare" \| "glass"` | `'bare'` | `glass` draws a blurred slab with a hairline; the default is the boxless hairline. |
 | `dismissible` | input | `boolean` | `false` |  |
 | `roleOverride` | input | `"" \| "status" \| "alert"` | `''` | Overrides the live-region role the tone picks (a page-load notice may want `status` even when it warns). |
-| `closeLabel` | input | `string` | `''` | The word on the close button; the caller owns the dictionary. |
+| `closeLabel` | input | `string` | `''` | The word on the close button; the caller owns the dictionary. Empty draws × named "Dismiss". |
 | `actionLabel` | input | `string` | `''` | An action word after the sentence (a Retry); the caller owns the dictionary. |
 | `icon` | input | `string` | `''` | A leading glyph in the tone colour (decorative; the sentence carries the meaning). |
 | `action` | output | `void` |  |  |
@@ -218,11 +218,11 @@ One cell per digit. A cream line sits under the cell being typed. Length default
 | `label` | input | `string` | `''` |  |
 | `placeholder` | input | `string` | `''` | Shown in each empty cell, e.g. `·`. |
 | `mask` | input | `boolean` | `false` | Hides the digits (a PIN). |
-| `cellLabel` | input | `string` | `''` | Names each cell "<cellLabel> 1", "<cellLabel> 2"…; the caller owns the language. |
+| `cellLabel` | input | `string` | `'Digit'` | Names each cell "<cellLabel> 1", "<cellLabel> 2"…; the caller owns the language. |
 
 ## `k-confirm` — KometaConfirm
 
-The row crossfades to the caller's question while `asking` is true. The question, including Yo'q and Ha, is projected; this component draws no button of its own. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
+The row crossfades to the caller's question while `asking` is true. The question, including Yo'q and Ha, is projected; this component draws no button of its own. When focus was inside the component as the panes swap, it moves to the first focusable element of the pane now shown (so the first button of the question is the safe answer). Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -439,7 +439,7 @@ A keyboard shortcut as words in Syne, `Ctrl + Shift + P`, inside the nested `<kb
 
 ## `k-link` — KometaLink
 
-Copies `text` and reads `copiedLabel` for 900ms. A refused clipboard leaves `copyLabel`. "Flash" (round 10): a cream band also sweeps over the element just before the link, which is where every site shows the value it copies. Skipped for reduced motion and where the value has no element to strike; the label swap alone still answers. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
+Copies `text` and reads `copiedLabel` for 900ms (also said through a polite live region). A refused clipboard leaves `copyLabel`. "Flash" (round 10): a cream band also sweeps over the element just before the link, which is where every site shows the value it copies. Skipped for reduced motion and where the value has no element to strike; the label swap alone still answers. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -531,7 +531,7 @@ An explanation that floats and moves nothing: a small ⓘ marker, and a cream ta
 
 ## `k-notes` — KometaNotes
 
-Free text, several lines. No box: a hairline under the text draws itself on focus, and the field grows with what is written (never shorter than `rows`). With a `maxlength` the count shows only in the last 30 characters, amber and then red at the limit; a page that draws its own counter passes `[count]="false"`. `value` is a model: `<k-notes [rows]="4" [maxlength]="300" [(value)]="draft" ariaLabel="Reply" />`. Spec: kometa-notes.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Whisper).
+Free text, several lines. No box: a hairline under the text draws itself on focus, and the field grows with what is written (never shorter than `rows`). With a `maxlength` the count shows only in the last 30 characters, amber and then red at the limit. Screen readers hear the count only as it crosses 30, 20, 10 and 5 left and at the limit, not on every key. A page that draws its own counter passes `[count]="false"`. `value` is a model: `<k-notes [rows]="4" [maxlength]="300" [(value)]="draft" ariaLabel="Reply" />`. Spec: kometa-notes.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Whisper).
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -625,6 +625,7 @@ The full-screen photo viewer: a native modal `<dialog>` (top layer, Escape and f
 | `downloadLabel` | input | `string` | `'Download'` |  |
 | `downloadable` | input | `boolean` | `true` | The download link in the toolbar. |
 | `thumbs` | input | `boolean` | `true` | The strip of thumbnails under the photo. |
+| `thumbLabel` | input | `string` | `'Photo {n}'` | Name of a thumbnail whose photo has no `alt`; `{n}` is its number. |
 
 ## `k-picker` — KometaPicker
 
@@ -1026,7 +1027,7 @@ A checkbox: a hairline ring that fills with ink while the tick draws itself in. 
 
 ## `k-time` — KometaTime
 
-A time of day. The time is a figure with a hairline under it, like `k-date`; it opens a glass list of times in the browser's top layer (so a drawer cannot clip it), flips above when there is no room below and is kept in the viewport. `step` is the minutes between the times listed (15 unless set); a time already held that is off the grid (09:07) is listed too, so nothing is lost by opening it. Arrow keys move over the list, Enter picks, Escape, Tab, a click outside, resize and scroll close it. With `clearable` a held time can be taken away again (the value is `null`). It holds a `Date` (only the hours and minutes matter, the date part is fixed by `dateAt`), so `[ngModel]`, `(ngModelChange)` and `[formControl]` replace it one for one. Spec: kometa-time.spec.ts.
+A time of day. The time is a figure with a hairline under it, like `k-date`; it opens a glass list of times in the browser's top layer (so a drawer cannot clip it), flips above when there is no room below and is kept in the viewport. `step` is the minutes between the times listed (15 unless set); a time already held that is off the grid (09:07) is listed too, so nothing is lost by opening it. Arrow keys move over the list, Enter picks, Tab moves to Clear (when there is one), and Escape, Tab out, a click outside, resize and scroll close it. With `clearable` a held time can be taken away again (the value is `null`). It holds a `Date` (only the hours and minutes matter, the date part is fixed by `dateAt`), so `[ngModel]`, `(ngModelChange)` and `[formControl]` replace it one for one. Spec: kometa-time.spec.ts.
 
 Works with Angular forms (`formControl`, `formControlName`, `ngModel`).
 
@@ -1042,7 +1043,7 @@ Works with Angular forms (`formControl`, `formControlName`, `ngModel`).
 
 ## `[kometaTip]` — KometaTip
 
-A tooltip in place of the browser's slow, unstyled `title` box. Put it on the element that carries the meaning: <button [kometaTip]="S.delete" aria-label="…">…</button> <span [kometaTip]="shop.name" [kometaTipSub]="S.shopNameFull">…</span> It is the lab's Note: a small glass card beside the element, an ink rule on its edge, a name and an optional second line. A hover shows it after a short pause (none when you are moving between neighbours), keyboard focus shows it at once, and Escape, leaving, scrolling and pressing all hide it. A null or empty `kometaTip` shows nothing, so `[kometaTip]="collapsed() ? name : null"` is a tooltip only while collapsed. The tip is described-by on the element while it is up, but it does not name it: an icon-only control still needs its own `aria-label`. A phone shows it on a tap of a plain element (a cell, a label); a button or link already does what it says, so a tap runs it and no tip appears. Spec: kometa-tip.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-10.html (Note).
+A tooltip in place of the browser's slow, unstyled `title` box. Put it on the element that carries the meaning: <button [kometaTip]="S.delete" aria-label="…">…</button> <span [kometaTip]="shop.name" [kometaTipSub]="S.shopNameFull">…</span> It is the lab's Note: a small glass card beside the element, an ink rule on its edge, a name and an optional second line. A hover shows it after a short pause (none when you are moving between neighbours), keyboard focus shows it at once, and Escape, leaving, scrolling and pressing all hide it. The pointer can move onto the tip and it stays while hovered (WCAG 1.4.13). A null or empty `kometaTip` shows nothing, so `[kometaTip]="collapsed() ? name : null"` is a tooltip only while collapsed. The tip is described-by on the element while it is up, but it does not name it: an icon-only control still needs its own `aria-label`. A phone shows it on a tap of a plain element (a cell, a label); a button or link already does what it says, so a tap runs it and no tip appears. Spec: kometa-tip.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-10.html (Note).
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -1053,13 +1054,14 @@ A tooltip in place of the browser's slow, unstyled `title` box. Put it on the el
 
 ## `k-toast` — KometaToast
 
-The short word that confirms a save or reports a failure. A thread of glass pills stacks up from the foot of the page, in the browser's top layer so no drawer covers it; a hairline under each drains with the time it has left, and a toast under the pointer waits. The caller owns the list: it passes `items` and removes an item on `(dismiss)`, which fires when the time is up (after the leave) or the pill is pressed. An error is `role="alert"`, the rest `status`. A page with a bottom bar of its own sets `--kometa-toast-lift` to the bar's height so the thread rides above it. Spec: kometa-toast.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Thread).
+The short word that confirms a save or reports a failure. A thread of glass pills stacks up from the foot of the page, in the browser's top layer so no drawer covers it; a hairline under each drains with the time it has left, and a toast under the pointer waits. The caller owns the list: it passes `items` and removes an item on `(dismiss)`, which fires when the time is up (after the leave), the pill is pressed or its close button is used. The text of an error is `role="alert"`, the rest `status`; the timer also waits while focus is inside the pill, so a keyboard user can reach the close button (named by `closeLabel`). A page with a bottom bar of its own sets `--kometa-toast-lift` to the bar's height so the thread rides above it. Spec: kometa-toast.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Thread).
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
 | `items` | input | `KometaToastItem[]` | **required** |  |
 | `dismiss` | output | `number` |  |  |
 | `position` | input | `"bottom" \| "top"` | `'bottom'` | Which edge the thread stacks from. |
+| `closeLabel` | input | `string` | `'Dismiss'` | Accessible name of each toast's close button. |
 
 ## `k-toggle` — KometaToggle
 

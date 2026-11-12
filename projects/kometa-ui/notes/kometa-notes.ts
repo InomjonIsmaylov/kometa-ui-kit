@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, afterRenderEffect, booleanAttribute, computed, input, model, viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, afterRenderEffect, booleanAttribute, computed, input, model, untracked, viewChild,
 } from '@angular/core';
 
 /**
  * Free text, several lines. No box: a hairline under the text draws itself on focus, and the field grows with what is
  * written (never shorter than `rows`). With a `maxlength` the count shows only in the last 30 characters, amber and then
- * red at the limit; a page that draws its own counter passes `[count]="false"`. `value` is a model:
+ * red at the limit. Screen readers hear the count only as it crosses 30, 20, 10 and 5 left and at the limit, not
+ * on every key. A page that draws its own counter passes `[count]="false"`. `value` is a model:
  * `<k-notes [rows]="4" [maxlength]="300" [(value)]="draft" ariaLabel="Reply" />`.
  * Spec: kometa-notes.spec.ts. Lab: docs/superpowers/labs/2026-10-13-blend-ui-lab-round-8.html (Whisper).
  */
@@ -30,6 +31,7 @@ import {
     .count { display: block; margin-top: 2px; text-align: right; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
     .count.warn { color: var(--notes-warn, var(--amber)); }
     .count.over { color: var(--red); }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     @media (prefers-reduced-motion: reduce) { .area::after { transition: none; } }
   `,
   template: `
@@ -38,7 +40,10 @@ import {
                 [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()" [readOnly]="readonly()" (input)="onInput($event)"></textarea>
     </div>
     @if (counting()) {
-      <span class="count" [class.warn]="left() <= 30 && left() > 0" [class.over]="left() <= 0" aria-live="polite">{{ value().length }} / {{ maxlength() }}</span>
+      <span class="count" [class.warn]="left() <= 30 && left() > 0" [class.over]="left() <= 0" aria-hidden="true">{{ value().length }} / {{ maxlength() }}</span>
+    }
+    @if (count() && maxlength() !== null) {
+      <span class="sr" aria-live="polite">{{ said() }}</span>
     }
   `,
 })
@@ -56,6 +61,13 @@ export class KometaNotes {
 
   protected readonly left = computed(() => (this.maxlength() ?? Infinity) - this.value().length);
   protected readonly counting = computed(() => this.count() && this.maxlength() !== null && this.left() <= 30);
+  /** The stretch of the countdown the text is in; only a change of stretch is announced. */
+  private readonly stretch = computed(() => {
+    const l = this.left();
+    return l > 30 ? null : [0, 5, 10, 20, 30].find((m) => l <= m)!;
+  });
+  protected readonly said = computed(() =>
+    this.stretch() === null ? '' : untracked(() => `${this.value().length} / ${this.maxlength()}`));
   private readonly ta = viewChild.required<ElementRef<HTMLTextAreaElement>>('ta');
 
   constructor() {

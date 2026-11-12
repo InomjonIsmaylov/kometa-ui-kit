@@ -95,7 +95,7 @@ export class KometaCode {
   /** Hides the digits (a PIN). */
   readonly mask = input(false, { transform: booleanAttribute });
   /** Names each cell "<cellLabel> 1", "<cellLabel> 2"…; the caller owns the language. */
-  readonly cellLabel = input('');
+  readonly cellLabel = input('Digit');
 
   private readonly cells = viewChildren<ElementRef<HTMLInputElement>>('cell');
   private readonly underline = viewChild<ElementRef<HTMLElement>>('underline');

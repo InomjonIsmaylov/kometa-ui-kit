@@ -12,8 +12,8 @@ let nextId = 0;
  * A time of day. The time is a figure with a hairline under it, like `k-date`; it opens a glass list of times in
  * the browser's top layer (so a drawer cannot clip it), flips above when there is no room below and is kept in the
  * viewport. `step` is the minutes between the times listed (15 unless set); a time already held that is off the grid
- * (09:07) is listed too, so nothing is lost by opening it. Arrow keys move over the list, Enter picks, Escape, Tab, a
- * click outside, resize and scroll close it. With `clearable` a held time can be taken away again (the value is `null`).
+ * (09:07) is listed too, so nothing is lost by opening it. Arrow keys move over the list, Enter picks, Tab moves to Clear
+ * (when there is one), and Escape, Tab out, a click outside, resize and scroll close it. With `clearable` a held time can be taken away again (the value is `null`).
  *
  * It holds a `Date` (only the hours and minutes matter, the date part is fixed by `dateAt`), so `[ngModel]`, `(ngModelChange)` and `[formControl]` replace it one for one.
  * Spec: kometa-time.spec.ts.
@@ -192,7 +192,19 @@ export class KometaTime implements ControlValueAccessor {
 
   protected onKey(e: KeyboardEvent): void {
     if (e.key === 'Escape') { e.stopPropagation(); this.close(true); return; }
-    if (e.key === 'Tab') { this.close(false); return; }
+    if (e.key === 'Tab') {
+      // Tab steps between the times and Clear, so Clear is reachable; Tab off either end closes the list.
+      const clear = this.pop().nativeElement.querySelector<HTMLButtonElement>('.clear');
+      const onClear = document.activeElement === clear;
+      if (clear && e.shiftKey === onClear) {
+        e.preventDefault();
+        if (onClear) (this.buttons().find((t) => t.getAttribute('aria-pressed') === 'true') ?? this.buttons()[0]).focus();
+        else clear.focus();
+        return;
+      }
+      this.close(false);
+      return;
+    }
     const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -4, ArrowDown: 4 }[e.key];
     if (step === undefined) return;
     const all = this.buttons();

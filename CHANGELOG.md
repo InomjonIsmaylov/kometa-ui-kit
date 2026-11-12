@@ -9,6 +9,19 @@ Each release has full notes, with migration steps when needed, on
   in `angular.json` `styles` for a CSS-only app) and adds `provideKometaUi()`. Running it again changes nothing.
 - A StackBlitz starter in `examples/starter`.
 - `ai/components.md` now tells agents to import from entry points (`kometa-ui/button`), as `ai/usage.md` already did.
+- Accessibility fixes (see `ACCESSIBILITY.md`):
+  - `k-toast`: each toast has a close button (`closeLabel`, default "Dismiss"), and its timer waits while focus is
+    inside it as well as under the pointer. The role now sits on the toast's text, and the thread is no longer an
+    `aria-live` region as well, so a toast is not announced twice.
+  - `k-time`: Tab moves from the times to Clear and Shift+Tab back, so Clear is reachable by keyboard.
+  - `k-banner`: `dismissible` without `closeLabel` draws × named "Dismiss" instead of an empty, unnamed button.
+  - `k-confirm`: when focus was inside as the panes swap, it moves to the first focusable element of the pane shown.
+  - `[kometaTip]`: the pointer can move onto the tip and it stays while hovered; Escape hides it wherever focus is
+    (WCAG 1.4.13).
+  - `k-photos`: a thumbnail of a photo without `alt` is named "Photo {n}" (`thumbLabel`).
+  - `k-code`: `cellLabel` defaults to "Digit", so cells are named "Digit 1"… (was unnamed).
+  - `k-link`: "copied" is also said through a polite live region.
+  - `k-notes`: the count is announced as it crosses 30, 20, 10 and 5 left and at the limit, not on every key.
 
 ## 0.2.0 (2026-11-11)
 

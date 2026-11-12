@@ -368,7 +368,7 @@
   },
   "cellLabel": {
    "type": "string",
-   "default": "''"
+   "default": "'Digit'"
   }
  },
  "KometaConfirm": {
@@ -1178,6 +1178,10 @@
   "thumbs": {
    "type": "boolean",
    "default": "true"
+  },
+  "thumbLabel": {
+   "type": "string",
+   "default": "'Photo {n}'"
   }
  },
  "KometaPicker": {
@@ -2090,6 +2094,10 @@
   "position": {
    "type": "\"bottom\" | \"top\"",
    "default": "'bottom'"
+  },
+  "closeLabel": {
+   "type": "string",
+   "default": "'Dismiss'"
   }
  },
  "KometaToggle": {

@@ -78,7 +78,8 @@ export interface KometaPhoto {
         @if (photos().length > 1 && thumbs()) {
           <div class="strip">
             @for (t of photos(); track $index) {
-              <button type="button" class="th" [class.on]="$index === index()" [attr.aria-current]="$index === index()" (click)="index.set($index)">
+              <button type="button" class="th" [class.on]="$index === index()" [attr.aria-current]="$index === index()"
+                      [attr.aria-label]="t.alt ? null : thumbLabel().replace('{n}', '' + ($index + 1))" (click)="index.set($index)">
                 <img [src]="t.thumbUrl" [alt]="t.alt ?? ''" />
               </button>
             }
@@ -105,6 +106,8 @@ export class KometaPhotos {
   readonly downloadable = input(true, { transform: booleanAttribute });
   /** The strip of thumbnails under the photo. */
   readonly thumbs = input(true, { transform: booleanAttribute });
+  /** Name of a thumbnail whose photo has no `alt`; `{n}` is its number. */
+  readonly thumbLabel = input('Photo {n}');
 
   protected readonly MIN_ZOOM = 0.5;
   protected readonly MAX_ZOOM = 3;

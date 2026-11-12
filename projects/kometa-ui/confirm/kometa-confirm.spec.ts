@@ -6,7 +6,7 @@ import { KometaConfirm } from './kometa-confirm';
   imports: [KometaConfirm],
   template: `
     <k-confirm [asking]="asking()">
-      <span data-row>Mark paid cash</span>
+      <span data-row>Mark paid cash <button type="button" class="mark">Mark</button></span>
       <span data-question>Sure? <button type="button">Yo'q</button><button type="button">Ha</button></span>
     </k-confirm>
   `,
@@ -45,8 +45,8 @@ describe('KometaConfirm', () => {
     expect(shown).not.toContain('Mark paid cash');
 
     const buttons = [...el.querySelectorAll('button')];
-    expect(buttons.map((button) => button.textContent!.trim())).toEqual(["Yo'q", 'Ha']);
-    for (const button of buttons) {
+    expect(buttons.map((button) => button.textContent!.trim())).toEqual(['Mark', "Yo'q", 'Ha']);
+    for (const button of buttons.slice(1)) {
       expect(button.closest('[data-question]')).not.toBeNull();
     }
 
@@ -54,5 +54,28 @@ describe('KometaConfirm', () => {
     const css = ((KometaConfirm as unknown as { ɵcmp?: { styles?: string[] } }).ɵcmp?.styles ?? []).join('\n').replaceAll('%NS%', '');
     expect(css).toContain('prefers-reduced-motion: reduce');
     expect(css).not.toMatch(/button[^{]*\{[^}]*background:\s*var\(--amber\)/);
+  });
+
+  it('moves focus into the pane it shows when focus was inside, and leaves it alone otherwise', async () => {
+    const fixture = TestBed.createComponent(Host);
+    document.body.appendChild(fixture.nativeElement);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    el.querySelector<HTMLButtonElement>('.mark')!.focus();
+    fixture.componentInstance.asking.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(document.activeElement?.textContent).toBe("Yo'q");
+    fixture.componentInstance.asking.set(false);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(el.querySelector('.mark'));
+
+    (document.activeElement as HTMLElement).blur();
+    fixture.componentInstance.asking.set(true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(document.body);
+    fixture.nativeElement.remove();
   });
 });

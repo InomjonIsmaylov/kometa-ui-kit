@@ -9,7 +9,7 @@ const CSS = `
   inset: auto; margin: 0; box-sizing: border-box; width: max-content; max-width: min(var(--tip-max-width, 260px), calc(100vw - 16px)); padding: 9px 14px 9px 13px;
   border: 1px solid var(--glass-line, rgba(244, 239, 230, .14)); border-left: 2px solid var(--display-ink, var(--text, #f4efe6)); border-radius: var(--tip-radius, 4px 12px 12px 4px);
   background: var(--tip-bg, var(--glass-drawer, var(--bg, #1c1a16))); color: var(--text, #e8e2d6); backdrop-filter: blur(14px);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, .4); font-size: var(--tip-font-size, 13px); line-height: 1.35; pointer-events: none; overflow: visible;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .4); font-size: var(--tip-font-size, 13px); line-height: 1.35; overflow: visible;
   animation: var(--k-anim, k-m-scale) var(--k-motion-dur, 240ms) var(--k-motion-ease, var(--ease-spring, ease)) backwards;
 }
 .kometa-tip b { display: block; color: var(--display-ink, var(--text, #f4efe6)); font-weight: 600; overflow-wrap: anywhere; }
@@ -24,6 +24,7 @@ export class KometaTipHost {
   private el: HTMLElement | null = null;
   private owner: HTMLElement | null = null;
   private lastHide = 0;
+  private leaveTimer: ReturnType<typeof setTimeout> | undefined;
 
   /** Whether a tip was on screen a moment ago: moving between neighbours skips the pause. */
   get warm(): boolean {
@@ -34,6 +35,7 @@ export class KometaTipHost {
     const el = this.element();
     const anim = kometaAnimationName(animation);
     if (anim) el.style.setProperty('--k-anim', anim); else el.style.removeProperty('--k-anim');
+    clearTimeout(this.leaveTimer);
     this.release();
     this.owner = host;
     const id = el.id;
@@ -56,11 +58,19 @@ export class KometaTipHost {
     if (this.owner === host) this.close();
   }
 
+  /** Hides after a moment, so the pointer can cross the gap onto the tip and stay there (WCAG 1.4.13). */
+  hideSoon(host: HTMLElement): void {
+    if (this.owner !== host) return;
+    clearTimeout(this.leaveTimer);
+    this.leaveTimer = setTimeout(() => this.hide(host), 150);
+  }
+
   isShownFor(host: HTMLElement): boolean {
     return this.owner === host;
   }
 
   private close(): void {
+    clearTimeout(this.leaveTimer);
     this.release();
     this.lastHide = Date.now();
     try { this.el?.hidePopover?.(); } catch { /* already closed */ }
@@ -107,6 +117,10 @@ export class KometaTipHost {
     this.doc.body.append(el);
     // One listener for every tip on the page: anything scrolling moves the host out from under the tip.
     this.doc.addEventListener('scroll', () => { if (this.owner) this.close(); }, true);
+    // The tip is hoverable: the pointer on it keeps it, leaving it hides it, and Escape hides it wherever focus is.
+    el.addEventListener('pointerenter', () => clearTimeout(this.leaveTimer));
+    el.addEventListener('pointerleave', () => { if (this.owner) this.close(); });
+    this.doc.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.owner) this.close(); });
     return (this.el = el);
   }
 }
@@ -119,7 +133,8 @@ export class KometaTipHost {
  *
  * It is the lab's Note: a small glass card beside the element, an ink rule on its edge, a name and an optional second
  * line. A hover shows it after a short pause (none when you are moving between neighbours), keyboard focus shows it
- * at once, and Escape, leaving, scrolling and pressing all hide it. A null or empty `kometaTip` shows nothing, so
+ * at once, and Escape, leaving, scrolling and pressing all hide it. The pointer can move onto the tip and it stays
+ * while hovered (WCAG 1.4.13). A null or empty `kometaTip` shows nothing, so
  * `[kometaTip]="collapsed() ? name : null"` is a tooltip only while collapsed. The tip is described-by on the element
  * while it is up, but it does not name it: an icon-only control still needs its own `aria-label`. A phone shows it on a
  * tap of a plain element (a cell, a label); a button or link already does what it says, so a tap runs it and no tip appears.
@@ -130,7 +145,7 @@ export class KometaTipHost {
   selector: '[kometaTip]',
   host: {
     '(pointerenter)': 'onEnter($event)',
-    '(pointerleave)': 'hide()',
+    '(pointerleave)': 'leave()',
     '(pointerdown)': 'onDown($event)',
     '(focusin)': 'onFocus($event)',
     '(focusout)': 'hide()',
@@ -183,6 +198,11 @@ export class KometaTip implements OnDestroy {
     // A mouse click focuses a button too; only the keyboard's focus is a request to explain it.
     if (!this.kometaTip() || !(e.target as HTMLElement).matches?.(':focus-visible')) return;
     this.show();
+  }
+
+  protected leave(): void {
+    clearTimeout(this.timer);
+    this.host.hideSoon(this.el);
   }
 
   protected hide(): void {

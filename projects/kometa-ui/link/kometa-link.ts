@@ -4,7 +4,8 @@ import { ChangeDetectionStrategy, Component, ElementRef, inject, booleanAttribut
 const BAND = 'linear-gradient(90deg, transparent 0 33.4%, color-mix(in srgb, var(--display-ink) 32%, transparent) 33.4% 66.6%, transparent 66.6%)';
 
 /**
- * Copies `text` and reads `copiedLabel` for 900ms. A refused clipboard leaves `copyLabel`.
+ * Copies `text` and reads `copiedLabel` for 900ms (also said through a polite live region). A refused clipboard
+ * leaves `copyLabel`.
  * "Flash" (round 10): a cream band also sweeps over the element just before the link, which is
  * where every site shows the value it copies. Skipped for reduced motion and where the value has
  * no element to strike; the label swap alone still answers.
@@ -28,9 +29,12 @@ const BAND = 'linear-gradient(90deg, transparent 0 33.4%, color-mix(in srgb, var
     button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 4px; }
     button:disabled { opacity: .5; cursor: not-allowed; }
     @media (pointer: coarse) { button { min-height: 44px; } }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   `,
   template: `
     <button type="button" [attr.aria-label]="ariaLabel() || null" [disabled]="disabled()" (click)="copy()">{{ copied() ? copiedLabel() : copyLabel() }}</button>
+    <!-- the swap inside the button is not reliably read (and not at all under an ariaLabel), so it is said here too -->
+    <span class="sr" aria-live="polite">{{ copied() ? copiedLabel() : '' }}</span>
   `,
 })
 export class KometaLink {

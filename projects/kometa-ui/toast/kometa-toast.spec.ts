@@ -30,7 +30,7 @@ describe('KometaToast', () => {
     const { add, pills } = render();
     add({ text: 'Saved' }, { kind: 'error', text: 'Could not save' }, { kind: 'info', text: 'Syncing' });
     expect(pills().map((p) => p.querySelector('.text')?.textContent)).toEqual(['Saved', 'Could not save', 'Syncing']);
-    expect(pills().map((p) => p.getAttribute('role'))).toEqual(['status', 'alert', 'status']);
+    expect(pills().map((p) => p.querySelector('.text')?.getAttribute('role'))).toEqual(['status', 'alert', 'status']);
     expect(pills()[1].classList.contains('error')).toBe(true);
   });
 
@@ -79,6 +79,36 @@ describe('KometaToast', () => {
     add({ life: 2500 });
     expect((root.querySelector('.drain') as HTMLElement).style.getPropertyValue('--life')).toBe('2500ms');
     expect(root.querySelector('.thread')?.getAttribute('popover')).toBe('manual');
-    expect(root.querySelector('.thread')?.getAttribute('aria-live')).toBe('polite');
+    // each item's words are their own live region; a live container around them as well would read them twice
+    expect(root.querySelector('.thread')?.hasAttribute('aria-live')).toBe(false);
+  });
+
+  it('has a named close button that dismisses it', () => {
+    const { f, add, pills } = render();
+    add({});
+    const x = pills()[0].querySelector<HTMLButtonElement>('button.x')!;
+    expect(x.getAttribute('aria-label')).toBe('Dismiss');
+    expect(x.closest('[role]')).toBeNull();
+    x.click();
+    vi.advanceTimersByTime(300);
+    f.detectChanges();
+    expect(f.componentInstance.gone).toEqual([1]);
+  });
+
+  it('keeps its time while focus is inside it, even when the pointer leaves', () => {
+    const { f, add, pills } = render();
+    add({ life: 1000 });
+    const x = pills()[0].querySelector<HTMLButtonElement>('button.x')!;
+    x.focus();
+    f.detectChanges();
+    expect(pills()[0].classList.contains('hold')).toBe(true);
+    pills()[0].dispatchEvent(new Event('pointerleave'));
+    vi.advanceTimersByTime(5000);
+    f.detectChanges();
+    expect(f.componentInstance.gone).toEqual([]);
+    x.blur();
+    vi.advanceTimersByTime(1500 + 300);
+    f.detectChanges();
+    expect(f.componentInstance.gone).toEqual([1]);
   });
 });

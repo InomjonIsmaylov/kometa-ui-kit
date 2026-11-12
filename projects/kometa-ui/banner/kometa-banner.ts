@@ -5,7 +5,7 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
 
 /**
  * A notice with no box: a 2px state-coloured hairline stands beside the sentence. With `dismissible`
- * a close word (`closeLabel`, supplied by the caller) collapses it (rows 1fr to 0fr, instant under
+ * a close word (`closeLabel`, supplied by the caller; × named "Dismiss" without one) collapses it (rows 1fr to 0fr, instant under
  * reduced motion) and emits `dismissed`. `ok` and `info` are `role="status"`, `warn` and `error`
  * `role="alert"`. `actionLabel` adds one word beside the sentence (`action` fires), replacing the old
  * inline-alert and load-error retry buttons. The sentence is projected: `<k-banner tone="warn">Internet yoq.</k-banner>`.
@@ -86,7 +86,7 @@ export type KometaBannerTone = 'warn' | 'ok' | 'info' | 'error';
           <button k-word type="button" (click)="action.emit()">{{ actionLabel() }}</button>
         }
         @if (dismissible()) {
-          <button class="close" type="button" (click)="dismiss()">{{ closeLabel() }}</button>
+          <button class="close" type="button" [attr.aria-label]="closeLabel() ? null : 'Dismiss'" (click)="dismiss()">{{ closeLabel() || '×' }}</button>
         }
       </div>
     </div>
@@ -99,7 +99,7 @@ export class KometaBanner {
   readonly dismissible = input(false, { transform: booleanAttribute });
   /** Overrides the live-region role the tone picks (a page-load notice may want `status` even when it warns). */
   readonly roleOverride = input<'status' | 'alert' | ''>('');
-  /** The word on the close button; the caller owns the dictionary. */
+  /** The word on the close button; the caller owns the dictionary. Empty draws × named "Dismiss". */
   readonly closeLabel = input('');
   /** An action word after the sentence (a Retry); the caller owns the dictionary. */
   readonly actionLabel = input('');

@@ -89,4 +89,26 @@ describe('KometaTime', () => {
     expect(btn.getAttribute('aria-expanded')).toBe('false');
     fixture.destroy();
   });
+
+  it('Tab reaches Clear from the times and Shift+Tab goes back; Tab past Clear closes', async () => {
+    const { fixture, el, btn } = await mount();
+    fixture.componentInstance.clearable.set(true);
+    fixture.detectChanges();
+    btn.click();
+    fixture.detectChanges();
+    const pop = el.querySelector<HTMLElement>('.pop')!;
+    const clear = el.querySelector<HTMLButtonElement>('.clear')!;
+    const pressed = times(el).find((t) => t.getAttribute('aria-pressed') === 'true')!;
+    pressed.focus();
+    const tab = (shiftKey = false) => pop.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey, bubbles: true, cancelable: true }));
+    tab();
+    expect(document.activeElement).toBe(clear);
+    tab(true);
+    expect(document.activeElement).toBe(pressed);
+    clear.focus();
+    tab();
+    fixture.detectChanges();
+    expect(btn.getAttribute('aria-expanded')).toBe('false');
+    fixture.destroy();
+  });
 });

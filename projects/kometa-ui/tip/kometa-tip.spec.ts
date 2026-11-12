@@ -53,8 +53,32 @@ describe('KometaTip', () => {
     pointer(q('.icon'), 'pointerenter');
     vi.advanceTimersByTime(400);
     pointer(q('.icon'), 'pointerleave');
+    vi.advanceTimersByTime(150);
     expect(q('.icon').hasAttribute('aria-describedby')).toBe(false);
     expect(tip()!.matches(':popover-open')).toBe(false);
+  });
+
+  it('stays while the pointer moves onto the tip, and hides when it leaves the tip', () => {
+    const { q, tip, pointer } = render();
+    const up = () => q('.icon').getAttribute('aria-describedby') === tip()!.id;
+    pointer(q('.icon'), 'pointerenter');
+    vi.advanceTimersByTime(400);
+    expect(getComputedStyle(tip()!).pointerEvents).not.toBe('none');
+    pointer(q('.icon'), 'pointerleave');
+    pointer(tip()!, 'pointerenter');
+    vi.advanceTimersByTime(1000);
+    expect(up()).toBe(true);
+    pointer(tip()!, 'pointerleave');
+    expect(up()).toBe(false);
+  });
+
+  it('Escape hides it even when focus is elsewhere', () => {
+    const { q, tip, pointer } = render();
+    pointer(q('.icon'), 'pointerenter');
+    vi.advanceTimersByTime(400);
+    expect(q('.icon').hasAttribute('aria-describedby')).toBe(true);
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(q('.icon').hasAttribute('aria-describedby')).toBe(false);
   });
 
   it('skips the pause when moving to a neighbour straight after', () => {

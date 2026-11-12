@@ -30,6 +30,11 @@ describe('KometaCode', () => {
     expect(inputs[1].getAttribute('autocomplete')).toBeNull();
   });
 
+  it('names each cell by default, so no cell is unnamed', () => {
+    const { inputs } = setup();
+    expect(inputs.map((i) => i.getAttribute('aria-label'))).toEqual(['Digit 1', 'Digit 2', 'Digit 3', 'Digit 4', 'Digit 5', 'Digit 6']);
+  });
+
   it('writes a digit and focuses the next cell', () => {
     const { f, inputs } = setup();
     typeDigit(inputs[0], '7');
