@@ -21,10 +21,10 @@ export interface KometaSplitSide {
     :host([data-align='center']) { text-align: center; }
     .amount {
       display: block;
-      white-space: nowrap;
       font-family: var(--font-display, 'Syne'), sans-serif;
       font-weight: 700;
       font-size: var(--split-amount-size, 28px);
+      line-height: 1.1;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.03em;
     }

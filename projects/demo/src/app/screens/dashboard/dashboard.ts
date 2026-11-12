@@ -216,9 +216,9 @@ export class DashboardScreen {
   }
 }
 
-/** "3 840 000 so'm": thousands are grouped with spaces, as in Uzbekistan. */
+/** "3 840 000 so'm": thousands are grouped with no-break spaces, as in Uzbekistan, so a figure wraps only before the unit. */
 function som(n: number): string {
-  return `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm`;
+  return `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} so'm`;
 }
 
 /** A Monday-first week of marks from visit counts. */
