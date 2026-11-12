@@ -19,10 +19,24 @@ jobs:
           node-version: 24
           cache: npm
           registry-url: https://registry.npmjs.org
-      - run: npm ci
       - name: Tag matches package version
         run: test "v$(node -p "require('./projects/kometa-ui/package.json').version")" = "$GITHUB_REF_NAME"
-      - run: npm test -- --watch=false
-      - run: npm run build
-      - run: npm publish --provenance --access public
+      # Tagging an old release must not fail on "cannot publish over". A lookup that errors for another
+      # reason (network) counts as unpublished, so the worst case is the old failure, never a skipped release.
+      - name: Skip if already on npm
+        id: npm
+        run: |
+          spec=$(node -p "const p = require('./projects/kometa-ui/package.json'); p.name + '@' + p.version")
+          if npm view "$spec" version > /dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$spec is already on npm; nothing to publish."
+          fi
+      - if: steps.npm.outputs.published != 'true'
+        run: npm ci
+      - if: steps.npm.outputs.published != 'true'
+        run: npm test -- --watch=false
+      - if: steps.npm.outputs.published != 'true'
+        run: npm run build
+      - if: steps.npm.outputs.published != 'true'
+        run: npm publish --provenance --access public
         working-directory: dist/kometa-ui
