@@ -47,5 +47,9 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "schematics": "./schematics/collection.json",
+  "ng-add": {
+    "save": "dependencies"
   }
 }

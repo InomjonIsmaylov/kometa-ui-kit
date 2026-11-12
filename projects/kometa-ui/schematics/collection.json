@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "ng-add": {
+      "description": "Set up kometa-ui: the layer order and base styles, and provideKometaUi().",
+      "factory": "./ng-add/index.cjs#ngAdd",
+      "schema": "./ng-add/schema.json"
+    }
+  }
+}

@@ -44,7 +44,7 @@ export class Home {
       code: `<k-toggle [(checked)]="on" />` },
     { glyph: '◐', title: 'Light and dark from tokens', text: 'Every colour is a CSS custom property, with a light and a dark column.',
       code: `--amber: #7B93FF;` },
-    { glyph: '◇', title: 'Styles that lose on purpose', text: 'Rules sit in :where() inside a cascade layer, so your CSS wins without !important.',
+    { glyph: '◇', title: 'Restyle without a fight', text: 'Every component reads the tokens and its own custom properties, so you restyle it without !important.',
       code: `k-button { --kbtn-radius: 6px; }` },
     { glyph: '♿', title: 'Accessible by default', text: 'Real buttons, labelled inputs, roving focus and live regions, tested in specs.',
       code: `ariaLabel="Time slot"` },

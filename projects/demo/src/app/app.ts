@@ -232,7 +232,7 @@ export class App {
 @use 'kometa-ui/styles/base';`;
   protected readonly provideCode = `// app.config.ts
 import { ApplicationConfig } from '@angular/core';
-import { provideKometaUi } from 'kometa-ui';
+import { provideKometaUi } from 'kometa-ui/provide-kometa-ui';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideKometaUi()],

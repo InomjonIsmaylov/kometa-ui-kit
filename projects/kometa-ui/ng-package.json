@@ -6,7 +6,8 @@
   },
   "assets": [
     "styles/**/*",
-    "ai/**/*"
+    "ai/**/*",
+    "schematics/**/*"
   ],
   "inlineStyleLanguage": "scss"
 }

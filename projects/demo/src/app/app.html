@@ -41,10 +41,10 @@
       @case ('playground') { <app-playground /> }
       <!-- ============================================================ Guides -->
       @case ('start') {
-        <app-doc id="install" heading="Install" about="Add the package to an Angular 22 app. It has no other runtime dependency." [demo]="false" lang="sh"
-                 code="npm install kometa-ui" />
+        <app-doc id="install" heading="Install" about="Add the package to an Angular 22 app. ng add also does the two steps below for you; with npm install, do them by hand. It has no other runtime dependency." [demo]="false" lang="sh"
+                 code="ng add kometa-ui" />
         <app-doc id="styles" heading="Styles" lang="ts" [demo]="false"
-                 about="Load the layer order first, then the base styles. Components sit in the components layer, so your own CSS wins without fighting specificity."
+                 about="Load the layer order first, then the base styles. Restyle components through the tokens and each component's own custom properties."
                  [code]="stylesCode" />
         <app-doc id="provide" heading="Provider" lang="ts" [demo]="false"
                  about="Add provideKometaUi() to the app config. It is empty today and reserved for global options."

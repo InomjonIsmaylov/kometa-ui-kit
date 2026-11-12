@@ -9,6 +9,10 @@ source. Live docs: https://inomjonismaylov.github.io/kometa-ui-kit/ (one page pe
 
 ## Setup (all three steps are required)
 
+`ng add kometa-ui` (0.3.0 and later) does all three: it installs the package, puts the two `@use` lines at the top of the
+global `.scss` stylesheet (or the two files first in `angular.json` `styles` for a CSS-only app) and adds `provideKometaUi()`.
+By hand:
+
 ```bash
 npm install kometa-ui
 ```

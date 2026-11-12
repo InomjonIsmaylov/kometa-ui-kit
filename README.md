@@ -1,9 +1,14 @@
 # Kometa UI
 
-A dense, warm UI kit for Angular 22: standalone, OnPush components, light and dark from one set of
-CSS custom properties, no third-party UI dependency.
+[![npm](https://img.shields.io/npm/v/kometa-ui)](https://www.npmjs.com/package/kometa-ui)
+[![license](https://img.shields.io/npm/l/kometa-ui)](LICENSE)
 
-**[Live demo and docs](https://inomjonismaylov.github.io/kometa-ui-kit/)**
+89 dense, warm components for Angular 22, built on signals, with no third-party UI dependency.
+You import only the components you use, restyle everything from one set of CSS custom properties
+in light and dark, and ship docs your AI coding agent can read.
+
+**[Live demo and docs](https://inomjonismaylov.github.io/kometa-ui-kit/)** ·
+**[Try it on StackBlitz](https://stackblitz.com/github/InomjonIsmaylov/kometa-ui-kit/tree/main/examples/starter)**
 
 ![Shop dashboard screen built from Kometa UI components](.github/readme/screen-dashboard.png)
 
@@ -97,9 +102,20 @@ The docs site has no sidebar: press <kbd>M</kbd> for the constellation map of ev
 
 ## Use it
 
+```bash
+ng add kometa-ui
+```
+
+`ng add` (from 0.3.0) installs the package, puts the layer order and base styles at the top of your global
+stylesheet and adds `provideKometaUi()`. To set it up by hand:
+
+```bash
+npm install kometa-ui
+```
+
 ```ts
 // app.config.ts
-import { provideKometaUi } from 'kometa-ui';
+import { provideKometaUi } from 'kometa-ui/provide-kometa-ui';
 
 export const appConfig = { providers: [provideKometaUi()] };
 ```
@@ -116,7 +132,15 @@ export const appConfig = { providers: [provideKometaUi()] };
 
 Components use the `k-` prefix (`<k-button>`, `<k-drawer>`, `button[k-halo]`) and read their colours
 from tokens such as `--amber`, `--bg` and `--text`, so overriding a token on any element restyles
-everything inside it.
+everything inside it. Import each component from its own entry point
+(`import { KometaButton } from 'kometa-ui/button'`) so lazy routes keep their components.
+
+| kometa-ui | Angular |
+|---|---|
+| 0.1 – 0.2 | 22.2+ |
+
+Keyboard and screen-reader support for every component, and the known gaps, are in
+[ACCESSIBILITY.md](ACCESSIBILITY.md). Release history: [CHANGELOG.md](CHANGELOG.md).
 
 ## Using it with AI agents
 
@@ -144,6 +168,8 @@ npm run build      # library into dist/kometa-ui
 
 The repo holds two projects: `projects/kometa-ui` (the library) and `projects/demo` (the docs site,
 which imports the library from source). Every push to `main` deploys the demo to GitHub Pages.
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

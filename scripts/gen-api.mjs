@@ -61,7 +61,8 @@ const BINDING = { input: 'input', model: 'model (two-way `[( )]`)', output: 'out
 let md = `# kometa-ui component reference
 
 Generated from the library source by \`npm run api\`; do not edit by hand. Read [usage.md](usage.md) first.
-Every class below is standalone: add it to your component's \`imports\` and import it from \`'kometa-ui'\`.
+Every class below is standalone: add it to your component's \`imports\` and import it from its entry point,
+\`'kometa-ui/<name>'\` (the file name without \`kometa-\`: \`KometaButton\` comes from \`'kometa-ui/button'\`).
 Inputs are signal inputs; boolean inputs accept a bare attribute (\`<k-button outlined />\`).
 
 `;
