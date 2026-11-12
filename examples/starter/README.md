@@ -3,7 +3,7 @@
 A minimal Angular 22 app using [`kometa-ui`](https://www.npmjs.com/package/kometa-ui) from npm: a small booking card
 built from `k-person`, `k-steps`, `k-slots`, `k-toggle`, `k-button` and `ThemeService`.
 
-Open it in the browser: https://stackblitz.com/github/InomjonIsmaylov/kometa-ui-kit/tree/main/examples/starter
+Open it in the browser: https://stackblitz.com/github/InomjonIsmaylov/kometa-ui-kit/tree/main/examples/starter?file=src/app/app.ts
 
 Or run it locally:
 
