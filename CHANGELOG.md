@@ -3,7 +3,7 @@
 Each release has full notes, with migration steps when needed, on
 [GitHub Releases](https://github.com/InomjonIsmaylov/kometa-ui-kit/releases).
 
-## Unreleased
+## 0.3.0 (2026-11-12)
 
 - `ng add kometa-ui` sets up the layer order and base styles (at the top of the global `.scss` stylesheet, or first
   in `angular.json` `styles` for a CSS-only app) and adds `provideKometaUi()`. Running it again changes nothing.

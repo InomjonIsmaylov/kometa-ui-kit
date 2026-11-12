@@ -137,7 +137,7 @@ everything inside it. Import each component from its own entry point
 
 | kometa-ui | Angular |
 |---|---|
-| 0.1 – 0.2 | 22.2+ |
+| 0.1 – 0.3 | 22.2+ |
 
 Keyboard and screen-reader support for every component, and the known gaps, are in
 [ACCESSIBILITY.md](ACCESSIBILITY.md). Release history: [CHANGELOG.md](CHANGELOG.md).
