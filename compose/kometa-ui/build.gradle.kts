@@ -45,3 +45,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
+
+publishing {
+    repositories {
+        // Credentials come from the GitHubPackagesUsername / GitHubPackagesPassword Gradle properties
+        // (ORG_GRADLE_PROJECT_* env vars in CI); they are only checked when a publish to it runs.
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/InomjonIsmaylov/kometa-ui-kit")
+            credentials(PasswordCredentials::class)
+        }
+    }
+}

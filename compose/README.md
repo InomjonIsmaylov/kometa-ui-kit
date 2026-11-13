@@ -12,21 +12,43 @@ same way the web kit has no PrimeNG.
 
 ## Use it in an Android project
 
-Publish to your local Maven repository:
+The kit is published to GitHub Packages. GitHub asks for a token even to download a public
+package, so create a classic personal access token with only the `read:packages` scope
+(github.com → Settings → Developer settings → Personal access tokens) and put it in
+`~/.gradle/gradle.properties`, never in the project:
 
-```bash
-./gradlew :kometa-ui:publishToMavenLocal
+```properties
+gpr.user=<your GitHub username>
+gpr.key=<the token>
 ```
 
 Then in the app:
 
 ```kotlin
 // settings.gradle.kts
-dependencyResolutionManagement { repositories { mavenLocal(); google(); mavenCentral() } }
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://maven.pkg.github.com/InomjonIsmaylov/kometa-ui-kit") {
+            credentials {
+                username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
+                password = providers.gradleProperty("gpr.key").orNull ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
 
 // app/build.gradle.kts
 dependencies { implementation("uz.kometa:kometa-ui:0.1.0") }
 ```
+
+In GitHub Actions the `GITHUB_ACTOR` / `GITHUB_TOKEN` fallback works once the workflow has
+`permissions: packages: read` (and, for a repository other than this one, the package's
+"Manage Actions access" setting lists it).
+
+To try a change before releasing it, `./gradlew :kometa-ui:publishToMavenLocal` and put
+`mavenLocal()` first in the app's repositories.
 
 ```kotlin
 setContent {
@@ -96,3 +118,10 @@ photos, upload, tree, reorder, split/panes and the remaining web-only helpers.
 ```
 
 iOS targets are declared but only build on a Mac.
+
+## Release
+
+1. Set `version` in `kometa-ui/build.gradle.kts` (GitHub Packages will not overwrite a published version).
+2. Commit and push `main`.
+3. Tag that commit `compose-v<version>` and push the tag. `.github/workflows/publish-compose.yml` checks the
+   tag against the version, runs `desktopTest` on macOS (needed for the iOS artifacts) and publishes.
