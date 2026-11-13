@@ -42,7 +42,7 @@ dependencyResolutionManagement {
 }
 
 // app/build.gradle.kts
-dependencies { implementation("uz.kometa:kometa-ui:0.1.0") }
+dependencies { implementation("uz.kometa:kometa-ui:0.2.0") }
 ```
 
 In GitHub Actions the `GITHUB_ACTOR` / `GITHUB_TOKEN` fallback works once the workflow has
