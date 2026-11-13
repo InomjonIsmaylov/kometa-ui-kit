@@ -9,6 +9,7 @@ same way the web kit has no PrimeNG.
 | ![](docs/gallery-dark.png) | ![](docs/gallery-light.png) |
 | ![](docs/gallery2-dark.png) | ![](docs/gallery2-light.png) |
 | ![](docs/gallery3-dark.png) | ![](docs/gallery3-light.png) |
+| ![](docs/gallery4-dark.png) | ![](docs/gallery4-light.png) |
 
 ## Use it in an Android project
 
@@ -103,18 +104,30 @@ Without them the system sans and mono are used.
 | `KometaTabbar` | `k-tabbar` | Glass capsule of icon tabs |
 | `KometaToasts` | `k-toast` | Draining glass pills; place over the screen |
 | `KometaDrawer` | `k-drawer` | Bottom sheet or side panel over a dimmed screen; Back closes it |
+| `KometaSelect` | `k-select` | One choice from a list that drops below the field, or above when there is no room; `pill` for a toolbar |
+| `KometaSearch` | `k-search` | The question is the type; a "×" once there is text, `large` hero |
+| `KometaNumber` | `k-number` | Whole number, `null` when empty, held in `min`..`max`; `money` groups in threes |
+| `KometaDigits` | `k-digits` | `+998` national number, stored as 9 digits, shown `90 123 45 67` |
+| `KometaAccordionItem` | `k-accordion` | Question and answer; hold the open index for one at a time |
+| `KometaCrumbs` | `k-crumbs` | Path that walks down the page to the current title |
+| `KometaAvatars` | `k-avatars` | Overlapping discs and a "+N" |
+| `KometaPair` | `k-pair` | Keep / delete footer of a destructive confirm; `busy` locks both |
+| `KometaTally` | `k-tally` | Figure that counts to its new value, optional ticks |
+| `KometaCountdown` | `k-countdown` | "0:42" over ticks that drain; `onDone` at zero |
 
 State is hoisted the Compose way: every control takes its value and an `on…Change` callback.
 Icons are composable slots drawn in `LocalKometaContentColor`, so any icon set works.
 
-Not ported yet: the date/time/picker/select family, table and rows, menus and popovers, carousel,
-photos, upload, tree, reorder, split/panes and the remaining web-only helpers.
+Not ported yet: date, time, picker, multi-select and suggest, table and rows, menus and popovers,
+carousel, photos, upload, tree, reorder, split/panes and the remaining web-only helpers. Not
+carried over from the ported ones: `k-number`'s minus/plus circles (use `KometaStepper`),
+`k-select` groups, and keyboard arrows in the accordion and select lists.
 
 ## Develop
 
 ```bash
 ./gradlew :kometa-ui:assembleRelease   # Android AAR
-./gradlew :kometa-ui:desktopTest       # logic tests, and renders build/gallery*-{dark,light}.png
+./gradlew :kometa-ui:desktopTest       # logic and select tests, and renders build/gallery*-{dark,light}.png
 ```
 
 iOS targets are declared but only build on a Mac.

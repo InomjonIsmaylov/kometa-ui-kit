@@ -128,4 +128,26 @@ class GalleryRender {
             }
         }
     }
+
+    @Test fun more() = shoot("gallery4", 1400) {
+        KometaCrumbs(listOf("Shops", "Barber Shop", "Services"), onPick = {})
+        KometaSearch("", {}, label = "Search", placeholder = "Find a barber")
+        KometaSearch("fade", {}, label = "Search", clearLabel = "Clear")
+        KometaAvatars(listOf("Ali Valiyev", "Sardor", "Madina K", "Bek", "Olim", "Zarina").map { KometaAvatar(it) })
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.Bottom) {
+            KometaNumber(12480, {}, label = "Price", money = true, suffix = "so'm", modifier = Modifier.weight(1f))
+            KometaNumber(null, {}, label = "Seats", placeholder = "0")
+        }
+        KometaDigits("901234567", {}, label = "Phone")
+        KometaSelect(listOf("Owner", "Barber", "Admin"), "Barber", {}, prefix = "Role:")
+        KometaSelect(listOf("Today", "This week"), null, {}, placeholder = "Any day", pill = true)
+        KometaTally(12480, max = 20000, unit = "so'm this week")
+        KometaCountdown(duration = 60, from = 42, label = "to confirm")
+        KometaAccordionItem("Can I cancel a booking?", open = true, onOpenChange = {}) {
+            BasicText("Up to two hours before it starts, from the booking itself.", style = Kometa.type.body.copy(color = Kometa.colors.muted))
+        }
+        KometaAccordionItem("Do you take cards?", open = false, onOpenChange = {}) {}
+        KometaPair("Keep it", "Delete", {}, {})
+        KometaPair("Cancel", "Save", {}, {}, primary = true, busy = true)
+    }
 }
