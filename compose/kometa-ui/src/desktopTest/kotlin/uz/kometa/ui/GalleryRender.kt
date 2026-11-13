@@ -150,4 +150,30 @@ class GalleryRender {
         KometaPair("Keep it", "Delete", {}, {})
         KometaPair("Cancel", "Save", {}, {}, primary = true, busy = true)
     }
+
+    @Test fun batch() = shoot("gallery5", 1720) {
+        KometaWords(listOf(KometaWordOption("day", "Day"), KometaWordOption("week", "Week", "12"), KometaWordOption("month", "Month"), KometaWordOption("todo", "To do", "3", hot = true)), "week", {})
+        KometaFilm(
+            listOf("Mo" to "12", "Tu" to "13", "We" to "14", "Th" to "15", "Fr" to "16", "Sa" to "17", "Su" to "18").map { (s, d) -> KometaFilmDay(d, d, s, muted = s == "Su", dot = d == "15") },
+            "14", {},
+        )
+        KometaSlots(listOf(KometaSlot("9:00", "9:00"), KometaSlot("10:30", "10:30", "Ali"), KometaSlot("12:00", "12:00", disabled = true), KometaSlot("14:30", "14:30"), KometaSlot("16:00", "16:00", "last")), "10:30", {})
+        KometaRows(label = "Account") {
+            KometaRow(label = "Phone") { KometaRowValue("+998 90 123 45 67") }
+            KometaRow(title = "Notifications", meta = "Bookings and reminders", tone = KometaRowTone.Amber, icon = { BasicText("◆", style = Kometa.type.md.copy(color = LocalKometaContentColor.current)) }) { KometaToggle(true, {}) }
+            KometaRow(title = "Language", tone = KometaRowTone.Blue, icon = { BasicText("A", style = Kometa.type.md.copy(color = LocalKometaContentColor.current)) }, onClick = {}) { BasicText("English", style = Kometa.type.body.copy(color = LocalKometaContentColor.current)) }
+            KometaRow(title = "Sign out", tone = KometaRowTone.Danger, icon = { BasicText("⏻", style = Kometa.type.md.copy(color = LocalKometaContentColor.current)) }, onClick = {}, chevron = false)
+        }
+        KometaSwipe(rightLabel = "Done", leftLabel = "Delete") { KometaPerson("Ali Valiyev", meta = "Haircut · 14:30", modifier = Modifier.padding(12.dp)) }
+        KometaRules("Kometa1", listOf(KometaRule("8+ characters") { it.length >= 8 }, KometaRule("a digit", Regex("[0-9]")), KometaRule("a capital", Regex("[A-Z]"))))
+        KometaNotes("Short fade, please. I'll be five minutes late, sorry!", {}, label = "Note", maxLength = 60)
+        KometaCode("4821", {}, label = "Code from SMS", placeholder = "·")
+        KometaWord("Book this time", {}, lead = true)
+        Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.CenterVertically) {
+            KometaWord("See all", {})
+            KometaWord("Skip", {}, quiet = true, arrow = false)
+            KometaErase("Delete account", {})
+        }
+        KometaQuiet("No bookings yet", hint = "When someone books a time with you, it shows here.") { KometaWord("Share your page", {}) }
+    }
 }

@@ -10,6 +10,7 @@ same way the web kit has no PrimeNG.
 | ![](docs/gallery2-dark.png) | ![](docs/gallery2-light.png) |
 | ![](docs/gallery3-dark.png) | ![](docs/gallery3-light.png) |
 | ![](docs/gallery4-dark.png) | ![](docs/gallery4-light.png) |
+| ![](docs/gallery5-dark.png) | ![](docs/gallery5-light.png) |
 
 ## Use it in an Android project
 
@@ -114,6 +115,17 @@ Without them the system sans and mono are used.
 | `KometaPair` | `k-pair` | Keep / delete footer of a destructive confirm; `busy` locks both |
 | `KometaTally` | `k-tally` | Figure that counts to its new value, optional ticks |
 | `KometaCountdown` | `k-countdown` | "0:42" over ticks that drain; `onDone` at zero |
+| `KometaWords`, `KometaWordOption` | `k-words` | A few words with a sliding cream line; `tabs` for panel tabs |
+| `KometaFilm`, `KometaFilmDay` | `k-film` | Week strip with a glass thumb behind the chosen day |
+| `KometaSlots`, `KometaSlot` | `k-slots` | Time slot chips, amber edge on the chosen one |
+| `KometaRows`, `KometaRow`, `KometaRowValue` | `k-rows`, `k-row` | Glass settings panel; fact rows and setting rows with tinted icon tiles |
+| `KometaSwipe` | `k-swipe` | Swipe right over ticks, left past a red ring; both also screen-reader actions |
+| `KometaRules`, `KometaRule` | `k-rules` | Password rules that strike themselves out |
+| `KometaNotes` | `k-notes` | Multi-line text that grows; count in the last 30 characters |
+| `KometaCode` | `k-code` | One cell per digit; typing and pasting as in one field |
+| `KometaWord` | `k-word` | Underlined action word with an arrow; `lead` row, `busy` dash |
+| `KometaErase` | `k-erase` | Red destructive word |
+| `KometaQuiet` | `k-quiet` | Centred empty state, title and hint |
 
 State is hoisted the Compose way: every control takes its value and an `on…Change` callback.
 Icons are composable slots drawn in `LocalKometaContentColor`, so any icon set works.

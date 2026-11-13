@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private val TABS = listOf(KometaTab("controls", "Controls"), KometaTab("inputs", "Inputs"), KometaTab("display", "Display"), KometaTab("overlays", "Overlays"))
+private val TABS = listOf(KometaTab("controls", "Controls"), KometaTab("inputs", "Inputs"), KometaTab("display", "Display"), KometaTab("overlays", "Overlays"), KometaTab("more", "More"))
 
 @Composable
 private fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
@@ -72,6 +72,7 @@ private fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
                 "controls" -> Controls()
                 "inputs" -> Inputs()
                 "display" -> Display()
+                "more" -> More()
                 else -> Overlays()
             }
         }
@@ -224,5 +225,58 @@ private fun ColumnScope.Overlays() {
                 KometaPair("Cancel", "Confirm", { drawer = null }, { drawer = null }, primary = true)
             }
         }
+    }
+}
+
+@Composable
+private fun ColumnScope.More() {
+    var word by remember { mutableStateOf("week") }
+    var day by remember { mutableStateOf("14") }
+    var slot by remember { mutableStateOf("10:30") }
+    var pw by remember { mutableStateOf("") }
+    var note by remember { mutableStateOf("") }
+    var code by remember { mutableStateOf("") }
+    var push by remember { mutableStateOf(true) }
+    var busy by remember { mutableStateOf(false) }
+    var swiped by remember { mutableStateOf("—") }
+    KometaWords(
+        listOf(KometaWordOption("day", "Day"), KometaWordOption("week", "Week", "12"), KometaWordOption("month", "Month"), KometaWordOption("todo", "To do", "3", hot = true)),
+        word, { word = it }, description = "Period",
+    )
+    KometaFilm(
+        listOf("Mo" to "12", "Tu" to "13", "We" to "14", "Th" to "15", "Fr" to "16", "Sa" to "17", "Su" to "18").map { (s, d) ->
+            KometaFilmDay(d, d, s, muted = s == "Su", dot = d == "15")
+        },
+        day, { day = it }, description = "Day",
+    )
+    KometaSlots(
+        listOf(KometaSlot("9:00", "9:00"), KometaSlot("10:30", "10:30", "Ali"), KometaSlot("12:00", "12:00", disabled = true), KometaSlot("14:30", "14:30"), KometaSlot("16:00", "16:00", "last")),
+        slot, { slot = it }, description = "Time",
+    )
+    KometaRows(label = "Account") {
+        KometaRow(label = "Phone") { KometaRowValue("+998 90 123 45 67") }
+        KometaRow(title = "Notifications", meta = "Bookings and reminders", tone = KometaRowTone.Amber, icon = { Label("◆") }) {
+            KometaToggle(push, { push = it }, label = "Notifications")
+        }
+        KometaRow(title = "Language", tone = KometaRowTone.Blue, icon = { Label("A") }, onClick = {}) { BasicText("English", style = Kometa.type.body.copy(color = LocalKometaContentColor.current)) }
+        KometaRow(title = "Sign out", tone = KometaRowTone.Danger, icon = { Label("!") }, onClick = {}, chevron = false)
+    }
+    Label("swiped: $swiped")
+    KometaSwipe(rightLabel = "Done", leftLabel = "Delete", onSwipeRight = { swiped = "right" }, onSwipeLeft = { swiped = "left" }) {
+        KometaPerson("Ali Valiyev", meta = "Haircut · 14:30", modifier = Modifier.padding(12.dp))
+    }
+    KometaField(pw, { pw = it }, label = "New password", password = true)
+    KometaRules(pw, listOf(KometaRule("8+ characters") { it.length >= 8 }, KometaRule("a digit", Regex("[0-9]")), KometaRule("a capital", Regex("[A-Z]"))))
+    KometaNotes(note, { note = it }, label = "Note", placeholder = "Anything the barber should know", maxLength = 60)
+    Label("code = \"$code\"")
+    KometaCode(code, { code = it }, label = "Code from SMS", placeholder = "·")
+    KometaWord("Book this time", { busy = !busy }, lead = true, busy = busy)
+    Row(horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.CenterVertically) {
+        KometaWord("See all", {})
+        KometaWord("Skip", {}, quiet = true, arrow = false)
+        KometaErase("Delete account", {})
+    }
+    KometaQuiet("No bookings yet", hint = "When someone books a time with you, it shows here.") {
+        KometaWord("Share your page", {})
     }
 }

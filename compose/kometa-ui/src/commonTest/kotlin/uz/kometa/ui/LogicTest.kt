@@ -85,4 +85,18 @@ class LogicTest {
         val low = androidx.compose.ui.unit.IntRect(300, 700, 390, 740)
         assertEquals(androidx.compose.ui.unit.IntOffset(192, 394), placeBelowOrAbove(low, win, list, 6, 8))
     }
+
+    @Test fun batchHelpers() {
+        assertEquals("1234", codeDigits("12-34", 6))
+        assertEquals("123456", codeDigits("1234567", 6))
+        assertEquals(null, notesStretch(31))
+        assertEquals(30, notesStretch(30))
+        assertEquals(10, notesStretch(6))
+        assertEquals(0, notesStretch(-2))
+        assertEquals(true, KometaRule("digit", Regex("[0-9]")).test("a1"))
+        assertEquals(false, KometaRule("digit", Regex("[0-9]")).test("ab"))
+        assertEquals(6, swipeLit(50f, 200f, 12))
+        assertEquals(12, swipeLit(150f, 200f, 12))
+        assertEquals(0, swipeLit(-20f, 200f, 12))
+    }
 }
