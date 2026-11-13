@@ -27,6 +27,10 @@ kotlin {
             api(compose.foundation)
             api(compose.ui)
         }
+        // The drawer's Android window needs the saved-state owner, which Compose pulls in only at runtime.
+        androidMain.dependencies {
+            implementation("androidx.savedstate:savedstate-ktx:1.2.1")
+        }
         commonTest.dependencies {
             implementation(kotlin("test"))
         }

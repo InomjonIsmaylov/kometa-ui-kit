@@ -113,7 +113,7 @@ private fun Toast(item: KometaToastItem, onDismiss: (Long) -> Unit, top: Boolean
             Modifier
                 .height(IntrinsicSize.Min)
                 .clip(shape)
-                .background(c.glass)
+                .background(c.bg).background(c.glass) // no backdrop blur in Compose, so glass sits on the page colour to stay readable
                 .border(1.dp, c.glassLine, shape)
                 .clickable(source, indication = null, onClickLabel = closeLabel, role = Role.Button) { state.targetState = false }
                 .drawBehind {

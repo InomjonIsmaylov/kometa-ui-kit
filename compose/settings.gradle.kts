@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 }
 
 include(":kometa-ui")
+include(":sample") // an Android app showing every component, to try the kit on a device

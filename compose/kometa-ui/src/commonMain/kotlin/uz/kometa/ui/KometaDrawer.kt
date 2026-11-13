@@ -19,7 +19,14 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -51,6 +58,15 @@ private object FullWindow : PopupPositionProvider {
     override fun calculatePosition(anchorBounds: IntRect, windowSize: IntSize, layoutDirection: LayoutDirection, popupContentSize: IntSize) = IntOffset.Zero
 }
 
+/** A focusable popup over the whole window; the drawer's window on desktop and iOS. */
+@Composable
+internal fun PopupDrawerWindow(onDismiss: () -> Unit, content: @Composable () -> Unit) =
+    Popup(popupPositionProvider = FullWindow, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true), content = content)
+
+/** The window the drawer draws in: on Android a panel window over the whole screen, bars included. */
+@Composable
+internal expect fun DrawerWindow(onDismiss: () -> Unit, content: @Composable () -> Unit)
+
 /**
  * A panel that slides up from the bottom (a sheet) or in from a side over a dimmed screen
  * (`k-drawer`). [visible] is owned by the caller; [onDismiss] is called for Back, and for a tap on
@@ -72,7 +88,7 @@ fun KometaDrawer(
     if (!state.currentState && !state.targetState && state.isIdle) return
 
     val c = Kometa.colors
-    Popup(popupPositionProvider = FullWindow, onDismissRequest = onDismiss, properties = PopupProperties(focusable = true)) {
+    DrawerWindow(onDismiss) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
             AnimatedVisibility(state, enter = fadeIn(tween(300)), exit = fadeOut(tween(300))) {
                 Box(
@@ -103,7 +119,12 @@ fun KometaDrawer(
                         .clip(shape)
                         // The web sheet is glass over a blurred page; Compose cannot blur behind a window, so it is solid card.
                         .background(c.card)
-                        .semantics { paneTitle = label; if (label.isNotEmpty()) contentDescription = label },
+                        .semantics { paneTitle = label; if (label.isNotEmpty()) contentDescription = label }
+                        // Keeps the content clear of the system bars and the keyboard where the window reaches them.
+                        .windowInsetsPadding(
+                            if (bottom) WindowInsets.systemBars.union(WindowInsets.ime).only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal)
+                            else WindowInsets.systemBars.only(WindowInsetsSides.Vertical + if (left) WindowInsetsSides.Start else WindowInsetsSides.End),
+                        ),
                     content = content,
                 )
             }

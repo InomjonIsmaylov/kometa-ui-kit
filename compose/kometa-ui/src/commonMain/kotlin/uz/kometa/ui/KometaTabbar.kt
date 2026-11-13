@@ -48,7 +48,7 @@ fun KometaTabbar(
     val c = Kometa.colors
     val pill = RoundedCornerShape(50)
     Row(
-        modifier.clip(pill).background(c.glass).border(1.dp, c.glassLine, pill).padding(6.dp).selectableGroup(),
+        modifier.clip(pill).background(c.bg).background(c.glass).border(1.dp, c.glassLine, pill).padding(6.dp).selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         tabs.forEach { tab ->

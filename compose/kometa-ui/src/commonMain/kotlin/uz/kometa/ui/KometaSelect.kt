@@ -1,11 +1,8 @@
 package uz.kometa.ui
 
-import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +38,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -71,8 +70,10 @@ internal fun placeBelowOrAbove(anchor: IntRect, window: IntSize, list: IntSize, 
 }
 
 private class DropPosition(val gap: Int, val pad: Int) : PopupPositionProvider {
+    /** Whether the list went above the field; it grows from that edge. */
+    var above by mutableStateOf(false)
     override fun calculatePosition(anchorBounds: IntRect, windowSize: IntSize, layoutDirection: LayoutDirection, popupContentSize: IntSize) =
-        placeBelowOrAbove(anchorBounds, windowSize, popupContentSize, gap, pad)
+        placeBelowOrAbove(anchorBounds, windowSize, popupContentSize, gap, pad).also { above = it.y < anchorBounds.top }
 }
 
 /**
@@ -145,52 +146,63 @@ fun <T> KometaSelect(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Canvas(Modifier.size(8.dp).rotate(turn)) {
-                // A chevron: two strokes of an L turned 45° (down) or 225° (up).
+            Canvas(Modifier.padding(horizontal = 2.dp).size(8.dp).rotate(turn)) {
+                // A chevron: two strokes of an L turned 45° (down) or 225° (up). The L is drawn a
+                // quarter back along the diagonal so the turned shape sits on the centre line.
                 val w = 1.dp.toPx()
-                drawLine(c.muted, Offset(size.width, 0f), Offset(size.width, size.height), w)
-                drawLine(c.muted, Offset(0f, size.height), Offset(size.width, size.height), w)
+                val e = size.width * .75f
+                val s = -size.width * .25f
+                drawLine(c.muted, Offset(e, s), Offset(e, e), w)
+                drawLine(c.muted, Offset(s, e), Offset(e, e), w)
             }
         }
 
         if (open) {
             val gap = with(density) { 6.dp.roundToPx() }
             val pad = with(density) { 8.dp.roundToPx() }
+            val place = remember(gap, pad) { DropPosition(gap, pad) }
+            val grow = remember { Animatable(0f) }
+            LaunchedEffect(Unit) { grow.animateTo(1f, tween(320, easing = SpringEase)) }
             Popup(
-                popupPositionProvider = remember(gap, pad) { DropPosition(gap, pad) },
+                popupPositionProvider = place,
                 onDismissRequest = { open = false },
                 properties = PopupProperties(focusable = true),
             ) {
                 val shape = RoundedCornerShape(16.dp)
-                val state = remember { MutableTransitionState(false).apply { targetState = true } }
-                AnimatedVisibility(state, enter = scaleIn(tween(320, easing = SpringEase), initialScale = .96f, transformOrigin = TransformOrigin(.5f, 0f)) + fadeIn(tween(200))) {
-                    Column(
-                        Modifier
-                            .widthIn(min = maxOf(160.dp, with(density) { width.toDp() }))
-                            .width(IntrinsicSize.Max)
-                            .heightIn(max = 300.dp)
-                            .clip(shape)
-                            .background(c.card, shape)
-                            .border(1.dp, c.glassLine, shape)
-                            .verticalScroll(rememberScrollState())
-                            .padding(6.dp),
-                    ) {
-                        if (options.isEmpty() && emptyLabel.isNotEmpty()) {
-                            BasicText(emptyLabel.uppercase(), Modifier.padding(12.dp, 8.dp), style = Kometa.type.eyebrow.copy(color = c.muted))
+                Column(
+                    Modifier
+                        // Read at draw time, after the popup is placed, so it grows from the field's side.
+                        .graphicsLayer {
+                            val t = grow.value
+                            scaleX = .96f + .04f * t
+                            scaleY = scaleX
+                            alpha = (t * 1.6f).coerceIn(0f, 1f)
+                            transformOrigin = TransformOrigin(.5f, if (place.above) 1f else 0f)
                         }
-                        options.forEachIndexed { i, o ->
-                            val on = i == chosen
-                            BasicText(
-                                label(o),
-                                Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .selectable(on, role = Role.RadioButton) { onValueChange(o); open = false }
-                                    .drawBehind { if (on) drawRect(c.displayInk, size = size.copy(width = 2.dp.toPx())) }
-                                    .padding(12.dp, 11.dp),
-                                style = Kometa.type.md.copy(color = if (on) c.displayInk else c.text, fontSize = 15.sp),
-                            )
-                        }
+                        .widthIn(min = maxOf(160.dp, with(density) { width.toDp() }))
+                        .width(IntrinsicSize.Max)
+                        .heightIn(max = 300.dp)
+                        .clip(shape)
+                        .background(c.card, shape)
+                        .border(1.dp, c.glassLine, shape)
+                        .verticalScroll(rememberScrollState())
+                        .padding(6.dp),
+                ) {
+                    if (options.isEmpty() && emptyLabel.isNotEmpty()) {
+                        BasicText(emptyLabel.uppercase(), Modifier.padding(12.dp, 8.dp), style = Kometa.type.eyebrow.copy(color = c.muted))
+                    }
+                    options.forEachIndexed { i, o ->
+                        val on = i == chosen
+                        BasicText(
+                            label(o),
+                            Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .selectable(on, role = Role.RadioButton) { onValueChange(o); open = false }
+                                .drawBehind { if (on) drawRect(c.displayInk, size = size.copy(width = 2.dp.toPx())) }
+                                .padding(12.dp, 11.dp),
+                            style = Kometa.type.md.copy(color = if (on) c.displayInk else c.text, fontSize = 15.sp),
+                        )
                     }
                 }
             }
