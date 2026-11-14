@@ -213,4 +213,26 @@ class GalleryRender {
             }
         })
     }
+
+    @Test fun batch7() = shoot("gallery7", 820) {
+        KometaSort(listOf(KometaSortOption("name", "Name"), KometaSortOption("date", "Date"), KometaSortOption("sum", "Sum")), "date", KometaSortDir.Desc, {})
+        KometaPager(total = 134, page = 5, onPageChange = {}, pageSize = 25, onPageSizeChange = {})
+        KometaHue("#E7C255", {}, label = "Colour")
+        KometaMenu(listOf(KometaWordOption("day", "Day"), KometaWordOption("week", "Week")), "week", {}, label = "Period")
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            KometaProviderLogo("click", size = 28.dp)
+            KometaProviderLogo("payme", size = 28.dp)
+            KometaTip("Copy the link") { BasicText("Hover me", style = Kometa.type.md.copy(color = Kometa.colors.text)) }
+            KometaContext(listOf(KometaContextItem("Edit"), null, KometaContextItem("Delete", danger = true)), {}) {
+                BasicText("Long-press me", style = Kometa.type.md.copy(color = Kometa.colors.text))
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            KometaActions(listOf(KometaAction("Edit") {}, KometaAction("Delete", danger = true) {}), "More actions", open = false, onOpenChange = {})
+            Box { KometaButton("Filters", {}); KometaPop(false, {}) {} }
+        }
+        Box(Modifier.fillMaxWidth().height(140.dp)) {
+            KometaFab(listOf(KometaFabAction("New booking"), KometaFabAction("New client")), open = false, onOpenChange = {}, onPick = {})
+        }
+    }
 }

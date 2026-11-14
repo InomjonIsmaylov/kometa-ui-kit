@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private val TABS = listOf(KometaTab("controls", "Controls"), KometaTab("inputs", "Inputs"), KometaTab("display", "Display"), KometaTab("overlays", "Overlays"), KometaTab("more", "More"), KometaTab("extra", "Extra"))
+private val TABS = listOf(KometaTab("controls", "Controls"), KometaTab("inputs", "Inputs"), KometaTab("display", "Display"), KometaTab("overlays", "Overlays"), KometaTab("more", "More"), KometaTab("extra", "Extra"), KometaTab("menus", "Menus"))
 
 @Composable
 private fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
@@ -76,6 +76,7 @@ private fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
                 "display" -> Display()
                 "more" -> More()
                 "extra" -> Extra()
+                "menus" -> Menus()
                 else -> Overlays()
             }
         }
@@ -328,3 +329,56 @@ private fun ColumnScope.Extra() {
         }
     })
 }
+
+@Composable
+private fun ColumnScope.Menus() {
+    var said by remember { mutableStateOf("—") }
+    var actions by remember { mutableStateOf(false) }
+    var pop by remember { mutableStateOf(false) }
+    var fab by remember { mutableStateOf(false) }
+    var ask by remember { mutableStateOf<KometaConfirmation?>(null) }
+    var period by remember { mutableStateOf("week") }
+    var hue by remember { mutableStateOf("#E7C255") }
+    var sort by remember { mutableStateOf("date") }
+    var dir by remember { mutableStateOf(KometaSortDir.Desc) }
+    var size by remember { mutableIntStateOf(10) }
+    val view = rememberKometaListView((1..134).toList(), mapOf("n" to compareBy<Int> { it }), "n", 10)
+    view.pageSize = size
+    Label("last: $said")
+    KometaSort(listOf(KometaSortOption("name", "Name"), KometaSortOption("date", "Date"), KometaSortOption("sum", "Sum")), sort, dir, {
+        dir = nextSortDirFor(it, sort, dir); sort = it; said = "sort $it $dir"
+    })
+    BasicText("Rows " + view.rows.first() + "–" + view.rows.last(), style = Kometa.type.md.copy(color = Kometa.colors.text))
+    KometaPager(total = view.total, page = view.page, onPageChange = { view.page = it }, pageSize = size, onPageSizeChange = { size = it })
+    KometaHue(hue, { hue = it }, label = "Colour")
+    KometaMenu(listOf(KometaWordOption("day", "Day"), KometaWordOption("week", "Week"), KometaWordOption("month", "Month")), period, { period = it }, label = "Period")
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+        KometaProviderLogo("click", size = 28.dp)
+        KometaProviderLogo("payme", size = 28.dp)
+        KometaTip("Copy the link", sub = "kometa.uz/ali") { BasicText("Hold for a tip", style = Kometa.type.md.copy(color = Kometa.colors.text)) }
+    }
+    KometaContext(listOf(KometaContextItem("Edit", "edit"), KometaContextItem("Copy", "copy", shortcut = "Ctrl C"), null, KometaContextItem("Delete", "delete", danger = true)), { said = "context ${it.value}" }) {
+        BasicText("Long-press this line for a menu", Modifier.fillMaxWidth().padding(vertical = 12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text))
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+        KometaActions(listOf(KometaAction("Edit") { said = "actions edit" }, KometaAction("Archive", badge = "2") { said = "actions archive" }, KometaAction("Delete", danger = true) { said = "actions delete" }), "More actions", actions, { actions = it })
+        Box {
+            KometaButton("Filters", { pop = !pop })
+            KometaPop(pop, { pop = it }, label = "Filters", width = 240.dp) {
+                BasicText("Only paid", Modifier.padding(12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text))
+                KometaWord("Apply", { pop = false; said = "filters applied" })
+            }
+        }
+        KometaButton("Delete…", {
+            ask = KometaConfirmation("Delete", "Keep", header = "Delete this booking?", message = "Ali will get a message.", danger = true)
+        })
+    }
+    Box(Modifier.fillMaxWidth().height(200.dp)) {
+        KometaFab(listOf(KometaFabAction("New booking", "booking"), KometaFabAction("New client", "client")), fab, { fab = it }, { said = "fab ${it.value}" })
+    }
+    KometaTray(ask, onAccept = { ask = null; said = "tray accept" }, onReject = { ask = null; said = "tray reject" })
+}
+
+// The sample keeps its own sort words, so it flips direction the way KometaSort's doc describes.
+private fun nextSortDirFor(option: String, key: String, dir: KometaSortDir) =
+    if (option != key) KometaSortDir.Asc else if (dir == KometaSortDir.Asc) KometaSortDir.Desc else KometaSortDir.Asc

@@ -1,5 +1,6 @@
 package uz.kometa.ui
 
+import androidx.compose.ui.unit.dp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -116,5 +117,66 @@ class LogicTest {
         assertEquals(androidx.compose.ui.unit.IntOffset(100, 252), placeNote(mid, win, tip, 8, 8, KometaNotePlacement.Auto))
         val top = androidx.compose.ui.unit.IntRect(380, 10, 400, 30)
         assertEquals(androidx.compose.ui.unit.IntOffset(192, 38), placeNote(top, win, tip, 8, 8, KometaNotePlacement.Auto))
+    }
+
+    @Test fun batch7Helpers() {
+        val sz = { w: Int, h: Int -> androidx.compose.ui.unit.IntSize(w, h) }
+        val rect = { l: Int, t: Int, r: Int, b: Int -> androidx.compose.ui.unit.IntRect(l, t, r, b) }
+        val at = { x: Int, y: Int -> androidx.compose.ui.unit.IntOffset(x, y) }
+        // actions, sort, paging
+        assertEquals(2, nextEnabled(listOf(true, false, true), 0, 1))
+        assertEquals(0, nextEnabled(listOf(true, false, true), 2, 1))
+        assertEquals(2, nextEnabled(listOf(true, true, true), 3, -1))
+        assertEquals(-1, nextEnabled(listOf(false, false), 0, 1))
+        assertEquals(KometaSortDir.Desc, nextSortDir("n", "n", KometaSortDir.Asc))
+        assertEquals(KometaSortDir.Asc, nextSortDir("name", "n", KometaSortDir.Desc))
+        assertEquals(KometaSortDir.Desc, nextSortDir("n", "name", KometaSortDir.Asc, start = KometaSortDir.Desc))
+        assertEquals(3, pageCountOf(25, 10))
+        assertEquals(1, pageCountOf(0, 10))
+        assertEquals(5, pageCountOf(5, 0))
+        assertEquals(1, pageNow(2, "a", "b", 5))
+        assertEquals(2, pageNow(3, "k", "k", 2))
+        assertEquals((21..25).toList(), pageSlice((1..25).toList(), 3, 10))
+        assertEquals(listOf("a1", "a2", "a10"), listOf("a10", "a2", "a1").sortedWith(::kometaSortText))
+        assertEquals(0, kometaSortText("A", "a"))
+        val view = KometaListView<Int>(mapOf("n" to compareBy { it }), "n", 10, mapOf("n" to KometaSortDir.Desc))
+        view.source = (1..25).toList()
+        assertEquals(KometaSortDir.Desc, view.dir)
+        view.page = 3
+        assertEquals(listOf(5, 4, 3, 2, 1), view.rows)
+        view.pickSort("n")
+        assertEquals(1, view.page)
+        assertEquals((1..10).toList(), view.rows)
+        // tip, pop, context
+        assertEquals(at(150, 100), placeTip(rect(100, 100, 140, 140), sz(1000, 800), sz(100, 40), 10, 8, 8))
+        assertEquals(at(790, 100), placeTip(rect(900, 100, 980, 140), sz(1000, 800), sz(100, 40), 10, 8, 8))
+        assertEquals(at(75, 148), placeTip(rect(100, 100, 200, 140), sz(300, 800), sz(150, 40), 10, 8, 8))
+        assertEquals(at(75, 702), placeTip(rect(100, 750, 200, 790), sz(300, 800), sz(150, 40), 10, 8, 8))
+        assertEquals(at(100, 148), placePop(rect(100, 100, 200, 140), sz(1000, 800), sz(300, 200), 8, 8, false))
+        assertEquals(at(8, 148), placePop(rect(100, 100, 200, 140), sz(1000, 800), sz(300, 200), 8, 8, true))
+        assertEquals(at(100, 492), placePop(rect(100, 700, 200, 740), sz(1000, 800), sz(300, 200), 8, 8, false))
+        assertEquals(at(100, 100), placeContext(at(100, 100), sz(1000, 800), sz(180, 200), 8))
+        assertEquals(at(812, 500), placeContext(at(950, 700), sz(1000, 800), sz(180, 200), 8))
+        // menu, fab, tray
+        assertEquals("Alpha", menuShown(listOf(KometaWordOption("a", "Alpha")), "a", "Pick"))
+        assertEquals("Pick", menuShown(listOf(KometaWordOption("a", "Alpha")), "x", "Pick"))
+        assertEquals(0, fabRiseDelay(2, 3))
+        assertEquals(80, fabRiseDelay(0, 3))
+        assertEquals(true, trayIsSheet(639.dp))
+        assertEquals(false, trayIsSheet(640.dp))
+        // hue, pager, provider logo
+        assertEquals("#E75555", hslToHex(0f, 75f, 62f))
+        assertEquals("#00FF00", hslToHex(120f, 100f, 50f))
+        assertEquals(240f, hexToHue("#0000FF"))
+        assertEquals(0f, hexToHue("nope"))
+        assertEquals(3, hueTick("#E7C255", 24))
+        assertEquals(0, hueTick("#FF0008", 24))
+        assertEquals(androidx.compose.ui.graphics.Color.Transparent, hexColor("bad"))
+        assertEquals(listOf(1, 2, null, 9), pageWindow(1, 9))
+        assertEquals(listOf(1, null, 4, 5, 6, null, 9), pageWindow(5, 9))
+        assertEquals(listOf(1, 2, 3, 4, null, 9), pageWindow(3, 9))
+        assertEquals("126–134 / 134", pagerCaption(134, 6, 25))
+        assertEquals("click", providerMark(" Click "))
+        assertEquals(null, providerMark("telegram"))
     }
 }

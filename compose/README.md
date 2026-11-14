@@ -12,6 +12,7 @@ same way the web kit has no PrimeNG.
 | ![](docs/gallery4-dark.png) | ![](docs/gallery4-light.png) |
 | ![](docs/gallery5-dark.png) | ![](docs/gallery5-light.png) |
 | ![](docs/gallery6-dark.png) | ![](docs/gallery6-light.png) |
+| ![](docs/gallery7-dark.png) | ![](docs/gallery7-light.png) |
 
 ## Use it in an Android project
 
@@ -138,15 +139,30 @@ Without them the system sans and mono are used.
 | `KometaLink` | `k-link` | Copy word that reads "Copied" for a moment, announced politely |
 | `KometaHalo`, `KometaHaloGlyph` | `button[k-halo]` | Icon-only button, a disc of light when pressed or hovered |
 | `KometaConfirm` | `k-confirm` | Row that crossfades to the caller's question; the hidden pane takes no taps |
+| `KometaActions`, `KometaAction` | `k-actions` | ⋯ button that drops a list of actions; danger words red, optional badge |
+| `KometaPop`, `KometaPopAlign` | `k-pop` | Glass panel under the button it sits beside; any content |
+| `KometaContext`, `KometaContextItem` | `k-context` | Menu on long-press or right-click where the finger was; `null` is a divider |
+| `KometaMenu` | `k-menu` | "Period Week ⌄" word that opens its options in the page |
+| `KometaTip` | `k-tip` | Glass tip after a hover or a long-press, with an optional second line |
+| `KometaFab`, `KometaFabAction` | `k-fab` | Round + that raises its actions as words, one after another |
+| `KometaTray`, `KometaConfirmation` | `k-tray` | Confirm request: bottom sheet under 640dp, centred card above |
+| `KometaSort`, `KometaSortHeader`, `KometaSortOption` | `k-sort` | Sort words with a cream line and an arrow; a header form for tables |
+| `KometaPager` | `k-pager` | "101–125 / 134 ‹ 5 / 6 ›" with a per-page choice |
+| `KometaListView`, `rememberKometaListView` | `paging` | Not a component: filter, sort and page state for a list, feeding `KometaSort` and `KometaPager` |
+| `KometaHue` | `k-hue` | A row of hue ticks that picks a `#RRGGBB` colour |
+| `KometaProviderLogo` | `k-provider-logo` | Click and Payme marks on a white plate; other providers through `art` |
 
 State is hoisted the Compose way: every control takes its value and an `on…Change` callback.
 Icons are composable slots drawn in `LocalKometaContentColor`, so any icon set works.
 
-Not ported yet: date, time, picker, multi-select and suggest, table, menus and popovers,
-carousel, photos, upload, tree, reorder, panes and the remaining web-only helpers. Not
-carried over from the ported ones: `k-number`'s minus/plus circles (use `KometaStepper`),
-`k-select` groups, keyboard arrows in the accordion and select lists, `k-link`'s band swept over the
-copied value, `k-keys`' start on hover (here `play` loops), and `k-confirm` moving focus into the pane shown.
+Not ported yet: date, time, picker, multi-select and suggest, table, carousel, photos, upload,
+tree, reorder, panes and the remaining web-only helpers. Not carried over from the ported ones:
+`k-number`'s minus/plus circles (use `KometaStepper`), `k-select` groups, keyboard arrows in the
+accordion, select, menu and hue, `k-link`'s band swept over the copied value, `k-keys`' start on hover
+(here `play` loops), focus moved into a shown pane or overlay and back (`k-confirm`, pop, context, fab,
+tray), backdrop blur behind glass popups, the `animation` presets on the actions list, Back closing
+`KometaMenu`, and the Telegram / Google / Instagram logo art. List sorting compares lowercased text, not
+a locale collator.
 
 ## Develop
 
