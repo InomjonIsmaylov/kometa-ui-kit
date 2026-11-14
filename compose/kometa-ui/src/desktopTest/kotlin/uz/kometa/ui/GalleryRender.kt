@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -175,5 +178,39 @@ class GalleryRender {
             KometaErase("Delete account", {})
         }
         KometaQuiet("No bookings yet", hint = "When someone books a time with you, it shows here.") { KometaWord("Share your page", {}) }
+    }
+
+    @Test fun batch6() = shoot("gallery6", 1500) {
+        val dusk = Brush.linearGradient(listOf(Color(0xFF3A2E5C), Color(0xFFE8A15A)))
+        val noon = Brush.linearGradient(listOf(Color(0xFF2C6E8F), Color(0xFFB8E0D2)))
+        KometaFrame(caption = "Studio, Chilonzor") { Box(Modifier.fillMaxWidth().height(110.dp).background(dusk)) }
+        KometaReveal(40, {}, before = { Box(Modifier.fillMaxSize().background(dusk)) }, after = { Box(Modifier.fillMaxSize().background(noon)) }, aspectRatio = 2.4f)
+        KometaSplit(KometaSplitSide("1 240 000", "cash"), KometaSplitSide("860 000", "card"))
+        KometaMarks(listOf(KometaMarkDay("Mo", "10:00\n19:00"), KometaMarkDay("Tu", "10:00\n19:00"), KometaMarkDay("We", null), KometaMarkDay("Th", "12:00\n20:00"), KometaMarkDay("Fr", "10:00\n18:00")))
+        KometaTrail {
+            KometaTrailStep("14:02", gap = "32 min") { BasicText("Booked online", style = Kometa.type.md.copy(color = Kometa.colors.text)) }
+            KometaTrailStep("14:34") { BasicText("Arrived", style = Kometa.type.md.copy(color = Kometa.colors.text)) }
+        }
+        KometaHint("Lead fee", "12% of a new client's first visit, when they came from search.", open = true, onOpenChange = {})
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            BasicText("Revenue", style = Kometa.type.md.copy(color = Kometa.colors.text))
+            KometaNote("Takings for the period, before payouts.", label = "About revenue")
+            KometaKeys("Ctrl+Shift+P")
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            BasicText("kometa.uz/ali", style = Kometa.type.md.copy(color = Kometa.colors.muted))
+            KometaLink("kometa.uz/ali", "Copy", "Copied")
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            KometaHalo({}, "Close", size = KometaHaloSize.Sm) { KometaHaloGlyph("✕") }
+            KometaHalo({}, "Previous") { KometaHaloGlyph("‹") }
+            KometaHalo({}, "More", size = KometaHaloSize.Lg) { KometaHaloGlyph("⋯") }
+        }
+        KometaConfirm(asking = true, row = { KometaPerson("Ali Valiyev", meta = "Haircut · 14:30") }, question = {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                BasicText("Cancel this booking?", style = Kometa.type.md.copy(color = Kometa.colors.text))
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) { KometaWord("No", {}, quiet = true, arrow = false); KometaErase("Yes, cancel", {}) }
+            }
+        })
     }
 }

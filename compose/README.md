@@ -11,6 +11,7 @@ same way the web kit has no PrimeNG.
 | ![](docs/gallery3-dark.png) | ![](docs/gallery3-light.png) |
 | ![](docs/gallery4-dark.png) | ![](docs/gallery4-light.png) |
 | ![](docs/gallery5-dark.png) | ![](docs/gallery5-light.png) |
+| ![](docs/gallery6-dark.png) | ![](docs/gallery6-light.png) |
 
 ## Use it in an Android project
 
@@ -126,14 +127,26 @@ Without them the system sans and mono are used.
 | `KometaWord` | `k-word` | Underlined action word with an arrow; `lead` row, `busy` dash |
 | `KometaErase` | `k-erase` | Red destructive word |
 | `KometaQuiet` | `k-quiet` | Centred empty state, title and hint |
+| `KometaFrame` | `k-frame` | Glass picture frame with a lit top edge and a caption |
+| `KometaReveal` | `k-reveal` | Before / after in one frame, dragged along a row of ticks; a slider for screen readers |
+| `KometaSplit`, `KometaSplitSide` | `k-split` | Two display figures side by side; the second wraps when they do not fit |
+| `KometaMarks`, `KometaMarkDay` | `k-marks` | A read-only week of marks; closed days muted |
+| `KometaTrail`, `KometaTrailStep` | `k-trail`, `k-step` | Steps in order with the wait written on the dashed line between them |
+| `KometaHint` | `k-hint` | Dotted-underline term that opens its sentence in the page |
+| `KometaNote` | `k-note` | ⓘ marker with a cream tab in a popup; flips below near the top |
+| `KometaKeys` | `k-keys` | A shortcut as display-font words; `play` lights them in turn |
+| `KometaLink` | `k-link` | Copy word that reads "Copied" for a moment, announced politely |
+| `KometaHalo`, `KometaHaloGlyph` | `button[k-halo]` | Icon-only button, a disc of light when pressed or hovered |
+| `KometaConfirm` | `k-confirm` | Row that crossfades to the caller's question; the hidden pane takes no taps |
 
 State is hoisted the Compose way: every control takes its value and an `on…Change` callback.
 Icons are composable slots drawn in `LocalKometaContentColor`, so any icon set works.
 
-Not ported yet: date, time, picker, multi-select and suggest, table and rows, menus and popovers,
-carousel, photos, upload, tree, reorder, split/panes and the remaining web-only helpers. Not
+Not ported yet: date, time, picker, multi-select and suggest, table, menus and popovers,
+carousel, photos, upload, tree, reorder, panes and the remaining web-only helpers. Not
 carried over from the ported ones: `k-number`'s minus/plus circles (use `KometaStepper`),
-`k-select` groups, and keyboard arrows in the accordion and select lists.
+`k-select` groups, keyboard arrows in the accordion and select lists, `k-link`'s band swept over the
+copied value, `k-keys`' start on hover (here `play` loops), and `k-confirm` moving focus into the pane shown.
 
 ## Develop
 

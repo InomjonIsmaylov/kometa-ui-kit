@@ -99,4 +99,22 @@ class LogicTest {
         assertEquals(12, swipeLit(150f, 200f, 12))
         assertEquals(0, swipeLit(-20f, 200f, 12))
     }
+
+    @Test fun batch6Helpers() {
+        assertEquals(listOf("Ctrl", "Shift", "P"), keysOf(" Ctrl + Shift+P+ "))
+        assertEquals(1f, keyGlow(400f, 0, 3))
+        assertEquals(0f, keyGlow(1800f, 0, 3))
+        assertEquals(0f, keyGlow(0f, 1, 3))
+        assertEquals(40, revealSnap(41.9f))
+        assertEquals(100, revealSnap(130f))
+        assertEquals(0, revealSnap(-3f))
+        assertEquals(150 to 141, splitWidths(100, 90, 307, 16))
+        assertEquals(null, splitWidths(200, 190, 380, 16))
+        val win = androidx.compose.ui.unit.IntSize(400, 800)
+        val tip = androidx.compose.ui.unit.IntSize(200, 40)
+        val mid = androidx.compose.ui.unit.IntRect(190, 300, 210, 320)
+        assertEquals(androidx.compose.ui.unit.IntOffset(100, 252), placeNote(mid, win, tip, 8, 8, KometaNotePlacement.Auto))
+        val top = androidx.compose.ui.unit.IntRect(380, 10, 400, 30)
+        assertEquals(androidx.compose.ui.unit.IntOffset(192, 38), placeNote(top, win, tip, 8, 8, KometaNotePlacement.Auto))
+    }
 }
