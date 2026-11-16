@@ -6,6 +6,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.platform.Font
+import kotlinx.coroutines.await
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import org.khronos.webgl.ArrayBuffer
+import org.khronos.webgl.Int8Array
+import org.khronos.webgl.get
+import org.w3c.fetch.Response
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -32,6 +44,7 @@ fun main() {
     // The docs site embeds this page and passes its theme as ?theme=dark|light.
     val asked = window.location.search.substringAfter("theme=", "").take(5)
     ComposeViewport(document.body!!) {
+        if (!symbolsReady()) return@ComposeViewport
         val system = isSystemInDarkTheme()
         var dark by remember { mutableStateOf(if (asked.isEmpty()) system else asked == "dark") }
         KometaTheme(dark = dark) { Showcase(dark) { dark = it } }
@@ -75,6 +88,7 @@ private fun newHost(): Host {
     document.body!!.appendChild(el)
     ComposeViewport(el) {
         val current = host.key.value ?: return@ComposeViewport
+        if (!symbolsReady()) return@ComposeViewport
         val example = DOC_EXAMPLES.getValue(current)
         key(current) {
             KometaTheme(dark = previewDark.value) {
@@ -89,6 +103,40 @@ private fun newHost(): Host {
     }
     return host
 }
+
+// The browser build has no system font fallback, so → ✓ ⋯ and friends drew as boxes: preload a symbol font as the fallback.
+// KometaSymbols.ttf is Noto Sans Symbols 2 + Noto Sans Math cut to the glyphs the kit and sample use (scripts/symbols-font.py);
+// one merged file, since only the first font of a preloaded family served as fallback.
+// The bytes load once; each viewport builds its own Font from them, as a shared one mixes up their GL contexts.
+private var symbolBytes: ByteArray? = null
+private val symbolLock = Mutex()
+
+private suspend fun symbolFont(): ByteArray = symbolLock.withLock {
+    symbolBytes ?: fetchBytes("KometaSymbols.ttf").also { symbolBytes = it }
+}
+
+private suspend fun fetchBytes(file: String): ByteArray {
+    val response = window.fetch(besideScript(file)).await<Response>()
+    val bytes = Int8Array(response.arrayBuffer().await<ArrayBuffer>())
+    return ByteArray(bytes.length) { bytes[it] }
+}
+
+/** False until the symbol font is in this composition's font resolver. */
+@Composable
+private fun symbolsReady(): Boolean {
+    val resolver = LocalFontFamilyResolver.current
+    var ready by remember { mutableStateOf(false) }
+    LaunchedEffect(resolver) {
+        // A failed fetch only costs the fallback glyphs, so draw anyway.
+        runCatching { resolver.preload(FontFamily(Font("KometaSymbols", symbolFont()))) }
+        ready = true
+    }
+    return ready
+}
+
+/** [file] next to sample.js, wherever the page that loaded it lives. */
+private fun besideScript(file: String): String =
+    js("new URL(file, document.querySelector('script[src$=\"sample.js\"]').src).href")
 
 private fun emitHeight(id: String, px: Int): Unit =
     js("void document.getElementById(id)?.dispatchEvent(new CustomEvent('compose-size', { detail: px }))")

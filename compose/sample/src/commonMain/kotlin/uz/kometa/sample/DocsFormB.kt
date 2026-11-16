@@ -217,7 +217,7 @@ internal fun ToggleInContext() {
         KometaRow(title = "Telegram reminder", meta = "Two hours before the visit", tone = KometaRowTone.Telegram, chevron = false, icon = { BasicText("✈") }) {
             KometaToggle(telegram, { telegram = it }, label = "Telegram reminder")
         }
-        KometaRow(title = "New booking", meta = "To you, the moment it lands", tone = KometaRowTone.Green, chevron = false, icon = { BasicText("＋") }) {
+        KometaRow(title = "New booking", meta = "To you, the moment it lands", tone = KometaRowTone.Green, chevron = false, icon = { BasicText("+") }) {
             KometaToggle(booking, { booking = it }, label = "New booking")
         }
         KometaRow(title = "Weekly report", meta = "Mondays at 09:00", tone = KometaRowTone.Violet, chevron = false, icon = { BasicText("∑") }) {

@@ -262,7 +262,7 @@ internal fun RowsBasic() {
     KometaRows(label = "Visit") {
         KometaRow(label = "Service") { KometaRowValue("Haircut") }
         KometaRow(label = "Time") { KometaRowValue("Mon · 14:00") }
-        KometaRow(title = "Notifications", meta = "SMS and Telegram", tone = KometaRowTone.Amber, onClick = { taps++ }, icon = { BasicText("🔔") })
+        KometaRow(title = "Notifications", meta = "SMS and Telegram", tone = KometaRowTone.Amber, onClick = { taps++ }, icon = { BasicText("🕭") })
         KometaRow(title = "Disabled", meta = "Nothing here", tone = KometaRowTone.Blue, onClick = {}, enabled = false, icon = { BasicText("⛔") })
     }
     BasicText("Row activated $taps times.", style = Kometa.type.small.copy(color = Kometa.colors.muted))

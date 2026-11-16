@@ -627,7 +627,7 @@ internal fun TabbarBasic() {
 internal fun TabbarInContext() {
     // #region tabbar/in-context
     val phoneTabs = listOf(KometaTab("today", "Today"), KometaTab("clients", "Clients"), KometaTab("money", "Money"))
-    val glyphs = mapOf("today" to "◷", "clients" to "☺", "money" to "∑")
+    val glyphs = mapOf("today" to "◷", "clients" to "☻", "money" to "∑")
     var tab by remember { mutableStateOf("today") }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Column(Modifier.height(180.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
