@@ -44,6 +44,9 @@ export class ThemeService {
   });
 
   constructor() {
+    // A saved choice must reach the page even in an app without the index.html script that applies it before boot.
+    const saved = this.preference();
+    if (this.browser && saved !== 'system') this.root.setAttribute('data-theme', saved);
     if (!this.browser || typeof matchMedia !== 'function') return;
     const query = matchMedia('(prefers-color-scheme: light)');
     this.systemLight.set(query.matches);
