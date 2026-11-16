@@ -13,6 +13,8 @@ same way the web kit has no PrimeNG.
 | ![](docs/gallery5-dark.png) | ![](docs/gallery5-light.png) |
 | ![](docs/gallery6-dark.png) | ![](docs/gallery6-light.png) |
 | ![](docs/gallery7-dark.png) | ![](docs/gallery7-light.png) |
+| ![](docs/gallery8-dark.png) | ![](docs/gallery8-light.png) |
+| ![](docs/gallery9-dark.png) | ![](docs/gallery9-light.png) |
 
 ## Use it in an Android project
 
@@ -151,18 +153,35 @@ Without them the system sans and mono are used.
 | `KometaListView`, `rememberKometaListView` | `paging` | Not a component: filter, sort and page state for a list, feeding `KometaSort` and `KometaPager` |
 | `KometaHue` | `k-hue` | A row of hue ticks that picks a `#RRGGBB` colour |
 | `KometaProviderLogo` | `k-provider-logo` | Click and Payme marks on a white plate; other providers through `art` |
+| `KometaDate`, `KometaDateRange`, `KometaDay`, `KometaDateNames` | `k-date` | Date word that opens a month grid; a range form; pass `today` in |
+| `KometaTime` | `k-time` | Time word that opens a grid of slots every `step` minutes; value in minutes |
+| `KometaMulti` | `k-multi` | Several choices as chips, filtered as you type; `pill` for a toolbar, `max` |
+| `KometaSuggest`, `KometaSuggestion` | `k-suggest` | Field that asks `onQuery` after a pause and lists the answers |
+| `KometaInplace` | `k-inplace` | Text that turns into a field on tap; the old value struck out while editing |
+| `KometaTable`, `KometaTableCell` | `k-table` | Hairline table with an optional header, groups and stripes |
+| `KometaTree`, `KometaTreeNode` | `k-tree` | Columns that open one level per tap, like a file browser |
+| `KometaReorder` | `k-reorder` | Rows put in order by dragging their grip; Move up / Move down for screen readers |
+| `KometaPanes` | `k-panes` | Two panes split by a handle that snaps to fixed stops |
+| `KometaCarousel` | `k-carousel`, `[kSlide]` | One slide at a time with edge arrows and ticks |
+| `KometaPhotos`, `KometaPhotosLabels` | `k-photos` | Full-screen photo viewer: swipe, zoom, rotate, thumbnails, download |
+| `KometaUpload`, `KometaUploadState` | `k-upload` | File card whose fill rises with progress; one action word |
+| `KometaPicker`, `KometaPickerVariant` | `k-picker` | "Add photos" button or zone; the file chooser is the caller's |
+| `KometaShare`, `KometaShareSegment` | `k-share` | Ticks split by share, with a legend of percents and figures |
 
 State is hoisted the Compose way: every control takes its value and an `on…Change` callback.
 Icons are composable slots drawn in `LocalKometaContentColor`, so any icon set works.
 
-Not ported yet: date, time, picker, multi-select and suggest, table, carousel, photos, upload,
-tree, reorder, panes and the remaining web-only helpers. Not carried over from the ported ones:
-`k-number`'s minus/plus circles (use `KometaStepper`), `k-select` groups, keyboard arrows in the
-accordion, select, menu and hue, `k-link`'s band swept over the copied value, `k-keys`' start on hover
-(here `play` loops), focus moved into a shown pane or overlay and back (`k-confirm`, pop, context, fab,
-tray), backdrop blur behind glass popups, the `animation` presets on the actions list, Back closing
-`KometaMenu`, and the Telegram / Google / Instagram logo art. List sorting compares lowercased text, not
-a locale collator.
+Every web component is ported; only the web-only helpers (`motion`, `provide-kometa-ui`) are not.
+Not carried over: `k-number`'s minus/plus circles (use `KometaStepper`), `k-select` groups, keyboard
+arrows in the accordion, select, menu, hue, date, time, tree, panes and multi's pill form, a keyboard
+grab in reorder (it has Move up / Move down actions instead), `k-link`'s band swept over the copied
+value, `k-keys`' start on hover (here `play` loops), focus moved into a shown pane or overlay and back
+(`k-confirm`, pop, context, fab, tray), backdrop blur behind glass popups, the `animation` presets on the
+actions list, Back closing `KometaMenu`, the Telegram / Google / Instagram logo art, and `k-share`'s
+dimming on legend hover. List sorting compares lowercased text, not a locale collator. There is no
+clock without kotlinx-datetime, so `KometaDate` takes `today`. A tap on the `KometaSuggest` field closes
+its list. `KometaTable` composes every row and does not scroll sideways. Panes do not scroll. The
+picker's file chooser, image loading and downloads are the app's.
 
 ## Develop
 

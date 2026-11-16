@@ -235,4 +235,28 @@ class GalleryRender {
             KometaFab(listOf(KometaFabAction("New booking"), KometaFabAction("New client")), open = false, onOpenChange = {}, onPick = {})
         }
     }
+
+    @Test fun batch8() = shoot("gallery8", 1060) {
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+            KometaDate(KometaDay(2026, 11, 16), {}, today = KometaDay(2026, 11, 16))
+            KometaTime(547, {})
+        }
+        KometaMulti(listOf("Haircut", "Beard", "Colour"), listOf("Haircut", "Beard"), {}, placeholder = "Services")
+        KometaSuggest("Ali", {}, emptyList(), {}, label = "Client")
+        KometaInplace("Ali Valiyev", {})
+        KometaTable(listOf("Ali" to "120 000", "Vali" to "85 000"), header = {
+            KometaTableCell("Client", Modifier.weight(1f)); KometaTableCell("Sum", Modifier.weight(1f), androidx.compose.ui.text.style.TextAlign.End)
+        }) { r, _ -> KometaTableCell(r.first, Modifier.weight(1f)); KometaTableCell(r.second, Modifier.weight(1f), androidx.compose.ui.text.style.TextAlign.End) }
+        KometaTree(listOf(KometaTreeNode("Hair", listOf(KometaTreeNode("Cut"), KometaTreeNode("Colour"))), KometaTreeNode("Nails")), listOf(0, 1), {})
+        KometaPanes(33, {}, start = { BasicText("List", Modifier.padding(12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text)) },
+            end = { BasicText("Details", Modifier.padding(12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text)) }, modifier = Modifier.height(120.dp))
+    }
+
+    @Test fun batch9() = shoot("gallery9", 1160) {
+        KometaReorder(listOf("Wash", "Cut", "Dry"), {}) { s, _ -> BasicText(s, style = Kometa.type.md.copy(color = Kometa.colors.text)) }
+        KometaShare(listOf(KometaShareSegment("Cash", 3.0, "300 000", Color(0xFFE7C255)), KometaShareSegment("Card", 1.0, "100 000", Color(0xFF557AE7))), label = "Payments")
+        KometaUpload("receipt.pdf", sizeLabel = "1.2 MB", progress = .42f, state = KometaUploadState.Running, statusLabel = "Uploading", actionLabel = "Cancel")
+        KometaPicker("Add photos", {}, variant = KometaPickerVariant.Zone, hint = "PNG or JPG, up to 10 MB")
+        KometaCarousel(3, 1, {}) { i -> Box(Modifier.fillMaxWidth().height(90.dp).background(Kometa.colors.glassLine)) { BasicText("Slide ${i + 1}", Modifier.padding(12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text)) } }
+    }
 }

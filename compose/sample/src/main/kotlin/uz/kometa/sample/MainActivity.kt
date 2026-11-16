@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import uz.kometa.ui.*
 
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private val TABS = listOf(KometaTab("controls", "Controls"), KometaTab("inputs", "Inputs"), KometaTab("display", "Display"), KometaTab("overlays", "Overlays"), KometaTab("more", "More"), KometaTab("extra", "Extra"), KometaTab("menus", "Menus"))
+private val TABS = listOf(KometaTab("controls", "Base"), KometaTab("inputs", "Inputs"), KometaTab("display", "Display"), KometaTab("overlays", "Overlays"), KometaTab("more", "More"), KometaTab("extra", "Extra"), KometaTab("menus", "Menus"), KometaTab("data", "Data"))
 
 @Composable
 private fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
@@ -77,6 +78,7 @@ private fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
                 "more" -> More()
                 "extra" -> Extra()
                 "menus" -> Menus()
+                "data" -> Data()
                 else -> Overlays()
             }
         }
@@ -382,3 +384,55 @@ private fun ColumnScope.Menus() {
 // The sample keeps its own sort words, so it flips direction the way KometaSort's doc describes.
 private fun nextSortDirFor(option: String, key: String, dir: KometaSortDir) =
     if (option != key) KometaSortDir.Asc else if (dir == KometaSortDir.Asc) KometaSortDir.Desc else KometaSortDir.Asc
+
+@Composable
+private fun ColumnScope.Data() {
+    var said by remember { mutableStateOf("—") }
+    var day by remember { mutableStateOf<KometaDay?>(null) }
+    var range by remember { mutableStateOf<Pair<KometaDay, KometaDay?>?>(null) }
+    var time by remember { mutableStateOf<Int?>(547) }
+    var picked by remember { mutableStateOf(listOf("Haircut")) }
+    var query by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("Ali Valiyev") }
+    var path by remember { mutableStateOf(listOf<Int>()) }
+    var steps by remember { mutableStateOf(listOf("Wash", "Cut", "Dry", "Style")) }
+    var split by remember { mutableIntStateOf(33) }
+    var slide by remember { mutableIntStateOf(0) }
+    var photos by remember { mutableStateOf(false) }
+    var photo by remember { mutableIntStateOf(0) }
+    var progress by remember { mutableStateOf(.42f) }
+    val today = KometaDay(2026, 11, 16)
+    val people = listOf("Ali Valiyev", "Alisher Karimov", "Aziza Rahimova", "Bobur Saidov")
+    val hues = listOf(0xFFE7C255, 0xFF557AE7, 0xFF55E7A0).map { androidx.compose.ui.graphics.Color(it) }
+    Label("last: $said")
+    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+        KometaDate(day, { day = it; said = "date ${it.day}.${it.month}" }, today)
+        KometaTime(time, { time = it; said = "time $it" })
+    }
+    KometaDateRange(range, { range = it; said = "range" }, today)
+    KometaMulti(listOf("Haircut", "Beard", "Colour", "Nails"), picked, { picked = it; said = "multi ${it.size}" }, placeholder = "Services")
+    KometaSuggest(query, { query = it }, people.filter { query.length >= 2 && it.contains(query, ignoreCase = true) }.map { KometaSuggestion(it) }, {}, label = "Client", onPick = { said = "suggest ${it.label}" })
+    KometaInplace(name, { name = it; said = "inplace $it" })
+    KometaTable(listOf("Ali" to "120 000", "Vali" to "85 000", "Aziza" to "40 000"), header = {
+        KometaTableCell("Client", Modifier.weight(1f)); KometaTableCell("Sum", Modifier.weight(1f), TextAlign.End)
+    }) { r, _ -> KometaTableCell(r.first, Modifier.weight(1f)); KometaTableCell(r.second, Modifier.weight(1f), TextAlign.End) }
+    KometaTree(
+        listOf(KometaTreeNode("Hair", listOf(KometaTreeNode("Cut"), KometaTreeNode("Colour", listOf(KometaTreeNode("Blonde"), KometaTreeNode("Dark"))))), KometaTreeNode("Nails")),
+        path, { path = it }, onPick = { said = "tree ${it.label}" },
+    )
+    KometaReorder(steps, { steps = it; said = "order " + it.joinToString(",") }) { s, _ -> BasicText(s, style = Kometa.type.md.copy(color = Kometa.colors.text)) }
+    KometaPanes(split, { split = it; said = "panes $it" },
+        start = { BasicText("List", Modifier.padding(12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text)) },
+        end = { BasicText("Details", Modifier.padding(12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text)) },
+        modifier = Modifier.height(140.dp))
+    KometaShare(listOf(KometaShareSegment("Cash", 3.0, "300 000", hues[0]), KometaShareSegment("Card", 1.0, "100 000", hues[1])), label = "Payments")
+    KometaUpload("receipt.pdf", sizeLabel = "1.2 MB", progress = progress, state = if (progress >= 1f) KometaUploadState.Done else KometaUploadState.Running,
+        statusLabel = if (progress >= 1f) "Done" else "Uploading", actionLabel = "Step", onAction = { progress = (progress + .2f).coerceAtMost(1f) })
+    KometaPicker("Add photos", { photos = true; said = "picker" }, variant = KometaPickerVariant.Zone, hint = "Opens the photo viewer here")
+    KometaCarousel(3, slide, { slide = it; said = "slide $it" }) { i ->
+        Box(Modifier.fillMaxWidth().height(110.dp).background(hues[i])) { BasicText("Slide ${i + 1}", Modifier.padding(12.dp), style = Kometa.type.md) }
+    }
+    KometaPhotos(3, photos, { photos = it }, photo, { photo = it }, photo = { i ->
+        Box(Modifier.size(280.dp).background(hues[i]), contentAlignment = Alignment.Center) { BasicText("Photo ${i + 1}", style = Kometa.type.title) }
+    }, thumb = { i -> Box(Modifier.fillMaxSize().background(hues[i])) }, onDownload = { said = "download $it" })
+}
