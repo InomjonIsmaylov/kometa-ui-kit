@@ -24,6 +24,7 @@ import { DashboardScreen, USES as dashboardUses } from './screens/dashboard/dash
 import { SettingsScreen, USES as settingsUses } from './screens/settings/settings';
 import { SCREEN_FILES } from './screens/sources';
 import apiMeta from './api.json';
+import composeApi from './compose-api.json';
 import entries from './entries.json';
 
 /** The part of Angular's compiled component metadata the API tables read. */
@@ -293,6 +294,14 @@ export const appConfig: ApplicationConfig = {
       tag + attrs.reduce((s, a, i) => (i % 2 ? s + (a ? `=${a}]` : ']') : `${s}[${a}`), '')).join(', ');
     return [{ name, selector, rows }];
   }));
+
+  /** Under Compose: the parameters of each kit composable the page's Kotlin examples call, read from the Kotlin source by gen-compose-api.mjs. */
+  protected readonly composeApi = computed(() => {
+    const page = this.current().id;
+    if (this.docs.platform() !== 'compose' || !this.docs.hasKotlin(page)) return null;
+    const all = composeApi as Record<string, { doc: string; params: { name: string; type: string; default?: string }[] }[]>;
+    return this.docs.composables(page).filter((n) => all[n]).flatMap((name) => all[name].map((o, i) => ({ name, key: name + i, ...o })));
+  });
 
   constructor() {
     this.docs.page.set(this.current().id);

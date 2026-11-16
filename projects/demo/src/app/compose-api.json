@@ -1,0 +1,3585 @@
+{
+ "KometaAccordionItem": [
+  {
+   "doc": "One question and its answer (`k-accordion-item`): the question in the display font, a hairline under it that stretches to full width while open, and the content below, composed only while open (the web kit draws the answer in `Kometa.type.body`, muted, 14sp). For one open at a time, hold the open index in the caller: var open by remember { mutableStateOf<Int?>(null) } faq.forEachIndexed { i, q -> KometaAccordionItem(q.title, open == i, { open = if (it) i else null }) { ... } }",
+   "params": [
+    {
+     "name": "heading",
+     "type": "String"
+    },
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "content",
+     "type": "@Composable ColumnScope.() -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaActions": [
+  {
+   "doc": "The \"more\" menu (`k-actions`): a ⋯ button that opens a short list of actions. Not a value chooser (that is KometaSelect): each row does something and the list closes. The list is words beside a hairline, with a bar that grows at the row under the pointer or focus; it opens in a popup, so a card cannot clip it, drops below the button or above it when there is no room, and stays inside the window. alignStart lines it up with the button's start edge instead of its end. Arrow keys, Home and End move between rows, Enter runs one, Escape closes it and returns focus to the button, Tab or a tap outside just closes it. icon replaces the ⋯ (drawn in LocalKometaContentColor). label is the button's accessible name (\"More options\"). open is hoisted: the button asks onOpenChange to flip it.",
+   "params": [
+    {
+     "name": "items",
+     "type": "List<KometaAction>"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "alignStart",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "icon",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaAvatars": [
+  {
+   "doc": "A few people as overlapping discs (`k-avatars`), then a \"+N\" disc for the rest. Each disc is parted from the one beneath by a ring of the page colour and names its person to a screen reader. moreLabel is what \"+N\" says aloud; `{n}` is the count.",
+   "params": [
+    {
+     "name": "people",
+     "type": "List<KometaAvatar>"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "max",
+     "type": "Int",
+     "default": "4"
+    },
+    {
+     "name": "size",
+     "type": "KometaPersonSize",
+     "default": "KometaPersonSize.Md"
+    },
+    {
+     "name": "moreLabel",
+     "type": "String",
+     "default": "\"{n} more\""
+    }
+   ]
+  }
+ ],
+ "KometaBadge": [
+  {
+   "doc": "A count on the corner of whatever it wraps (`k-badge`): a cream disc with the figure in mono, that pops each time the count changes. Over max it shows `99+`; at zero it is gone unless showZero. A screen reader hears label (`{n}` is the count) as the wrapped control's state.",
+   "params": [
+    {
+     "name": "count",
+     "type": "Int"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "max",
+     "type": "Int",
+     "default": "99"
+    },
+    {
+     "name": "showZero",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"{n} new\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaBanner": [
+  {
+   "doc": "A notice with no box (`k-banner`): a 2dp state-coloured hairline beside the sentence. With onDismiss a close word (closeLabel, × without one) collapses it, then calls back. actionLabel adds one word beside the sentence (onAction fires). `warn`/`error` are announced assertively, `ok`/`info` politely. The caller owns every word.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "tone",
+     "type": "KometaBannerTone",
+     "default": "KometaBannerTone.Info"
+    },
+    {
+     "name": "actionLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "onAction",
+     "type": "() -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "closeLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "onDismiss",
+     "type": "(() -> Unit)?",
+     "default": "null"
+    },
+    {
+     "name": "icon",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaButton": [
+  {
+   "doc": "The one button (`k-button`). The default is the amber main action — one per screen. KometaSeverity.Secondary is the quiet grey pill, KometaSeverity.Danger the red one; variant draws it as a hairline or a bare word. `small` is the 36dp one; pass `Modifier.fillMaxWidth()` for a fluid button. loading shows a spinner and blocks the tap.",
+   "params": [
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "onClick",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "severity",
+     "type": "KometaSeverity",
+     "default": "KometaSeverity.Primary"
+    },
+    {
+     "name": "variant",
+     "type": "KometaButtonVariant",
+     "default": "KometaButtonVariant.Filled"
+    },
+    {
+     "name": "small",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "loading",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "iconRight",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "icon",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaCarousel": [
+  {
+   "doc": "Slides in a row, one in view (`k-carousel`, its slides `kSlide`), with a row of ticks under them as the pager: the current tick stands tall and cream, like KometaMeter. slide draws slide `i` of count; the row is as tall as the tallest. With edges a tap on the left or right third goes back or forward, and a thin chevron shows on that side while the pointer is there; taps on a control inside a slide are left to it. Focused, the arrow keys move too. Off-screen slides are hidden from screen readers; each tick is named \"slideLabel 2\".",
+   "params": [
+    {
+     "name": "count",
+     "type": "Int"
+    },
+    {
+     "name": "index",
+     "type": "Int"
+    },
+    {
+     "name": "onIndexChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "edges",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "slideLabel",
+     "type": "String",
+     "default": "\"Slide\""
+    },
+    {
+     "name": "slide",
+     "type": "@Composable (Int) -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaCheck": [
+  {
+   "doc": "A checkbox with no box (`k-check`): when checked a line runs through the label and the label turns muted. readOnly shows the state but ignores presses.",
+   "params": [
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "checked",
+     "type": "Boolean"
+    },
+    {
+     "name": "onCheckedChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaChip": [
+  {
+   "doc": "A glass pill that is a multi-select toggle (`k-chip`). Chosen: a 2dp inset amber edge, never an amber fill. The caller owns selected; onSelectedChange gets the value the user asked for. count is drawn muted after the words.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "selected",
+     "type": "Boolean"
+    },
+    {
+     "name": "onSelectedChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "count",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "icon",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaCode": [
+  {
+   "doc": "One cell per digit (`k-code`), length 6 by default. A cream line sits under the cell being typed. It is one text field drawn as cells, so typing, Backspace and pasting a whole code work as in any field. mask hides the digits (a PIN); placeholder shows in each empty cell (\"·\"); label is a muted line above the cells and their accessible name.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "length",
+     "type": "Int",
+     "default": "6"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "mask",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaConfirm": [
+  {
+   "doc": "A row that crossfades to the caller's question while asking is true (`k-confirm`). Both panes are the caller's: row is the normal face, question holds the question with its own No / Yes buttons (this draws none). The box keeps the taller pane's height, so nothing below jumps; the hidden pane takes no taps and is not read out.",
+   "params": [
+    {
+     "name": "asking",
+     "type": "Boolean"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "row",
+     "type": "@Composable () -> Unit"
+    },
+    {
+     "name": "question",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaContext": [
+  {
+   "doc": "A context menu for whatever it wraps (`k-context`): a glass card in a popup at the press point, kept inside the window, with each action's KometaContextItem.shortcut in mono and danger ones in red; `null` in items draws a divider. A secondary (right) click or a long press on touch opens it; the long press does not also click what is under the finger. The Menu key or Shift+F10 opens it under the wrapped content. Arrows move between actions, Enter picks, Escape, Back, Tab or a tap outside close it. Picking closes the menu and calls onPick with the item. label is the menu's accessible name.",
+   "params": [
+    {
+     "name": "items",
+     "type": "List<KometaContextItem?>"
+    },
+    {
+     "name": "onPick",
+     "type": "(KometaContextItem) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"Actions\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaCountdown": [
+  {
+   "doc": "Time running out (`k-countdown`): a figure \"0:42\" and a row of ticks that drain one by one, right to left. duration (seconds) is the span the ticks stand for; it counts down from from (the whole span by default) from when it is first drawn, and calls onDone once at zero. Change key to restart it. description is read before the time, e.g. \"Code expires in\".",
+   "params": [
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "duration",
+     "type": "Int",
+     "default": "60"
+    },
+    {
+     "name": "from",
+     "type": "Int",
+     "default": "duration"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "key",
+     "type": "Any?",
+     "default": "Unit"
+    },
+    {
+     "name": "onDone",
+     "type": "() -> Unit",
+     "default": "{}"
+    }
+   ]
+  }
+ ],
+ "KometaCrumbs": [
+  {
+   "doc": "Where you are, as a path that walks down the page (`k-crumbs`): each level a step further right and a size larger, and the last one, the current page, a title behind a \"↳\". Every other level is pressable and calls onPick with its index (the outermost is 0).",
+   "params": [
+    {
+     "name": "items",
+     "type": "List<String>"
+    },
+    {
+     "name": "onPick",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    }
+   ]
+  }
+ ],
+ "KometaDate": [
+  {
+   "doc": "One calendar day (`k-date`). The date is a figure with a hairline under it; a tap opens a glass month in a popup (so no clipping parent cuts it) that flips above when there is no room below. Days are bare figures: the chosen day takes the 2dp edge, today a small line. The week starts on Monday (weekStart 0 for Sunday). Picking a day calls onValueChange and closes; a tap outside or Back closes too. min and max grey out the days beyond and stop the month arrows there. names is the caller's language. inline draws the month in place, with no figure and no popup, for a panel that already floats. description is the accessible name. For a period use KometaDateRange.",
+   "params": [
+    {
+     "name": "value",
+     "type": "KometaDay?"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(KometaDay) -> Unit"
+    },
+    {
+     "name": "today",
+     "type": "KometaDay"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "min",
+     "type": "KometaDay?",
+     "default": "null"
+    },
+    {
+     "name": "max",
+     "type": "KometaDay?",
+     "default": "null"
+    },
+    {
+     "name": "names",
+     "type": "KometaDateNames",
+     "default": "KometaDateNames.English"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"—\""
+    },
+    {
+     "name": "weekStart",
+     "type": "Int",
+     "default": "1"
+    },
+    {
+     "name": "inline",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaDateRange": [
+  {
+   "doc": "A period (`k-date range`): the same figure and month as KometaDate, but the first tap holds the start (value is `start to null`) and the second the end (`start to end`, an earlier second tap swaps them) and closes. The two ends are filled discs and a line joins them under the days between. The figure reads \"1 Nov 2026 – 9 Nov 2026\".",
+   "params": [
+    {
+     "name": "value",
+     "type": "Pair<KometaDay, KometaDay?>?"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(Pair<KometaDay, KometaDay?>) -> Unit"
+    },
+    {
+     "name": "today",
+     "type": "KometaDay"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "min",
+     "type": "KometaDay?",
+     "default": "null"
+    },
+    {
+     "name": "max",
+     "type": "KometaDay?",
+     "default": "null"
+    },
+    {
+     "name": "names",
+     "type": "KometaDateNames",
+     "default": "KometaDateNames.English"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"—\""
+    },
+    {
+     "name": "weekStart",
+     "type": "Int",
+     "default": "1"
+    },
+    {
+     "name": "inline",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaDigits": [
+  {
+   "doc": "A national phone number (`k-digits`) after a display-only prefix. value is digits only, at most 9, and is shown grouped as `90 123 45 67`. small sits in a 44dp form row; the default is the big figure. label is the accessible name.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "prefix",
+     "type": "String",
+     "default": "\"+998\""
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "small",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaDrawer": [
+  {
+   "doc": "A panel that slides up from the bottom (a sheet) or in from a side over a dimmed screen (`k-drawer`). visible is owned by the caller; onDismiss is called for Back, and for a tap on the dimmed area while dismissible. The panel stays composed until its leave slide has finished. label names the sheet for a screen reader.",
+   "params": [
+    {
+     "name": "visible",
+     "type": "Boolean"
+    },
+    {
+     "name": "onDismiss",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "position",
+     "type": "KometaDrawerPosition",
+     "default": "KometaDrawerPosition.Bottom"
+    },
+    {
+     "name": "dismissible",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable ColumnScope.() -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaErase": [
+  {
+   "doc": "A destructive action that lives inline (`k-erase`): a red underlined word. Deliberately quiet; the loud red button belongs to the confirm step (KometaPair), so the list itself never shouts. The underline is 40% red and goes solid while pressed.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "onClick",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaFab": [
+  {
+   "doc": "The page's main action, as a round ink button in the bottom-end corner (`k-fab`). Pressing it dims the box and raises actions above it as big display words, no icons; the `+` turns into a `×`. Picking one closes the menu and calls onPick. It fills its parent like the web's `inset: 0` layer, so put it last in a full-screen Box for the fixed fab or in a card's Box for the inline one. open is owned by the caller; a tap on the dimmed area, Back and Escape call onOpenChange with false. icon is the glyph slot (turned 45° when open); label names the button and its menu.",
+   "params": [
+    {
+     "name": "actions",
+     "type": "List<KometaFabAction>"
+    },
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "onPick",
+     "type": "(KometaFabAction) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"Actions\""
+    },
+    {
+     "name": "icon",
+     "type": "@Composable () -> Unit",
+     "default": "{ BasicText(\"+\", style = Kometa.type.md.copy(color = LocalKometaContentColor.current, fontSize = 26.sp, fontWeight = FontWeight.SemiBold)) }"
+    }
+   ]
+  }
+ ],
+ "KometaField": [
+  {
+   "doc": "The text field as the \"whisper\" draws it (`k-field`): no box, the placeholder is the label (display font, 24sp; 18sp when small), one hairline under it, and on focus a cream line draws in from the left. Under it an optional \"4 / 40\" counter and an error line. label is also the accessible name. maxLength cuts input at that length.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "label"
+    },
+    {
+     "name": "small",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "password",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "keyboardOptions",
+     "type": "KeyboardOptions",
+     "default": "KeyboardOptions.Default"
+    },
+    {
+     "name": "maxLength",
+     "type": "Int?",
+     "default": "null"
+    },
+    {
+     "name": "showCount",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "error",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaFilm": [
+  {
+   "doc": "A week strip of days (`k-film`) with one glass thumb sliding behind the chosen one. The days share the width equally. value is the chosen day's `value`. Put the meaning of a KometaFilmDay.dot in its label or description: the dot itself is not read out.",
+   "params": [
+    {
+     "name": "days",
+     "type": "List<KometaFilmDay>"
+    },
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaFoldMark": [
+  {
+   "doc": "The plus that loses its vertical bar when open (`k-fold-mark`).",
+   "params": [
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    }
+   ]
+  }
+ ],
+ "KometaFold": [
+  {
+   "doc": "A disclosure (`k-fold`): a header row that opens and closes the content below it, which is composed only while open. aside sits between the title and the mark.",
+   "params": [
+    {
+     "name": "title",
+     "type": "String"
+    },
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "aside",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    },
+    {
+     "name": "content",
+     "type": "@Composable ColumnScope.() -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaFrame": [
+  {
+   "doc": "A framed picture (`k-frame`): glass with a lit top edge and 16dp corners, content clipped to it. A non-empty caption sits under the frame in muted 13sp.",
+   "params": [
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "caption",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaHalo": [
+  {
+   "doc": "An icon-only button with no drawn box (`button[k-halo]`): 44dp (Sm 32, Lg 56), a muted glyph and a disc of light while pressed, hovered or focused. description is required, since the glyph is the only content. icon draws in LocalKometaContentColor; KometaHaloGlyph is a text glyph sized to it.",
+   "params": [
+    {
+     "name": "onClick",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "description",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "size",
+     "type": "KometaHaloSize",
+     "default": "KometaHaloSize.Md"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "icon",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaHaloGlyph": [
+  {
+   "doc": "A text glyph (\"✕\", \"‹\") for KometaHalo's icon, in the halo's ink and size.",
+   "params": [
+    {
+     "name": "glyph",
+     "type": "String"
+    }
+   ]
+  }
+ ],
+ "KometaHeading": [
+  {
+   "doc": "A display title and a hairline that runs out to the action (`k-heading`); with no action the hairline runs to the edge.",
+   "params": [
+    {
+     "name": "title",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "action",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaHint": [
+  {
+   "doc": "An explanation that stays in the page (`k-hint`). The term itself is the button, with a dotted underline; opened, a 1dp thread grows to 24dp and the text fades in beside it, pushing what is below down. open is hoisted: a tap asks onOpenChange for the other state. openLabel / closedLabel are read as the term's state.",
+   "params": [
+    {
+     "name": "term",
+     "type": "String"
+    },
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "openLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "closedLabel",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaHue": [
+  {
+   "doc": "A colour picked from a row of hue ticks (`k-hue`): every tick is drawn in its own hue and the chosen one stands tall, the rest lie at 45%. A disc of the colour and its hex in mono sit underneath (showValue = false hides them). saturation and lightness are fixed by the caller, so every pick sits in one family. Tap or drag along the row; TalkBack adjusts it with the usual slider gestures. value is `#RRGGBB`, and onValueChange always gets one of the row's own colours.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "count",
+     "type": "Int",
+     "default": "24"
+    },
+    {
+     "name": "saturation",
+     "type": "Float",
+     "default": "75f"
+    },
+    {
+     "name": "lightness",
+     "type": "Float",
+     "default": "62f"
+    },
+    {
+     "name": "height",
+     "type": "Dp",
+     "default": "26.dp"
+    },
+    {
+     "name": "showValue",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaInplace": [
+  {
+   "doc": "A value you edit where it stands (`k-inplace`): a display-font word that turns into an input on tap, its text selected. While you type, the old value sits above it struck through, so you can see what you are replacing. Enter or leaving the field saves (an empty entry keeps the old value), Escape cancels, and a save flashes the word. After Enter or Escape focus returns to the word. placeholder shows, muted, while the value is empty; label names it, read as \"label: value\".",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaKeys": [
+  {
+   "doc": "A keyboard shortcut as words in the display font (`k-keys`): `Ctrl + Shift + P`. keys is written `\"Ctrl+Shift+P\"`; separator goes between them. play lights the keys one after another, as if pressed, on a loop (the web kit's hover start has no touch twin, so here it is a flag).",
+   "params": [
+    {
+     "name": "keys",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "play",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "separator",
+     "type": "String",
+     "default": "\"+\""
+    }
+   ]
+  }
+ ],
+ "KometaLink": [
+  {
+   "doc": "A word that copies text (`k-link`) and reads copiedLabel for copiedMs ms, announced politely, before going back to copyLabel. description names what is copied when the word alone is ambiguous (one per table row). Ink is LocalKometaContentColor, text colour when unset.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "copyLabel",
+     "type": "String"
+    },
+    {
+     "name": "copiedLabel",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "copiedMs",
+     "type": "Long",
+     "default": "900"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaMarks": [
+  {
+   "doc": "A week of marks (`k-marks`): each day's label over its mark (\"10:00\\n19:00\" wraps where written). A closed day (null mark) is muted and shows empty.",
+   "params": [
+    {
+     "name": "days",
+     "type": "List<KometaMarkDay>"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "empty",
+     "type": "String",
+     "default": "\"—\""
+    }
+   ]
+  }
+ ],
+ "KometaMenu": [
+  {
+   "doc": "A chooser with no floating sheet (`k-menu`): a trigger line (a muted label word, the chosen value in the display font, a caret) opens the options in the page as big display words and pushes the content below it down over 420ms. The chosen word is ink with a trailing bead; picking one calls onValueChange and closes the list. Escape closes it too. description names the control for a screen reader when the prefix word alone is not enough; placeholder shows while nothing is chosen.",
+   "params": [
+    {
+     "name": "options",
+     "type": "List<KometaWordOption>"
+    },
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaMeter": [
+  {
+   "doc": "A figure \"17 / 25\" over one tick per unit (`k-meter`): a remaining unit is bright and tall, a spent one dim and short. Above 40 units it draws 25 ticks and scales; the figure stays exact. Read-only.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Int"
+    },
+    {
+     "name": "max",
+     "type": "Int"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "unit",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "showFigure",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaMulti": [
+  {
+   "doc": "Several choices from a list (`k-multi`). What is chosen sits in the field as words with a cross, in the order chosen; the field is also an input, so typing narrows the glass list under it (above when there is no room). Arrow keys move through the list, Enter toggles the row under the cursor, Backspace on an empty input takes the last choice off, Escape, Tab, leaving the field or a tap outside closes it. The list stays open while you choose. pill is the toolbar form: no chips and no typing, a bordered button that shows the caller's summary (\"Columns 3/7\") over the same list. label reads options as words and dot gives a colour drawn as a dot before it. value is matched with `==` and replaced (never changed in place) on every toggle; max stops adding at that many, a full set can still be reduced. noMatch shows when typing matches nothing, removeLabel prefixes a chip's spoken name (\"Remove Tashkent\"), description is the accessible name.",
+   "params": [
+    {
+     "name": "options",
+     "type": "List<T>"
+    },
+    {
+     "name": "value",
+     "type": "List<T>"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(List<T>) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "(T) -> String",
+     "default": "{ it.toString() }"
+    },
+    {
+     "name": "dot",
+     "type": "(T) -> Color?",
+     "default": "{ null }"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "summary",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "noMatch",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "removeLabel",
+     "type": "String",
+     "default": "\"Remove\""
+    },
+    {
+     "name": "pill",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "max",
+     "type": "Int?",
+     "default": "null"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaNote": [
+  {
+   "doc": "An explanation that floats and moves nothing (`k-note`): a small ⓘ marker and, open, a cream tab with the text in a popup above the page, so no clipping parent can cut it. A tap opens and closes it, a tap elsewhere or Back closes it, and a mouse hover opens it. The tab sits above the marker, flips below near the top edge (placement) and stays inside the window. label is the marker's accessible name; without one the marker is described by the text itself.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "placement",
+     "type": "KometaNotePlacement",
+     "default": "KometaNotePlacement.Auto"
+    }
+   ]
+  }
+ ],
+ "KometaNotes": [
+  {
+   "doc": "Free text, several lines (`k-notes`). No box: a hairline under the text draws itself on focus, and the field grows with what is written, never shorter than rows lines. With a maxLength typing stops at it, and the count shows only in the last 30 characters, amber and then red at the limit; a screen reader hears it only as it crosses 30, 20, 10 and 5 left and at the limit. A screen that draws its own counter passes showCount = false. label is the accessible name.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "rows",
+     "type": "Int",
+     "default": "2"
+    },
+    {
+     "name": "maxLength",
+     "type": "Int?",
+     "default": "null"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "showCount",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaNumber": [
+  {
+   "doc": "The one number field (`k-number`): a whole number typed into a bare figure over a hairline that draws itself on focus. Typing never leaves min..max in value: it is held at the nearest end while the box keeps what was typed (the line turns red), and the box catches up when focus leaves. An empty box is `null`, never 0, so a price nobody typed is not saved as zero. money groups the figure in threes, floors it at 0 unless min says otherwise and fills its row; suffix is a unit word after it. For a small count with minus and plus circles use KometaStepper.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Long?"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(Long?) -> Unit"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "min",
+     "type": "Long?",
+     "default": "null"
+    },
+    {
+     "name": "max",
+     "type": "Long?",
+     "default": "null"
+    },
+    {
+     "name": "suffix",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "money",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaPager": [
+  {
+   "doc": "The pager (`k-pager`): a mono caption \"1–25 / 134\", page numbers as words with a 2dp cream line under the current one (\"‹ 1 2 3 … 9 ›\"), and a rows-per-page words group. Under 560dp of its own width only \"‹ 2 / 9 ›\" and the caption stay. Draws nothing when total fits the smallest of sizes, so a short list shows no pager at all. page is 1-based; a page beyond the last is pulled back through onPageChange, and picking a size also sets page to 1. Pass an empty sizes for no rows-per-page group (the hide threshold is then pageSize); a single size draws no group either. The words default to English; pass your own.",
+   "params": [
+    {
+     "name": "total",
+     "type": "Int"
+    },
+    {
+     "name": "page",
+     "type": "Int"
+    },
+    {
+     "name": "onPageChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "pageSize",
+     "type": "Int"
+    },
+    {
+     "name": "onPageSizeChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "sizes",
+     "type": "List<Int>",
+     "default": "listOf(10, 25, 50)"
+    },
+    {
+     "name": "caption",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "prevLabel",
+     "type": "String",
+     "default": "\"Previous page\""
+    },
+    {
+     "name": "nextLabel",
+     "type": "String",
+     "default": "\"Next page\""
+    },
+    {
+     "name": "perPageLabel",
+     "type": "String",
+     "default": "\"Per page\""
+    }
+   ]
+  }
+ ],
+ "KometaPair": [
+  {
+   "doc": "The footer of a confirm that destroys something (`k-pair`): an equal pair, a quiet keep beside a red confirm. primary draws the confirm side amber, for a pair that destroys nothing. busy spins the confirm side and locks both, so a double tap cannot confirm twice; confirmEnabled locks only the confirm side.",
+   "params": [
+    {
+     "name": "keep",
+     "type": "String"
+    },
+    {
+     "name": "confirm",
+     "type": "String"
+    },
+    {
+     "name": "onKeep",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "onConfirm",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "busy",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "confirmEnabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "primary",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaPanes": [
+  {
+   "doc": "Two panes side by side with a line between them that you drag to resize (`k-panes`). The line is a dot until hovered or dragged, then it grows to full height. size is the first pane's share of the width in percent. With snaps the split only rests on those, and a row of ticks above marks them, the current one standing tall; an empty snaps lets it go anywhere in min..max. A screen reader hears an adjustable description that steps to the next snap (or by 5%). The frame is 240dp tall unless modifier sets a height.",
+   "params": [
+    {
+     "name": "size",
+     "type": "Int"
+    },
+    {
+     "name": "onSizeChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "start",
+     "type": "@Composable () -> Unit"
+    },
+    {
+     "name": "end",
+     "type": "@Composable () -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "snaps",
+     "type": "List<Int>",
+     "default": "listOf(25, 33, 50, 66, 75)"
+    },
+    {
+     "name": "min",
+     "type": "Int",
+     "default": "15"
+    },
+    {
+     "name": "max",
+     "type": "Int",
+     "default": "85"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"Resize panes\""
+    }
+   ]
+  }
+ ],
+ "KometaPerson": [
+  {
+   "doc": "A person row (`k-person`), and the one avatar: a glass disc of initials (28/36/64dp), then the name and an optional meta line; trailing sits at the end. square is a tile for a shop, image draws a photo in place of the initials (load it with your image library), bare hides the name beside it.",
+   "params": [
+    {
+     "name": "name",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "meta",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "size",
+     "type": "KometaPersonSize",
+     "default": "KometaPersonSize.Md"
+    },
+    {
+     "name": "square",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "bare",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "initials",
+     "type": "String",
+     "default": "initialsOf(name)"
+    },
+    {
+     "name": "image",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    },
+    {
+     "name": "trailing",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaPhotos": [
+  {
+   "doc": "The full-screen photo viewer (`k-photos`): a dark window over everything with photo index of count large, the count (\"3 / 12\"), a toolbar (rotate left and right, zoom out and in, download when onDownload is given, and a Close word), arrow keys and a swipe to move, and a strip of thumbnails when there is more than one (and thumbs). open and index are the caller's; Back, Escape and Close call `onOpenChange(false)`. Images are the caller's too: photo draws photo `i` filling its box (fit inside, not cropped), thumb its square thumbnail (cropped). A new photo, or the viewer reopening, starts upright at 1x.",
+   "params": [
+    {
+     "name": "count",
+     "type": "Int"
+    },
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "index",
+     "type": "Int"
+    },
+    {
+     "name": "onIndexChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "photo",
+     "type": "@Composable (Int) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "thumb",
+     "type": "@Composable (Int) -> Unit",
+     "default": "photo"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "labels",
+     "type": "KometaPhotosLabels",
+     "default": "KometaPhotosLabels()"
+    },
+    {
+     "name": "onDownload",
+     "type": "((Int) -> Unit)?",
+     "default": "null"
+    },
+    {
+     "name": "thumbs",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaPicker": [
+  {
+   "doc": "The \"choose a file\" half of an upload (`k-picker`). It draws the control and calls onPick; the OS chooser, the accepted types and what to do with the files are the caller's (progress is KometaUpload's). Two shapes, one frame language: KometaPickerVariant.Button is a small framed chip with label (a \"+\" before it with plus), KometaPickerVariant.Zone a corner-marked frame with label as its title and a muted hint. While over (the caller's own drop target has a file over it) or under the pointer, the corners close in and a veil fills the zone from the bottom. content is drawn after the label. contentDescription overrides the spoken name.",
+   "params": [
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "onPick",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "variant",
+     "type": "KometaPickerVariant",
+     "default": "KometaPickerVariant.Button"
+    },
+    {
+     "name": "hint",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "plus",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "over",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "contentDescription",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit",
+     "default": "{}"
+    }
+   ]
+  }
+ ],
+ "KometaPop": [
+  {
+   "doc": "A small panel hung off a button (`k-pop`): a glass card in a popup, so no clipping parent cuts it, that drops in under its anchor, flips above when there is no room below and stays inside the window. Put it in the same `Box` as the button that toggles open: the popup anchors to that parent. The panel is whatever content draws. A tap outside, Escape or Back calls onOpenChange with false. It is at most 70% of the window tall and scrolls inside itself; width fixes its width, offset is the gap to the anchor and align the anchor edge it lines up with. label names the panel for screen readers.",
+   "params": [
+    {
+     "name": "open",
+     "type": "Boolean"
+    },
+    {
+     "name": "onOpenChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "width",
+     "type": "Dp",
+     "default": "Dp.Unspecified"
+    },
+    {
+     "name": "offset",
+     "type": "Dp",
+     "default": "8.dp"
+    },
+    {
+     "name": "align",
+     "type": "KometaPopAlign",
+     "default": "KometaPopAlign.Start"
+    },
+    {
+     "name": "content",
+     "type": "@Composable ColumnScope.() -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaProviderLogo": [
+  {
+   "doc": "Click's or Payme's own mark (`k-provider-logo`), verbatim from the vendor's brand kit, on a small white plate: Payme's \"me\" block is black and vanishes on a dark surface, and either mark vanishes on its own brand-filled button, so the surface under the art changes, never the art. provider takes the wire's `Click` / `Payme` as well as lower-case ids. Hidden from TalkBack, since every caller keeps the text label that names the provider. Telegram, Google and Instagram are gradient art the app ships itself: pass it as art (an `Image` of your drawable), drawn on the same plate.",
+   "params": [
+    {
+     "name": "provider",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "size",
+     "type": "Dp",
+     "default": "20.dp"
+    },
+    {
+     "name": "plate",
+     "type": "Color",
+     "default": "Color.White"
+    },
+    {
+     "name": "art",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaQuiet": [
+  {
+   "doc": "An empty state (`k-quiet`): a display-font title and one muted hint sentence, centred. No picture. content goes under them (a KometaWord that fixes the emptiness, say).",
+   "params": [
+    {
+     "name": "title",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "hint",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable ColumnScope.() -> Unit",
+     "default": "{}"
+    }
+   ]
+  }
+ ],
+ "KometaRating": [
+  {
+   "doc": "How a score is given (`k-rating`): numerals 1..max as a radio group, the chosen one cream with a bead under it, and words (`words[n - 1]` is the word for score n) below. 0 is \"nothing chosen yet\"; pressing the chosen numeral again keeps it. Use KometaStars to only display a score.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Int"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "max",
+     "type": "Int",
+     "default": "5"
+    },
+    {
+     "name": "words",
+     "type": "List<String>",
+     "default": "emptyList()"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "showWord",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaReorder": [
+  {
+   "doc": "A list put in order by dragging each row's grip (`k-reorder`). The row lifts, tilts a little and casts a shadow while the others slide aside to make room; on release onItemsChange gets the new order and onMove says what went where. row draws an item beside its grip. Rows are keyed by the items themselves, so items must be distinct. A screen reader hears each grip as grabLabel plus labelOf, with its position, and moves the row with the moveUpLabel / moveDownLabel actions.",
+   "params": [
+    {
+     "name": "items",
+     "type": "List<T>"
+    },
+    {
+     "name": "onItemsChange",
+     "type": "(List<T>) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "labelOf",
+     "type": "(T) -> String",
+     "default": "{ it.toString() }"
+    },
+    {
+     "name": "onMove",
+     "type": "(from: Int, to: Int) -> Unit",
+     "default": "{ _, _ -> }"
+    },
+    {
+     "name": "grabLabel",
+     "type": "String",
+     "default": "\"Move\""
+    },
+    {
+     "name": "moveUpLabel",
+     "type": "String",
+     "default": "\"Move up\""
+    },
+    {
+     "name": "moveDownLabel",
+     "type": "String",
+     "default": "\"Move down\""
+    },
+    {
+     "name": "positionLabel",
+     "type": "(n: Int, total: Int) -> String",
+     "default": "{ n, total -> \"position $n of $total\" }"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "row",
+     "type": "@Composable (item: T, index: Int) -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaReveal": [
+  {
+   "doc": "A before and an after picture in one frame (`k-reveal`). A plain line crosses the frame at position (0..100, steps of 5, the share that shows before); under it a row of 21 ticks, those up to the line cream and the one under it tall. Drag along the ticks or across the frame, or tap one. Screen readers get a slider (description, \"Before 40%, After 60%\"). aspectRatio is width / height.",
+   "params": [
+    {
+     "name": "position",
+     "type": "Int"
+    },
+    {
+     "name": "onPositionChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "before",
+     "type": "@Composable () -> Unit"
+    },
+    {
+     "name": "after",
+     "type": "@Composable () -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "beforeLabel",
+     "type": "String",
+     "default": "\"Before\""
+    },
+    {
+     "name": "afterLabel",
+     "type": "String",
+     "default": "\"After\""
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "aspectRatio",
+     "type": "Float",
+     "default": "1f"
+    },
+    {
+     "name": "showLabels",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaRows": [
+  {
+   "doc": "The glass panel that holds rows (`k-rows`): a small muted caps label above it, and a 1dp hairline between the rows, inset 16dp from the left. Put KometaRows (or anything) in content; each child is one row. description names a panel that has no visible label.",
+   "params": [
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaRow": [
+  {
+   "doc": "One row of a KometaRows panel (`k-row`), in one of two modes. Fact: label plus the end value, right-aligned and wrapping from the right edge. Setting: title, an optional meta line, an optional leading icon tile (tone tints it) and the end content. An onClick makes the whole row one control, 56dp tall, with a pressed wash and a chevron (chevron = false leaves it off); without one the row is static and may hold its own controls (a toggle, words). KometaRowTone.Danger also reddens the title.",
+   "params": [
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "title",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "meta",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "tone",
+     "type": "KometaRowTone",
+     "default": "KometaRowTone.Neutral"
+    },
+    {
+     "name": "onClick",
+     "type": "(() -> Unit)?",
+     "default": "null"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "chevron",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "icon",
+     "type": "(@Composable () -> Unit)?",
+     "default": "null"
+    },
+    {
+     "name": "end",
+     "type": "@Composable RowScope.() -> Unit",
+     "default": "{}"
+    }
+   ]
+  }
+ ],
+ "KometaRowValue": [
+  {
+   "doc": "A fact row's value: 15sp semibold, right-aligned, wrapping from the right edge.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    }
+   ]
+  }
+ ],
+ "KometaRules": [
+  {
+   "doc": "What a value still needs (`k-rules`): a row of words that strike through as each rule is met, with the 1dp line KometaCheck draws through a done label. Put it under the field (a password, say) and pass that field's value. A met rule is read with doneLabel; description names the list.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "rules",
+     "type": "List<KometaRule>"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "doneLabel",
+     "type": "String",
+     "default": "\"done\""
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaSearch": [
+  {
+   "doc": "The search as the \"whisper\" draws it (`k-search`): no box, no magnifier; the placeholder is the question in the display font at 32% ink, over a hairline that grows into a 2dp line on focus. A quiet \"×\" appears once there is text. label is the accessible name; clearLabel names the \"×\" (without one it is skipped by a screen reader). large is the 42sp hero. onSearch runs on the keyboard's search key.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "clearLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "large",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "onSearch",
+     "type": "(() -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaSelect": [
+  {
+   "doc": "One choice from a list (`k-select`). The field is a line with the chosen word and a chevron; it opens a glass list that drops below it, or above when there is no room, kept inside the window. The chosen row takes the 2dp edge. A tap outside or Back closes it. label reads options as words; value is matched with `==` and with no match the placeholder shows. prefix is a muted word before the choice (\"Role: Owner\"); pill draws the field as a bordered pill for a toolbar. description is the accessible name of the field.",
+   "params": [
+    {
+     "name": "options",
+     "type": "List<T>"
+    },
+    {
+     "name": "value",
+     "type": "T?"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(T) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "label",
+     "type": "(T) -> String",
+     "default": "{ it.toString() }"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "prefix",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "pill",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "emptyLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaShare": [
+  {
+   "doc": "How a whole divides (`k-share`): one bar of ticks where every slice is a run in its own colour, as KometaMeter draws units, and a legend under it with each slice's share and amount, so a slice too thin to see and a negative one the bar cannot draw are both still read. The legend is the truth, the colour decoration. Read-only; label names the bar for a screen reader.",
+   "params": [
+    {
+     "name": "segments",
+     "type": "List<KometaShareSegment>"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "legend",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "percents",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "tickCount",
+     "type": "Int",
+     "default": "48"
+    }
+   ]
+  }
+ ],
+ "KometaSkeleton": [
+  {
+   "doc": "Loading placeholder with no blocks (`k-skeleton`): a hairline disc and hairlines that draw themselves, row by row. KometaSkeletonShape.Line is one hairline with a bright stretch sliding along it, for a table cell; it says nothing to a screen reader. label is the caller's word for \"loading\".",
+   "params": [
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "shape",
+     "type": "KometaSkeletonShape",
+     "default": "KometaSkeletonShape.Rows"
+    },
+    {
+     "name": "rows",
+     "type": "Int",
+     "default": "3"
+    },
+    {
+     "name": "avatar",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "lines",
+     "type": "Int",
+     "default": "2"
+    },
+    {
+     "name": "delayMillis",
+     "type": "Int",
+     "default": "0"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaSlider": [
+  {
+   "doc": "A value chosen by dragging along a row of ticks (`k-slider`): the ticks up to the value stand tall and cream, the rest lie short and dim. A figure \"12 / 20 km\" sits above. Above 40 steps it draws 25 ticks and scales. TalkBack adjusts it with the usual slider gestures.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Int"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "min",
+     "type": "Int",
+     "default": "0"
+    },
+    {
+     "name": "max",
+     "type": "Int",
+     "default": "20"
+    },
+    {
+     "name": "step",
+     "type": "Int",
+     "default": "1"
+    },
+    {
+     "name": "unit",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "showFigure",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaSlots": [
+  {
+   "doc": "Free times as glass chips (`k-slots`); the chosen one gets an amber edge, never an amber fill. value is the chosen slot's `value`, \"\" for none. With clearable a second tap on the chosen chip clears it, for a grid that holds a time before it commits. enabled = false disables all.",
+   "params": [
+    {
+     "name": "slots",
+     "type": "List<KometaSlot>"
+    },
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "clearable",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaSort": [
+  {
+   "doc": "Sort words for a list of cards (`k-sort`). The options are words; the active one is Kometa.colors text with a 2dp cream line under it, followed by ascGlyph or descGlyph. It holds no state: a tap only reports the key to onPick (feed it to KometaListView.pickSort, which flips the direction on the active key and switches on another). The words wrap onto a second line when the row is full. Nothing is animated. A screen reader hears the active word as selected with ascLabel / descLabel; description names the group (the web default is \"Sort\", in the caller's language here).",
+   "params": [
+    {
+     "name": "options",
+     "type": "List<KometaSortOption>"
+    },
+    {
+     "name": "key",
+     "type": "String"
+    },
+    {
+     "name": "dir",
+     "type": "KometaSortDir"
+    },
+    {
+     "name": "onPick",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"Sort\""
+    },
+    {
+     "name": "ascLabel",
+     "type": "String",
+     "default": "\"ascending\""
+    },
+    {
+     "name": "descLabel",
+     "type": "String",
+     "default": "\"descending\""
+    },
+    {
+     "name": "ascGlyph",
+     "type": "String",
+     "default": "\"↑\""
+    },
+    {
+     "name": "descGlyph",
+     "type": "String",
+     "default": "\"↓\""
+    }
+   ]
+  }
+ ],
+ "KometaSortHeader": [
+  {
+   "doc": "A sortable table column's header (`thkometaSortHeader`): content (the column's name) as a button that reports key to onPick, followed by ascGlyph / descGlyph while active is this column. It inherits the header's text style, so put it inside the cell's own text styling. A screen reader hears the column's direction (ascLabel / descLabel) on the active column only.",
+   "params": [
+    {
+     "name": "key",
+     "type": "String"
+    },
+    {
+     "name": "active",
+     "type": "String"
+    },
+    {
+     "name": "dir",
+     "type": "KometaSortDir"
+    },
+    {
+     "name": "onPick",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "ascLabel",
+     "type": "String",
+     "default": "\"ascending\""
+    },
+    {
+     "name": "descLabel",
+     "type": "String",
+     "default": "\"descending\""
+    },
+    {
+     "name": "ascGlyph",
+     "type": "String",
+     "default": "\"↑\""
+    },
+    {
+     "name": "descGlyph",
+     "type": "String",
+     "default": "\"↓\""
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaSplit": [
+  {
+   "doc": "Two display-font figures side by side (`k-split`), each over a muted label. Each side takes its figure's width and they share what is left; when both do not fit, the second wraps under the first. center centres each side's text.",
+   "params": [
+    {
+     "name": "left",
+     "type": "KometaSplitSide"
+    },
+    {
+     "name": "right",
+     "type": "KometaSplitSide"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "center",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaStars": [
+  {
+   "doc": "Five inline stars (`k-stars`) showing a score: whole stars filled, a half star filled on its start side, the rest outlines. label is the accessible name (\"4.5 of 5\"), owned by the caller.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Float"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "max",
+     "type": "Int",
+     "default": "5"
+    },
+    {
+     "name": "size",
+     "type": "Dp",
+     "default": "16.dp"
+    }
+   ]
+  }
+ ],
+ "KometaStepper": [
+  {
+   "doc": "A number between two hairline circles (`k-stepper`). The figure rolls when it changes and a circle dims at its limit. Words (unit, button labels) come from the caller.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Int"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(Int) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "min",
+     "type": "Int",
+     "default": "0"
+    },
+    {
+     "name": "max",
+     "type": "Int?",
+     "default": "null"
+    },
+    {
+     "name": "step",
+     "type": "Int",
+     "default": "1"
+    },
+    {
+     "name": "unit",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "decrementLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "incrementLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaSteps": [
+  {
+   "doc": "A vertical rail of named steps (`k-steps`) with one cream bead that travels to the current one (1-based). Read-only progress, not navigation. currentLabel is announced on the current row.",
+   "params": [
+    {
+     "name": "steps",
+     "type": "List<String>"
+    },
+    {
+     "name": "current",
+     "type": "Int"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "currentLabel",
+     "type": "String",
+     "default": "\"current\""
+    }
+   ]
+  }
+ ],
+ "KometaSuggest": [
+  {
+   "doc": "A text field that offers people while you type (`k-suggest`), drawn as a KometaField; free text always, a word nobody has is simply what was typed. From minLength letters, after delayMillis of quiet, onQuery gets the trimmed text and the page answers by setting suggestions; a new list opens a glass panel under the field (above when there is no room) while the field keeps focus. Arrow keys move over the rows, Enter picks, Escape, Tab or a tap outside closes. A pick puts its label in the field (onValueChange) and hands the row to onPick. Rows draw as a small KometaPerson unless row draws them. label is the field's label and accessible name.",
+   "params": [
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "suggestions",
+     "type": "List<KometaSuggestion>"
+    },
+    {
+     "name": "onQuery",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "onPick",
+     "type": "(KometaSuggestion) -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "label"
+    },
+    {
+     "name": "minLength",
+     "type": "Int",
+     "default": "2"
+    },
+    {
+     "name": "delayMillis",
+     "type": "Long",
+     "default": "300"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "row",
+     "type": "(@Composable (KometaSuggestion) -> Unit)?",
+     "default": "null"
+    }
+   ]
+  }
+ ],
+ "KometaSwipe": [
+  {
+   "doc": "A row that does something when swiped (`k-swipe`). Pulling right fills a row of ticks ticks and, released with all of them lit, fires onSwipeRight (rightLabel is the word beside them). Pulling left grows a ring that turns red past 45% of the width; released there the row slides away and onSwipeLeft fires (leftLabel, leftIcon). A side without a label does not pull. Both actions are also offered to screen readers as custom actions. content is the row's face.",
+   "params": [
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "rightLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "leftLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "leftIcon",
+     "type": "String",
+     "default": "\"✕\""
+    },
+    {
+     "name": "ticks",
+     "type": "Int",
+     "default": "12"
+    },
+    {
+     "name": "onSwipeRight",
+     "type": "() -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "onSwipeLeft",
+     "type": "() -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaTabbar": [
+  {
+   "doc": "A floating glass capsule of icon tabs (`k-tabbar`); the chosen one opens to show its word (allLabels keeps every word open). icon draws a tab's icon in LocalKometaContentColor.",
+   "params": [
+    {
+     "name": "tabs",
+     "type": "List<KometaTab>"
+    },
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "icon",
+     "type": "@Composable (KometaTab) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "allLabels",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaTable": [
+  {
+   "doc": "A plain table for the lists the consoles show (`k-table`), generic over rows. header and row are a RowScope each, so their cells line up by sharing `Modifier.weight` / `width`; use KometaTableCell for text cells. Every row sits on a hairline; the header's words are muted and semibold, the figures tabular. groupBy draws groupHeader before the first row of each run of equal keys; key keeps a row's state with its item when the list changes (the web `dataKey`). empty shows when there are no rows. compact tightens the padding (`size=\"sm\"`), striped tints every second row, hoverable the row under the pointer. A finite maxHeight caps the height and scrolls the rows under a header that stays put. Sorting and paging stay the caller's (KometaSortHeader, KometaPager).",
+   "params": [
+    {
+     "name": "rows",
+     "type": "List<T>"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "key",
+     "type": "((T) -> Any)?",
+     "default": "null"
+    },
+    {
+     "name": "groupBy",
+     "type": "((T) -> Any?)?",
+     "default": "null"
+    },
+    {
+     "name": "compact",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "striped",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "hoverable",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "maxHeight",
+     "type": "Dp",
+     "default": "Dp.Infinity"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "header",
+     "type": "(@Composable RowScope.() -> Unit)?",
+     "default": "null"
+    },
+    {
+     "name": "groupHeader",
+     "type": "@Composable (T) -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "empty",
+     "type": "@Composable () -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "row",
+     "type": "@Composable RowScope.(item: T, index: Int) -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaTableCell": [
+  {
+   "doc": "One text cell of a KometaTable row or header, padded like the web `td` / `th`: muted semibold in the header, LocalKometaContentColor (else text) in a row. Give it a `Modifier.weight` so the columns line up.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "align",
+     "type": "TextAlign",
+     "default": "TextAlign.Start"
+    }
+   ]
+  }
+ ],
+ "KometaTag": [
+  {
+   "doc": "A status mark (`k-tag`): a state-coloured dot and a word, no container. Not a button.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "tone",
+     "type": "KometaTagTone",
+     "default": "KometaTagTone.Book"
+    },
+    {
+     "name": "dot",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaTally": [
+  {
+   "doc": "A figure that counts to its new value instead of jumping (`k-tally`), with a row of ticks under it that fills to match when it has a max. A screen reader hears only the final value. format writes the figure; the default groups thousands.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Int"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "max",
+     "type": "Int?",
+     "default": "null"
+    },
+    {
+     "name": "ticks",
+     "type": "Int",
+     "default": "30"
+    },
+    {
+     "name": "unit",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "durationMillis",
+     "type": "Int",
+     "default": "900"
+    },
+    {
+     "name": "format",
+     "type": "(Int) -> String",
+     "default": "{ groupThousands(it.toLong()) }"
+    }
+   ]
+  }
+ ],
+ "KometaTheme": [
+  {
+   "doc": "Wrap the app (or a screen) in this; the components read their colours and fonts from it.",
+   "params": [
+    {
+     "name": "dark",
+     "type": "Boolean",
+     "default": "isSystemInDarkTheme()"
+    },
+    {
+     "name": "fonts",
+     "type": "KometaFonts",
+     "default": "KometaFonts()"
+    },
+    {
+     "name": "colors",
+     "type": "KometaColors",
+     "default": "if (dark) KometaDarkColors else KometaLightColors"
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaTick": [
+  {
+   "doc": "A checkbox with no label of its own (`k-tick`): a hairline ring that fills with ink while the tick draws itself in. Name it with label. For a row whose words are the control, see KometaCheck.",
+   "params": [
+    {
+     "name": "checked",
+     "type": "Boolean"
+    },
+    {
+     "name": "onCheckedChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "readOnly",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "invalid",
+     "type": "Boolean",
+     "default": "false"
+    }
+   ]
+  }
+ ],
+ "KometaTime": [
+  {
+   "doc": "A time of day (`k-time`). The time is a figure with a hairline under it, like KometaDate; a tap opens a glass list of times in four columns, in a popup that flips above when there is no room below, scrolled to the held time (or 09:00). value is minutes after midnight (0–1439, `null` for none); step is the minutes between the times listed, and a held time off that grid (09:07) is listed too, so nothing is lost by opening it. Picking calls onValueChange and closes; a tap outside or Back closes too. With clearable a Clear link (clearLabel) under the list sets it back to `null`. description is the accessible name.",
+   "params": [
+    {
+     "name": "value",
+     "type": "Int?"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(Int?) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "step",
+     "type": "Int",
+     "default": "15"
+    },
+    {
+     "name": "placeholder",
+     "type": "String",
+     "default": "\"—\""
+    },
+    {
+     "name": "clearable",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "clearLabel",
+     "type": "String",
+     "default": "\"Clear\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaTip": [
+  {
+   "doc": "A tooltip on whatever it wraps (`kometaTip`): a small glass card beside it, an ink rule on its left edge, the text and an optional sub line, in a popup so no clipping parent cuts it. A mouse hover shows it after delayMs (none when moving between neighbouring tips), keyboard focus shows it at once, and Escape, leaving and pressing hide it. The pointer can cross onto the tip and it stays while hovered (WCAG 1.4.13). On touch a long press shows it for two seconds and does not also click what is under the finger. A null or empty text shows nothing. The tip sits right of the content, else left, else below or above, inside the window. It does not name the content: an icon-only control still needs its own label.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String?"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "sub",
+     "type": "String?",
+     "default": "null"
+    },
+    {
+     "name": "delayMs",
+     "type": "Long",
+     "default": "380"
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaToasts": [
+  {
+   "doc": "The short word that confirms a save or reports a failure (`k-toast`): a thread of glass pills stacking up from the bottom (or down from the top). A hairline under each drains with the time it has left, and a toast held under a finger waits. The caller owns the list: it passes items and removes an item in onDismiss, called once the time is up or the pill is tapped, after it has left. Place it over the screen, e.g. `Box { content(); KometaToasts(..., Modifier.align(BottomCenter)) }`.",
+   "params": [
+    {
+     "name": "items",
+     "type": "List<KometaToastItem>"
+    },
+    {
+     "name": "onDismiss",
+     "type": "(Long) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "top",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "closeLabel",
+     "type": "String",
+     "default": "\"Dismiss\""
+    }
+   ]
+  }
+ ],
+ "KometaToggle": [
+  {
+   "doc": "An on/off switch whose state is a word (`k-toggle`): the on word goes cream and a 1dp line draws under it. The caller supplies both words; with neither it draws a track and knob. label names the switch for a screen reader, since the visible word is only its state.",
+   "params": [
+    {
+     "name": "checked",
+     "type": "Boolean"
+    },
+    {
+     "name": "onCheckedChange",
+     "type": "(Boolean) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "onLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "offLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaTrail": [
+  {
+   "doc": "A list of things in the order they happened (`k-trail`); put a KometaTrailStep per thing in content.",
+   "params": [
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "content",
+     "type": "@Composable ColumnScope.() -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaTrailStep": [
+  {
+   "doc": "One step of a KometaTrail (`k-step`): the time as a large display figure, content beside it, and under it the wait to the next step (gap, \"32 min\") written on the dashed line that joins them; the wait is the story. The step rises in when it first appears; delayMs staggers a list of them.",
+   "params": [
+    {
+     "name": "time",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "gap",
+     "type": "String?",
+     "default": "null"
+    },
+    {
+     "name": "delayMs",
+     "type": "Int",
+     "default": "0"
+    },
+    {
+     "name": "content",
+     "type": "@Composable () -> Unit"
+    }
+   ]
+  }
+ ],
+ "KometaTray": [
+  {
+   "doc": "The page's one confirm question (`k-tray`): two wide answers rise from the bottom of the screen on a phone and sit as a centred card on a wider window, over a dimmed screen. It is driven by request: a KometaConfirmation shows it, null hides it; the words stay through the leave animation. The accept answer goes first and calls onAccept; the quiet answer under it, Back, Escape and a tap on the dark area (while dismissible) call onReject. Both callbacks should set the request back to null. The heading is KometaConfirmation.header, else the message.",
+   "params": [
+    {
+     "name": "request",
+     "type": "KometaConfirmation?"
+    },
+    {
+     "name": "onAccept",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "onReject",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "dismissible",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaTree": [
+  {
+   "doc": "A tree drawn as columns (`k-tree`): pick a word and its children slide in as the next column, each behind a hairline. The chosen word in every column goes cream; a branch carries a \"›\". path holds the chosen index per column, outermost first; a pick reports the new path to onPathChange and the node to onPick. The columns scroll sideways when they run out of room. A screen reader hears the chosen word as selected and a branch as expandedLabel / collapsedLabel.",
+   "params": [
+    {
+     "name": "nodes",
+     "type": "List<KometaTreeNode>"
+    },
+    {
+     "name": "path",
+     "type": "List<Int>"
+    },
+    {
+     "name": "onPathChange",
+     "type": "(List<Int>) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "onPick",
+     "type": "(KometaTreeNode) -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "expandedLabel",
+     "type": "String",
+     "default": "\"expanded\""
+    },
+    {
+     "name": "collapsedLabel",
+     "type": "String",
+     "default": "\"collapsed\""
+    }
+   ]
+  }
+ ],
+ "KometaUpload": [
+  {
+   "doc": "The upload zone (`k-upload`): a dashed box that fills from the bottom behind the file's name and sizeLabel, a big tabular percentage, then the statusLabel line and one quiet text button. It is a display: the caller runs the upload and feeds progress (0 to 1) and state. The button (actionLabel, none when empty) only calls onAction; cancel or retry is the caller's decision. Done draws a solid edge, Failed the error colour. label names the progress bar (the file name by default).",
+   "params": [
+    {
+     "name": "name",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "sizeLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "progress",
+     "type": "Float",
+     "default": "0f"
+    },
+    {
+     "name": "state",
+     "type": "KometaUploadState",
+     "default": "KometaUploadState.Idle"
+    },
+    {
+     "name": "statusLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "actionLabel",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "onAction",
+     "type": "() -> Unit",
+     "default": "{}"
+    },
+    {
+     "name": "label",
+     "type": "String",
+     "default": "\"\""
+    },
+    {
+     "name": "showPercent",
+     "type": "Boolean",
+     "default": "true"
+    }
+   ]
+  }
+ ],
+ "KometaWait": [
+  {
+   "doc": "Loading state (`k-wait`): the label stays, and a short line travels under it.",
+   "params": [
+    {
+     "name": "label",
+     "type": "String"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    }
+   ]
+  }
+ ],
+ "KometaWord": [
+  {
+   "doc": "An action that is only a word and an arrow (`k-word`), for the end of a row. No box, so a column of them stays calm; the arrow leans while pressed. Amber ink; quiet for a muted secondary word beside it. lead is the screen's one call to action: ink, a hairline under it and the arrow pushed to the end, filling its row. busy swaps the hairline for a marching amber one and ignores presses (its busyLabel is read out). arrow = false drops the arrow. Never destructive: that is KometaErase.",
+   "params": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "onClick",
+     "type": "() -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "quiet",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "lead",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "busy",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "arrow",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "busyLabel",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ],
+ "KometaWords": [
+  {
+   "doc": "A handful of words with a cream line under the chosen one (`k-words`); the line slides to a newly chosen word. value is the chosen word's `value`. A long row scrolls sideways inside its own box and never wraps. tabs reads the words as tabs (they switch panels) instead of a choice.",
+   "params": [
+    {
+     "name": "options",
+     "type": "List<KometaWordOption>"
+    },
+    {
+     "name": "value",
+     "type": "String"
+    },
+    {
+     "name": "onValueChange",
+     "type": "(String) -> Unit"
+    },
+    {
+     "name": "modifier",
+     "type": "Modifier",
+     "default": "Modifier"
+    },
+    {
+     "name": "tabs",
+     "type": "Boolean",
+     "default": "false"
+    },
+    {
+     "name": "enabled",
+     "type": "Boolean",
+     "default": "true"
+    },
+    {
+     "name": "description",
+     "type": "String",
+     "default": "\"\""
+    }
+   ]
+  }
+ ]
+}

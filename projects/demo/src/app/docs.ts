@@ -11,6 +11,13 @@ import scssSource from './app.scss' with { loader: 'text' };
 import globalScss from '../styles.scss' with { loader: 'text' };
 // The Compose versions of the examples, compiled with the sample app so they cannot drift from the Kotlin API.
 import ktSource from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/Docs.kt' with { loader: 'text' };
+import ktFormA from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/DocsFormA.kt' with { loader: 'text' };
+import ktFormB from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/DocsFormB.kt' with { loader: 'text' };
+import ktActions from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/DocsActions.kt' with { loader: 'text' };
+import ktData from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/DocsData.kt' with { loader: 'text' };
+import ktOverlays from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/DocsOverlays.kt' with { loader: 'text' };
+import ktMedia from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/DocsMedia.kt' with { loader: 'text' };
+import ktMisc from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/DocsMisc.kt' with { loader: 'text' };
 
 /** Cuts the inner markup of every `<app-doc id="x">` out of the template, keyed `page/x` by the `@case` above it. */
 export function parseSource(html: string): Map<string, string> {
@@ -88,7 +95,7 @@ export class Docs {
   private readonly snippets = parseSource(source);
   private readonly ts = parseRegions(tsSource as unknown as string);
   private readonly scss = parseRegions(globalScss + '\n' + scssSource);
-  private readonly kotlin = parseRegions(ktSource);
+  private readonly kotlin = parseRegions([ktSource, ktFormA, ktFormB, ktActions, ktData, ktOverlays, ktMedia, ktMisc].join('\n'));
   readonly platform = signal<Platform>(readPlatform());
   private readonly entries = signal<DocEntry[]>([]);
   /** The sections on screen, in page order, for the "On this page" list. */
@@ -107,6 +114,12 @@ export class Docs {
   /** Whether any example on this page has a Compose version. */
   hasKotlin(page: string): boolean {
     return [...this.kotlin.keys()].some((k) => k.startsWith(page + '/'));
+  }
+
+  /** The kit composables this page's Kotlin examples call, in order of first use: the Compose API table. In-context examples are left out, they borrow other components. */
+  composables(page: string): string[] {
+    const code = [...this.kotlin].filter(([k]) => k.startsWith(page + '/') && !k.endsWith('/in-context')).map(([, v]) => v).join('\n');
+    return [...new Set([...code.matchAll(/\b(Kometa[A-Z]\w*)\s*\(/g)].map((m) => m[1]))];
   }
 
   setPlatform(p: Platform): void {

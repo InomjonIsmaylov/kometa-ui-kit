@@ -186,8 +186,13 @@ internal fun DateWeekStart() {
 /** One docs example as the site's Compose preview draws it; [room] is extra height (dp) for a popup to open into. */
 internal class DocExample(val room: Int = 0, val content: @Composable () -> Unit)
 
-/** Every region above by its key, so the browser build can draw it in place of the Angular preview. */
-internal val DOC_EXAMPLES = mapOf(
+/** Every docs example by its key, so the browser build can draw it in place of the Angular preview. */
+// by lazy: top-level vals of other files may not be initialised yet when this file's are.
+internal val DOC_EXAMPLES by lazy {
+    BASE_EXAMPLES + FORM_A_EXAMPLES + FORM_B_EXAMPLES + ACTIONS_EXAMPLES + DATA_EXAMPLES + OVERLAYS_EXAMPLES + MEDIA_EXAMPLES + MISC_EXAMPLES
+}
+
+private val BASE_EXAMPLES = mapOf(
     "button/severity" to DocExample { ButtonSeverity() },
     "button/in-context" to DocExample { ButtonInContext() },
     "button/variants" to DocExample { ButtonVariants() },

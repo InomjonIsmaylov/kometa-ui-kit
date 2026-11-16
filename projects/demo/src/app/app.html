@@ -2310,9 +2310,27 @@
       </section>
     }
 
-    @if (api().length) {
-      <app-doc id="api" heading="API" [code]="null"
-               [about]="docs.platform() === 'compose' && docs.hasKotlin(current().id) ? 'The Angular inputs, models and outputs. The Compose parameters are in the Kotlin tabs above; there is no Compose table yet.' : 'Inputs, two-way models and outputs, read from the components themselves.'">
+    @if (composeApi(); as fns) {
+      <app-doc id="api" heading="API" [code]="null" about="Parameters of the composables used above, read from the Kotlin source.">
+        @for (f of fns; track f.key) {
+          <h3 class="api-name">{{ f.name }}</h3>
+          @if (f.doc) { <p class="api-doc">{{ f.doc }}</p> }
+          <table class="api">
+            <thead><tr><th>Name</th><th>Type</th><th>Default</th></tr></thead>
+            <tbody>
+              @for (p of f.params; track p.name) {
+                <tr>
+                  <td><code>{{ p.name }}</code>@if (p.default === undefined) { <span class="req">required</span> }</td>
+                  <td><code>{{ p.type }}</code></td>
+                  <td>@if (p.default !== undefined) { <code>{{ p.default }}</code> } @else { <span class="muted">-</span> }</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </app-doc>
+    } @else if (api().length) {
+      <app-doc id="api" heading="API" [code]="null" about="Inputs, two-way models and outputs, read from the components themselves.">
         @for (c of api(); track c.name) {
           <h3 class="api-name">{{ c.name }} <code>{{ c.selector }}</code></h3>
           <table class="api">
