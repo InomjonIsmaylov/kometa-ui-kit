@@ -104,16 +104,16 @@ internal fun SearchBasic() {
     // #endregion
 }
 
-private data class Client(val name: String, val phone: String, val tag: String, val tone: KometaTagTone)
+private data class Customer(val name: String, val phone: String, val tag: String, val tone: KometaTagTone)
 
 @Composable
 internal fun SearchInContext() {
     // #region search/in-context
     val clients = listOf(
-        Client("Dilnoza Karimova", "+998 90 123 45 67", "Regular", KometaTagTone.Done),
-        Client("Aziz Rahimov", "+998 91 555 20 10", "New", KometaTagTone.Book),
-        Client("Malika Yusupova", "+998 93 410 77 02", "VIP", KometaTagTone.Now),
-        Client("Sardor Tursunov", "+998 97 300 11 45", "2 no-shows", KometaTagTone.Warn),
+        Customer("Dilnoza Karimova", "+998 90 123 45 67", "Regular", KometaTagTone.Done),
+        Customer("Aziz Rahimov", "+998 91 555 20 10", "New", KometaTagTone.Book),
+        Customer("Malika Yusupova", "+998 93 410 77 02", "VIP", KometaTagTone.Now),
+        Customer("Sardor Tursunov", "+998 97 300 11 45", "2 no-shows", KometaTagTone.Warn),
     )
     var query by remember { mutableStateOf("") }
     val q = query.lowercase().filterNot { it.isWhitespace() }
@@ -247,15 +247,15 @@ internal fun NumberBasic() {
     // #endregion
 }
 
-private data class Service(val name: String, val minutes: Int, val price: Long?)
+private data class Treatment(val name: String, val minutes: Int, val price: Long?)
 
 @Composable
 internal fun NumberInContext() {
     // #region number/in-context
     val prices = remember {
         mutableStateListOf(
-            Service("Haircut", 40, 80000), Service("Beard trim", 20, 40000),
-            Service("Haircut and beard", 60, 110000), Service("Kids haircut", 30, 60000),
+            Treatment("Haircut", 40, 80000), Treatment("Beard trim", 20, 40000),
+            Treatment("Haircut and beard", 60, 110000), Treatment("Kids haircut", 30, 60000),
         )
     }
     val average = prices.sumOf { it.price ?: 0 } / prices.size
@@ -409,7 +409,7 @@ internal fun InplaceInContext() {
     var usual by remember { mutableStateOf("Low fade, no beard") }
     var note by remember { mutableStateOf("") }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        KometaPerson("Anvar Karimov", meta = "Client since March")
+        KometaPerson("Anvar Karimov", meta = "Customer since March")
         listOf(
             Triple("Phone", phone) { v: String -> phone = v },
             Triple("Usual", usual) { v: String -> usual = v },

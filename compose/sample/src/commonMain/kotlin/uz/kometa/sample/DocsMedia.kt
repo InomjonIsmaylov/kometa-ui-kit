@@ -182,7 +182,7 @@ internal fun CarouselInContext() {
     var slide by remember { mutableIntStateOf(0) }
     var booked by remember { mutableStateOf("") }
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        KometaPerson("Aziza Karimova", meta = "Master · 6 years")
+        KometaPerson("Aziza Karimova", meta = "Stylist · 6 years")
         KometaCarousel(works.size, slide, { slide = it }, label = "Aziza's work", slideLabel = "Work") { i ->
             Box(Modifier.fillMaxWidth().height(180.dp).background(works[i].picture), contentAlignment = Alignment.BottomStart) {
                 BasicText(works[i].title, Modifier.padding(12.dp), style = Kometa.type.md.copy(color = Kometa.colors.text))
@@ -304,7 +304,7 @@ internal fun AvatarsSize() {
 internal fun PersonPerson() {
     // #region person/person
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-        KometaPerson("Dilnoza Karimova", meta = "Master")
+        KometaPerson("Dilnoza Karimova", meta = "Stylist")
         KometaPerson("Aziz", size = KometaPersonSize.Sm)
         // image draws the photo in place of the initials: an Image from your image library.
         KometaPerson("Shop", square = true, size = KometaPersonSize.Lg, image = { Box(Modifier.fillMaxSize().background(dusk)) })
@@ -313,16 +313,16 @@ internal fun PersonPerson() {
     // #endregion
 }
 
-private data class Master(val name: String, val meta: String, val score: Float)
+private data class Stylist(val name: String, val meta: String, val score: Float)
 
 @Composable
 internal fun PersonInContext() {
     // #region person/in-context
     val crew = listOf(
-        Master("Any master", "First free chair", 0f),
-        Master("Aziz Rahimov", "Barber · from 80 000", 4.9f),
-        Master("Dilnoza Karimova", "Stylist · from 120 000", 4.7f),
-        Master("Jasur Nazarov", "Barber · from 70 000", 4.3f),
+        Stylist("Any master", "First free chair", 0f),
+        Stylist("Aziz Rahimov", "Barber · from 80 000", 4.9f),
+        Stylist("Dilnoza Karimova", "Stylist · from 120 000", 4.7f),
+        Stylist("Jasur Nazarov", "Barber · from 70 000", 4.3f),
     )
     var pick by remember { mutableStateOf("Any master") }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -347,7 +347,7 @@ internal fun PersonInContext() {
 @Composable
 internal fun PersonInitials() {
     // #region person/person-initials
-    KometaPerson("Dilnoza Karimova", meta = "Master", initials = "DK")
+    KometaPerson("Dilnoza Karimova", meta = "Stylist", initials = "DK")
     // #endregion
 }
 

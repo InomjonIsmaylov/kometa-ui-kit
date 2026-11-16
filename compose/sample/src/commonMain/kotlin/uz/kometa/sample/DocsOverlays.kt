@@ -371,18 +371,18 @@ internal fun TagTones() {
     // #endregion
 }
 
-private data class Visit(val time: String, val name: String, val service: String, val tone: KometaTagTone, val word: String)
+private data class Appointment(val time: String, val name: String, val service: String, val tone: KometaTagTone, val word: String)
 
 @Composable
 internal fun TagInContext() {
     // #region tag/in-context
     val visits = listOf(
-        Visit("09:00", "Dilnoza Karimova", "Haircut", KometaTagTone.Done, "Done"),
-        Visit("10:30", "Aziz Rahimov", "Beard trim", KometaTagTone.Now, "In the chair"),
-        Visit("11:15", "Sardor Tursunov", "Haircut", KometaTagTone.Warn, "Late 15 min"),
-        Visit("13:00", "Malika Yusupova", "Colour", KometaTagTone.Book, "Booked"),
-        Visit("15:30", "Nodira Saidova", "Manicure", KometaTagTone.Wait, "Unconfirmed"),
-        Visit("17:00", "Jasur Nazarov", "Haircut and beard", KometaTagTone.Error, "Cancelled"),
+        Appointment("09:00", "Dilnoza Karimova", "Haircut", KometaTagTone.Done, "Done"),
+        Appointment("10:30", "Aziz Rahimov", "Beard trim", KometaTagTone.Now, "In the chair"),
+        Appointment("11:15", "Sardor Tursunov", "Haircut", KometaTagTone.Warn, "Late 15 min"),
+        Appointment("13:00", "Malika Yusupova", "Colour", KometaTagTone.Book, "Booked"),
+        Appointment("15:30", "Nodira Saidova", "Manicure", KometaTagTone.Wait, "Unconfirmed"),
+        Appointment("17:00", "Jasur Nazarov", "Haircut and beard", KometaTagTone.Error, "Cancelled"),
     )
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         visits.forEach { v ->

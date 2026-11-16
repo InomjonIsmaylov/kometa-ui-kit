@@ -24,7 +24,6 @@ import { DashboardScreen, USES as dashboardUses } from './screens/dashboard/dash
 import { SettingsScreen, USES as settingsUses } from './screens/settings/settings';
 import { SCREEN_FILES } from './screens/sources';
 import apiMeta from './api.json';
-import composeApi from './compose-api.json';
 import entries from './entries.json';
 
 /** The part of Angular's compiled component metadata the API tables read. */
@@ -299,7 +298,7 @@ export const appConfig: ApplicationConfig = {
   protected readonly composeApi = computed(() => {
     const page = this.current().id;
     if (this.docs.platform() !== 'compose' || !this.docs.hasKotlin(page)) return null;
-    const all = composeApi as Record<string, { doc: string; params: { name: string; type: string; default?: string }[] }[]>;
+    const all = this.docs.composeApi();
     return this.docs.composables(page).filter((n) => all[n]).flatMap((name) => all[name].map((o, i) => ({ name, key: name + i, ...o })));
   });
 

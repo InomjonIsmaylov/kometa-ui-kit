@@ -32,12 +32,12 @@ private fun weekdayAt(i: Int) = weekdays[i % 7]
 
 // ---------------------------------------------------------------- multi
 
-private data class Service(val label: String, val value: String, val price: Int = 0, val minutes: Int = 0)
+private data class Offer(val label: String, val value: String, val price: Int = 0, val minutes: Int = 0)
 
 @Composable
 internal fun MultiBasic() {
     // #region multi/basic
-    val serviceOptions = listOf(Service("Haircut", "cut"), Service("Beard", "beard"), Service("Colour", "colour"))
+    val serviceOptions = listOf(Offer("Haircut", "cut"), Offer("Beard", "beard"), Offer("Colour", "colour"))
     val dots = mapOf("cut" to Kometa.colors.amber, "beard" to Kometa.colors.green, "colour" to Kometa.colors.violet)
     var services by remember { mutableStateOf(listOf(serviceOptions[0])) }
     KometaMulti(
@@ -52,8 +52,8 @@ internal fun MultiBasic() {
 internal fun MultiInContext() {
     // #region multi/in-context
     val orderOptions = listOf(
-        Service("Haircut", "cut", 80000, 40), Service("Beard trim", "beard", 40000, 20),
-        Service("Hair wash", "wash", 20000, 10), Service("Colour", "colour", 250000, 90),
+        Offer("Haircut", "cut", 80000, 40), Offer("Beard trim", "beard", 40000, 20),
+        Offer("Hair wash", "wash", 20000, 10), Offer("Colour", "colour", 250000, 90),
     )
     val dots = mapOf("cut" to Kometa.colors.amber, "beard" to Kometa.colors.green, "wash" to Kometa.colors.blue, "colour" to Kometa.colors.violet)
     var order by remember { mutableStateOf(listOf(orderOptions[0])) }
@@ -347,16 +347,16 @@ internal fun ChipBasic() {
     // #endregion
 }
 
-private data class Master(val name: String, val meta: String, val score: Float, val open: Boolean, val beard: Boolean)
+private data class Barber(val name: String, val meta: String, val score: Float, val open: Boolean, val beard: Boolean)
 
 @Composable
 internal fun ChipInContext() {
     // #region chip/in-context
     val masters = listOf(
-        Master("Aziz Rahimov", "Barber · Chilonzor", 4.9f, open = true, beard = true),
-        Master("Dilnoza Karimova", "Stylist · Chilonzor", 4.7f, open = false, beard = false),
-        Master("Jasur Nazarov", "Barber · Yunusobod", 4.3f, open = true, beard = true),
-        Master("Malika Yusupova", "Stylist · Yunusobod", 4.8f, open = true, beard = false),
+        Barber("Aziz Rahimov", "Barber · Chilonzor", 4.9f, open = true, beard = true),
+        Barber("Dilnoza Karimova", "Stylist · Chilonzor", 4.7f, open = false, beard = false),
+        Barber("Jasur Nazarov", "Barber · Yunusobod", 4.3f, open = true, beard = true),
+        Barber("Malika Yusupova", "Stylist · Yunusobod", 4.8f, open = true, beard = false),
     )
     var open by remember { mutableStateOf(false) }
     var top by remember { mutableStateOf(false) }
@@ -547,7 +547,7 @@ internal fun FilmBasic() {
     // #endregion
 }
 
-private data class Visit(val time: String, val who: String, val gap: String?)
+private data class Booking(val time: String, val who: String, val gap: String?)
 
 @Composable
 internal fun FilmInContext() {
@@ -555,13 +555,13 @@ internal fun FilmInContext() {
     val shiftDays = List(7) { i -> KometaFilmDay("$i", "${dayAt(i)}", sub = weekdayAt(i), dot = i % 2 == 0, muted = i % 2 == 1) }
     val plans = listOf(
         listOf(
-            Visit("10:00", "Dilnoza Karimova · haircut", "1 h 20 min"),
-            Visit("11:20", "Aziz Rahimov · beard trim", "2 h"),
-            Visit("13:20", "Malika Yusupova · colour", null),
+            Booking("10:00", "Dilnoza Karimova · haircut", "1 h 20 min"),
+            Booking("11:20", "Aziz Rahimov · beard trim", "2 h"),
+            Booking("13:20", "Malika Yusupova · colour", null),
         ),
         listOf(
-            Visit("09:30", "Sardor Tursunov · haircut", "50 min"),
-            Visit("10:20", "Jasur Nazarov · haircut and beard", null),
+            Booking("09:30", "Sardor Tursunov · haircut", "50 min"),
+            Booking("10:20", "Jasur Nazarov · haircut and beard", null),
         ),
     )
     var shiftDay by remember { mutableStateOf("0") }
