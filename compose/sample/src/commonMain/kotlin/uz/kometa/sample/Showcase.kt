@@ -1,13 +1,6 @@
 package uz.kometa.sample
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
-import android.graphics.Color
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,27 +33,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import uz.kometa.ui.*
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            val system = isSystemInDarkTheme()
-            var dark by rememberSaveable { mutableStateOf(system) }
-            // The bar icons follow the app's theme toggle, not the system's.
-            LaunchedEffect(dark) {
-                val bars = if (dark) SystemBarStyle.dark(Color.TRANSPARENT) else SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
-                enableEdgeToEdge(bars, bars)
-            }
-            KometaTheme(dark = dark) { Showcase(dark) { dark = it } }
-        }
-    }
-}
-
 private val TABS = listOf(KometaTab("controls", "Base"), KometaTab("inputs", "Inputs"), KometaTab("display", "Display"), KometaTab("overlays", "Overlays"), KometaTab("more", "More"), KometaTab("extra", "Extra"), KometaTab("menus", "Menus"), KometaTab("data", "Data"))
 
+/** Every component on eight tabs; the Android app and the docs site's browser build both show it. */
 @Composable
-private fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
+fun Showcase(dark: Boolean, onDark: (Boolean) -> Unit) {
     var tab by rememberSaveable { mutableStateOf("controls") }
     Box(Modifier.fillMaxSize().background(Kometa.colors.bg).systemBarsPadding().imePadding()) {
         Column(

@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, Type, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
   KOMETA_ANIMATIONS, KometaAccordion, KometaAccordionItem, KometaAction, KometaActions, KometaAnimate, KometaAvatars, KometaCrumb, KometaCrumbs, KometaSlider, KometaCarousel, KometaCountdown, KometaKeys, KometaSlide, KometaTree, KometaTreeNode, KometaHue, KometaRule, KometaRules, KometaInplace, KometaBadge, KometaPanes, KometaContext, KometaContextItem, KometaReorder, KometaSwipe, KometaTally, KometaFab, KometaFabAction, KometaBanner, KometaButton, KometaCheck, KometaChip,
   KometaCode, KometaConfirm, KometaConfirmationService, KometaDate, KometaDigits, KometaDrawer, KometaErase, KometaField,
@@ -68,6 +69,7 @@ export class App {
     { label: 'Overview', items: [
       { id: 'home', label: 'Welcome', about: 'Kometa UI for Angular.' },
       { id: 'playground', label: 'Playground', about: 'Write a template, a class and some CSS, and watch them run. Everything in kometa-ui is in scope.' },
+      { id: 'compose', label: 'Compose Multiplatform', about: 'The same kit in Kotlin for Android, iOS, desktop and the web, running live below.' },
     ] },
     { label: 'Guides', items: [
       { id: 'start', label: 'Getting started', about: 'Install the kit, load its styles and use your first component.' },
@@ -224,12 +226,40 @@ export class App {
   protected readonly prev = computed(() => this.pages[this.pages.indexOf(this.current()) - 1]);
   protected readonly next = computed(() => this.pages[this.pages.indexOf(this.current()) + 1]);
   protected readonly docs = inject(Docs);
+  protected readonly platforms = [{ value: 'angular', label: 'Angular' }, { value: 'compose', label: 'Compose' }];
   protected readonly active = signal('');
   protected readonly group = computed(() => this.nav.find((g) => g.items.includes(this.current()))?.label);
   protected readonly tokens = ['bg', 'card', 'input', 'border', 'text', 'text2', 'muted', 'amber', 'green', 'red', 'error', 'blue', 'violet'];
   protected readonly stylesCode = `// styles.scss: the layer order has to come first
 @use 'kometa-ui/styles/layers';
 @use 'kometa-ui/styles/base';`;
+  /** The Compose showcase, built to WebAssembly into public/compose by the Pages workflow (npm run compose:web locally). */
+  protected readonly composeSrc = computed(() => this.sanitizer.bypassSecurityTrustResourceUrl(`compose/index.html?theme=${this.theme.resolved()}`));
+  private readonly sanitizer = inject(DomSanitizer);
+  protected readonly composeInstall = `// settings.gradle.kts: GitHub Packages wants a token with read:packages, even to download
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://maven.pkg.github.com/InomjonIsmaylov/kometa-ui-kit") {
+            credentials {
+                username = providers.gradleProperty("gpr.user").get()
+                password = providers.gradleProperty("gpr.key").get()
+            }
+        }
+    }
+}
+
+// build.gradle.kts
+dependencies { implementation("uz.kometa:kometa-ui:0.3.0") }`;
+  protected readonly composeUse = `import uz.kometa.ui.*
+
+setContent {
+    KometaTheme(dark = isSystemInDarkTheme()) {
+        var taps by remember { mutableIntStateOf(0) }
+        KometaButton("Book now ($taps)", { taps++ })
+    }
+}`;
   protected readonly provideCode = `// app.config.ts
 import { ApplicationConfig } from '@angular/core';
 import { provideKometaUi } from 'kometa-ui/provide-kometa-ui';
@@ -240,6 +270,7 @@ export const appConfig: ApplicationConfig = {
   protected readonly importLine = computed(() => {
     const api = this.apis[this.current().id];
     if (!api) return null;
+    if (this.docs.platform() === 'compose' && this.docs.hasKotlin(this.current().id)) return 'import uz.kometa.ui.*';
     // One import per entry point: importing kometa-ui/<entry> keeps unused components out of a chunk.
     const by = new Map<string, string[]>();
     for (const n of Object.keys(api)) {

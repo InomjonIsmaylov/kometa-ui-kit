@@ -8,7 +8,8 @@ You import only the components you use, restyle everything from one set of CSS c
 in light and dark, and ship docs your AI coding agent can read.
 
 **[Live demo and docs](https://inomjonismaylov.github.io/kometa-ui-kit/)** ·
-**[Try it on StackBlitz](https://stackblitz.com/github/InomjonIsmaylov/kometa-ui-kit/tree/main/examples/starter?file=src/app/app.ts)**
+**[Try it on StackBlitz](https://stackblitz.com/github/InomjonIsmaylov/kometa-ui-kit/tree/main/examples/starter?file=src/app/app.ts)** ·
+**[Compose Multiplatform, live](https://inomjonismaylov.github.io/kometa-ui-kit/#compose)** ([`compose/`](compose/README.md))
 
 ![Shop dashboard screen built from Kometa UI components](.github/readme/screen-dashboard.png)
 

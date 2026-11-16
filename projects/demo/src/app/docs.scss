@@ -60,6 +60,8 @@ app-doc { display: block; margin: 0 0 56px; scroll-margin-top: 88px; }
   &[data-canvas=dots] { background-image: radial-gradient(var(--muted) 1px, transparent 1.2px); background-size: 4px 4px; }
 }
 .doc-tabs { display: flex; gap: 2px; margin-left: auto; }
+.doc-note { align-self: center; color: var(--muted); font-size: 12px; }
+.doc-compose { width: 100%; }
 .doc-tools + .doc-tabs { margin-left: 0; }
 .doc-tabs button, .doc-copy {
   padding: 5px 10px; border: 0; border-radius: 8px; background: none; color: var(--muted);

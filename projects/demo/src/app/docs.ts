@@ -1,13 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, Injectable, OnDestroy, OnInit, ViewEncapsulation, computed, inject, input,
-  signal,
+  effect, signal, viewChild,
 } from '@angular/core';
+import { ThemeService } from 'kometa-ui/theme';
 // The demo's own sources, as text: every code snippet is cut from them, so a snippet cannot drift from its demo.
 import source from './app.html' with { loader: 'text' };
 // @ts-ignore: the build reads it as text; TypeScript would resolve it as the module itself.
 import tsSource from './app.ts' with { loader: 'text' };
 import scssSource from './app.scss' with { loader: 'text' };
 import globalScss from '../styles.scss' with { loader: 'text' };
+// The Compose versions of the examples, compiled with the sample app so they cannot drift from the Kotlin API.
+import ktSource from '../../../../compose/sample/src/commonMain/kotlin/uz/kometa/sample/Docs.kt' with { loader: 'text' };
 
 /** Cuts the inner markup of every `<app-doc id="x">` out of the template, keyed `page/x` by the `@case` above it. */
 export function parseSource(html: string): Map<string, string> {
@@ -48,6 +51,8 @@ const TOKENS = {
   html: /(<!--.*?-->)|(<\/?[\w-]+|\/?>)|("[^"]*")|(\{\{.*?\}\})|(@\w+)|([\w.\-[\]()#*]+(?==))/g,
   sh: /(#.*)/g,
   ts: /(\/\/.*|\/\*.*?\*\/)|(\b[A-Z]\w*\b)|('[^']*'|"[^"]*"|`[^`]*`)|(\b\d+\b)|(\b(?:import|from|export|const|let|return|new|class|interface|function|protected|private|readonly|if|else|for|of|type)\b|@\w+)|(--[\w-]+|\b\w+(?=\s*:))/g,
+  // comment | type | string | number | keyword | named argument
+  kotlin: /(\/\/.*|\/\*.*?\*\/)|(\b[A-Z]\w*\b)|("[^"]*")|(\b\d+\b)|(\b(?:import|package|val|var|fun|return|if|else|when|in|is|private|internal|class|data|object|by|null|true|false)\b|@\w+)|(\b\w+(?= = ))/g,
   // comment | selector | string | number | at-rule | property
   scss: /(\/\/.*|\/\*.*?\*\/)|([.#&][\w-]*|:{1,2}[\w-]+(?=[\s,{(]))|('[^']*'|"[^"]*")|(\b\d+(?:\.\d+)?(?:px|rem|em|%|ms|s|fr|dvh|vw)?)|(@[\w-]+|!important|\$[\w-]+)|(--[\w-]+|[\w-]+(?=\s*:\s))/g,
 };
@@ -69,7 +74,13 @@ export function highlight(code: string, lang: Lang): string {
 
 export interface DocEntry { id: string; title: string; el: HTMLElement }
 /** The code shown under a demo, one tab per language that has any. */
-export type DocFiles = Partial<Record<'html' | 'ts' | 'scss', string>>;
+export type DocFiles = Partial<Record<'html' | 'ts' | 'scss' | 'kotlin', string>>;
+/** Which kit the docs show code for; under Compose, an example with no Kotlin keeps its Angular code. */
+export type Platform = 'angular' | 'compose';
+const PLATFORM_KEY = 'kometa-docs-platform';
+function readPlatform(): Platform {
+  try { return localStorage.getItem(PLATFORM_KEY) === 'compose' ? 'compose' : 'angular'; } catch { return 'angular'; }
+}
 
 @Injectable({ providedIn: 'root' })
 export class Docs {
@@ -77,6 +88,8 @@ export class Docs {
   private readonly snippets = parseSource(source);
   private readonly ts = parseRegions(tsSource as unknown as string);
   private readonly scss = parseRegions(globalScss + '\n' + scssSource);
+  private readonly kotlin = parseRegions(ktSource);
+  readonly platform = signal<Platform>(readPlatform());
   private readonly entries = signal<DocEntry[]>([]);
   /** The sections on screen, in page order, for the "On this page" list. */
   readonly sections = computed(() => [...this.entries()].sort((a, b) =>
@@ -88,7 +101,17 @@ export class Docs {
 
   files(id: string): DocFiles {
     const key = `${this.page()}/${id}`;
-    return { html: this.snippets.get(key), ts: this.ts.get(key), scss: this.scss.get(key) };
+    return { html: this.snippets.get(key), ts: this.ts.get(key), scss: this.scss.get(key), kotlin: this.kotlin.get(key) };
+  }
+
+  /** Whether any example on this page has a Compose version. */
+  hasKotlin(page: string): boolean {
+    return [...this.kotlin.keys()].some((k) => k.startsWith(page + '/'));
+  }
+
+  setPlatform(p: Platform): void {
+    this.platform.set(p);
+    try { localStorage.setItem(PLATFORM_KEY, p); } catch { /* private window: keep it for this visit only */ }
   }
 
   add(entry: DocEntry): void {
@@ -100,7 +123,50 @@ export class Docs {
   }
 }
 
-const LABELS = { html: 'HTML', ts: 'TypeScript', scss: 'SCSS' } as const;
+/** What the Compose build (compose/sample.js, see compose/sample/src/wasmJsMain) puts on globalThis once it has started. */
+interface ComposeApi { mount(id: string, key: string, dark: boolean): void; theme(dark: boolean): void; unmount(id: string): void }
+
+/** Loads the Compose (Wasm) build once, on the first Compose preview, and draws docs examples with it. */
+@Injectable({ providedIn: 'root' })
+export class ComposePreviews {
+  private readonly theme = inject(ThemeService);
+  private api?: Promise<ComposeApi>;
+  /** The build is missing (ng serve without it) or did not start: previews fall back to Angular. */
+  readonly failed = signal(false);
+
+  constructor() {
+    effect(() => {
+      const dark = this.theme.resolved() === 'dark';
+      void this.api?.then((a) => a.theme(dark));
+    });
+  }
+
+  /** Draws example `key` into the element with `id`; the returned function takes it down again. */
+  mount(id: string, key: string): () => void {
+    let gone = false;
+    this.load().then((a) => { if (!gone) a.mount(id, key, this.theme.resolved() === 'dark'); }, () => this.failed.set(true));
+    return () => {
+      gone = true;
+      void this.api?.then((a) => a.unmount(id), () => {});
+    };
+  }
+
+  private load(): Promise<ComposeApi> {
+    return this.api ??= new Promise((resolve, reject) => {
+      addEventListener('kometa-compose', () => resolve((globalThis as unknown as { kometaCompose: ComposeApi }).kometaCompose), { once: true });
+      const script = document.createElement('script');
+      script.src = 'compose/sample.js';
+      script.onerror = reject;
+      document.head.append(script);
+      // ng serve answers a missing file with index.html, which fails as a script without an error event.
+      setTimeout(reject, 30_000);
+    });
+  }
+}
+
+let composeIds = 0;
+
+const LABELS = { html: 'HTML', ts: 'TypeScript', scss: 'SCSS', kotlin: 'Kotlin' } as const;
 type Tab = keyof typeof LABELS;
 
 /**
@@ -121,7 +187,15 @@ type Tab = keyof typeof LABELS;
     <div class="doc-box">
       @if (demo()) {
         <div class="doc-stage" [attr.data-canvas]="canvas()">
-          <div class="doc-demo" [attr.data-width]="width()"><ng-content /></div>
+          @if (composeKey()) {
+            <div class="doc-demo" [attr.data-width]="width()">
+              @if (!composeHeight()) { <span class="doc-note">Starting Compose…</span> }
+              <div #compose class="doc-compose" [id]="composeId" [style.height.px]="composeHeight()"
+                   (compose-size)="resize($any($event).detail)"></div>
+            </div>
+          } @else {
+            <div class="doc-demo" [attr.data-width]="width()"><ng-content /></div>
+          }
         </div>
       }
       @if (tabs().length) {
@@ -144,6 +218,7 @@ type Tab = keyof typeof LABELS;
               <button type="button" role="tab" [attr.aria-selected]="open() && tab() === t" (click)="pick(t)">{{ labels[t] }}</button>
             }
           </div>
+          @if (angularOnly()) { <span class="doc-note">No Compose version</span> }
           <button type="button" class="doc-copy" (click)="copy()">{{ copied() ? 'Copied ✓' : 'Copy' }}</button>
         </div>
         @if (open()) { <pre class="doc-code"><code [innerHTML]="html()"></code></pre> }
@@ -180,7 +255,37 @@ export class DocSection implements OnInit, OnDestroy {
     if (code !== undefined) return { [this.lang()]: code };
     return this.files() ?? this.docs.files(this.id());
   });
-  protected readonly tabs = computed(() => (Object.keys(this.sources()) as Tab[]).filter((t) => this.sources()[t]));
+  private readonly all = computed(() => (Object.keys(this.sources()) as Tab[]).filter((t) => this.sources()[t]));
+  /** Compose shows the Kotlin tab alone; Angular shows the rest. */
+  protected readonly tabs = computed<Tab[]>(() => this.docs.platform() === 'compose' && this.all().includes('kotlin')
+    ? ['kotlin'] : this.all().filter((t) => t !== 'kotlin'));
+  private readonly previews = inject(ComposePreviews);
+  /** The example drawn by the Compose build instead of the Angular demo, when Compose is picked and it has Kotlin. */
+  protected readonly composeKey = computed(() => this.demo() && this.docs.platform() === 'compose' && this.all().includes('kotlin')
+    && !this.previews.failed() ? `${this.docs.page()}/${this.id()}` : null);
+  protected readonly composeId = `compose-preview-${++composeIds}`;
+  protected readonly composeHeight = signal(0);
+  private readonly composeEl = viewChild<ElementRef<HTMLElement>>('compose');
+
+  constructor() {
+    effect((onCleanup) => {
+      const key = this.composeKey();
+      if (!key || !this.composeEl()) return;
+      this.composeHeight.set(0);
+      onCleanup(this.previews.mount(this.composeId, key));
+    });
+  }
+
+  /** Fits the box to the example; Compose sizes its canvas to the box only on a window resize, so send one. */
+  protected resize(px: number): void {
+    if (px === this.composeHeight()) return;
+    this.composeHeight.set(px);
+    requestAnimationFrame(() => dispatchEvent(new Event('resize')));
+  }
+
+  /** Compose is picked and the page has Compose examples, but not this one. */
+  protected readonly angularOnly = computed(() => this.docs.platform() === 'compose' && this.code() === undefined && !this.files()
+    && !this.all().includes('kotlin') && this.all().length > 0 && this.docs.hasKotlin(this.docs.page()));
   private readonly shown = computed(() => (this.tabs().includes(this.tab() as Tab) ? this.tab() : this.tabs()[0]) as Lang);
   protected readonly html = computed(() => highlight(this.sources()[this.shown()] ?? '', this.shown()));
   private entry?: DocEntry;

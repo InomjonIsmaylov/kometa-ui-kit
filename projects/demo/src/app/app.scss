@@ -124,6 +124,7 @@ main { width: 100%; max-width: 920px; box-sizing: border-box; margin: 0 auto; pa
   .eyebrow { margin: 0 0 8px; color: var(--amber-ink); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
   h1 { margin: 0 0 10px; font: 700 40px/1.1 var(--font-display); letter-spacing: -.025em; }
   p { margin: 0; color: var(--text2); font-size: 16px; line-height: 1.6; }
+  .platform { display: inline-flex; margin-top: 16px; }
 }
 
 // Screens get the outline's column, and more width for the page itself.
@@ -210,6 +211,9 @@ h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: v
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .muted { color: var(--muted); }
 .pad { padding: 16px; }
+// The Compose showcase is a phone app: show it at phone size.
+.compose-phone { width: min(390px, 100%); height: 760px; margin-inline: auto; border: 1px solid var(--border); border-radius: 32px; overflow: hidden; background: var(--bg); }
+.compose-phone iframe { display: block; width: 100%; height: 100%; border: 0; }
 .bare { display: inline-flex; gap: 8px; align-items: center; justify-self: start; padding: 0; border: 0; background: none; color: var(--text); font: inherit; cursor: pointer; }
 .thumb {
   padding: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; background: none;

@@ -1,7 +1,7 @@
 # kometa-ui for Compose Multiplatform
 
 The Kometa design tokens and a core set of components for Jetpack Compose / Compose Multiplatform
-(Android, desktop JVM, iOS). Built on `compose.foundation` only, with no Material dependency, the
+(Android, desktop JVM, iOS, web via Wasm). **[Run it live in the browser](https://inomjonismaylov.github.io/kometa-ui-kit/#compose)**. Built on `compose.foundation` only, with no Material dependency, the
 same way the web kit has no PrimeNG.
 
 | Dark | Light |

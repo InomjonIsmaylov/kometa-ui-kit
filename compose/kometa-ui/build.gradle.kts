@@ -20,6 +20,8 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs { browser() } // runs the live showcase on the docs site (sample's wasmJs build)
 
     sourceSets {
         commonMain.dependencies {

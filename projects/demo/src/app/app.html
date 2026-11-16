@@ -26,10 +26,13 @@
       <p class="eyebrow">{{ group() }}</p>
       <h1>{{ current().label }}</h1>
       <p>{{ current().about }}</p>
+      @if (docs.hasKotlin(current().id)) {
+        <k-words class="platform" [options]="platforms" [value]="docs.platform()" (valueChange)="docs.setPlatform($any($event))" ariaLabel="Code for" />
+      }
     </header>
 
     @if (importLine(); as line) {
-      <app-doc id="import" heading="Import" [demo]="false" [code]="line" lang="ts" />
+      <app-doc id="import" heading="Import" [demo]="false" [code]="line" [lang]="line.startsWith('import uz') ? 'kotlin' : 'ts'" />
     }
     @if (play(); as p) {
       <app-doc id="props" heading="Try it" about="Change any input and watch the component follow; the code under it is what you would write." [code]="null">
@@ -40,6 +43,24 @@
     @switch (current().id) {
       @case ('playground') { <app-playground /> }
       <!-- ============================================================ Guides -->
+      @case ('compose') {
+        <app-doc id="live" heading="Live in the browser" [code]="null"
+                 about="The kit's Android showcase app, compiled to WebAssembly from the same Kotlin. Every tab and control works; it starts in this page's theme and has its own toggle.">
+          <div class="compose-phone">
+            <iframe [src]="composeSrc()" title="Kometa UI for Compose, live" loading="lazy"></iframe>
+          </div>
+        </app-doc>
+        <app-doc id="platforms" heading="Platforms" [code]="null"
+                 about="One Kotlin source set on compose.foundation only: no Material, the way the web kit has no PrimeNG. KometaTheme carries the same tokens as tokens.scss.">
+          <div class="row">
+            @for (p of ['Android', 'iOS', 'Desktop JVM', 'Web (Wasm)']; track p) { <k-tag tone="done">{{ p }}</k-tag> }
+          </div>
+        </app-doc>
+        <app-doc id="install" heading="Install" lang="ts" [demo]="false" [code]="composeInstall"
+                 about="Published to GitHub Packages as uz.kometa:kometa-ui. Put gpr.user and gpr.key (a classic token with only read:packages) in ~/.gradle/gradle.properties, never in the project." />
+        <app-doc id="use" heading="Use it" lang="ts" [demo]="false" [code]="composeUse"
+                 about="Wrap the app in KometaTheme; every component reads Kometa.colors and Kometa.type from it." />
+      }
       @case ('start') {
         <app-doc id="install" heading="Install" about="Add the package to an Angular 22 app. ng add also does the two steps below for you; with npm install, do them by hand. It has no other runtime dependency." [demo]="false" lang="sh"
                  code="ng add kometa-ui" />
@@ -2290,7 +2311,8 @@
     }
 
     @if (api().length) {
-      <app-doc id="api" heading="API" about="Inputs, two-way models and outputs, read from the components themselves." [code]="null">
+      <app-doc id="api" heading="API" [code]="null"
+               [about]="docs.platform() === 'compose' && docs.hasKotlin(current().id) ? 'The Angular inputs, models and outputs. The Compose parameters are in the Kotlin tabs above; there is no Compose table yet.' : 'Inputs, two-way models and outputs, read from the components themselves.'">
         @for (c of api(); track c.name) {
           <h3 class="api-name">{{ c.name }} <code>{{ c.selector }}</code></h3>
           <table class="api">
