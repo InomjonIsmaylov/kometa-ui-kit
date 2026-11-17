@@ -228,6 +228,40 @@
   }
  },
  "KometaButton": {
+  "severity": {
+   "type": "\"secondary\" | \"danger\" | null",
+   "default": "null"
+  },
+  "size": {
+   "type": "\"small\" | null",
+   "default": "null"
+  },
+  "outlined": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "text": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "fluid": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "loading": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "icon": {
+   "type": "string",
+   "default": "''"
+  },
+  "iconPos": {
+   "type": "\"left\" | \"right\"",
+   "default": "'left'"
+  }
+ },
+ "KometaButtonElement": {
   "label": {
    "type": "string",
    "default": "''"

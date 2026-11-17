@@ -34,7 +34,7 @@ export class MiniPreview {
       untracked(() => {
         this.slot().clear();
         if (!c) return;
-        // Nothing projected unless there is content: an empty projection would hide a component's fallback (k-button's label).
+        // Nothing projected unless there is content: an empty projection would hide a component's fallback.
         const nodes = c.content !== undefined ? [[document.createTextNode(c.content)]] : undefined;
         ref = this.slot().createComponent(c.type, { projectableNodes: nodes });
         for (const [k, v] of Object.entries(c.seed ?? {})) ref.setInput(k, v);

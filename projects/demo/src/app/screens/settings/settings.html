@@ -157,7 +157,7 @@
       <div class="lead">
         <h2>Team</h2>
         <p>Who takes bookings, and which services each master does. Admins can change these settings.</p>
-        <k-button label="Invite a master" icon="+" outlined [disabled]="!invites().length" (clicked)="invite()" />
+        <button k-button icon="+" outlined [disabled]="!invites().length" (click)="invite()">Invite a master</button>
       </div>
       <div class="card team">
         @for (m of team(); track m.id) {

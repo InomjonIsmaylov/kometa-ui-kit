@@ -60,7 +60,7 @@ export class Home {
     { glyph: '◐', title: 'Light and dark from tokens', text: 'Every colour is a CSS custom property, with a light and a dark column.',
       code: `--amber: #7B93FF;` },
     { glyph: '◇', title: 'Restyle without a fight', text: 'Every component reads the tokens and its own custom properties, so you restyle it without !important.',
-      code: `k-button { --kbtn-radius: 6px; }` },
+      code: `.kbtn { --kbtn-radius: 6px; }` },
     { glyph: '♿', title: 'Accessible by default', text: 'Real buttons, labelled inputs, roving focus and live regions, tested in specs.',
       code: `ariaLabel="Time slot"` },
   ];

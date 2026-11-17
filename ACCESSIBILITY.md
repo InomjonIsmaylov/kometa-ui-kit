@@ -39,7 +39,7 @@ Keys listed are the ones the component's own code handles.
 
 | Component | Keyboard | Screen reader | Notes |
 |---|---|---|---|
-| `k-button` | Native | `<button>`, `aria-busy` while `loading`, icon `aria-hidden` | Icon-only buttons need `ariaLabel`. |
+| `k-button` | Native | Is the `<button>` or `<a>` itself; `aria-busy` and `aria-disabled` while `loading`, which keeps focus; icon `aria-hidden` | Icon-only buttons need `aria-label`. |
 | `button[k-halo]` | Native | Host is your `<button>` | Icon-only: add `aria-label` yourself. |
 | `button[k-erase]` | Native | Host is your `<button>` | Same as above. |
 | `button[k-word]` | Native | Host is your `<button>`, `aria-busy` when `busy` | |

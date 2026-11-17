@@ -36,7 +36,7 @@
       <span class="glyph" aria-hidden="true">◎</span>
       <h3>Angular, for the web</h3>
       <p>Standalone, OnPush components driven by signals. No PrimeNG, no Material, restyled with CSS custom properties.</p>
-      <code>&lt;k-button label="Book" (clicked)="book()" /&gt;</code>
+      <code>&lt;button k-button (click)="book()"&gt;Book&lt;/button&gt;</code>
       <div class="kit-links">
         <a class="go primary" href="#button" (click)="browse('angular')">Browse Angular <span aria-hidden="true">→</span></a>
         <a class="go" href="#start">Install guide</a>
@@ -77,7 +77,7 @@
       </div>
       <k-steps [steps]="['Service', 'Time', 'Details']" [current]="1" ariaLabel="Booking progress" />
       <k-slots [slots]="slots" [(value)]="slot" ariaLabel="Time slot" />
-      <k-button [label]="'Book ' + (slot() || 'a time')" fluid />
+      <button k-button fluid>{{ 'Book ' + (slot() || 'a time') }}</button>
     </article>
 
     <article class="tile">

@@ -71,7 +71,7 @@
                  about="Add provideKometaUi() to the app config. It is empty today and reserved for global options."
                  [code]="provideCode" />
         <app-doc id="first" heading="Your first component" about="Every component is standalone: import it and use it. This button is live.">
-          <k-button label="Say hello" (clicked)="log.set('Hello from Kometa')" />
+          <button k-button (click)="log.set('Hello from Kometa')">Say hello</button>
         </app-doc>
       }
       @case ('motion') {
@@ -84,9 +84,9 @@
         </app-doc>
         <app-doc id="components" heading="On a component" about="Every overlay takes an animation input: pop, select, multi, date, time, actions, context, note, toast, tray and drawer, and kometaTipAnimation on a tip.">
           <div class="row">
-            <k-button label="Flip" severity="secondary" (clicked)="flipPop.toggle($event)" />
-            <k-button label="Spring" severity="secondary" (clicked)="springPop.toggle($event)" />
-            <k-button label="Blur" severity="secondary" (clicked)="blurPop.toggle($event)" />
+            <button k-button severity="secondary" (click)="flipPop.toggle($event)">Flip</button>
+            <button k-button severity="secondary" (click)="springPop.toggle($event)">Spring</button>
+            <button k-button severity="secondary" (click)="blurPop.toggle($event)">Blur</button>
           </div>
           <k-pop #flipPop ariaLabel="Flip" [width]="220" animation="flip"><p class="pad">Flipped down from the top edge.</p></k-pop>
           <k-pop #springPop ariaLabel="Spring" [width]="220" animation="spring"><p class="pad">Bounced in.</p></k-pop>
@@ -100,7 +100,7 @@
           </ul>
         </app-doc>
         <app-doc id="custom" heading="Your own keyframes" about="Name global keyframes: one for the way in, an optional second for the way out. Write them in a global stylesheet, as component styles rename keyframes.">
-          <div class="row"><k-button label="Swoosh" severity="secondary" (clicked)="swoosh.set(true)" /></div>
+          <div class="row"><button k-button severity="secondary" (click)="swoosh.set(true)">Swoosh</button></div>
           <k-drawer [(visible)]="swoosh" ariaLabel="Swoosh" animation="demo-swoosh-in demo-swoosh-out">
             <div class="pad"><h3>Swoosh</h3><p>Swung in from the side by keyframes of this app's own.</p></div>
           </k-drawer>
@@ -113,7 +113,7 @@
         </app-doc>
         <app-doc id="timing" heading="Timing" about="--k-motion-dur, --k-motion-ease and --k-motion-distance tune any motion: here a slow, long rise.">
           <div class="row" style="--k-motion-dur: 1200ms; --k-motion-ease: cubic-bezier(.16, 1, .3, 1); --k-motion-distance: 40px">
-            <k-button label="Slow pop" severity="secondary" (clicked)="slowPop.toggle($event)" />
+            <button k-button severity="secondary" (click)="slowPop.toggle($event)">Slow pop</button>
             <k-pop #slowPop ariaLabel="Slow" [width]="220" animation="rise"><p class="pad">Taking its time.</p></k-pop>
           </div>
         </app-doc>
@@ -128,8 +128,8 @@
         </app-doc>
         <app-doc id="override" heading="Override" about="Set a token on any element and everything inside follows. Here the accent is blue for this box only.">
           <div class="row" style="--amber: #7B93FF; --amber-ink: #7B93FF">
-            <k-button label="Primary" />
-            <k-button label="Outlined" outlined />
+            <button k-button>Primary</button>
+            <button k-button outlined>Outlined</button>
             <k-toggle [(checked)]="on" ariaLabel="Blue toggle" />
           </div>
         </app-doc>
@@ -164,7 +164,7 @@
             <div class="ic-signup-phone"><span>Phone</span><k-digits [(value)]="signupPhone" size="sm" ariaLabel="Phone" placeholder="90 123 45 67" /></div>
             <k-check [(checked)]="signupTerms">I accept the terms of service</k-check>
             @if (signupTried() && !signupValid()) { <p class="ic-signup-err">Check the name, a 9-digit phone and the terms.</p> }
-            <k-button label="Create account" fluid [loading]="signupBusy()" (clicked)="signUp()" />
+            <button k-button fluid [loading]="signupBusy()" (click)="signUp()">Create account</button>
           </div>
         </app-doc>
         <app-doc id="invalid" heading="Invalid" about="Set invalid and touched to show the error text under the field.">
@@ -215,7 +215,7 @@
               @for (p of memoPhrases; track p) { <k-chip [selected]="memo().includes(p)" (selectedChange)="togglePhrase(p, $event)">{{ p }}</k-chip> }
             </div>
             <k-notes [(value)]="memo" [maxlength]="160" placeholder="Anything Aziz should know" ariaLabel="Note for the master" />
-            <k-button label="Send to Aziz" size="small" [disabled]="!memo().trim()" (clicked)="log.set('Note sent: ' + memo())" />
+            <button k-button size="small" [disabled]="!memo().trim()" (click)="log.set('Note sent: ' + memo())">Send to Aziz</button>
           </div>
         </app-doc>
         <app-doc id="readonly" heading="Read only" about="readonly shows the note without letting it be edited.">
@@ -264,7 +264,7 @@
             } @else {
               <p class="ic-call-hint">Leave your number and the administrator calls you back.</p>
               <k-digits [(value)]="callPhone" ariaLabel="Your phone" placeholder="90 123 45 67" />
-              <div class="row"><k-button label="Call me back" [disabled]="callPhone().length < 9" (clicked)="callAsked.set(true)" /></div>
+              <div class="row"><button k-button [disabled]="callPhone().length < 9" (click)="callAsked.set(true)">Call me back</button></div>
             }
           </div>
         </app-doc>
@@ -314,7 +314,7 @@
           <div class="ic-card">
             <p class="ic-card-title">Barbers near Chilonzor</p>
             <k-slider [(value)]="radius" [min]="1" [max]="15" unit="km" ariaLabel="Search radius" />
-            <k-button fluid (clicked)="log.set(nearby() + ' shops within ' + radius() + ' km')">Show {{ nearby() }} shops</k-button>
+            <button k-button fluid (click)="log.set(nearby() + ' shops within ' + radius() + ' km')">Show {{ nearby() }} shops</button>
           </div>
         </app-doc>
         <app-doc id="slider-steps" heading="Range and step" about="min, max and step set the range; above 40 steps it draws 25 ticks and the figure stays exact.">
@@ -362,7 +362,7 @@
               <k-field label="Password" type="password" [(value)]="signupPassword" />
               <k-rules [value]="signupPassword()" [rules]="passwordRules" ariaLabel="Password needs" />
             </div>
-            <k-button fluid [disabled]="!signupReady()" (clicked)="log.set('Account created')">Create account</k-button>
+            <button k-button fluid [disabled]="!signupReady()" (click)="log.set('Account created')">Create account</button>
           </div>
         </app-doc>
         <app-doc id="customizing" heading="Customizing" about="--rules-size.">
@@ -489,7 +489,7 @@
             <p class="ic-group-title">Saturday, 10:00 · Wedding party</p>
             <k-stepper [(value)]="groupSize" [min]="1" [max]="groupChairs" unit="guests" ariaLabel="Guests" decrementLabel="Fewer guests" incrementLabel="More guests" />
             <k-meter [value]="groupSize()" [max]="groupChairs" label="chairs taken at 10:00" />
-            <k-button fluid (clicked)="log.set('Group of ' + groupSize() + ' booked')">Book {{ groupSize() }} chairs · {{ groupPrice().toLocaleString('ru-RU') }} so'm</k-button>
+            <button k-button fluid (click)="log.set('Group of ' + groupSize() + ' booked')">Book {{ groupSize() }} chairs · {{ groupPrice().toLocaleString('ru-RU') }} so'm</button>
           </div>
         </app-doc>
         <app-doc id="icons" heading="Icons and read only" about="decrementIcon and incrementIcon replace the symbols; readonly and disabled lock the value.">
@@ -543,9 +543,9 @@
           <div class="ic-order">
             <k-person name="Malika Yusupova" meta="Stylist · Yunusobod" />
             <k-multi [options]="orderOptions" [(value)]="orderServices" optionDot="dot" placeholder="Choose services" ariaLabel="Services" />
-            <k-button fluid [disabled]="!orderServices().length" (clicked)="log.set('Booked ' + orderServices().join(', '))">
+            <button k-button fluid [disabled]="!orderServices().length" (click)="log.set('Booked ' + orderServices().join(', '))">
               Book · {{ orderTotal().minutes }} min · {{ orderTotal().price.toLocaleString('ru-RU') }} so'm
-            </k-button>
+            </button>
           </div>
         </app-doc>
         <app-doc id="max" heading="Max" about="max caps the number of choices.">
@@ -591,7 +591,7 @@
                        ariaLabel="Client" (query)="findClient($event)" (picked)="visitPicked.set($event)" />
             @if (visitPicked(); as c) {
               <div class="ic-newvisit-card"><k-person [name]="c.label" [meta]="c.meta ?? ''" /><k-tag tone="done">{{ c.data }}</k-tag></div>
-              <div class="row"><k-button [label]="'Book a visit for ' + c.label" (clicked)="log.set('Visit for ' + c.label)" /></div>
+              <div class="row"><button k-button (click)="log.set('Visit for ' + c.label)">{{ 'Book a visit for ' + c.label }}</button></div>
             }
           </div>
         </app-doc>
@@ -639,7 +639,7 @@
               <k-check [checked]="p.done" (checkedChange)="setPrep(i, $event)">{{ p.text }}@if (!p.required) { <small class="muted"> · optional</small> }</k-check>
             }
             <k-meter [value]="prepDone()" [max]="prep().length" label="checks done" [showFigure]="false" />
-            <div class="row"><k-button label="Start the visit" [disabled]="!prepReady()" (clicked)="log.set('Colouring started')" /></div>
+            <div class="row"><button k-button [disabled]="!prepReady()" (click)="log.set('Colouring started')">Start the visit</button></div>
           </div>
         </app-doc>
         <app-doc id="readonly" heading="Read only" about="readonly shows state but ignores presses; ariaLabel overrides the projected name.">
@@ -659,7 +659,7 @@
             <div class="ic-remind-head">
               <k-tick [checked]="remindAll()" (checkedChange)="pickAllRemind($event)" ariaLabel="Select all" />
               <span>{{ remindPicked().length ? remindPicked().length + ' selected' : 'Tomorrow, 4 visits' }}</span>
-              <k-button label="Send SMS" size="small" [disabled]="!remindPicked().length" (clicked)="log.set('Reminders sent: ' + remindPicked().length)" />
+              <button k-button size="small" [disabled]="!remindPicked().length" (click)="log.set('Reminders sent: ' + remindPicked().length)">Send SMS</button>
             </div>
             @for (r of remindList; track r.name) {
               <div class="ic-remind-row">
@@ -738,7 +738,7 @@
               <k-person name="Aziz Rahimov" meta="Haircut and beard · yesterday, 18:00" />
               <k-rating [(value)]="reviewScore" [words]="['Bad', 'Poor', 'Fine', 'Good', 'Great']" ariaLabel="Your score" />
               <k-notes [(value)]="reviewText" [maxlength]="300" placeholder="What did you like? Optional" ariaLabel="Review" />
-              <div class="row"><k-button label="Send review" [disabled]="!reviewScore()" (clicked)="reviewSent.set(true)" /></div>
+              <div class="row"><button k-button [disabled]="!reviewScore()" (click)="reviewSent.set(true)">Send review</button></div>
             }
           </div>
         </app-doc>
@@ -789,9 +789,9 @@
             <k-date range [(rangeValue)]="leave" [min]="leaveMin" ariaLabel="Days off" />
             <k-notes [(value)]="leaveNote" placeholder="Reason, for example a family wedding in Samarkand" ariaLabel="Reason" />
             <div class="row">
-              <k-button [disabled]="!leaveDays()" (clicked)="log.set('Asked for ' + leaveDays() + ' days off')">
+              <button k-button [disabled]="!leaveDays()" (click)="log.set('Asked for ' + leaveDays() + ' days off')">
                 {{ leaveDays() ? 'Ask for ' + leaveDays() + (leaveDays() === 1 ? ' day' : ' days') + ' off' : 'Pick the days' }}
-              </k-button>
+              </button>
             </div>
           </div>
         </app-doc>
@@ -805,7 +805,7 @@
                 <k-quiet title="Closed on Sundays" hint="Try Saturday or Monday." />
               } @else {
                 <k-slots [slots]="bookSlots()" [(value)]="bookTime" ariaLabel="Visit time" />
-                <k-button label="Book" [disabled]="!bookTime()" (clicked)="log.set('Booked ' + bookDay()!.toDateString() + ', ' + bookTime())" />
+                <button k-button [disabled]="!bookTime()" (click)="log.set('Booked ' + bookDay()!.toDateString() + ', ' + bookTime())">Book</button>
               }
             </div>
           </div>
@@ -887,9 +887,9 @@
             } @else {
               <k-quiet title="Closed on Sunday" hint="Pick another day." />
             }
-            <k-button fluid [disabled]="!pickTime()" (clicked)="log.set('Booked ' + pickTime())">
+            <button k-button fluid [disabled]="!pickTime()" (click)="log.set('Booked ' + pickTime())">
               {{ pickTime() ? 'Book ' + pickTime() + ' with Aziz' : 'Choose a time' }}
-            </k-button>
+            </button>
           </div>
         </app-doc>
         <app-doc id="disabled" heading="Disabled" about="disabled stops the slots from being chosen.">
@@ -926,9 +926,9 @@
       @case ('button') {
         <app-doc id="severity" heading="Severity" about="Primary is the default; secondary and danger set the tone.">
           <div class="row">
-            <k-button label="Primary" (clicked)="clicks.set(clicks() + 1)" />
-            <k-button label="Secondary" severity="secondary" />
-            <k-button label="Danger" severity="danger" />
+            <button k-button (click)="clicks.set(clicks() + 1)">Primary</button>
+            <button k-button severity="secondary">Secondary</button>
+            <button k-button severity="danger">Danger</button>
           </div>
           <p class="out">Primary clicked {{ clicks() }} times.</p>
         </app-doc>
@@ -939,37 +939,40 @@
             }
             <k-words [options]="[{ value: 'click', label: 'Click' }, { value: 'payme', label: 'Payme' }, { value: 'cash', label: 'Cash' }]" [(value)]="payWith" ariaLabel="Pay with" />
             <div class="row">
-              <k-button label="Back" severity="secondary" outlined [disabled]="paying()" />
-              <k-button icon="→" iconPos="right" [loading]="paying()" [disabled]="paid()" (clicked)="checkout()">
+              <button k-button severity="secondary" outlined [disabled]="paying()">Back</button>
+              <button k-button icon="→" iconPos="right" [loading]="paying()" [disabled]="paid()" (click)="checkout()">
                 {{ paid() ? 'Paid ✓' : 'Pay ' + cartTotal().toLocaleString('ru-RU') + " so'm" }}
-              </k-button>
+              </button>
             </div>
           </div>
         </app-doc>
         <app-doc id="variants" heading="Variants" about="Outlined and text buttons for lower emphasis, and a small size.">
           <div class="row">
-            <k-button label="Outlined" outlined />
-            <k-button label="Text" text />
-            <k-button label="Small" size="small" />
+            <button k-button outlined>Outlined</button>
+            <button k-button text>Text</button>
+            <button k-button size="small">Small</button>
           </div>
         </app-doc>
-        <app-doc id="states" heading="States" about="loading shows a spinner and blocks clicks; disabled greys the button out.">
+        <app-doc id="states" heading="States" about="loading shows a spinner and swallows clicks but keeps focus; disabled greys the button out.">
           <div class="row">
-            <k-button label="Loading" loading />
-            <k-button label="Disabled" disabled />
+            <button k-button loading>Loading</button>
+            <button k-button disabled>Disabled</button>
           </div>
         </app-doc>
         <app-doc id="fluid" heading="Fluid" about="fluid fills the width of its container.">
-          <k-button label="Fluid" fluid />
+          <button k-button fluid>Fluid</button>
         </app-doc>
         <app-doc id="icon" heading="Icon" about="icon puts a decorative glyph beside the label; iconPos moves it to the right.">
           <div class="row">
-            <k-button label="Add" icon="+" />
-            <k-button label="Next" icon="→" iconPos="right" />
+            <button k-button icon="+">Add</button>
+            <button k-button icon="→" iconPos="right">Next</button>
           </div>
         </app-doc>
+        <app-doc id="link" heading="Link" about="k-button works on an a element too: a link that looks like a button, so middle-click and open in a new tab still work.">
+          <a k-button severity="secondary" href="#button/severity">Back to Severity</a>
+        </app-doc>
         <app-doc id="customizing" heading="Customizing" about="--kbtn-radius and --kbtn-gap reshape one button.">
-          <k-button label="Square" icon="★" style="--kbtn-radius: 6px; --kbtn-gap: 14px" />
+          <button k-button icon="★" style="--kbtn-radius: 6px; --kbtn-gap: 14px">Square</button>
         </app-doc>
       }
       @case ('word') {
@@ -1133,12 +1136,12 @@
       @case ('tray') {
         <app-doc id="basic" heading="Basic" about="Place one k-tray in the app, then call KometaConfirmationService.confirm() from anywhere. backdropClose=false keeps it open on a backdrop click; --tray-width, --tray-radius and --tray-button-radius restyle it.">
           <div class="row">
-            <k-button label="Ask (danger)" severity="danger" outlined (clicked)="ask(true)" />
-            <k-button label="Ask (plain)" severity="secondary" (clicked)="ask(false)" />
+            <button k-button severity="danger" outlined (click)="ask(true)">Ask (danger)</button>
+            <button k-button severity="secondary" (click)="ask(false)">Ask (plain)</button>
           </div>
         </app-doc>
         <app-doc id="animation" heading="Animation" about="The app-wide k-tray takes animation too; this page sets it on the one at the bottom of the app.">
-          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Ask" severity="secondary" (clicked)="ask(false)" /></div>
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><button k-button severity="secondary" (click)="ask(false)">Ask</button></div>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Blocking a client from their card: the tray asks first, and the card follows the answer.">
           <div class="ic-block">
@@ -1149,9 +1152,9 @@
             </div>
             <div class="row">
               @if (blocked()) {
-                <k-button label="Unblock" severity="secondary" (clicked)="blocked.set(false)" />
+                <button k-button severity="secondary" (click)="blocked.set(false)">Unblock</button>
               } @else {
-                <k-button label="Block client" severity="danger" outlined (clicked)="blockClient()" />
+                <button k-button severity="danger" outlined (click)="blockClient()">Block client</button>
               }
             </div>
           </div>
@@ -1307,7 +1310,7 @@
         <app-doc id="in-context" heading="In context" about="Picking a service: walk the columns and the booking line follows.">
           <div class="ic-card ic-wide">
             <k-tree [nodes]="menuTree" [(path)]="servicePath" (picked)="service.set($event.label)" ariaLabel="Services" />
-            <k-button fluid [disabled]="!service()" (clicked)="log.set('Booked: ' + service())">{{ service() ? 'Book ' + service() : 'Pick a service' }}</k-button>
+            <button k-button fluid [disabled]="!service()" (click)="log.set('Booked: ' + service())">{{ service() ? 'Book ' + service() : 'Pick a service' }}</button>
           </div>
         </app-doc>
         <app-doc id="customizing" heading="Customizing" about="--tree-col, --tree-gap and --tree-size.">
@@ -1370,7 +1373,7 @@
               <span><k-provider-logo provider="Click" /> 520 000</span>
               <span><k-provider-logo provider="Payme" /> 340 000</span>
             </div>
-            <k-button [label]="dayClosed() ? 'Day closed ✓' : 'Close the day'" [disabled]="dayClosed()" fluid (clicked)="dayClosed.set(true); log.set('Day closed')" />
+            <button k-button [disabled]="dayClosed()" fluid (click)="dayClosed.set(true); log.set('Day closed')">{{ dayClosed() ? 'Day closed ✓' : 'Close the day' }}</button>
           </div>
         </app-doc>
         <app-doc id="align" heading="Align" about="align=center centres the amounts and labels.">
@@ -1400,7 +1403,7 @@
             </k-accordion-item>
             <k-accordion-item heading="Can I cancel?">
               <p class="ic-faq-p">Free up to 2 hours before the visit.</p>
-              <k-button label="Cancel my visit" size="small" severity="danger" outlined (clicked)="log.set('Cancel asked')" />
+              <button k-button size="small" severity="danger" outlined (click)="log.set('Cancel asked')">Cancel my visit</button>
             </k-accordion-item>
           </k-accordion>
         </app-doc>
@@ -1485,25 +1488,25 @@
       @case ('drawer') {
         <app-doc id="basic" heading="Basic" about="Slides in from the side, or up from the bottom as a sheet. Escape and the backdrop close it.">
           <div class="row">
-            <k-button label="Right drawer" severity="secondary" (clicked)="drawer.set(true)" />
-            <k-button label="Bottom sheet" severity="secondary" (clicked)="sheet.set(true)" />
+            <button k-button severity="secondary" (click)="drawer.set(true)">Right drawer</button>
+            <button k-button severity="secondary" (click)="sheet.set(true)">Bottom sheet</button>
           </div>
           <k-drawer [(visible)]="drawer" ariaLabel="Demo drawer" (opened)="log.set('Drawer opened')" (closing)="log.set('Drawer closing')">
             <div class="pad"><h3>Drawer</h3><p>Escape or the dark area closes it.</p>
-              <k-button label="Close" (clicked)="drawer.set(false)" /></div>
+              <button k-button (click)="drawer.set(false)">Close</button></div>
           </k-drawer>
           <k-drawer [(visible)]="sheet" position="bottom" styleClass="kometa-sheet" ariaLabel="Demo sheet">
             <div class="pad"><h3>Bottom sheet</h3><p>Slides up from the bottom.</p></div>
           </k-drawer>
         </app-doc>
         <app-doc id="animation" heading="Animation" about="In place of the slide from its edge: the drawer plays the motion in, and reversed on the way out.">
-          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Open drawer" severity="secondary" (clicked)="animDrawer.set(true)" /></div>
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><button k-button severity="secondary" (click)="animDrawer.set(true)">Open drawer</button></div>
           <k-drawer [(visible)]="animDrawer" ariaLabel="Animated drawer" [animation]="anim()">
             <div class="pad"><h3>Animated drawer</h3><p>In with the chosen motion, out with it reversed.</p></div>
           </k-drawer>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="A cart drawer: remove services with a halo, and book from the bottom with the running total.">
-          <div class="row"><k-button severity="secondary" (clicked)="bagOpen.set(true)">Your visit · {{ bag().length }}</k-button></div>
+          <div class="row"><button k-button severity="secondary" (click)="bagOpen.set(true)">Your visit · {{ bag().length }}</button></div>
           <k-drawer [(visible)]="bagOpen" ariaLabel="Your visit">
             <div class="ic-bag">
               <h3>Your visit, Friday 11:00</h3>
@@ -1516,12 +1519,12 @@
               } @empty {
                 <k-quiet title="Nothing here" hint="Add a service to book a visit." />
               }
-              <k-button fluid [disabled]="!bag().length" (clicked)="bagOpen.set(false); log.set('Visit booked')">Book · {{ bagTotal().toLocaleString('ru-RU') }} so'm</k-button>
+              <button k-button fluid [disabled]="!bag().length" (click)="bagOpen.set(false); log.set('Visit booked')">Book · {{ bagTotal().toLocaleString('ru-RU') }} so'm</button>
             </div>
           </k-drawer>
         </app-doc>
         <app-doc id="filters" heading="Filter sheet" about="A bottom sheet of filters for a phone: day, chips and one button that applies them.">
-          <div class="row"><k-button label="Filters" severity="secondary" outlined (clicked)="filtersOpen.set(true)" /></div>
+          <div class="row"><button k-button severity="secondary" outlined (click)="filtersOpen.set(true)">Filters</button></div>
           <k-drawer [(visible)]="filtersOpen" position="bottom" styleClass="kometa-sheet" ariaLabel="Filters" (kometaSheetClosed)="log.set('Filters applied')">
             <div class="ic-filters">
               <h3>Find a master</h3>
@@ -1530,13 +1533,13 @@
                 <k-chip [(selected)]="filterOpenNow">Open now</k-chip>
                 <k-chip [(selected)]="filterTop">4.5+</k-chip>
               </div>
-              <k-button label="Show 14 masters" fluid (clicked)="filtersOpen.set(false)" />
+              <button k-button fluid (click)="filtersOpen.set(false)">Show 14 masters</button>
             </div>
           </k-drawer>
         </app-doc>
         <app-doc id="customizing" heading="Customizing" about="Width, height and backdrop through CSS variables on the drawer.">
           <div class="row">
-            <k-button label="Wide drawer" severity="secondary" (clicked)="cWide.set(true)" />
+            <button k-button severity="secondary" (click)="cWide.set(true)">Wide drawer</button>
           </div>
           <div style="--drawer-width: 640px; --drawer-backdrop: rgba(120, 60, 0, .5)">
             <k-drawer [(visible)]="cWide" ariaLabel="Wide drawer">
@@ -1547,15 +1550,15 @@
       }
       @case ('pop') {
         <app-doc id="basic" heading="Basic" about="A small panel anchored to the element that opened it.">
-          <div class="row"><k-button label="Pop" severity="secondary" (clicked)="pop.toggle($event)" /></div>
+          <div class="row"><button k-button severity="secondary" (click)="pop.toggle($event)">Pop</button></div>
           <k-pop #pop ariaLabel="Shop" [width]="240"><p class="pad">A small panel hung off the button.</p></k-pop>
         </app-doc>
         <app-doc id="animation" heading="Animation" about="animation takes a preset or your own keyframes; pick one and open it.">
-          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Pop" severity="secondary" (clicked)="animPop.toggle($event)" /></div>
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><button k-button severity="secondary" (click)="animPop.toggle($event)">Pop</button></div>
           <k-pop #animPop ariaLabel="Animated pop" [width]="240" [animation]="anim()"><p class="pad">Arrives with “{{ anim() || 'drop' }}”.</p></k-pop>
         </app-doc>
         <app-doc id="in-context" heading="In context" about="A shop switcher: the button names the current shop, and the pop lists the others.">
-          <div class="row"><k-button severity="secondary" icon="▾" iconPos="right" (clicked)="shopPop.toggle($event)">{{ shop().name }}</k-button></div>
+          <div class="row"><button k-button severity="secondary" icon="▾" iconPos="right" (click)="shopPop.toggle($event)">{{ shop().name }}</button></div>
           <k-pop #shopPop ariaLabel="Choose a shop" [width]="300">
             <div class="ic-shops">
               @for (s of shops; track s.id) {
@@ -1567,11 +1570,11 @@
           </k-pop>
         </app-doc>
         <app-doc id="align" heading="Align and offset" about="align=end lines the panel up with the right edge of the button; offset is the gap in pixels.">
-          <div class="row"><k-button label="Pop (end, 24px)" severity="secondary" (clicked)="popEnd.toggle($event)" /></div>
+          <div class="row"><button k-button severity="secondary" (click)="popEnd.toggle($event)">Pop (end, 24px)</button></div>
           <k-pop #popEnd ariaLabel="Shop" [width]="240" align="end" [offset]="24"><p class="pad">Right edge, 24px away.</p></k-pop>
         </app-doc>
         <app-doc id="pop-customizing" heading="Customizing" about="--pop-padding, --pop-radius, --pop-max-height and --pop-shadow.">
-          <div class="row"><k-button label="Pop (styled)" severity="secondary" (clicked)="popStyled.toggle($event)" /></div>
+          <div class="row"><button k-button severity="secondary" (click)="popStyled.toggle($event)">Pop (styled)</button></div>
           <k-pop #popStyled ariaLabel="Shop" [width]="240" style="--pop-padding: 16px; --pop-radius: 8px; --pop-shadow: 0 0 0 2px var(--amber)"><p class="pad">Square, padded and outlined.</p></k-pop>
         </app-doc>
       }
@@ -1614,7 +1617,7 @@
               <dt><k-hint term="Acquiring">The 1.5% Click and Payme keep for card payments.</k-hint></dt><dd>− 72 300 so'm</dd>
               <dt><b>To your card</b></dt><dd><b>4 561 700 so'm</b></dd>
             </dl>
-            <div class="row"><k-button label="Withdraw" size="small" (clicked)="log.set('Payout requested')" /></div>
+            <div class="row"><button k-button size="small" (click)="log.set('Payout requested')">Withdraw</button></div>
           </div>
         </app-doc>
         <app-doc id="disabled" heading="Disabled and label" about="disabled stops the term from opening; ariaLabel names the button when the term alone is not enough.">
@@ -1760,29 +1763,29 @@
       @case ('toast') {
         <app-doc id="kinds" heading="Kinds" about="You own the list: push an item to show it, remove it on dismiss. life sets how long it stays.">
           <div class="row">
-            <k-button label="Success" size="small" (clicked)="toast('success')" />
-            <k-button label="Info" size="small" severity="secondary" (clicked)="toast('info')" />
-            <k-button label="Warn" size="small" severity="secondary" (clicked)="toast('warn')" />
-            <k-button label="Error" size="small" severity="danger" (clicked)="toast('error')" />
+            <button k-button size="small" (click)="toast('success')">Success</button>
+            <button k-button size="small" severity="secondary" (click)="toast('info')">Info</button>
+            <button k-button size="small" severity="secondary" (click)="toast('warn')">Warn</button>
+            <button k-button size="small" severity="danger" (click)="toast('error')">Error</button>
           </div>
         </app-doc>
         <app-doc id="animation" heading="Animation" about="Toasts arrive with the chosen motion and leave with it reversed.">
-          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><k-button label="Show toast" size="small" severity="secondary" (clicked)="animToast()" /></div>
+          <div class="row"><k-select [options]="animations" [(value)]="anim" pill prefix="Animation:" ariaLabel="Animation" /><button k-button size="small" severity="secondary" (click)="animToast()">Show toast</button></div>
           <k-toast [items]="animToasts()" (dismiss)="dropAnimToast($event)" position="top" [animation]="anim()" />
         </app-doc>
         <app-doc id="in-context" heading="In context" about="Quick actions on a visit, each answered by a toast in the app-wide stack.">
           <div class="ic-quick">
             <k-person name="Aziz Rahimov" meta="Beard trim · today 11:30" />
             <div class="row">
-              <k-button label="Remind" size="small" severity="secondary" (clicked)="notify('success', 'Reminder sent to Aziz by Telegram.')" />
-              <k-button label="Move to 12:00" size="small" severity="secondary" (clicked)="notify('info', 'Moved to 12:00. Aziz gets an SMS.')" />
-              <k-button label="Charge 40 000" size="small" (clicked)="notify('warn', 'Click is slow today; the payment may take a minute.')" />
-              <k-button label="No-show" size="small" severity="danger" outlined (clicked)="notify('error', 'Aziz is marked as a no-show.')" />
+              <button k-button size="small" severity="secondary" (click)="notify('success', 'Reminder sent to Aziz by Telegram.')">Remind</button>
+              <button k-button size="small" severity="secondary" (click)="notify('info', 'Moved to 12:00. Aziz gets an SMS.')">Move to 12:00</button>
+              <button k-button size="small" (click)="notify('warn', 'Click is slow today; the payment may take a minute.')">Charge 40 000</button>
+              <button k-button size="small" severity="danger" outlined (click)="notify('error', 'Aziz is marked as a no-show.')">No-show</button>
             </div>
           </div>
         </app-doc>
         <app-doc id="position" heading="Top and customizing" about="position top stacks from the top edge; gap, radius, size and background are CSS variables.">
-          <k-button label="Top toast" size="small" severity="secondary" (clicked)="cTopToasts.set([{ id: 1, kind: 'info', text: 'From the top.', life: 3000 }])" />
+          <button k-button size="small" severity="secondary" (click)="cTopToasts.set([{ id: 1, kind: 'info', text: 'From the top.', life: 3000 }])">Top toast</button>
           <k-toast [items]="cTopToasts()" (dismiss)="cTopToasts.set([])" position="top" style="--toast-gap: 14px; --toast-radius: 4px; --toast-font-size: 16px; --toast-bg: var(--bg)" />
         </app-doc>
       }
@@ -1802,7 +1805,7 @@
             @if (importState() === 'done') {
               <k-banner tone="ok" icon="✓" actionLabel="Open clients" (action)="log.set('Open clients')">312 clients imported, 4 duplicates merged.</k-banner>
             } @else {
-              <div class="row"><k-button label="Import clients-from-excel.csv" [loading]="importState() === 'running'" (clicked)="runImport()" /></div>
+              <div class="row"><button k-button [loading]="importState() === 'running'" (click)="runImport()">Import clients-from-excel.csv</button></div>
             }
           </div>
         </app-doc>
@@ -1881,7 +1884,7 @@
                 <div kSlide class="work"><img [src]="w.image" [alt]="w.title" /><p>{{ w.title }}<span>{{ w.by }}</span></p></div>
               }
             </k-carousel>
-            <div class="ic-line"><k-stars [value]="4.8" label="4.8 out of 5" /><k-button size="small" (clicked)="log.set('Booking ' + works[profileSlide()].title)">Book {{ works[profileSlide()].title }}</k-button></div>
+            <div class="ic-line"><k-stars [value]="4.8" label="4.8 out of 5" /><button k-button size="small" (click)="log.set('Booking ' + works[profileSlide()].title)">Book {{ works[profileSlide()].title }}</button></div>
           </div>
         </app-doc>
         <app-doc id="carousel-plain" heading="Ticks only" about="edges false leaves the slides alone, for slides full of their own buttons.">
@@ -1908,7 +1911,7 @@
             <k-person name="Malika Yusupova" meta="Stylist · Yunusobod" />
             <k-reveal [before]="lookBefore" [after]="lookAfter" aspectRatio="4/3" afterLabel="After 2 h" ariaLabel="Balayage, before and after" />
             <p class="ic-look-cap">Balayage on long hair · from 450 000 so'm</p>
-            <div class="row"><k-button label="Book this look" (clicked)="log.set('Booking balayage with Malika')" /></div>
+            <div class="row"><button k-button (click)="log.set('Booking balayage with Malika')">Book this look</button></div>
           </div>
         </app-doc>
         <app-doc id="reveal-options" heading="Options" about="aspectRatio sets the shape of the picture; showLabels false hides the before/after labels.">
@@ -1923,7 +1926,7 @@
           <div class="ic-card">
             <p class="ic-card-title">Saturday, 10:00 · Wedding party</p>
             <div class="ic-line"><k-avatars [people]="guests" ariaLabel="Guests" /><k-tag tone="book">{{ guests.length }} guests</k-tag></div>
-            <k-button severity="secondary" fluid (clicked)="log.set('Reminder sent to ' + guests.length + ' guests')">Remind them all</k-button>
+            <button k-button severity="secondary" fluid (click)="log.set('Reminder sent to ' + guests.length + ' guests')">Remind them all</button>
           </div>
         </app-doc>
         <app-doc id="avatars-size" heading="Size and max" about="size matches k-person; max is how many discs show before the +N.">
@@ -1952,7 +1955,7 @@
               </button>
             }
           </div>
-          <div class="row"><k-button [label]="'Continue with ' + crewPick()" (clicked)="log.set('Master: ' + crewPick())" /></div>
+          <div class="row"><button k-button (click)="log.set('Master: ' + crewPick())">{{ 'Continue with ' + crewPick() }}</button></div>
         </app-doc>
         <app-doc id="person-initials" heading="Initials" about="initialsText overrides the letters drawn in the disc.">
           <k-person name="Dilnoza Karimova" initialsText="DK" meta="Master" />
@@ -1978,7 +1981,7 @@
                 </button>
               }
             </div>
-            <k-button fluid (clicked)="log.set('Paying 120 000 with ' + payBy())">Pay 120 000 so'm with {{ payBy() }}</k-button>
+            <button k-button fluid (click)="log.set('Paying 120 000 with ' + payBy())">Pay 120 000 so'm with {{ payBy() }}</button>
           </div>
         </app-doc>
       }
@@ -1994,7 +1997,7 @@
             <k-meter [value]="3" [max]="5" label="masters on the team" />
             <k-meter [value]="22" [max]="25" label="free leads used this month" />
             <k-meter [value]="410" [max]="500" label="SMS reminders sent" />
-            <div class="row"><k-button label="Upgrade to Pro" size="small" (clicked)="log.set('Upgrade')" /></div>
+            <div class="row"><button k-button size="small" (click)="log.set('Upgrade')">Upgrade to Pro</button></div>
           </div>
         </app-doc>
         <app-doc id="meter-ticks" heading="Ticks only" about="showFigure false hides the big number; the value is still read aloud.">
@@ -2047,11 +2050,11 @@
               <k-banner tone="ok" icon="✓">See you at {{ wizardTime() }}, {{ wizardName() }}. Aziz is expecting you.</k-banner>
             }
             <div class="row">
-              @if (wizardStep() > 1 && wizardStep() < 4) { <k-button label="Back" severity="secondary" outlined (clicked)="wizardStep.set(wizardStep() - 1)" /> }
+              @if (wizardStep() > 1 && wizardStep() < 4) { <button k-button severity="secondary" outlined (click)="wizardStep.set(wizardStep() - 1)">Back</button> }
               @if (wizardStep() < 4) {
-                <k-button [label]="wizardStep() === 3 ? 'Book' : 'Next'" [disabled]="!wizardReady()" (clicked)="wizardStep.set(wizardStep() + 1)" />
+                <button k-button [disabled]="!wizardReady()" (click)="wizardStep.set(wizardStep() + 1)">{{ wizardStep() === 3 ? 'Book' : 'Next' }}</button>
               } @else {
-                <k-button label="Book another" severity="secondary" (clicked)="wizardStep.set(1); wizardTime.set('')" />
+                <button k-button severity="secondary" (click)="wizardStep.set(1); wizardTime.set('')">Book another</button>
               }
             </div>
           </div>
@@ -2243,7 +2246,7 @@
                 <k-row label="Styling">70 000 so'm</k-row>
               </k-rows>
             }
-            <div class="row"><k-button label="Reload" size="small" severity="secondary" [disabled]="cardLoading()" (clicked)="reloadCard()" /></div>
+            <div class="row"><button k-button size="small" severity="secondary" [disabled]="cardLoading()" (click)="reloadCard()">Reload</button></div>
           </div>
         </app-doc>
         <app-doc id="skeleton-options" heading="Rows options" about="avatar false drops the disc; lines sets the lines per row.">

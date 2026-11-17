@@ -13,6 +13,7 @@
  "KometaWord": "kometa-ui/word",
  "KometaBanner": "kometa-ui/banner",
  "KometaButton": "kometa-ui/button",
+ "KometaButtonElement": "kometa-ui/button",
  "KometaSlide": "kometa-ui/carousel",
  "KometaCarousel": "kometa-ui/carousel",
  "KometaCheck": "kometa-ui/check",

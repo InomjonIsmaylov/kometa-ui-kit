@@ -4,7 +4,7 @@
       <p class="eyebrow">CRM</p>
       <h2>Clients <span class="total">{{ clients().length }}</span></h2>
     </div>
-    <k-button label="Add client" icon="+" (clicked)="addOpen.set(true)" />
+    <button k-button icon="+" (click)="addOpen.set(true)">Add client</button>
   </header>
 
   <!-- Toolbar: search and master narrow the list, the chips pick a group, the words sort it. -->

@@ -3,7 +3,7 @@
 Generated from the library source by `npm run api`; do not edit by hand. Read [usage.md](usage.md) first.
 Every class below is standalone: add it to your component's `imports` and import it from its entry point,
 `'kometa-ui/<name>'` (the file name without `kometa-`: `KometaButton` comes from `'kometa-ui/button'`).
-Inputs are signal inputs; boolean inputs accept a bare attribute (`<k-button outlined />`).
+Inputs are signal inputs; boolean inputs accept a bare attribute (`<button k-button outlined>`).
 
 ## `k-fold-mark` — KometaFoldMark
 
@@ -147,9 +147,24 @@ A notice with no box: a 2px state-coloured hairline stands beside the sentence. 
 | `action` | output | `void` |  |  |
 | `dismissed` | output | `void` |  |  |
 
-## `k-button` — KometaButton
+## `button[k-button], a[k-button]` — KometaButton
 
-The one button. A real `<button class="kbtn">` inside the host, so type, disabled and click stay the browser's own. Looks: the default is the amber main action; `severity` `secondary` is the quiet grey pill, `danger` the red one; `outlined` draws it as a hairline, `text` as an underline-free word; `size="small"` is the compact one; `fluid` fills the row; `loading` shows a spinner and blocks the tap. `styleClass` lands on the inner button, `(clicked)` carries the click. The look is written with `:where()`, so an app stylesheet's `.kbtn` floor (the 48px thumb height) wins without a fight. Spec: kometa-button.spec.ts.
+The one button, put on a native element: `<button k-button>Save</button>`, or `<a k-button href="/book">Book</a>` for a link that looks like one. The element stays the browser's own, so `type`, `disabled`, `aria-*`, `class`, `(click)`, `form` and focus need no inputs. A `<button k-button>` with no `type` is `type="button"`, so it never submits a form by accident; write `type="submit"` for the one that should. Looks: the default is the amber main action; `severity` `secondary` is the quiet grey pill, `danger` the red one; `outlined` draws it as a hairline, `text` as an underline-free word; `size="small"` is the compact one; `fluid` fills the row. `loading` shows a spinner, sets `aria-busy` and swallows the click (and a link's navigation) but keeps the focus where it is, so a keyboard user is not dropped mid-request. `icon` is a decorative glyph beside the content. The look is written with `:where()` on `.kbtn`, so an app stylesheet's `.kbtn` floor (the 48px thumb height) wins without a fight. Spec: kometa-button.spec.ts.
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `severity` | input | `"secondary" \| "danger" \| null` | `null` |  |
+| `size` | input | `"small" \| null` | `null` |  |
+| `outlined` | input | `boolean` | `false` |  |
+| `text` | input | `boolean` | `false` |  |
+| `fluid` | input | `boolean` | `false` |  |
+| `loading` | input | `boolean` | `false` | Spinner and `aria-busy`; the click is swallowed but the element stays focusable. |
+| `icon` | input | `string` | `''` | A decorative glyph or emoji beside the content; an icon-only button still needs an `aria-label`. |
+| `iconPos` | input | `"left" \| "right"` | `'left'` |  |
+
+## `k-button` — KometaButtonElement
+
+Deprecated: use `<button k-button>` (`KometaButton`). The old wrapper element, kept for one minor release: it draws a `<button k-button>` inside itself and passes `label`, `type`, `disabled`, `ariaLabel`, `styleClass` and `(clicked)` on. Unlike before, `loading` no longer disables the inner button (it keeps focus and swallows the click instead).
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -164,7 +179,7 @@ The one button. A real `<button class="kbtn">` inside the host, so type, disable
 | `disabled` | input | `boolean` | `false` |  |
 | `ariaLabel` | input | `string` | `''` |  |
 | `styleClass` | input | `string` | `''` |  |
-| `icon` | input | `string` | `''` | A decorative glyph or emoji beside the label; name the button with `label` or `ariaLabel`. |
+| `icon` | input | `string` | `''` |  |
 | `iconPos` | input | `"left" \| "right"` | `'left'` |  |
 | `clicked` | output | `MouseEvent` |  |  |
 

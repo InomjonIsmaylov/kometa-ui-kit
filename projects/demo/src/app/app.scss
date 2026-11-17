@@ -285,7 +285,7 @@ k-frame img { display: block; width: 100%; height: auto; }
 .ic-memo {
   display: grid; gap: 14px; max-width: 460px; padding: 18px; border: 1px solid var(--border); border-radius: 18px; background: var(--card);
 
-  k-button { justify-self: start; }
+  .kbtn { justify-self: start; }
 }
 // #endregion
 
@@ -393,7 +393,7 @@ k-frame img { display: block; width: 100%; height: auto; }
 .ic-book-times {
   display: grid; flex: 1 1 220px; gap: 16px;
 
-  k-button { justify-self: start; }
+  .kbtn { justify-self: start; }
 }
 // #endregion
 

@@ -11,8 +11,8 @@ const STARTERS: { label: string; value: string; src: PlaySource }[] = [
       html: `<div class="card">
   <k-person name="Malika Karimova" meta="Haircut · today 14:00" />
   <k-tag [tone]="paid() ? 'done' : 'wait'">{{ paid() ? 'Paid' : 'Waiting' }}</k-tag>
-  <k-button [label]="paid() ? 'Refund' : 'Charge 80 000'" [severity]="paid() ? 'secondary' : null"
-            (clicked)="paid.set(!paid())" />
+  <button k-button [severity]="paid() ? 'secondary' : null"
+            (click)="paid.set(!paid())">{{ paid() ? 'Refund' : 'Charge 80 000' }}</button>
 </div>`,
       ts: `import { signal } from '@angular/core';
 
@@ -30,7 +30,7 @@ export class Demo {
       html: `<form class="form" (submit)="$event.preventDefault(); send()">
   <k-field label="Name" [(value)]="name" placeholder="Your name" [error]="name().length ? '' : 'Tell us your name'" />
   <k-toggle [(checked)]="news" onLabel="Send me news" offLabel="No news, thanks" />
-  <k-button type="submit" label="Create account" [loading]="busy()" />
+  <button k-button type="submit" [loading]="busy()">Create account</button>
 </form>
 <k-toast [items]="toasts()" (dismiss)="toasts.set([])" animation="spring" />`,
       ts: `import { signal } from '@angular/core';
@@ -57,7 +57,7 @@ export class Demo {
     label: 'Motion lab', value: 'motion', src: {
       html: `<div class="lab">
   <k-select [options]="kinds" [(value)]="kind" pill prefix="Animation:" ariaLabel="Animation" />
-  <k-button label="Open" severity="secondary" (clicked)="pop.toggle($event)" />
+  <button k-button severity="secondary" (click)="pop.toggle($event)">Open</button>
   <k-pop #pop ariaLabel="Demo" [width]="240" [animation]="kind()">
     <p style="margin: 12px">Arrived with {{ kind() }}.</p>
   </k-pop>
@@ -98,7 +98,7 @@ const LANG: Record<File, Lang> = { html: 'html', ts: 'ts', css: 'scss' };
     <div class="pg-bar">
       <k-select [options]="starters" [value]="starter()" (valueChange)="load($event)" pill prefix="Start from:" ariaLabel="Starter" />
       <span class="pg-state" [class.bad]="error()" aria-live="polite">{{ status() }}</span>
-      <k-button label="Reset" size="small" severity="secondary" (clicked)="load(starter())" />
+      <button k-button size="small" severity="secondary" (click)="load(starter())">Reset</button>
     </div>
     <div class="pg">
       <section class="pg-edit" aria-label="Code">

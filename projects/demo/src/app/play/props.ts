@@ -29,7 +29,7 @@ const ANIMATIONS = ['', 'fade', 'rise', 'drop', 'scale', 'zoom', 'spring', 'flip
 const ARIA = ['ariaLabel', 'ariaLabelledBy', 'ariaDescribedBy', 'styleClass', 'name', 'inputId', 'inputmode', 'autocomplete', 'headingId'];
 
 export const PLAY: Record<string, PlayConfig> = {
-  button: { type: KometaButton, seed: { label: 'Book a visit' }, choices: { severity: [null, 'secondary', 'danger'], size: [null, 'small'], iconPos: ['left', 'right'] }, skip: ['type'] },
+  button: { type: KometaButton, content: 'Book a visit', choices: { severity: [null, 'secondary', 'danger'], size: [null, 'small'], iconPos: ['left', 'right'] } },
   tag: { type: KometaTag, content: 'Paid', choices: { tone: ['now', 'wait', 'book', 'done', 'warn', 'error'] } },
   banner: { type: KometaBanner, content: 'Your shop is visible to clients again.', choices: { tone: ['info', 'ok', 'warn', 'error'], surface: ['bare', 'glass'], roleOverride: ['', 'status', 'alert'] } },
   meter: { type: KometaMeter, seed: { value: 12, label: 'Visits today' } },
@@ -118,8 +118,8 @@ const attr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
     <div class="pp-foot">
       <pre class="pp-code"><code [innerHTML]="coloured()"></code></pre>
       <div class="pp-acts">
-        <k-button label="Copy" size="small" severity="secondary" (clicked)="copy()" />
-        <k-button label="Open in playground" size="small" icon="→" iconPos="right" (clicked)="openPlayground()" />
+        <button k-button size="small" severity="secondary" (click)="copy()">Copy</button>
+        <button k-button size="small" icon="→" iconPos="right" (click)="openPlayground()">Open in playground</button>
       </div>
     </div>
   `,
@@ -150,7 +150,7 @@ export class PropsPanel {
     this.content.set(config.content ?? '');
     this.text = this.doc.createTextNode(config.content ?? '');
     this.slot().clear();
-    // Nothing projected unless there is content: an empty projection would hide a component's fallback (k-button's label).
+    // Nothing projected unless there is content: an empty projection would hide a component's fallback.
     const ref = this.slot().createComponent(config.type, { projectableNodes: config.content !== undefined ? [[this.text]] : undefined });
     this.ref = ref;
     const inst = ref.instance as Record<string, unknown>;

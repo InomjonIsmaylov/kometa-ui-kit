@@ -130,10 +130,10 @@ export const appConfig = { providers: [provideKometaUi()] };
 ```
 
 ```html
-<k-button label="Save" (clicked)="save()" />
+<button k-button (click)="save()">Save</button>
 ```
 
-Components use the `k-` prefix (`<k-button>`, `<k-drawer>`, `button[k-halo]`) and read their colours
+Components use the `k-` prefix (`<k-drawer>`, `button[k-button]`, `button[k-halo]`) and read their colours
 from tokens such as `--amber`, `--bg` and `--text`, so overriding a token on any element restyles
 everything inside it. Import each component from its own entry point
 (`import { KometaButton } from 'kometa-ui/button'`) so lazy routes keep their components.

@@ -38,13 +38,16 @@ Tailwind v4: also `@import 'kometa-ui/styles/kometa-theme.css';` to map the toke
   `from 'kometa-ui'` re-exports them all and works, but it puts every kit component any lazy route uses into the
   app's initial chunk.
   then list them in the standalone component's `imports: [...]`.
-- Find the class for a selector in `components.md` (`<k-button>` is `KometaButton`, `button[k-halo]` is `KometaHalo`).
-- Inputs are signal inputs: bind them with `[label]="x"` or a static `label="Save"`. Boolean inputs take a bare attribute: `<k-button outlined fluid />`.
+- Find the class for a selector in `components.md` (`button[k-button]` is `KometaButton`, `button[k-halo]` is `KometaHalo`).
+- Inputs are signal inputs: bind them with `[label]="x"` or a static `label="Save"`. Boolean inputs take a bare attribute: `<k-toggle disabled />`.
 - `model` inputs are two-way: `<k-toggle [(checked)]="on" />`, `<k-select [(value)]="city" [options]="cities" />`.
 - Forms: components marked "A Signal Forms control" in `components.md` bind with `[formField]="form.name"`
   (`@angular/forms/signals`); those marked "Works with Angular forms" take `formControl` / `formControlName` / `ngModel`.
   The rest bind through their `model`.
-- Output names are the library's own, not DOM names: `<k-button (clicked)="save()">`, `<k-drawer (closing)="...">`. Check `components.md` before guessing.
+- Buttons are native elements with the kit on them: `<button k-button (click)="save()">Save</button>`, `<a k-button href="/book">Book</a>`;
+  use the DOM's own `type`, `disabled`, `aria-label`, `class` and `(click)`. `<k-button label="..." (clicked)>` is the deprecated
+  wrapper (`KometaButtonElement`), kept for one minor release.
+- Other output names are the library's own, not DOM names: `<k-drawer (closing)="...">`. Check `components.md` before guessing.
 - Read the component's doc comment in `components.md` (or its `.d.ts` in `node_modules/kometa-ui`) before using an input you have not seen; inputs are often unions like `'secondary' | 'danger' | null`.
 
 ## Services and app-wide pieces
@@ -64,7 +67,7 @@ Tailwind v4: also `@import 'kometa-ui/styles/kometa-theme.css';` to map the toke
 - Most components expose their own knobs (e.g. `--kbtn-radius`); see the "Customizing" example on each docs page.
 - Component styles are wrapped in `:where()`, so a plain class selector in app CSS overrides them. Do not use
   `::ng-deep`, `!important` or copy component CSS; write a normal rule or set a custom property.
-- `k-button`, `k-drawer` and `k-digits` take `styleClass` to put a class on their inner element.
+- `k-drawer` and `k-digits` take `styleClass` to put a class on their inner element.
 - Overlays (drawer, pop, menu, toast...) take `animation`: a preset name from `KOMETA_ANIMATIONS`, `'none'`, or
   your own `"in out"` keyframe names, which must be defined in global CSS (component-scoped `@keyframes` get renamed).
   `[kAnimate]` animates any element on enter or when scrolled into view.
