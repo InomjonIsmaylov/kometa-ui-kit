@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { Docs, Platform } from '../docs';
 import {
   KometaButton, KometaLink, KometaMeter, KometaPerson, KometaRating, KometaShare, KometaShareSegment, KometaSlot, KometaSlots,
   KometaStars, KometaSteps, KometaTag, KometaToggle, KometaWords,
@@ -19,6 +20,20 @@ export class Home {
   /** How many component pages the docs have, for the stats strip. */
   readonly count = input(0);
   readonly screens = input<{ id: string; label: string; about: string }[]>([]);
+
+  private readonly docs = inject(Docs);
+  /** Composables in the Compose kit (compose/README.md). */
+  protected readonly composables = 81;
+  protected readonly kits = [{ value: 'angular', label: 'Angular' }, { value: 'compose', label: 'Compose' }];
+  /** The install line shown, starting from the kit the visitor last picked in the docs. */
+  protected readonly kit = signal<Platform>(this.docs.platform());
+  protected readonly install = computed(() =>
+    this.kit() === 'compose' ? 'implementation("uz.kometa:kometa-ui:0.3.0")' : 'npm install kometa-ui');
+
+  /** Opens the docs with code and previews for that kit. */
+  protected browse(p: Platform): void {
+    this.docs.setPlatform(p);
+  }
 
   protected readonly accents = [
     { name: 'Amber', value: '#FFBF00' }, { name: 'Mint', value: '#3ECF8E' }, { name: 'Sky', value: '#54A9EB' },

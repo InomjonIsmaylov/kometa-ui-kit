@@ -69,7 +69,7 @@ export function highlight(code: string, lang: Lang): string {
   }).join(''); // the spans are blocks; a '\n' between them would draw an empty line inside <pre>
 }
 
-export interface DocEntry { id: string; title: string; el: HTMLElement }
+export interface DocEntry { id: string; title: string; el: HTMLElement; hidden: () => boolean }
 /** The code shown under a demo, one tab per language that has any. */
 export type DocFiles = Partial<Record<'html' | 'ts' | 'scss' | 'kotlin', string>>;
 /** Which kit the docs show code for; under Compose, an example with no Kotlin keeps its Angular code. */
@@ -98,7 +98,7 @@ export class Docs {
   readonly platform = signal<Platform>(readPlatform());
   private readonly entries = signal<DocEntry[]>([]);
   /** The sections on screen, in page order, for the "On this page" list. */
-  readonly sections = computed(() => [...this.entries()].sort((a, b) =>
+  readonly sections = computed(() => this.entries().filter((e) => !e.hidden()).sort((a, b) =>
     a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 
   snippet(id: string): string {
@@ -191,6 +191,7 @@ type Tab = keyof typeof LABELS;
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   styleUrl: './docs.scss',
+  host: { '[style.display]': "hidden() ? 'none' : null" },
   template: `
     @if (heading()) {
       <h2 class="doc-title"><a [href]="'#' + docs.page() + '/' + id()">{{ heading() }}</a></h2>
@@ -299,6 +300,9 @@ export class DocSection implements OnInit, OnDestroy {
     this.composeHeight.set(px);
   }
 
+  /** A Customizing example sets the web kit's CSS custom properties, which mean nothing in Compose: hidden there unless it has Kotlin. */
+  protected readonly hidden = computed(() => this.docs.platform() === 'compose' && this.heading() === 'Customizing' && !this.all().includes('kotlin'));
+
   /** Compose is picked and the page has Compose examples, but not this one. */
   protected readonly angularOnly = computed(() => this.docs.platform() === 'compose' && this.code() === undefined && !this.files()
     && !this.all().includes('kotlin') && this.all().length > 0 && this.docs.hasKotlin(this.docs.page()));
@@ -308,7 +312,7 @@ export class DocSection implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.open.set(!this.folded() || !this.demo());
-    this.entry = { id: this.id(), title: this.heading(), el: this.host.nativeElement };
+    this.entry = { id: this.id(), title: this.heading(), el: this.host.nativeElement, hidden: this.hidden };
     if (this.heading()) this.docs.add(this.entry);
   }
 

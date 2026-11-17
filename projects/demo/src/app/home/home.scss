@@ -83,6 +83,22 @@ h1 {
   code { color: var(--text); }
 }
 
+.install-for { margin-bottom: -8px; }
+
+.kit-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.kit-card {
+  display: grid; align-content: start; gap: 12px; padding: 28px; border: 1px solid var(--border); border-radius: 20px; background: var(--card);
+  transition: transform .25s, border-color .25s;
+
+  &:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--amber) 40%, var(--border)); }
+  .glyph { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--input); color: var(--amber-ink); font-size: 22px; }
+  h3 { margin: 4px 0 0; font-size: 20px; }
+  p { margin: 0; color: var(--text2); line-height: 1.6; }
+  > code { padding: 10px 12px; border-radius: 10px; background: var(--bg); color: var(--amber-ink); font: 13px var(--font-mono); overflow-wrap: anywhere; }
+  .inline { font: 13px var(--font-mono); color: var(--text); }
+}
+.kit-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+
 // ---------------------------------------------------------------- Bands
 section:not(.hero) { max-width: 1160px; margin: 0 auto; padding: 72px 24px; box-sizing: border-box; }
 .band-head {
@@ -213,7 +229,7 @@ kbd { padding: 2px 7px; border: 1px solid var(--border2); border-bottom-width: 2
 @media (max-width: 639px) {
   .hero { padding: 64px 16px 80px; }
   section:not(.hero) { padding: 48px 16px; }
-  .bento, .principles, .screen-cards { grid-template-columns: minmax(0, 1fr); }
+  .bento, .principles, .screen-cards, .kit-cards { grid-template-columns: minmax(0, 1fr); }
   .tile.book, .tile.wide { grid-column: auto; }
   .stats { grid-template-columns: 1fr 1fr; div:nth-child(3) { border-left: 0; } }
   .install { max-width: 100%; box-sizing: border-box; font-size: 12px; }

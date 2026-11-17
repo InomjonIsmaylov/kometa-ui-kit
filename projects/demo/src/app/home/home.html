@@ -5,19 +5,54 @@
     <span class="comet"></span><span class="comet late"></span>
   </div>
 
-  <p class="kicker"><span class="pulse"></span>Angular 22 · standalone · no runtime dependencies</p>
+  <p class="kicker"><span class="pulse"></span>Angular 22 · Compose Multiplatform · one design language</p>
   <h1>Components that leave<br /><span class="grad">a trail of light.</span></h1>
   <p class="lede">
-    Kometa is a dense, warm UI kit for Angular: {{ count() }} standalone components, light and dark from one set of tokens,
-    and styles you can override without a fight.
+    Kometa is a dense, warm UI kit for the web and for mobile: {{ count() }} standalone Angular components, and the same look
+    in Kotlin for Android, iOS and desktop. Light and dark from one set of tokens, styles you can override without a fight.
   </p>
   <div class="cta">
     <a class="go primary" href="#start">Get started <span aria-hidden="true">→</span></a>
     <a class="go" href="#booking">See a real screen</a>
   </div>
+  <k-words class="install-for" [options]="kits" [value]="kit()" (valueChange)="kit.set($any($event))" ariaLabel="Install for" />
   <div class="install">
-    <span class="prompt" aria-hidden="true">$</span><code>npm install kometa-ui</code>
-    <k-link text="npm install kometa-ui" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy the install command" />
+    <span class="prompt" aria-hidden="true">{{ kit() === 'compose' ? '+' : '$' }}</span><code>{{ install() }}</code>
+    <k-link [text]="install()" copyLabel="Copy" copiedLabel="Copied" ariaLabel="Copy the install line" />
+  </div>
+</section>
+
+<section class="kits reveal" aria-label="Two kits">
+  <header class="band-head">
+    <p class="eyebrow">Web and mobile</p>
+    <h2>Two kits, one look.</h2>
+    <p class="band-sub">
+      Whether you ship an Angular app, a Kotlin app, or both, every page of these docs shows the component in your stack:
+      pick Angular or Compose under a page's title.
+    </p>
+  </header>
+  <div class="kit-cards">
+    <article class="kit-card">
+      <span class="glyph" aria-hidden="true">◎</span>
+      <h3>Angular, for the web</h3>
+      <p>Standalone, OnPush components driven by signals. No PrimeNG, no Material, restyled with CSS custom properties.</p>
+      <code>&lt;k-button label="Book" (clicked)="book()" /&gt;</code>
+      <div class="kit-links">
+        <a class="go primary" href="#button" (click)="browse('angular')">Browse Angular <span aria-hidden="true">→</span></a>
+        <a class="go" href="#start">Install guide</a>
+      </div>
+    </article>
+    <article class="kit-card">
+      <span class="glyph" aria-hidden="true">▯</span>
+      <h3>Compose, for Android, iOS and desktop</h3>
+      <p>The same tokens as <code class="inline">KometaTheme</code>, with {{ composables }} composables built on
+        <code class="inline">compose.foundation</code> only. Every docs preview runs the real Kotlin, compiled to Wasm.</p>
+      <code>KometaButton("Book", onClick = ::book)</code>
+      <div class="kit-links">
+        <a class="go primary" href="#button" (click)="browse('compose')">Browse Compose <span aria-hidden="true">→</span></a>
+        <a class="go" href="#compose">Run the showcase</a>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -79,10 +114,10 @@
 </section>
 
 <section class="stats reveal" aria-label="In numbers">
-  <div><b>{{ count() }}</b><span>components</span></div>
-  <div><b>0</b><span>runtime deps</span></div>
+  <div><b>{{ count() }}</b><span>Angular components</span></div>
+  <div><b>{{ composables }}</b><span>Compose composables</span></div>
   <div><b>2</b><span>colour schemes</span></div>
-  <div><b>1</b><span>import line</span></div>
+  <div><b>0</b><span>runtime deps</span></div>
 </section>
 
 <section class="principles reveal" aria-label="Principles">
@@ -117,7 +152,8 @@
   <h2>Ready when you are.</h2>
   <div class="cta">
     <a class="go primary" href="#start">Read the guide <span aria-hidden="true">→</span></a>
-    <a class="go" href="#button">Browse components</a>
+    <a class="go" href="#button" (click)="browse('angular')">Angular components</a>
+    <a class="go" href="#button" (click)="browse('compose')">Compose components</a>
   </div>
   <p class="hint">Tip: press <kbd>Ctrl</kbd> <kbd>K</kbd> anywhere to jump to a component.</p>
 </section>
