@@ -16,13 +16,18 @@ gh auth status >/dev/null 2>&1 || { echo "gh is not logged in here; run gh auth 
 
 read -rp "Maven Central user token, username part: " central_user
 read -rsp "Maven Central user token, password part: " central_pass; echo
+# Windows consoles and Git Bash's native openssl can end a value with \r, which GitHub drops from a secret.
+central_user=${central_user//$'\r'/}; central_pass=${central_pass//$'\r'/}
 [ -n "$central_user" ] && [ -n "$central_pass" ] || { echo "Both parts are needed (central.sonatype.com → View Account → Generate User Token)."; exit 1; }
 
-pass=$(openssl rand -base64 32 | tr -d '\n')
-uid="Kometa UI release signing ($(date +%Y-%m-%d))"
+pass=$(openssl rand -base64 32 | tr -d '\r\n')
+uid="Kometa UI release signing ($(date '+%Y-%m-%d %H:%M:%S'))" # unique, so a rerun finds its own key
 gpg --batch --pinentry-mode loopback --passphrase "$pass" --quick-gen-key "$uid" ed25519 sign 3y
 fpr=$(gpg --list-keys --with-colons "$uid" | awk -F: '/^fpr/ {print $10; exit}')
 echo "Signing key: $fpr"
+# Prove the passphrase opens the key before storing anything.
+echo check | gpg --batch --pinentry-mode loopback --passphrase "$pass" -u "$fpr" --clearsign >/dev/null \
+  || { echo "The new key does not sign with its passphrase; nothing was stored."; exit 1; }
 
 gpg --keyserver hkps://keyserver.ubuntu.com --send-keys "$fpr"
 gpg --armor --export "$fpr" | curl -fsS -T - https://keys.openpgp.org >/dev/null && echo "Uploaded to keys.openpgp.org"
