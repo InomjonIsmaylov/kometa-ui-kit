@@ -3,7 +3,7 @@
 Each release has full notes, with migration steps when needed, on
 [GitHub Releases](https://github.com/InomjonIsmaylov/kometa-ui-kit/releases).
 
-## Compose 0.4.0 (unreleased)
+## Compose 0.4.0 (2026-11-17)
 
 **Breaking for the dependency line only.** The Compose port moves from GitHub Packages (`uz.kometa:kometa-ui`) to
 Maven Central as `io.github.inomjonismaylov:kometa-ui`, so no token or extra repository is needed. The Kotlin
