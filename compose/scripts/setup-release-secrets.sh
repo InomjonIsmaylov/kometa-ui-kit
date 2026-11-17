@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One-time setup for publishing the Compose kit to Maven Central from GitHub Actions.
 # Run it yourself (it asks for your Central token, which should never pass through anyone else):
-#   bash compose/scripts/setup-release-secrets.sh   (Windows: & "C:Program FilesGitbinbash.exe" compose/scripts/setup-release-secrets.sh)
+#   bash compose/scripts/setup-release-secrets.sh   (Windows: & "C:\Program Files\Git\bin\bash.exe" compose/scripts/setup-release-secrets.sh)
 # Needs: gpg, gh (logged in with access to the repo), curl.
 # It makes a signing key with no e-mail in it, publishes the public half to two keyservers (Central checks
 # signatures against them), and stores five repository secrets that publish-compose.yml reads.
