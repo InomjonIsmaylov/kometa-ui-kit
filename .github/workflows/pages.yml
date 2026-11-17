@@ -27,7 +27,7 @@ jobs:
       - run: npm test -- --watch=false
       - run: npm run api
       # The Compose kit's showcase, built to WebAssembly and served at compose/ (the docs site's Compose page embeds it).
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
