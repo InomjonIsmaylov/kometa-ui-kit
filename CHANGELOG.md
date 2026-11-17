@@ -3,6 +3,25 @@
 Each release has full notes, with migration steps when needed, on
 [GitHub Releases](https://github.com/InomjonIsmaylov/kometa-ui-kit/releases).
 
+## Unreleased
+
+- `[kometaTip]`: its global `<style>` tag takes Angular's `CSP_NONCE`, so tooltips stay styled under a strict
+  Content-Security-Policy (the motion keyframes already did).
+- `SECURITY.md`: how to report a vulnerability, and which versions get fixes.
+
+## 0.4.0 (2026-11-17)
+
+**Breaking.** `k-button` is an attribute on a native `<button>` or `<a>` instead of a wrapper element:
+`<button k-button (click)="save()">Save</button>`, `<a k-button href="/book">Book</a>`.
+
+- Every native attribute, event and focus works with no extra input (`type`, `disabled`, `aria-*`, `form`, `class`).
+  A `<button k-button>` with no `type` is still `type="button"`.
+- `loading` no longer disables the button: it sets `aria-busy` / `aria-disabled` and swallows the click (and a link's
+  navigation), so focus stays where it was.
+- Migration: `<k-button label="Save" (clicked)="save()" />` → `<button k-button (click)="save()">Save</button>`
+  (`ariaLabel` → `aria-label`, `styleClass` → `class`). For one minor release the old element still works if you import
+  `KometaButtonElement` instead of `KometaButton`. CSS that targeted the `k-button` element should target `.kbtn`.
+
 ## 0.3.0 (2026-11-12)
 
 - `ng add kometa-ui` sets up the layer order and base styles (at the top of the global `.scss` stylesheet, or first

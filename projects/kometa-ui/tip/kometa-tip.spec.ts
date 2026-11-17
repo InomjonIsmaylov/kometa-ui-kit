@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { CSP_NONCE, Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { KometaTip } from './kometa-tip';
 
@@ -133,5 +133,15 @@ describe('KometaTip', () => {
     f.componentInstance.name.set('Remove');
     f.detectChanges();
     expect(tip()!.querySelector('b')!.textContent).toBe('Remove');
+  });
+
+  it('puts the CSP nonce on its style tag, so a strict Content-Security-Policy keeps it styled', () => {
+    TestBed.configureTestingModule({ providers: [{ provide: CSP_NONCE, useValue: 'n0nce' }] });
+    const { q, tip, pointer } = render();
+    pointer(q('.icon'), 'pointerenter');
+    vi.advanceTimersByTime(400);
+    expect(tip()).not.toBeNull();
+    const styles = [...document.head.querySelectorAll('style')].filter((s) => s.textContent!.includes('.kometa-tip {'));
+    expect(styles.at(-1)!.nonce).toBe('n0nce');
   });
 });

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Directive, ElementRef, Injectable, OnDestroy, effect, inject, input } from '@angular/core';
+import { CSP_NONCE, Directive, ElementRef, Injectable, OnDestroy, effect, inject, input } from '@angular/core';
 import { KometaAnimation, injectKometaMotion, kometaAnimationName } from 'kometa-ui/motion';
 
 let nextId = 0;
@@ -21,6 +21,7 @@ const CSS = `
 @Injectable({ providedIn: 'root' })
 export class KometaTipHost {
   private readonly doc = inject(DOCUMENT);
+  private readonly nonce = inject(CSP_NONCE, { optional: true });
   private el: HTMLElement | null = null;
   private owner: HTMLElement | null = null;
   private lastHide = 0;
@@ -107,6 +108,7 @@ export class KometaTipHost {
   private element(): HTMLElement {
     if (this.el) return this.el;
     const style = this.doc.createElement('style');
+    if (this.nonce) style.nonce = this.nonce;
     style.textContent = CSS;
     this.doc.head.append(style);
     const el = this.doc.createElement('div');
