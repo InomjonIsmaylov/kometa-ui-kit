@@ -74,7 +74,9 @@ app-doc { display: block; margin: 0 0 56px; scroll-margin-top: 88px; }
   &::after { top: 150px; height: 64px; }
 }
 .doc-phone-screen {
-  position: relative; display: flex; flex-direction: column; min-height: 280px; overflow: hidden;
+  // A 20:9 Android screen; the example sits at the top like an app screen.
+  // shortcut: an example taller than the screen (~700px of content) is cut off; none is, add scrolling if one gets there.
+  position: relative; display: flex; flex-direction: column; aspect-ratio: 9 / 20; overflow: hidden;
   border-radius: 30px; background: var(--card); color: var(--text);
 
   // Punch-hole camera.
