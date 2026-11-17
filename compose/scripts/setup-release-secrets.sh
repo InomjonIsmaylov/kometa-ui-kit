@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 # One-time setup for publishing the Compose kit to Maven Central from GitHub Actions.
 # Run it yourself (it asks for your Central token, which should never pass through anyone else):
-#   bash compose/scripts/setup-release-secrets.sh
+#   bash compose/scripts/setup-release-secrets.sh   (Windows: & "C:Program FilesGitbinbash.exe" compose/scripts/setup-release-secrets.sh)
 # Needs: gpg, gh (logged in with access to the repo), curl.
 # It makes a signing key with no e-mail in it, publishes the public half to two keyservers (Central checks
 # signatures against them), and stores five repository secrets that publish-compose.yml reads.
 set -euo pipefail
 repo=InomjonIsmaylov/kometa-ui-kit
+
+# Check everything before making a key: on Windows, `bash` from PowerShell can be WSL, which has no gh.
+for t in gpg gh curl openssl; do
+  command -v "$t" >/dev/null || { echo "$t not found in this shell. On Windows run it with Git Bash: & \"C:\Program Files\Git\bin\bash.exe\" $0"; exit 1; }
+done
+gh auth status >/dev/null 2>&1 || { echo "gh is not logged in here; run gh auth login first."; exit 1; }
 
 read -rp "Maven Central user token, username part: " central_user
 read -rsp "Maven Central user token, password part: " central_pass; echo
