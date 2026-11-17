@@ -19,14 +19,14 @@ jobs:
       run:
         working-directory: compose
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
       # No setup-android: the macOS runner image ships the SDK (ANDROID_HOME), and setup-android@v3
       # fails there asking sdkmanager for the long-gone 'tools' package.
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Tag matches the Gradle version
         run: |
           version=$(sed -n 's/^version = "\(.*\)"/\1/p' kometa-ui/build.gradle.kts)
