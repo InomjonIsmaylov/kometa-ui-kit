@@ -24,9 +24,9 @@ import { KometaToggle } from 'kometa-ui/toggle';
 
       <k-toggle [(checked)]="remind" onLabel="Remind me" offLabel="No reminder" ariaLabel="Reminder" />
 
-      <k-button fluid [label]="done() ? 'Booked for ' + time() : 'Book'" [disabled]="!time() || done()" (clicked)="done.set(true)" />
+      <button k-button fluid [disabled]="!time() || done()" (click)="done.set(true)">{{ done() ? 'Booked for ' + time() : 'Book' }}</button>
       @if (done()) {
-        <k-button text label="Start over" (clicked)="reset()" />
+        <button k-button text (click)="reset()">Start over</button>
       }
     </main>
   `,
