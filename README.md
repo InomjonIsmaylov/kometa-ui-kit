@@ -1,3 +1,5 @@
+<img src="projects/demo/public/favicon.svg" alt="" width="72" align="right">
+
 # Kometa UI
 
 [![npm](https://img.shields.io/npm/v/kometa-ui)](https://www.npmjs.com/package/kometa-ui)
