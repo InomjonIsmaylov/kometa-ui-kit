@@ -61,7 +61,34 @@ app-doc { display: block; margin: 0 0 56px; scroll-margin-top: 88px; }
 }
 .doc-tabs { display: flex; gap: 2px; margin-left: auto; }
 .doc-note { align-self: center; color: var(--muted); font-size: 12px; }
-.doc-compose { width: 100%; }
+.doc-compose { width: 100%; overflow: hidden; }
+
+// Compose previews sit in an Android phone: the kit is the mobile one. Fixed width, so the canvas never refits.
+.doc-phone {
+  position: relative; width: 360px; max-width: 100%; margin: 0 auto; padding: 10px;
+  border-radius: 40px; background: #111; box-shadow: 0 0 0 2px #2a2a2a, var(--shadow);
+
+  // Power and volume keys on the right edge.
+  &::before, &::after { content: ''; position: absolute; right: -4px; width: 3px; border-radius: 0 2px 2px 0; background: #2a2a2a; }
+  &::before { top: 90px; height: 36px; }
+  &::after { top: 150px; height: 64px; }
+}
+.doc-phone-screen {
+  position: relative; display: flex; flex-direction: column; min-height: 280px; overflow: hidden;
+  border-radius: 30px; background: var(--card); color: var(--text);
+
+  // Punch-hole camera.
+  &::before { content: ''; position: absolute; top: 10px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #111; }
+  > .doc-note { padding: 16px; }
+  > .doc-compose { padding: 0 14px; }
+}
+.doc-phone-status {
+  display: flex; justify-content: space-between; padding: 8px 24px 10px; font: 600 12px var(--font-sans);
+}
+.doc-phone-icons { letter-spacing: 3px; font-size: 10px; }
+.doc-phone-nav {
+  width: 108px; height: 4px; margin: auto auto 8px; padding-top: 0; border-radius: 2px; background: var(--text); opacity: .5;
+}
 .doc-tools + .doc-tabs { margin-left: 0; }
 .doc-tabs button, .doc-copy {
   padding: 5px 10px; border: 0; border-radius: 8px; background: none; color: var(--muted);

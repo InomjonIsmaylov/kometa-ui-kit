@@ -33,6 +33,7 @@ import androidx.compose.ui.window.ComposeViewport
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.events.Event
 import uz.kometa.ui.Kometa
 import uz.kometa.ui.KometaTheme
 import kotlin.math.roundToInt
@@ -69,6 +70,18 @@ private fun mount(id: String, key: String, dark: Boolean) {
     host.slot = id
     slot.appendChild(host.el)
     host.key.value = key
+    // Compose 1.7 refits its canvas only on a window resize; send one when this slot's width differs from the canvas's.
+    val canvas = host.el.querySelector("canvas") as HTMLElement?
+    if (canvas?.style?.width != "${host.el.clientWidth}px") refitSoon()
+}
+
+private var refitPending = false
+
+/** One window resize for all mounts in this task, sent outside a frame so the redraw lands before the next paint. */
+private fun refitSoon() {
+    if (refitPending) return
+    refitPending = true
+    window.setTimeout({ refitPending = false; window.dispatchEvent(Event("resize")); null }, 0)
 }
 
 private fun unmount(id: String) {
@@ -82,7 +95,9 @@ private fun unmount(id: String) {
 private fun newHost(): Host {
     val el = document.createElement("div") as HTMLElement
     el.style.width = "100%"
-    el.style.height = "100%"
+    // Fixed height, clipped by the slot: a canvas resize clears every preview, so the height of an example must not cause one.
+    // shortcut: an example taller than the screen is cut off; none is.
+    el.style.height = "${maxOf(window.screen.height, 1080)}px"
     val host = Host(el, mutableStateOf(null))
     // ComposeViewport sizes its canvas from the container, so it must be in the page when created.
     document.body!!.appendChild(el)

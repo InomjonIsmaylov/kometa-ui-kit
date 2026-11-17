@@ -200,10 +200,14 @@ type Tab = keyof typeof LABELS;
       @if (demo()) {
         <div class="doc-stage" [attr.data-canvas]="canvas()">
           @if (composeKey()) {
-            <div class="doc-demo" [attr.data-width]="width()">
-              @if (!composeHeight()) { <span class="doc-note">Starting Compose…</span> }
-              <div #compose class="doc-compose" [id]="composeId" [style.height.px]="composeHeight()"
-                   (compose-size)="resize($any($event).detail)"></div>
+            <div class="doc-phone" role="img" aria-label="Android phone">
+              <div class="doc-phone-screen">
+                <div class="doc-phone-status" aria-hidden="true"><span>9:41</span><span class="doc-phone-icons">▾ ◢ ▮</span></div>
+                @if (!composeHeight()) { <span class="doc-note">Starting Compose…</span> }
+                <div #compose class="doc-compose" [id]="composeId" [style.height.px]="composeHeight()"
+                     (compose-size)="resize($any($event).detail)"></div>
+                <div class="doc-phone-nav" aria-hidden="true"></div>
+              </div>
             </div>
           } @else {
             <div class="doc-demo" [attr.data-width]="width()"><ng-content /></div>
@@ -218,10 +222,12 @@ type Tab = keyof typeof LABELS;
                 <button type="button" class="doc-tool" [attr.aria-pressed]="canvas() === c" [attr.aria-label]="c + ' canvas'"
                         [title]="c + ' canvas'" (click)="canvas.set(c)"><span class="doc-swatch" [attr.data-canvas]="c"></span></button>
               }
-              <span class="doc-sep"></span>
-              @for (w of widths; track w.id) {
-                <button type="button" class="doc-tool" [attr.aria-pressed]="width() === w.id" [title]="w.label"
-                        [attr.aria-label]="w.label" (click)="width.set(w.id)">{{ w.glyph }}</button>
+              @if (!composeKey()) {
+                <span class="doc-sep"></span>
+                @for (w of widths; track w.id) {
+                  <button type="button" class="doc-tool" [attr.aria-pressed]="width() === w.id" [title]="w.label"
+                          [attr.aria-label]="w.label" (click)="width.set(w.id)">{{ w.glyph }}</button>
+                }
               }
             </div>
           }
@@ -288,11 +294,9 @@ export class DocSection implements OnInit, OnDestroy {
     });
   }
 
-  /** Fits the box to the example; Compose sizes its canvas to the box only on a window resize, so send one. */
+  /** Fits the box to the example. Only the clip changes, so no other preview redraws. */
   protected resize(px: number): void {
-    if (px === this.composeHeight()) return;
     this.composeHeight.set(px);
-    requestAnimationFrame(() => dispatchEvent(new Event('resize')));
   }
 
   /** Compose is picked and the page has Compose examples, but not this one. */
