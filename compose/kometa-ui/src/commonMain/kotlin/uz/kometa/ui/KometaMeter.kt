@@ -77,7 +77,7 @@ internal fun TickRow(ticks: List<Boolean>, height: Dp, short: Float, ms: Int, mo
  * one dim and short. Above 40 units it draws 25 ticks and scales; the figure stays exact. Read-only.
  */
 @Composable
-fun KometaMeter(
+public fun KometaMeter(
     value: Int,
     max: Int,
     modifier: Modifier = Modifier,

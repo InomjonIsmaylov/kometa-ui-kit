@@ -32,7 +32,7 @@ internal fun starFills(value: Float, max: Int): List<Int> {
  * start side, the rest outlines. [label] is the accessible name ("4.5 of 5"), owned by the caller.
  */
 @Composable
-fun KometaStars(value: Float, label: String, modifier: Modifier = Modifier, max: Int = 5, size: Dp = 16.dp) {
+public fun KometaStars(value: Float, label: String, modifier: Modifier = Modifier, max: Int = 5, size: Dp = 16.dp) {
     val amber = Kometa.colors.amber
     val path = remember { PathParser().parsePathString(STAR).toPath() }
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl

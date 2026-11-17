@@ -30,7 +30,7 @@ internal fun snapSlider(v: Float, min: Int, max: Int, step: Int): Int {
  * 25 ticks and scales. TalkBack adjusts it with the usual slider gestures.
  */
 @Composable
-fun KometaSlider(
+public fun KometaSlider(
     value: Int,
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier,

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KometaRating(
+public fun KometaRating(
     value: Int,
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier,

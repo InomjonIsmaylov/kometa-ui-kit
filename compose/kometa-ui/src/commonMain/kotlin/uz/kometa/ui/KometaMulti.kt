@@ -109,7 +109,7 @@ internal fun stepRow(at: Int, delta: Int, n: Int): Int = when {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun <T> KometaMulti(
+public fun <T> KometaMulti(
     options: List<T>,
     value: List<T>,
     onValueChange: (List<T>) -> Unit,
@@ -119,7 +119,7 @@ fun <T> KometaMulti(
     placeholder: String = "",
     summary: String = "",
     noMatch: String = "",
-    removeLabel: String = "Remove",
+    removeLabel: String = Kometa.strings.remove,
     pill: Boolean = false,
     max: Int? = null,
     description: String = "",

@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 
-enum class KometaBannerTone { Ok, Info, Warn, Error }
+public enum class KometaBannerTone { Ok, Info, Warn, Error }
 
 /**
  * A notice with no box (`k-banner`): a 2dp state-coloured hairline beside the sentence.
@@ -42,7 +42,7 @@ enum class KometaBannerTone { Ok, Info, Warn, Error }
  * announced assertively, `ok`/`info` politely. The caller owns every word.
  */
 @Composable
-fun KometaBanner(
+public fun KometaBanner(
     text: String,
     modifier: Modifier = Modifier,
     tone: KometaBannerTone = KometaBannerTone.Info,

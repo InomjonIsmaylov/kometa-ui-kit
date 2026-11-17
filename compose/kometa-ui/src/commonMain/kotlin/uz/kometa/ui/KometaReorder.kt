@@ -67,16 +67,16 @@ private class ReorderDrag(val from: Int, val to: Int, val dy: Float, val step: F
  * [labelOf], with its position, and moves the row with the [moveUpLabel] / [moveDownLabel] actions.
  */
 @Composable
-fun <T> KometaReorder(
+public fun <T> KometaReorder(
     items: List<T>,
     onItemsChange: (List<T>) -> Unit,
     modifier: Modifier = Modifier,
     labelOf: (T) -> String = { it.toString() },
     onMove: (from: Int, to: Int) -> Unit = { _, _ -> },
-    grabLabel: String = "Move",
-    moveUpLabel: String = "Move up",
-    moveDownLabel: String = "Move down",
-    positionLabel: (n: Int, total: Int) -> String = { n, total -> "position $n of $total" },
+    grabLabel: String = Kometa.strings.move,
+    moveUpLabel: String = Kometa.strings.moveUp,
+    moveDownLabel: String = Kometa.strings.moveDown,
+    positionLabel: (n: Int, total: Int) -> String = Kometa.strings.position.let { t -> { n, total -> t.replace("{n}", "$n").replace("{total}", "$total") } },
     description: String = "",
     row: @Composable (item: T, index: Int) -> Unit,
 ) {

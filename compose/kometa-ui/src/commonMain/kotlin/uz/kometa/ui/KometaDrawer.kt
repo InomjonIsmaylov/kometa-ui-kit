@@ -48,7 +48,7 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 
-enum class KometaDrawerPosition { Bottom, Right, Left }
+public enum class KometaDrawerPosition { Bottom, Right, Left }
 
 private val DrawerIn = CubicBezierEasing(.22f, 1.35f, .32f, 1f)
 private val DrawerOut = CubicBezierEasing(.32f, 0f, .22f, 1f)
@@ -74,7 +74,7 @@ internal expect fun DrawerWindow(onDismiss: () -> Unit, content: @Composable () 
  * [label] names the sheet for a screen reader.
  */
 @Composable
-fun KometaDrawer(
+public fun KometaDrawer(
     visible: Boolean,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,

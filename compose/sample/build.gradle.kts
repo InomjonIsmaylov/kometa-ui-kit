@@ -13,7 +13,7 @@ kotlin {
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "sample"
+        outputModuleName = "sample"
         browser { commonWebpackConfig { outputFileName = "sample.js" } }
         binaries.executable()
     }
@@ -26,11 +26,11 @@ kotlin {
 
 android {
     namespace = "uz.kometa.sample"
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig {
         applicationId = "uz.kometa.sample"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }

@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
  * [count] is drawn muted after the words.
  */
 @Composable
-fun KometaChip(
+public fun KometaChip(
     text: String,
     selected: Boolean,
     onSelectedChange: (Boolean) -> Unit,

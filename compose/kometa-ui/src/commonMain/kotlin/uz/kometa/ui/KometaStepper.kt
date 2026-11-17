@@ -37,7 +37,7 @@ internal fun stepValue(value: Int, step: Int, min: Int, max: Int?): Int {
  * circle dims at its limit. Words (unit, button labels) come from the caller.
  */
 @Composable
-fun KometaStepper(
+public fun KometaStepper(
     value: Int,
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier,

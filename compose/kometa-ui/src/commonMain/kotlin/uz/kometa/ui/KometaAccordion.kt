@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.sp
  *     faq.forEachIndexed { i, q -> KometaAccordionItem(q.title, open == i, { open = if (it) i else null }) { ... } }
  */
 @Composable
-fun KometaAccordionItem(
+public fun KometaAccordionItem(
     heading: String,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,

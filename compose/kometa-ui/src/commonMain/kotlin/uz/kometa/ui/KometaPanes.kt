@@ -66,7 +66,7 @@ internal fun panesStep(now: Int, forward: Boolean, stops: List<Int>, min: Int, m
  * unless [modifier] sets a height.
  */
 @Composable
-fun KometaPanes(
+public fun KometaPanes(
     size: Int,
     onSizeChange: (Int) -> Unit,
     start: @Composable () -> Unit,
@@ -75,7 +75,7 @@ fun KometaPanes(
     snaps: List<Int> = listOf(25, 33, 50, 66, 75),
     min: Int = 15,
     max: Int = 85,
-    description: String = "Resize panes",
+    description: String = Kometa.strings.resizePanes,
 ) {
     val c = Kometa.colors
     val stops = remember(snaps, min, max) { panesStops(snaps, min, max) }

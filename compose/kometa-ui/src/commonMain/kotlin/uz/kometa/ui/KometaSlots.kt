@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /** One free time for [KometaSlots]; [note] is a muted second line ("2 left"). */
-data class KometaSlot(val value: String, val label: String, val note: String = "", val disabled: Boolean = false)
+public data class KometaSlot(val value: String, val label: String, val note: String = "", val disabled: Boolean = false)
 
 /**
  * Free times as glass chips (`k-slots`); the chosen one gets an amber edge, never an amber fill.
@@ -43,7 +43,7 @@ data class KometaSlot(val value: String, val label: String, val note: String = "
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KometaSlots(
+public fun KometaSlots(
     slots: List<KometaSlot>,
     value: String,
     onValueChange: (String) -> Unit,

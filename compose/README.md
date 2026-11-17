@@ -18,36 +18,31 @@ same way the web kit has no PrimeNG.
 
 ## Use it in an Android project
 
-The kit is published to GitHub Packages. GitHub asks for a token even to download a public
-package, so create a classic personal access token with only the `read:packages` scope
-(github.com → Settings → Developer settings → Personal access tokens) and put it in
-`~/.gradle/gradle.properties`, never in the project:
-
-```properties
-gpr.user=<your GitHub username>
-gpr.key=<the token>
-```
-
-Then in the app:
+The kit is on Maven Central (signed, with sources and a Dokka javadoc jar), so no extra repository or token:
 
 ```kotlin
-// settings.gradle.kts
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://maven.pkg.github.com/InomjonIsmaylov/kometa-ui-kit") {
-            credentials {
-                username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
-                password = providers.gradleProperty("gpr.key").orNull ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
-}
-
 // app/build.gradle.kts
-dependencies { implementation("uz.kometa:kometa-ui:0.3.0") }
+dependencies { implementation("io.github.inomjonismaylov:kometa-ui:0.4.0") }
 ```
+
+The Kotlin package is still `uz.kometa.ui`. Versions up to 0.3.0 were published to GitHub Packages as
+`uz.kometa:kometa-ui`; moving to 0.4.0 changes only the dependency line.
+
+Requirements: Kotlin 2.2+, Compose Multiplatform 1.11+ (Jetpack Compose 1.11+), Android Gradle plugin 8.6+ with
+compileSdk 35+, minSdk 24, desktop on Java 17+. These floors are kept low on purpose so an app does not have to
+upgrade its toolchain to adopt the kit. Targets: Android, desktop JVM, iosArm64, iosSimulatorArm64 and wasmJs
+(no iosX64: Intel-Mac simulators, which Compose Multiplatform drops in 1.12).
+
+### Translating the built-in words
+
+The words the kit says on its own (screen-reader names, pager and reorder labels, month names) are in
+`KometaStrings`. Pass a translated copy once, instead of a label at every call:
+
+```kotlin
+KometaTheme(strings = KometaStrings(remove = "Olib tashlash", previousPage = "Oldingi sahifa")) { App() }
+```
+
+A label passed to a component still wins.
 
 In GitHub Actions the `GITHUB_ACTOR` / `GITHUB_TOKEN` fallback works once the workflow has
 `permissions: packages: read` (and, for a repository other than this one, the package's
@@ -188,13 +183,24 @@ picker's file chooser, image loading and downloads are the app's.
 ```bash
 ./gradlew :kometa-ui:assembleRelease   # Android AAR
 ./gradlew :kometa-ui:desktopTest       # logic and select tests, and renders build/gallery*-{dark,light}.png
+./gradlew :kometa-ui:check             # the tests plus apiCheck, the public-API guard
+./gradlew :kometa-ui:apiDump           # after an intended API change: rewrites kometa-ui/api/, commit it
+./gradlew :kometa-ui:dokkaGeneratePublicationHtml   # API reference in kometa-ui/build/dokka/html
 ```
 
-iOS targets are declared but only build on a Mac.
+The library is in explicit-API mode: every declaration says `public` or `internal`, and `kometa-ui/api/` records
+the public API per platform. `apiCheck` fails when it changes without an `apiDump`, so a breaking change is always
+a visible diff in review. iOS targets only build on a Mac; `.github/workflows/compose-ci.yml` runs `check`, the
+iOS compile and the sample on macOS for every push and pull request that touches `compose/`.
 
 ## Release
 
-1. Set `version` in `kometa-ui/build.gradle.kts` (GitHub Packages will not overwrite a published version).
-2. Commit and push `main`.
+One-time setup: sign in at central.sonatype.com with GitHub (that verifies the `io.github.inomjonismaylov`
+namespace), generate a user token, then run `bash compose/scripts/setup-release-secrets.sh`. It creates the
+signing key, publishes its public half and stores the five repository secrets.
+
+1. Set `version` in `kometa-ui/build.gradle.kts`; Maven Central never lets a version be replaced or removed.
+2. Add the changes under "Compose" in `CHANGELOG.md`, commit and push `main`.
 3. Tag that commit `compose-v<version>` and push the tag. `.github/workflows/publish-compose.yml` checks the
-   tag against the version, runs `desktopTest` on macOS (needed for the iOS artifacts) and publishes.
+   tag against the version, runs `check` on macOS (needed for the iOS artifacts), signs and publishes. It is
+   searchable on Central within about 30 minutes.

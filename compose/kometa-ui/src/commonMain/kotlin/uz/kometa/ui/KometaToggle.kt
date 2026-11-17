@@ -37,7 +37,7 @@ internal val SpringEase = CubicBezierEasing(.22f, 1.15f, .36f, 1f)
  * [label] names the switch for a screen reader, since the visible word is only its state.
  */
 @Composable
-fun KometaToggle(
+public fun KometaToggle(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,

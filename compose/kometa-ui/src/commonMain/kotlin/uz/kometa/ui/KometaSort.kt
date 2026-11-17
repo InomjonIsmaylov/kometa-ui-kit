@@ -27,10 +27,10 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 
 /** The direction a list is sorted in. */
-enum class KometaSortDir { Asc, Desc }
+public enum class KometaSortDir { Asc, Desc }
 
 /** One word for [KometaSort]: [value] is the sort key, [label] the word shown. */
-data class KometaSortOption(val value: String, val label: String)
+public data class KometaSortOption(val value: String, val label: String)
 
 /** The direction a tap on [option] asks for: the other one on the active key, else [start] for a new key. */
 internal fun nextSortDir(option: String, key: String, dir: KometaSortDir, start: KometaSortDir = KometaSortDir.Asc): KometaSortDir =
@@ -46,15 +46,15 @@ internal fun nextSortDir(option: String, key: String, dir: KometaSortDir, start:
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KometaSort(
+public fun KometaSort(
     options: List<KometaSortOption>,
     key: String,
     dir: KometaSortDir,
     onPick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    description: String = "Sort",
-    ascLabel: String = "ascending",
-    descLabel: String = "descending",
+    description: String = Kometa.strings.sort,
+    ascLabel: String = Kometa.strings.ascending,
+    descLabel: String = Kometa.strings.descending,
     ascGlyph: String = "↑",
     descGlyph: String = "↓",
 ) {
@@ -100,14 +100,14 @@ private fun RowScope.SortGlyph(glyph: String) =
  * screen reader hears the column's direction ([ascLabel] / [descLabel]) on the active column only.
  */
 @Composable
-fun KometaSortHeader(
+public fun KometaSortHeader(
     key: String,
     active: String,
     dir: KometaSortDir,
     onPick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    ascLabel: String = "ascending",
-    descLabel: String = "descending",
+    ascLabel: String = Kometa.strings.ascending,
+    descLabel: String = Kometa.strings.descending,
     ascGlyph: String = "↑",
     descGlyph: String = "↓",
     content: @Composable () -> Unit,

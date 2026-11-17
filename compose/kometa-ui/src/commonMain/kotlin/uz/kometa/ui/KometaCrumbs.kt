@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
  * pressable and calls [onPick] with its index (the outermost is 0).
  */
 @Composable
-fun KometaCrumbs(items: List<String>, onPick: (Int) -> Unit, modifier: Modifier = Modifier) {
+public fun KometaCrumbs(items: List<String>, onPick: (Int) -> Unit, modifier: Modifier = Modifier) {
     val c = Kometa.colors
     Column(modifier) {
         items.forEachIndexed { i, label ->

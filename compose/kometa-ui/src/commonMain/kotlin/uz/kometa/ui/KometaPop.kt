@@ -32,7 +32,7 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 
-enum class KometaPopAlign { Start, End }
+public enum class KometaPopAlign { Start, End }
 
 /**
  * Where the panel goes: below the [anchor] when it fits, else above (see [placeBelowOrAbove]), its left
@@ -55,7 +55,7 @@ private class PopPosition(val gap: Int, val pad: Int, val end: Boolean) : PopupP
  * [align] the anchor edge it lines up with. [label] names the panel for screen readers.
  */
 @Composable
-fun KometaPop(
+public fun KometaPop(
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,

@@ -53,7 +53,7 @@ private val LocalTableCell = staticCompositionLocalOf { TableCellStyle(false, 16
 // A Column, not a LazyColumn: console lists arrive a page (25 rows) at a time from KometaPager, and a
 // lazy list would fight a parent verticalScroll. shortcut: every row is composed, switch to LazyColumn for unpaged lists of hundreds.
 @Composable
-fun <T> KometaTable(
+public fun <T> KometaTable(
     rows: List<T>,
     modifier: Modifier = Modifier,
     key: ((T) -> Any)? = null,
@@ -120,7 +120,7 @@ fun <T> KometaTable(
  * columns line up.
  */
 @Composable
-fun KometaTableCell(text: String, modifier: Modifier = Modifier, align: TextAlign = TextAlign.Start) {
+public fun KometaTableCell(text: String, modifier: Modifier = Modifier, align: TextAlign = TextAlign.Start) {
     val s = LocalTableCell.current
     val c = Kometa.colors
     BasicText(

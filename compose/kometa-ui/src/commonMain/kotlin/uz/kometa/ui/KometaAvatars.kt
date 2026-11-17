@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /** One face in [KometaAvatars]; [image] draws a photo in place of the initials. */
-data class KometaAvatar(val name: String, val image: (@Composable () -> Unit)? = null)
+public data class KometaAvatar(val name: String, val image: (@Composable () -> Unit)? = null)
 
 /**
  * A few people as overlapping discs (`k-avatars`), then a "+N" disc for the rest. Each disc is parted
@@ -26,12 +26,12 @@ data class KometaAvatar(val name: String, val image: (@Composable () -> Unit)? =
  * [moreLabel] is what "+N" says aloud; `{n}` is the count.
  */
 @Composable
-fun KometaAvatars(
+public fun KometaAvatars(
     people: List<KometaAvatar>,
     modifier: Modifier = Modifier,
     max: Int = 4,
     size: KometaPersonSize = KometaPersonSize.Md,
-    moreLabel: String = "{n} more",
+    moreLabel: String = Kometa.strings.more,
 ) {
     val c = Kometa.colors
     val rest = (people.size - max).coerceAtLeast(0)

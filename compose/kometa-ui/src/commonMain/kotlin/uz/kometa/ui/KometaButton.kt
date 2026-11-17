@@ -36,11 +36,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-enum class KometaSeverity { Primary, Secondary, Danger }
-enum class KometaButtonVariant { Filled, Outlined, Text }
+public enum class KometaSeverity { Primary, Secondary, Danger }
+public enum class KometaButtonVariant { Filled, Outlined, Text }
 
 /** The colour the content of a Kometa control is drawn in; read it for an icon slot. */
-val LocalKometaContentColor = androidx.compose.runtime.compositionLocalOf { Color.Unspecified }
+public val LocalKometaContentColor: androidx.compose.runtime.ProvidableCompositionLocal<Color> = androidx.compose.runtime.compositionLocalOf { Color.Unspecified }
 
 /**
  * The one button (`k-button`). The default is the amber main action — one per screen.
@@ -49,7 +49,7 @@ val LocalKometaContentColor = androidx.compose.runtime.compositionLocalOf { Colo
  * `Modifier.fillMaxWidth()` for a fluid button. [loading] shows a spinner and blocks the tap.
  */
 @Composable
-fun KometaButton(
+public fun KometaButton(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

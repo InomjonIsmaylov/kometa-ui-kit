@@ -3,6 +3,21 @@
 Each release has full notes, with migration steps when needed, on
 [GitHub Releases](https://github.com/InomjonIsmaylov/kometa-ui-kit/releases).
 
+## Compose 0.4.0 (unreleased)
+
+**Breaking for the dependency line only.** The Compose port moves from GitHub Packages (`uz.kometa:kometa-ui`) to
+Maven Central as `io.github.inomjonismaylov:kometa-ui`, so no token or extra repository is needed. The Kotlin
+package stays `uz.kometa.ui`.
+
+- Built with Kotlin 2.3.21 and Compose Multiplatform 1.11.1 (was 2.1.0 / 1.7.3). Apps need Kotlin 2.2+, Compose
+  1.11+, AGP 8.6+ and compileSdk 35+; the desktop jar targets Java 17. The `iosX64` target (Intel-Mac simulators)
+  is dropped.
+- `KometaStrings`: every word the kit says on its own, set once with `KometaTheme(strings = ...)`; a label passed
+  to a component still wins.
+- Explicit-API mode and a recorded public API (`kometa-ui/api/`), checked on every push.
+- The published POM names the MIT license, source repository and developer; artifacts are signed and ship with
+  sources and a Dokka javadoc jar.
+
 ## Unreleased
 
 - `[kometaTip]`: its global `<style>` tag takes Angular's `CSP_NONCE`, so tooltips stay styled under a strict

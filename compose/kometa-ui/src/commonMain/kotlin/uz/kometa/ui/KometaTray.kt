@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 
 /** One question for [KometaTray]. A [danger] accept is drawn red. */
-data class KometaConfirmation(
+public data class KometaConfirmation(
     val acceptLabel: String,
     val rejectLabel: String,
     val header: String = "",
@@ -74,7 +74,7 @@ internal fun trayIsSheet(width: Dp): Boolean = width < 640.dp
  * set the request back to null. The heading is [KometaConfirmation.header], else the message.
  */
 @Composable
-fun KometaTray(
+public fun KometaTray(
     request: KometaConfirmation?,
     onAccept: () -> Unit,
     onReject: () -> Unit,

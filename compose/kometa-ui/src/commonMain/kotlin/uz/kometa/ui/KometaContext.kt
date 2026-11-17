@@ -73,7 +73,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 
 /** One action of a [KometaContext] menu. [shortcut] is shown in mono on the right; it describes the key, it does not bind it. */
-data class KometaContextItem(
+public data class KometaContextItem(
     val label: String,
     val value: String = "",
     val shortcut: String = "",
@@ -123,11 +123,11 @@ private class ContextPosition(val point: IntOffset, val pad: Int) : PopupPositio
  * Picking closes the menu and calls [onPick] with the item. [label] is the menu's accessible name.
  */
 @Composable
-fun KometaContext(
+public fun KometaContext(
     items: List<KometaContextItem?>,
     onPick: (KometaContextItem) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Actions",
+    label: String = Kometa.strings.actions,
     content: @Composable () -> Unit,
 ) {
     val c = Kometa.colors

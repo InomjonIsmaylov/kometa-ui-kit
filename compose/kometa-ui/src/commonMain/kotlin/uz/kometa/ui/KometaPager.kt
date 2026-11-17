@@ -66,7 +66,7 @@ internal fun pagerCaption(total: Int, page: Int, pageSize: Int): String {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KometaPager(
+public fun KometaPager(
     total: Int,
     page: Int,
     onPageChange: (Int) -> Unit,
@@ -75,9 +75,9 @@ fun KometaPager(
     modifier: Modifier = Modifier,
     sizes: List<Int> = listOf(10, 25, 50),
     caption: Boolean = true,
-    prevLabel: String = "Previous page",
-    nextLabel: String = "Next page",
-    perPageLabel: String = "Per page",
+    prevLabel: String = Kometa.strings.previousPage,
+    nextLabel: String = Kometa.strings.nextPage,
+    perPageLabel: String = Kometa.strings.perPage,
 ) {
     val count = pageCountOf(total, pageSize)
     val current = page.coerceIn(1, count)

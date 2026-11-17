@@ -35,7 +35,7 @@ internal fun Modifier.textRule(color: Color, gap: Dp = 0.dp, width: Dp = 1.dp) =
  * underline is 40% red and goes solid while pressed.
  */
 @Composable
-fun KometaErase(
+public fun KometaErase(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

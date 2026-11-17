@@ -43,7 +43,7 @@ internal fun keyGlow(t: Float, i: Int, n: Int, step: Int = 400): Float {
  * pressed, on a loop (the web kit's hover start has no touch twin, so here it is a flag).
  */
 @Composable
-fun KometaKeys(keys: String, modifier: Modifier = Modifier, play: Boolean = false, separator: String = "+") {
+public fun KometaKeys(keys: String, modifier: Modifier = Modifier, play: Boolean = false, separator: String = "+") {
     val c = Kometa.colors
     val list = keysOf(keys)
     val cycle = list.size * 400 + 800

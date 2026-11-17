@@ -101,7 +101,7 @@
     {
      "name": "moreLabel",
      "type": "String",
-     "default": "\"{n} more\""
+     "default": "Kometa.strings.more"
     }
    ]
   }
@@ -132,7 +132,7 @@
     {
      "name": "label",
      "type": "String",
-     "default": "\"{n} new\""
+     "default": "Kometa.strings.newCount"
     },
     {
      "name": "content",
@@ -276,7 +276,7 @@
     {
      "name": "slideLabel",
      "type": "String",
-     "default": "\"Slide\""
+     "default": "Kometa.strings.slide"
     },
     {
      "name": "slide",
@@ -447,7 +447,7 @@
     {
      "name": "label",
      "type": "String",
-     "default": "\"Actions\""
+     "default": "Kometa.strings.actions"
     },
     {
      "name": "content",
@@ -552,7 +552,7 @@
     {
      "name": "names",
      "type": "KometaDateNames",
-     "default": "KometaDateNames.English"
+     "default": "Kometa.strings.dateNames"
     },
     {
      "name": "placeholder",
@@ -616,7 +616,7 @@
     {
      "name": "names",
      "type": "KometaDateNames",
-     "default": "KometaDateNames.English"
+     "default": "Kometa.strings.dateNames"
     },
     {
      "name": "placeholder",
@@ -782,7 +782,7 @@
     {
      "name": "label",
      "type": "String",
-     "default": "\"Actions\""
+     "default": "Kometa.strings.actions"
     },
     {
      "name": "icon",
@@ -1378,7 +1378,7 @@
     {
      "name": "removeLabel",
      "type": "String",
-     "default": "\"Remove\""
+     "default": "Kometa.strings.remove"
     },
     {
      "name": "pill",
@@ -1584,17 +1584,17 @@
     {
      "name": "prevLabel",
      "type": "String",
-     "default": "\"Previous page\""
+     "default": "Kometa.strings.previousPage"
     },
     {
      "name": "nextLabel",
      "type": "String",
-     "default": "\"Next page\""
+     "default": "Kometa.strings.nextPage"
     },
     {
      "name": "perPageLabel",
      "type": "String",
-     "default": "\"Per page\""
+     "default": "Kometa.strings.perPage"
     }
    ]
   }
@@ -1690,7 +1690,7 @@
     {
      "name": "description",
      "type": "String",
-     "default": "\"Resize panes\""
+     "default": "Kometa.strings.resizePanes"
     }
    ]
   }
@@ -1792,7 +1792,7 @@
     {
      "name": "labels",
      "type": "KometaPhotosLabels",
-     "default": "KometaPhotosLabels()"
+     "default": "Kometa.strings.photos"
     },
     {
      "name": "onDownload",
@@ -2043,22 +2043,22 @@
     {
      "name": "grabLabel",
      "type": "String",
-     "default": "\"Move\""
+     "default": "Kometa.strings.move"
     },
     {
      "name": "moveUpLabel",
      "type": "String",
-     "default": "\"Move up\""
+     "default": "Kometa.strings.moveUp"
     },
     {
      "name": "moveDownLabel",
      "type": "String",
-     "default": "\"Move down\""
+     "default": "Kometa.strings.moveDown"
     },
     {
      "name": "positionLabel",
      "type": "(n: Int, total: Int) -> String",
-     "default": "{ n, total -> \"position $n of $total\" }"
+     "default": "Kometa.strings.position.let { t -> { n, total -> t.replace(\"{n}\", \"$n\").replace(\"{total}\", \"$total\") } }"
     },
     {
      "name": "description",
@@ -2100,12 +2100,12 @@
     {
      "name": "beforeLabel",
      "type": "String",
-     "default": "\"Before\""
+     "default": "Kometa.strings.before"
     },
     {
      "name": "afterLabel",
      "type": "String",
-     "default": "\"After\""
+     "default": "Kometa.strings.after"
     },
     {
      "name": "description",
@@ -2244,7 +2244,7 @@
     {
      "name": "doneLabel",
      "type": "String",
-     "default": "\"done\""
+     "default": "Kometa.strings.done"
     },
     {
      "name": "description",
@@ -2561,17 +2561,17 @@
     {
      "name": "description",
      "type": "String",
-     "default": "\"Sort\""
+     "default": "Kometa.strings.sort"
     },
     {
      "name": "ascLabel",
      "type": "String",
-     "default": "\"ascending\""
+     "default": "Kometa.strings.ascending"
     },
     {
      "name": "descLabel",
      "type": "String",
-     "default": "\"descending\""
+     "default": "Kometa.strings.descending"
     },
     {
      "name": "ascGlyph",
@@ -2614,12 +2614,12 @@
     {
      "name": "ascLabel",
      "type": "String",
-     "default": "\"ascending\""
+     "default": "Kometa.strings.ascending"
     },
     {
      "name": "descLabel",
      "type": "String",
-     "default": "\"descending\""
+     "default": "Kometa.strings.descending"
     },
     {
      "name": "ascGlyph",
@@ -2778,7 +2778,7 @@
     {
      "name": "currentLabel",
      "type": "String",
-     "default": "\"current\""
+     "default": "Kometa.strings.current"
     }
    ]
   }
@@ -3107,6 +3107,11 @@
      "default": "if (dark) KometaDarkColors else KometaLightColors"
     },
     {
+     "name": "strings",
+     "type": "KometaStrings",
+     "default": "KometaStrings()"
+    },
+    {
      "name": "content",
      "type": "@Composable () -> Unit"
     }
@@ -3187,7 +3192,7 @@
     {
      "name": "clearLabel",
      "type": "String",
-     "default": "\"Clear\""
+     "default": "Kometa.strings.clear"
     },
     {
      "name": "enabled",
@@ -3257,7 +3262,7 @@
     {
      "name": "closeLabel",
      "type": "String",
-     "default": "\"Dismiss\""
+     "default": "Kometa.strings.dismiss"
     }
    ]
   }
@@ -3411,12 +3416,12 @@
     {
      "name": "expandedLabel",
      "type": "String",
-     "default": "\"expanded\""
+     "default": "Kometa.strings.expanded"
     },
     {
      "name": "collapsedLabel",
      "type": "String",
-     "default": "\"collapsed\""
+     "default": "Kometa.strings.collapsed"
     }
    ]
   }

@@ -19,7 +19,7 @@ import androidx.compose.ui.zIndex
  * takes no taps and is not read out.
  */
 @Composable
-fun KometaConfirm(asking: Boolean, modifier: Modifier = Modifier, row: @Composable () -> Unit, question: @Composable () -> Unit) {
+public fun KometaConfirm(asking: Boolean, modifier: Modifier = Modifier, row: @Composable () -> Unit, question: @Composable () -> Unit) {
     // shortcut: focus is not moved into the pane now shown (the web kit does); add a FocusRequester if a keyboard flow needs it.
     Box(modifier) {
         Pane(!asking, row)

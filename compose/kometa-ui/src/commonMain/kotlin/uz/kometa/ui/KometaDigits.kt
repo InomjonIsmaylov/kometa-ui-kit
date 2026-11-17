@@ -52,7 +52,7 @@ private object NationalGrouping : VisualTransformation {
  * the big figure. [label] is the accessible name.
  */
 @Composable
-fun KometaDigits(
+public fun KometaDigits(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,

@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
  * (1-based). Read-only progress, not navigation. [currentLabel] is announced on the current row.
  */
 @Composable
-fun KometaSteps(steps: List<String>, current: Int, modifier: Modifier = Modifier, currentLabel: String = "current") {
+public fun KometaSteps(steps: List<String>, current: Int, modifier: Modifier = Modifier, currentLabel: String = Kometa.strings.current) {
     val c = Kometa.colors
     val row = 30.dp
     val bead by animateDpAsState(row * (current - 1).coerceIn(0, (steps.size - 1).coerceAtLeast(0)), tween(420, easing = SpringEase))

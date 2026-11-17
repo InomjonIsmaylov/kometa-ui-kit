@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
-enum class KometaPersonSize { Sm, Md, Lg }
+public enum class KometaPersonSize { Sm, Md, Lg }
 
 /** The first letter of the first two words that start with a letter: "Ali Valiyev" → "AV". */
 internal fun initialsOf(name: String): String =
@@ -35,7 +35,7 @@ internal fun initialsOf(name: String): String =
  * name beside it.
  */
 @Composable
-fun KometaPerson(
+public fun KometaPerson(
     name: String,
     modifier: Modifier = Modifier,
     meta: String = "",

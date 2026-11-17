@@ -34,12 +34,12 @@ internal fun badgeText(count: Int, max: Int) = if (count > max) "$max+" else "$c
  * [showZero]. A screen reader hears [label] (`{n}` is the count) as the wrapped control's state.
  */
 @Composable
-fun KometaBadge(
+public fun KometaBadge(
     count: Int,
     modifier: Modifier = Modifier,
     max: Int = 99,
     showZero: Boolean = false,
-    label: String = "{n} new",
+    label: String = Kometa.strings.newCount,
     content: @Composable () -> Unit,
 ) {
     val c = Kometa.colors

@@ -47,10 +47,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import kotlinx.coroutines.delay
 
-enum class KometaToastKind { Success, Error, Info, Warn }
+public enum class KometaToastKind { Success, Error, Info, Warn }
 
 /** One toast; [life] is its time on screen in milliseconds. */
-data class KometaToastItem(val id: Long, val text: String, val kind: KometaToastKind = KometaToastKind.Info, val life: Long = 4000)
+public data class KometaToastItem(val id: Long, val text: String, val kind: KometaToastKind = KometaToastKind.Info, val life: Long = 4000)
 
 /**
  * The short word that confirms a save or reports a failure (`k-toast`): a thread of glass pills
@@ -60,12 +60,12 @@ data class KometaToastItem(val id: Long, val text: String, val kind: KometaToast
  * has left. Place it over the screen, e.g. `Box { content(); KometaToasts(..., Modifier.align(BottomCenter)) }`.
  */
 @Composable
-fun KometaToasts(
+public fun KometaToasts(
     items: List<KometaToastItem>,
     onDismiss: (Long) -> Unit,
     modifier: Modifier = Modifier,
     top: Boolean = false,
-    closeLabel: String = "Dismiss",
+    closeLabel: String = Kometa.strings.dismiss,
 ) {
     Column(
         modifier.padding(16.dp),

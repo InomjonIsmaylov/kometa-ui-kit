@@ -85,7 +85,7 @@ private class DropPosition(val gap: Int, val pad: Int) : PopupPositionProvider {
  * [description] is the accessible name of the field.
  */
 @Composable
-fun <T> KometaSelect(
+public fun <T> KometaSelect(
     options: List<T>,
     value: T?,
     onValueChange: (T) -> Unit,

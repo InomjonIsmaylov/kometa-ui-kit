@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
  * only the confirm side.
  */
 @Composable
-fun KometaPair(
+public fun KometaPair(
     keep: String,
     confirm: String,
     onKeep: () -> Unit,

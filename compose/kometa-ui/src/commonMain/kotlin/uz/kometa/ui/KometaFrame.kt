@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
  * A non-empty [caption] sits under the frame in muted 13sp.
  */
 @Composable
-fun KometaFrame(modifier: Modifier = Modifier, caption: String = "", content: @Composable () -> Unit) {
+public fun KometaFrame(modifier: Modifier = Modifier, caption: String = "", content: @Composable () -> Unit) {
     val c = Kometa.colors
     val shape = RoundedCornerShape(16.dp)
     Column(modifier) {

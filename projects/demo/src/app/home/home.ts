@@ -28,7 +28,7 @@ export class Home {
   /** The install line shown, starting from the kit the visitor last picked in the docs. */
   protected readonly kit = signal<Platform>(this.docs.platform());
   protected readonly install = computed(() =>
-    this.kit() === 'compose' ? 'implementation("uz.kometa:kometa-ui:0.3.0")' : 'npm install kometa-ui');
+    this.kit() === 'compose' ? 'implementation("io.github.inomjonismaylov:kometa-ui:0.4.0")' : 'npm install kometa-ui');
 
   /** Opens the docs with code and previews for that kit. */
   protected browse(p: Platform): void {

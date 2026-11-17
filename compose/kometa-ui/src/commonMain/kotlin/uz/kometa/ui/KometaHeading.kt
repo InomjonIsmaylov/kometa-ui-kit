@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.em
  * the hairline runs to the edge.
  */
 @Composable
-fun KometaHeading(title: String, modifier: Modifier = Modifier, action: (@Composable () -> Unit)? = null) {
+public fun KometaHeading(title: String, modifier: Modifier = Modifier, action: (@Composable () -> Unit)? = null) {
     val c = Kometa.colors
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
         BasicText(

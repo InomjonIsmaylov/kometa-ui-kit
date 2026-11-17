@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.sp
 
 /** One day for [KometaFilm]: the big [label] figure ("14") and a small [sub] weekday under it. A [muted]
  * day has nothing in it but can still be pressed; [dot] is a decorative amber point for "has something". */
-data class KometaFilmDay(val value: String, val label: String, val sub: String = "", val muted: Boolean = false, val dot: Boolean = false)
+public data class KometaFilmDay(val value: String, val label: String, val sub: String = "", val muted: Boolean = false, val dot: Boolean = false)
 
 /**
  * A week strip of days (`k-film`) with one glass thumb sliding behind the chosen one. The days share
@@ -49,7 +49,7 @@ data class KometaFilmDay(val value: String, val label: String, val sub: String =
  * in its label or [description]: the dot itself is not read out.
  */
 @Composable
-fun KometaFilm(
+public fun KometaFilm(
     days: List<KometaFilmDay>,
     value: String,
     onValueChange: (String) -> Unit,

@@ -44,7 +44,7 @@ internal fun codeDigits(text: String, length: Int): String = text.filter { it in
  * muted line above the cells and their accessible name.
  */
 @Composable
-fun KometaCode(
+public fun KometaCode(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,

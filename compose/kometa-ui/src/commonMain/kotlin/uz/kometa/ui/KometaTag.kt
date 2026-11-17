@@ -14,11 +14,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 /** `now` is amber (a dot, never a fill), `wait` blue, `book` muted, `done` green, `warn` and `error` red. */
-enum class KometaTagTone { Now, Wait, Book, Done, Warn, Error }
+public enum class KometaTagTone { Now, Wait, Book, Done, Warn, Error }
 
 /** A status mark (`k-tag`): a state-coloured dot and a word, no container. Not a button. */
 @Composable
-fun KometaTag(text: String, modifier: Modifier = Modifier, tone: KometaTagTone = KometaTagTone.Book, dot: Boolean = true) {
+public fun KometaTag(text: String, modifier: Modifier = Modifier, tone: KometaTagTone = KometaTagTone.Book, dot: Boolean = true) {
     val c = Kometa.colors
     val (dotColor, ink) = when (tone) {
         KometaTagTone.Now -> c.amber to c.amberInk

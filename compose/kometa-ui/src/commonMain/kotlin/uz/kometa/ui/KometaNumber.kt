@@ -46,7 +46,7 @@ internal fun wholeDigits(text: String, maxLength: Int): String =
  * word after it. For a small count with minus and plus circles use [KometaStepper].
  */
 @Composable
-fun KometaNumber(
+public fun KometaNumber(
     value: Long?,
     onValueChange: (Long?) -> Unit,
     label: String,

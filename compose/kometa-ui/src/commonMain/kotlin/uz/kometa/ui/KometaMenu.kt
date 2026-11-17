@@ -63,7 +63,7 @@ internal fun menuShown(options: List<KometaWordOption>, value: String, placehold
  * for a screen reader when the prefix word alone is not enough; [placeholder] shows while nothing is chosen.
  */
 @Composable
-fun KometaMenu(
+public fun KometaMenu(
     options: List<KometaWordOption>,
     value: String,
     onValueChange: (String) -> Unit,

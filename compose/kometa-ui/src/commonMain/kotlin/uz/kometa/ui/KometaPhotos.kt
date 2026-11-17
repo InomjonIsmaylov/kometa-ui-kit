@@ -62,7 +62,7 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 
 /** The viewer's words, for screen readers and the Close button. In [photo], `{n}` is the photo's number. */
-data class KometaPhotosLabels(
+public data class KometaPhotosLabels(
     val close: String = "Close",
     val prev: String = "Previous",
     val next: String = "Next",
@@ -100,7 +100,7 @@ internal fun photosSwipe(dx: Float): Int = if (abs(dx) > 50f) (if (dx < 0) 1 els
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KometaPhotos(
+public fun KometaPhotos(
     count: Int,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
@@ -110,7 +110,7 @@ fun KometaPhotos(
     modifier: Modifier = Modifier,
     thumb: @Composable (Int) -> Unit = photo,
     label: String = "",
-    labels: KometaPhotosLabels = KometaPhotosLabels(),
+    labels: KometaPhotosLabels = Kometa.strings.photos,
     onDownload: ((Int) -> Unit)? = null,
     thumbs: Boolean = true,
 ) {

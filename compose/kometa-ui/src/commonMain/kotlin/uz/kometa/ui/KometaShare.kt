@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
 /** One slice of a [KometaShare]: [value] in the caller's unit (a negative one is listed, not drawn), [text] as the caller writes it. */
-data class KometaShareSegment(val label: String, val value: Double, val text: String, val color: Color)
+public data class KometaShareSegment(val label: String, val value: Double, val text: String, val color: Color)
 
 /**
  * The segment index each tick is drawn in, or -1 for a blank tick when nothing is above zero. A slice
@@ -54,7 +54,7 @@ internal fun sharePercent(value: Double, values: List<Double>): String {
  * colour decoration. Read-only; [label] names the bar for a screen reader.
  */
 @Composable
-fun KometaShare(
+public fun KometaShare(
     segments: List<KometaShareSegment>,
     label: String,
     modifier: Modifier = Modifier,

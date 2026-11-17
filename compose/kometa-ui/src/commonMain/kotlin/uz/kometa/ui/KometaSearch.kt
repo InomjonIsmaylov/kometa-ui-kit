@@ -48,7 +48,7 @@ internal fun Modifier.underline(base: Color, ink: Color, draw: Float) = drawBehi
  * keyboard's search key.
  */
 @Composable
-fun KometaSearch(
+public fun KometaSearch(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,

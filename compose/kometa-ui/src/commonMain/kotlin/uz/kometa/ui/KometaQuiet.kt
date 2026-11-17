@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
  * picture. [content] goes under them (a [KometaWord] that fixes the emptiness, say).
  */
 @Composable
-fun KometaQuiet(
+public fun KometaQuiet(
     title: String,
     modifier: Modifier = Modifier,
     hint: String = "",

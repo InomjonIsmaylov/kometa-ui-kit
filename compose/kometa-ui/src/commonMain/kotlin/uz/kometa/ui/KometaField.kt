@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
  * accessible name. [maxLength] cuts input at that length.
  */
 @Composable
-fun KometaField(
+public fun KometaField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,

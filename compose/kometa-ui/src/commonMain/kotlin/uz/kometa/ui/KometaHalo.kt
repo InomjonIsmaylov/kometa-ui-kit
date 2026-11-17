@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-enum class KometaHaloSize { Sm, Md, Lg }
+public enum class KometaHaloSize { Sm, Md, Lg }
 
 private val LocalHaloGlyphSize = compositionLocalOf<TextUnit> { 18.sp }
 
@@ -39,7 +39,7 @@ private val LocalHaloGlyphSize = compositionLocalOf<TextUnit> { 18.sp }
  * only content. [icon] draws in [LocalKometaContentColor]; [KometaHaloGlyph] is a text glyph sized to it.
  */
 @Composable
-fun KometaHalo(
+public fun KometaHalo(
     onClick: () -> Unit,
     description: String,
     modifier: Modifier = Modifier,
@@ -76,5 +76,5 @@ fun KometaHalo(
 
 /** A text glyph ("✕", "‹") for [KometaHalo]'s icon, in the halo's ink and size. */
 @Composable
-fun KometaHaloGlyph(glyph: String) =
+public fun KometaHaloGlyph(glyph: String): Unit =
     BasicText(glyph, style = Kometa.type.md.copy(color = LocalKometaContentColor.current, fontSize = LocalHaloGlyphSize.current))

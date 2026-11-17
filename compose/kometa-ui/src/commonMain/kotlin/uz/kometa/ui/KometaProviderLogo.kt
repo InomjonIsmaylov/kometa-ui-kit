@@ -46,7 +46,7 @@ private val paymePay by lazy { parse(PAYME_PAY_D) }
  * itself: pass it as [art] (an `Image` of your drawable), drawn on the same plate.
  */
 @Composable
-fun KometaProviderLogo(
+public fun KometaProviderLogo(
     provider: String,
     modifier: Modifier = Modifier,
     size: Dp = 20.dp,

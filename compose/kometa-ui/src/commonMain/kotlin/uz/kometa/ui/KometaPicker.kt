@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
-enum class KometaPickerVariant { Button, Zone }
+public enum class KometaPickerVariant { Button, Zone }
 
 /**
  * The "choose a file" half of an upload (`k-picker`). It draws the control and calls [onPick]; the OS
@@ -48,7 +48,7 @@ enum class KometaPickerVariant { Button, Zone }
  * label. [contentDescription] overrides the spoken name.
  */
 @Composable
-fun KometaPicker(
+public fun KometaPicker(
     label: String,
     onPick: () -> Unit,
     modifier: Modifier = Modifier,

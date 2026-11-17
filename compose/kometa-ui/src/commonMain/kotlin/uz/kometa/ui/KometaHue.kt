@@ -84,7 +84,7 @@ internal fun hexColor(hex: String): Color =
  * [value] is `#RRGGBB`, and [onValueChange] always gets one of the row's own colours.
  */
 @Composable
-fun KometaHue(
+public fun KometaHue(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,

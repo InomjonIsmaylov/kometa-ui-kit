@@ -73,14 +73,14 @@ internal fun carouselSide(x: Float, width: Float, index: Int, count: Int): Int {
  * readers; each tick is named "[slideLabel] 2".
  */
 @Composable
-fun KometaCarousel(
+public fun KometaCarousel(
     count: Int,
     index: Int,
     onIndexChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
     edges: Boolean = true,
     label: String = "",
-    slideLabel: String = "Slide",
+    slideLabel: String = Kometa.strings.slide,
     slide: @Composable (Int) -> Unit,
 ) {
     val c = Kometa.colors

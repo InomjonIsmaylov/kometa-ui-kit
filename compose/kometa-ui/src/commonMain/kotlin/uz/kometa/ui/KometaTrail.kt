@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 
 /** A list of things in the order they happened (`k-trail`); put a [KometaTrailStep] per thing in [content]. */
 @Composable
-fun KometaTrail(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) = Column(modifier, content = content)
+public fun KometaTrail(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit): Unit = Column(modifier, content = content)
 
 /**
  * One step of a [KometaTrail] (`k-step`): the [time] as a large display figure, [content] beside it,
@@ -36,7 +36,7 @@ fun KometaTrail(modifier: Modifier = Modifier, content: @Composable ColumnScope.
  * the wait is the story. The step rises in when it first appears; [delayMs] staggers a list of them.
  */
 @Composable
-fun KometaTrailStep(time: String, modifier: Modifier = Modifier, gap: String? = null, delayMs: Int = 0, content: @Composable () -> Unit) {
+public fun KometaTrailStep(time: String, modifier: Modifier = Modifier, gap: String? = null, delayMs: Int = 0, content: @Composable () -> Unit) {
     val c = Kometa.colors
     val rise = remember { Animatable(0f) }
     LaunchedEffect(Unit) { rise.animateTo(1f, tween(520, delayMs, SpringEase)) }

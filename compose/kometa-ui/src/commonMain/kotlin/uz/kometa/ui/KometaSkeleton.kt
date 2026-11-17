@@ -35,7 +35,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
-enum class KometaSkeletonShape { Rows, Card, Line }
+public enum class KometaSkeletonShape { Rows, Card, Line }
 
 private val OutEase = CubicBezierEasing(.22f, 1f, .36f, 1f)
 
@@ -46,7 +46,7 @@ private val OutEase = CubicBezierEasing(.22f, 1f, .36f, 1f)
  * for "loading".
  */
 @Composable
-fun KometaSkeleton(
+public fun KometaSkeleton(
     modifier: Modifier = Modifier,
     shape: KometaSkeletonShape = KometaSkeletonShape.Rows,
     rows: Int = 3,

@@ -30,14 +30,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
-data class KometaTab(val value: String, val label: String)
+public data class KometaTab(val value: String, val label: String)
 
 /**
  * A floating glass capsule of icon tabs (`k-tabbar`); the chosen one opens to show its word
  * ([allLabels] keeps every word open). [icon] draws a tab's icon in [LocalKometaContentColor].
  */
 @Composable
-fun KometaTabbar(
+public fun KometaTabbar(
     tabs: List<KometaTab>,
     value: String,
     onValueChange: (String) -> Unit,

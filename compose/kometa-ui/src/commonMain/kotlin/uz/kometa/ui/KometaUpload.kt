@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
-enum class KometaUploadState { Idle, Running, Done, Failed }
+public enum class KometaUploadState { Idle, Running, Done, Failed }
 
 /** How full the zone draws, 0 to 1: [progress] clamped (NaN is 0), and always full once [KometaUploadState.Done]. */
 internal fun uploadShown(progress: Float, state: KometaUploadState): Float =
@@ -55,7 +55,7 @@ internal fun uploadShown(progress: Float, state: KometaUploadState): Float =
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KometaUpload(
+public fun KometaUpload(
     name: String,
     modifier: Modifier = Modifier,
     sizeLabel: String = "",

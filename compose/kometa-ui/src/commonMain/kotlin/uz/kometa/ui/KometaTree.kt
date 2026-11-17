@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /** One word of a [KometaTree]; a node with [children] is a branch, one without a leaf. */
-data class KometaTreeNode(val label: String, val children: List<KometaTreeNode> = emptyList(), val value: Any? = null)
+public data class KometaTreeNode(val label: String, val children: List<KometaTreeNode> = emptyList(), val value: Any? = null)
 
 /** The columns a [path] opens: the root, then the children of each chosen branch, stopping at a leaf or a bad index. */
 internal fun treeColumns(nodes: List<KometaTreeNode>, path: List<Int>): List<List<KometaTreeNode>> {
@@ -62,15 +62,15 @@ internal fun treePick(path: List<Int>, d: Int, i: Int): List<Int> = path.take(d)
  * chosen word as selected and a branch as [expandedLabel] / [collapsedLabel].
  */
 @Composable
-fun KometaTree(
+public fun KometaTree(
     nodes: List<KometaTreeNode>,
     path: List<Int>,
     onPathChange: (List<Int>) -> Unit,
     modifier: Modifier = Modifier,
     onPick: (KometaTreeNode) -> Unit = {},
     description: String = "",
-    expandedLabel: String = "expanded",
-    collapsedLabel: String = "collapsed",
+    expandedLabel: String = Kometa.strings.expanded,
+    collapsedLabel: String = Kometa.strings.collapsed,
 ) {
     val c = Kometa.colors
     val dx = with(LocalDensity.current) { (-10).dp.toPx() }

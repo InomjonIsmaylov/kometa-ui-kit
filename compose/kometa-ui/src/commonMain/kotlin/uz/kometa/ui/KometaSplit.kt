@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
 /** One side of a pair (cash / card). [amount] is already formatted. */
-data class KometaSplitSide(val amount: String, val label: String)
+public data class KometaSplitSide(val amount: String, val label: String)
 
 /**
  * The widths of two sides that want [a] and [b] px in a row [width] px wide with [gap] between
@@ -31,7 +31,7 @@ internal fun splitWidths(a: Int, b: Int, width: Int, gap: Int): Pair<Int, Int>? 
  * [center] centres each side's text.
  */
 @Composable
-fun KometaSplit(left: KometaSplitSide, right: KometaSplitSide, modifier: Modifier = Modifier, center: Boolean = false) {
+public fun KometaSplit(left: KometaSplitSide, right: KometaSplitSide, modifier: Modifier = Modifier, center: Boolean = false) {
     val c = Kometa.colors
     Layout(
         content = {

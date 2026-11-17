@@ -3,7 +3,7 @@
 ## Supported versions
 
 kometa-ui is 0.x: security fixes go into the newest minor release only (today 0.4.x). Update to it to get them.
-The Compose port (`uz.kometa:kometa-ui`) follows the same rule for its own versions.
+The Compose port (`io.github.inomjonismaylov:kometa-ui` on Maven Central) follows the same rule for its own versions.
 
 ## Reporting a vulnerability
 

@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
  * [closedLabel] are read as the term's state.
  */
 @Composable
-fun KometaHint(
+public fun KometaHint(
     term: String,
     text: String,
     open: Boolean,

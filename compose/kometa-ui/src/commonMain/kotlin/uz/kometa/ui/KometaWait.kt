@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 
 /** Loading state (`k-wait`): the label stays, and a short line travels under it. */
 @Composable
-fun KometaWait(label: String, modifier: Modifier = Modifier) {
+public fun KometaWait(label: String, modifier: Modifier = Modifier) {
     val c = Kometa.colors
     val x by rememberInfiniteTransition().animateFloat(
         0f, 2.57f, infiniteRepeatable(tween(1200, easing = FastOutSlowInEasing), RepeatMode.Restart),

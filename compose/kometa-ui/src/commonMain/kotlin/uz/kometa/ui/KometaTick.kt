@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
  * tick draws itself in. Name it with [label]. For a row whose words are the control, see [KometaCheck].
  */
 @Composable
-fun KometaTick(
+public fun KometaTick(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     label: String,

@@ -49,7 +49,7 @@ import androidx.compose.ui.window.PopupProperties
 import kotlinx.coroutines.delay
 
 /** One row offered by [KometaSuggest]: the [label] drawn and put in the field once picked, a quiet [meta] line (a phone), and your [data]. */
-data class KometaSuggestion(val label: String, val meta: String = "", val data: Any? = null)
+public data class KometaSuggestion(val label: String, val meta: String = "", val data: Any? = null)
 
 /** Whether [text] is long enough to ask for suggestions: [minLength] letters, not counting spaces at the ends. */
 internal fun suggestAsks(text: String, minLength: Int): Boolean = text.trim().length >= minLength
@@ -64,7 +64,7 @@ internal fun suggestAsks(text: String, minLength: Int): Boolean = text.trim().le
  * [KometaPerson] unless [row] draws them. [label] is the field's label and accessible name.
  */
 @Composable
-fun KometaSuggest(
+public fun KometaSuggest(
     value: String,
     onValueChange: (String) -> Unit,
     suggestions: List<KometaSuggestion>,

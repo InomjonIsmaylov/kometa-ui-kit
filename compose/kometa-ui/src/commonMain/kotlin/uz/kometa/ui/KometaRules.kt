@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /** One rule for [KometaRules]: met when [test] returns true for the value. */
-class KometaRule(val label: String, val test: (String) -> Boolean) {
+public class KometaRule(public val label: String, public val test: (String) -> Boolean) {
     /** Met when [pattern] is found anywhere in the value, as the web kit's string rules are. */
-    constructor(label: String, pattern: Regex) : this(label, { pattern.containsMatchIn(it) })
+    public constructor(label: String, pattern: Regex) : this(label, { pattern.containsMatchIn(it) })
 }
 
 /**
@@ -31,11 +31,11 @@ class KometaRule(val label: String, val test: (String) -> Boolean) {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KometaRules(
+public fun KometaRules(
     value: String,
     rules: List<KometaRule>,
     modifier: Modifier = Modifier,
-    doneLabel: String = "done",
+    doneLabel: String = Kometa.strings.done,
     description: String = "",
 ) {
     val c = Kometa.colors

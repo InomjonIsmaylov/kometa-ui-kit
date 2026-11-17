@@ -50,14 +50,14 @@ internal fun timeSlots(step: Int, held: Int?): List<Int> {
  * [description] is the accessible name.
  */
 @Composable
-fun KometaTime(
+public fun KometaTime(
     value: Int?,
     onValueChange: (Int?) -> Unit,
     modifier: Modifier = Modifier,
     step: Int = 15,
     placeholder: String = "—",
     clearable: Boolean = false,
-    clearLabel: String = "Clear",
+    clearLabel: String = Kometa.strings.clear,
     enabled: Boolean = true,
     description: String = "",
 ) {

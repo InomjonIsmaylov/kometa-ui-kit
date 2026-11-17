@@ -54,7 +54,7 @@ internal fun swipeLit(x: Float, width: Float, ticks: Int): Int =
  * are also offered to screen readers as custom actions. [content] is the row's face.
  */
 @Composable
-fun KometaSwipe(
+public fun KometaSwipe(
     modifier: Modifier = Modifier,
     rightLabel: String = "",
     leftLabel: String = "",

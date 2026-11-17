@@ -44,7 +44,7 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 
-enum class KometaNotePlacement { Auto, Above, Below }
+public enum class KometaNotePlacement { Auto, Above, Below }
 
 /**
  * Where a note's tab goes: centred over the [anchor] [gap] px above it (below when [placement] says so,
@@ -74,7 +74,7 @@ private class NotePosition(val gap: Int, val pad: Int, val placement: KometaNote
  * marker's accessible name; without one the marker is described by the text itself.
  */
 @Composable
-fun KometaNote(text: String, modifier: Modifier = Modifier, label: String = "", placement: KometaNotePlacement = KometaNotePlacement.Auto) {
+public fun KometaNote(text: String, modifier: Modifier = Modifier, label: String = "", placement: KometaNotePlacement = KometaNotePlacement.Auto) {
     val c = Kometa.colors
     var tapped by remember { mutableStateOf(false) }
     val source = remember { MutableInteractionSource() }

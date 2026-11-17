@@ -36,7 +36,7 @@ function kdocBefore(src, at) {
 
 export function parseKotlin(src) {
   const out = {};
-  for (const m of src.matchAll(/^fun (?:<[^>]+> )?(Kometa\w+)\(/gm)) {
+  for (const m of src.matchAll(/^(?:public )?fun (?:<[^>]+> )?(Kometa\w+)\(/gm)) {
     const open = m.index + m[0].length - 1;
     let depth = 0;
     let close = open;

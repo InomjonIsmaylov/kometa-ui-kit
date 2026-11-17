@@ -44,7 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-enum class KometaRowTone { Neutral, Amber, Blue, Green, Violet, Red, Telegram, Danger }
+public enum class KometaRowTone { Neutral, Amber, Blue, Green, Violet, Red, Telegram, Danger }
 
 /**
  * The glass panel that holds rows (`k-rows`): a small muted caps [label] above it, and a 1dp hairline
@@ -52,7 +52,7 @@ enum class KometaRowTone { Neutral, Amber, Blue, Green, Violet, Red, Telegram, D
  * is one row. [description] names a panel that has no visible label.
  */
 @Composable
-fun KometaRows(
+public fun KometaRows(
     modifier: Modifier = Modifier,
     label: String = "",
     description: String = "",
@@ -109,7 +109,7 @@ private class IntArrayHolder { var values: List<Int> = emptyList() }
  * controls (a toggle, words). [KometaRowTone.Danger] also reddens the title.
  */
 @Composable
-fun KometaRow(
+public fun KometaRow(
     modifier: Modifier = Modifier,
     title: String = "",
     label: String = "",
@@ -179,5 +179,5 @@ fun KometaRow(
 
 /** A fact row's value: 15sp semibold, right-aligned, wrapping from the right edge. */
 @Composable
-fun KometaRowValue(text: String, modifier: Modifier = Modifier) =
+public fun KometaRowValue(text: String, modifier: Modifier = Modifier): Unit =
     BasicText(text, modifier, style = Kometa.type.body.copy(color = Kometa.colors.text, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.End))

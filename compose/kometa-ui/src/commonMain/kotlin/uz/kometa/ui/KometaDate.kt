@@ -43,13 +43,13 @@ import androidx.compose.ui.unit.sp
 
 /** A calendar day with no time and no zone. [month] is 1–12. */
 @Immutable
-data class KometaDay(val year: Int, val month: Int, val day: Int) : Comparable<KometaDay> {
-    override fun compareTo(other: KometaDay) = compareValuesBy(this, other, { it.year }, { it.month }, { it.day })
+public data class KometaDay(val year: Int, val month: Int, val day: Int) : Comparable<KometaDay> {
+    override fun compareTo(other: KometaDay): Int = compareValuesBy(this, other, { it.year }, { it.month }, { it.day })
 }
 
 /** The words a date picker draws. [dayNamesMin] is Sunday first; the week is drawn from `weekStart`. */
 @Immutable
-data class KometaDateNames(
+public data class KometaDateNames(
     val monthNames: List<String>,
     val monthNamesShort: List<String>,
     val dayNamesMin: List<String>,
@@ -57,8 +57,8 @@ data class KometaDateNames(
     val next: String,
     val today: String = "today",
 ) {
-    companion object {
-        val English = KometaDateNames(
+    public companion object {
+        public val English: KometaDateNames = KometaDateNames(
             listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
             listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
             listOf("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"),
@@ -120,7 +120,7 @@ internal fun rangeLabel(r: Pair<KometaDay, KometaDay?>, names: KometaDateNames):
  * [description] is the accessible name. For a period use [KometaDateRange].
  */
 @Composable
-fun KometaDate(
+public fun KometaDate(
     value: KometaDay?,
     onValueChange: (KometaDay) -> Unit,
     // shortcut: commonMain has no clock or time zone without kotlinx-datetime, so the caller passes today; upgrade if that dependency is added
@@ -128,13 +128,13 @@ fun KometaDate(
     modifier: Modifier = Modifier,
     min: KometaDay? = null,
     max: KometaDay? = null,
-    names: KometaDateNames = KometaDateNames.English,
+    names: KometaDateNames = Kometa.strings.dateNames,
     placeholder: String = "—",
     weekStart: Int = 1,
     inline: Boolean = false,
     enabled: Boolean = true,
     description: String = "",
-) = DatePicker(
+): Unit = DatePicker(
     shown = value?.let { dateLabel(it, names) }, focus = value ?: today, today = today, modifier = modifier,
     min = min, max = max, names = names, placeholder = placeholder, weekStart = weekStart, inline = inline,
     enabled = enabled, description = description, range = false,
@@ -149,20 +149,20 @@ fun KometaDate(
  * reads "1 Nov 2026 – 9 Nov 2026".
  */
 @Composable
-fun KometaDateRange(
+public fun KometaDateRange(
     value: Pair<KometaDay, KometaDay?>?,
     onValueChange: (Pair<KometaDay, KometaDay?>) -> Unit,
     today: KometaDay,
     modifier: Modifier = Modifier,
     min: KometaDay? = null,
     max: KometaDay? = null,
-    names: KometaDateNames = KometaDateNames.English,
+    names: KometaDateNames = Kometa.strings.dateNames,
     placeholder: String = "—",
     weekStart: Int = 1,
     inline: Boolean = false,
     enabled: Boolean = true,
     description: String = "",
-) = DatePicker(
+): Unit = DatePicker(
     shown = value?.let { rangeLabel(it, names) }, focus = value?.let { if (inline) it.second ?: it.first else it.first } ?: today,
     today = today, modifier = modifier, min = min, max = max, names = names, placeholder = placeholder,
     weekStart = weekStart, inline = inline, enabled = enabled, description = description, range = true,

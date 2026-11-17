@@ -38,7 +38,7 @@ internal fun countdownTicks(left: Int, duration: Int): List<Boolean> {
  * restart it. [description] is read before the time, e.g. "Code expires in".
  */
 @Composable
-fun KometaCountdown(
+public fun KometaCountdown(
     modifier: Modifier = Modifier,
     duration: Int = 60,
     from: Int = duration,

@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.window.ComposeViewport
 import kotlinx.browser.document
 import kotlinx.browser.window
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.events.Event
 import uz.kometa.ui.Kometa
@@ -70,9 +71,16 @@ private fun mount(id: String, key: String, dark: Boolean) {
     host.slot = id
     slot.appendChild(host.el)
     host.key.value = key
-    // Compose 1.7 refits its canvas only on a window resize; send one when this slot's width differs from the canvas's.
-    val canvas = host.el.querySelector("canvas") as HTMLElement?
-    if (canvas?.style?.width != "${host.el.clientWidth}px") refitSoon()
+    // Compose refits its canvas only on a window resize; send one when this slot's width differs from the canvas's.
+    if (canvasOf(host.el)?.style?.width != "${host.el.clientWidth}px") refitSoon()
+}
+
+/** The viewport's canvas; since Compose 1.8 it sits in a shadow root under the container. */
+private fun canvasOf(el: Element): HTMLElement? {
+    el.querySelector("canvas")?.let { return it as HTMLElement }
+    val all = el.querySelectorAll("*")
+    for (i in 0 until all.length) (all.item(i) as? Element)?.shadowRoot?.querySelector("canvas")?.let { return it as HTMLElement }
+    return null
 }
 
 private var refitPending = false

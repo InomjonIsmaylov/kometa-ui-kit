@@ -28,7 +28,7 @@ internal fun <T> pageSlice(rows: List<T>, page: Int, size: Int): List<T> {
  * Numbers and dates need no helper: `compareBy { it.at }` (Kotlin puts null first, as the web does).
  */
 // shortcut: compares lowercased code points, not a locale collator (Cyrillic and Latin order hold; accents and Ё do not); upgrade with a platform Collator if a list sorts accented names.
-fun kometaSortText(a: String?, b: String?): Int {
+public fun kometaSortText(a: String?, b: String?): Int {
     val x = (a ?: "").lowercase()
     val y = (b ?: "").lowercase()
     var i = 0
@@ -61,19 +61,19 @@ fun kometaSortText(a: String?, b: String?): Int {
  * this and hold page and page size yourself. In a composable, [rememberKometaListView] builds one.
  */
 @Stable
-class KometaListView<T>(
+public class KometaListView<T>(
     private val sorts: Map<String, Comparator<in T>>,
     sort: String,
     pageSize: Int,
     private val dirs: Map<String, KometaSortDir> = emptyMap(),
 ) {
-    var source: List<T> by mutableStateOf(emptyList())
-    var filter: ((T) -> Boolean)? by mutableStateOf(null)
+    public var source: List<T> by mutableStateOf(emptyList())
+    public var filter: ((T) -> Boolean)? by mutableStateOf(null)
     /** Change it with the filter (the query text, say): a lambda has no useful equality, so this tells a new filter from a rebuilt one. */
-    var filterKey: Any? by mutableStateOf(null)
-    var sort: String by mutableStateOf(sort)
-    var dir: KometaSortDir by mutableStateOf(dirs[sort] ?: KometaSortDir.Asc)
-    var pageSize: Int by mutableIntStateOf(pageSize)
+    public var filterKey: Any? by mutableStateOf(null)
+    public var sort: String by mutableStateOf(sort)
+    public var dir: KometaSortDir by mutableStateOf(dirs[sort] ?: KometaSortDir.Asc)
+    public var pageSize: Int by mutableIntStateOf(pageSize)
 
     private var setPage by mutableIntStateOf(1)
     private var setUnder: Any? by mutableStateOf(under())
@@ -85,18 +85,18 @@ class KometaListView<T>(
         if (dir == KometaSortDir.Desc) kept.sortedWith { a, b -> cmp.compare(b, a) } else kept.sortedWith(cmp)
     }
 
-    val total: Int get() = ordered.size
-    val all: Int get() = source.size
-    val pageCount: Int get() = pageCountOf(total, pageSize)
+    public val total: Int get() = ordered.size
+    public val all: Int get() = source.size
+    public val pageCount: Int get() = pageCountOf(total, pageSize)
 
     // shortcut: a list that shrinks and grows back returns to the page set before (the web keeps the clamped page); store the clamp if that matters.
-    var page: Int
+    public var page: Int
         get() = pageNow(setPage, setUnder, under(), pageCount)
         set(v) { setPage = v; setUnder = under() }
 
-    val rows: List<T> get() = pageSlice(ordered, page, pageSize)
+    public val rows: List<T> get() = pageSlice(ordered, page, pageSize)
 
-    fun pickSort(key: String) {
+    public fun pickSort(key: String) {
         dir = nextSortDir(key, sort, dir, dirs[key] ?: KometaSortDir.Asc)
         sort = key
     }
@@ -108,7 +108,7 @@ class KometaListView<T>(
  * (the query text). [sort], [pageSize] and [dirs] are only the starting values.
  */
 @Composable
-fun <T> rememberKometaListView(
+public fun <T> rememberKometaListView(
     source: List<T>,
     sorts: Map<String, Comparator<in T>>,
     sort: String,

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
  * turns muted. [readOnly] shows the state but ignores presses.
  */
 @Composable
-fun KometaCheck(
+public fun KometaCheck(
     label: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,

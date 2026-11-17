@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
 /** 12480 → "12 480": thousands grouped with a no-break space, the way ru-RU writes them. */
-fun groupThousands(n: Long): String {
+public fun groupThousands(n: Long): String {
     val digits = kotlin.math.abs(n).toString().reversed().chunked(3).joinToString(" ").reversed()
     return if (n < 0) "-$digits" else digits
 }
@@ -34,7 +34,7 @@ internal fun tallyLit(shown: Int, max: Int, ticks: Int): Int =
  * the figure; the default groups thousands.
  */
 @Composable
-fun KometaTally(
+public fun KometaTally(
     value: Int,
     modifier: Modifier = Modifier,
     max: Int? = null,

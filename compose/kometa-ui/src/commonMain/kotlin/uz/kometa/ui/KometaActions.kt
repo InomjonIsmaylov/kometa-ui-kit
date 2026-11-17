@@ -68,7 +68,7 @@ import androidx.compose.ui.window.PopupProperties
  * One row of [KometaActions]. [danger] (Cancel, No-show) draws it in the error colour; [badge] is a
  * small word after the label (the "PRO" a feature needs); a row that is not [enabled] is dimmed and skipped by the arrow keys.
  */
-data class KometaAction(
+public data class KometaAction(
     val label: String,
     val danger: Boolean = false,
     val badge: String = "",
@@ -107,7 +107,7 @@ private class ActionsPosition(val gap: Int, val pad: Int, val start: Boolean) : 
  * button's accessible name ("More options"). [open] is hoisted: the button asks [onOpenChange] to flip it.
  */
 @Composable
-fun KometaActions(
+public fun KometaActions(
     items: List<KometaAction>,
     label: String,
     open: Boolean,

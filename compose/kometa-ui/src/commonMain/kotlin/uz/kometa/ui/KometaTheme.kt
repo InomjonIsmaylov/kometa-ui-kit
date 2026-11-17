@@ -3,6 +3,7 @@ package uz.kometa.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
@@ -19,7 +20,7 @@ import androidx.compose.ui.unit.sp
  * Amber is spent on exactly one control per screen: the action the user should take next.
  */
 @Immutable
-data class KometaColors(
+public data class KometaColors(
     val bg: Color,
     val card: Color,
     val input: Color,
@@ -51,7 +52,7 @@ data class KometaColors(
     val isDark: Boolean,
 )
 
-val KometaDarkColors = KometaColors(
+public val KometaDarkColors: KometaColors = KometaColors(
     bg = Color(0xFF12110E), card = Color(0xFF1A1C1C), input = Color(0xFF1E2020),
     border = Color(0xFF282A2B), border2 = Color(0xFF333535),
     text = Color(0xFFE2E2E2), text2 = Color(0xFFC4C7C7), muted = Color(0xFF8E9192),
@@ -67,7 +68,7 @@ val KometaDarkColors = KometaColors(
     isDark = true,
 )
 
-val KometaLightColors = KometaColors(
+public val KometaLightColors: KometaColors = KometaColors(
     bg = Color(0xFFFAF8F4), card = Color(0xFFFFFFFF), input = Color(0xFFF2EFE9),
     border = Color(0xFFE4DFD6), border2 = Color(0xFFD6D0C5),
     text = Color(0xFF1A1C1C), text2 = Color(0xFF45484A), muted = Color(0xFF5F6364),
@@ -88,7 +89,7 @@ val KometaLightColors = KometaColors(
  * Compose cannot load: pass your own `FontFamily(Font(R.font.manrope...))` here to match it.
  */
 @Immutable
-data class KometaFonts(
+public data class KometaFonts(
     val sans: FontFamily = FontFamily.SansSerif,
     val display: FontFamily = FontFamily.SansSerif,
     val mono: FontFamily = FontFamily.Monospace,
@@ -96,30 +97,32 @@ data class KometaFonts(
 
 /** The type scale: dense, 500..800 weights only, mono for every time and price. */
 @Immutable
-class KometaTypography(fonts: KometaFonts) {
-    val body = TextStyle(fontFamily = fonts.sans, fontSize = 13.sp, fontWeight = FontWeight.Medium, lineHeight = 1.35.em)
-    val md = body.copy(fontSize = 14.sp)
-    val small = body.copy(fontSize = 12.sp)
+public class KometaTypography(fonts: KometaFonts) {
+    public val body: TextStyle = TextStyle(fontFamily = fonts.sans, fontSize = 13.sp, fontWeight = FontWeight.Medium, lineHeight = 1.35.em)
+    public val md: TextStyle = body.copy(fontSize = 14.sp)
+    public val small: TextStyle = body.copy(fontSize = 12.sp)
     /** Tracked uppercase eyebrow; uppercase the string yourself. */
-    val eyebrow = small.copy(fontWeight = FontWeight.Bold, letterSpacing = .08.em)
-    val title = TextStyle(fontFamily = fonts.display, fontSize = 22.sp, fontWeight = FontWeight.Bold, letterSpacing = (-.005).em)
-    val mono = body.copy(fontFamily = fonts.mono)
+    public val eyebrow: TextStyle = small.copy(fontWeight = FontWeight.Bold, letterSpacing = .08.em)
+    public val title: TextStyle = TextStyle(fontFamily = fonts.display, fontSize = 22.sp, fontWeight = FontWeight.Bold, letterSpacing = (-.005).em)
+    public val mono: TextStyle = body.copy(fontFamily = fonts.mono)
 }
 
-val LocalKometaColors = staticCompositionLocalOf { KometaDarkColors }
-val LocalKometaFonts = staticCompositionLocalOf { KometaFonts() }
-val LocalKometaTypography = staticCompositionLocalOf { KometaTypography(KometaFonts()) }
+public val LocalKometaColors: ProvidableCompositionLocal<KometaColors> = staticCompositionLocalOf { KometaDarkColors }
+public val LocalKometaFonts: ProvidableCompositionLocal<KometaFonts> = staticCompositionLocalOf { KometaFonts() }
+public val LocalKometaTypography: ProvidableCompositionLocal<KometaTypography> = staticCompositionLocalOf { KometaTypography(KometaFonts()) }
 
 /** Wrap the app (or a screen) in this; the components read their colours and fonts from it. */
 @Composable
-fun KometaTheme(
+public fun KometaTheme(
     dark: Boolean = isSystemInDarkTheme(),
     fonts: KometaFonts = KometaFonts(),
     colors: KometaColors = if (dark) KometaDarkColors else KometaLightColors,
+    strings: KometaStrings = KometaStrings(),
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
         LocalKometaColors provides colors,
+        LocalKometaStrings provides strings,
         LocalKometaFonts provides fonts,
         LocalKometaTypography provides remember(fonts) { KometaTypography(fonts) },
         content = content,
@@ -127,10 +130,11 @@ fun KometaTheme(
 }
 
 /** `Kometa.colors.amber`, `Kometa.type.title`... */
-object Kometa {
-    val colors: KometaColors @Composable @ReadOnlyComposable get() = LocalKometaColors.current
-    val fonts: KometaFonts @Composable @ReadOnlyComposable get() = LocalKometaFonts.current
-    val type: KometaTypography @Composable @ReadOnlyComposable get() = LocalKometaTypography.current
+public object Kometa {
+    public val colors: KometaColors @Composable @ReadOnlyComposable get() = LocalKometaColors.current
+    public val fonts: KometaFonts @Composable @ReadOnlyComposable get() = LocalKometaFonts.current
+    public val type: KometaTypography @Composable @ReadOnlyComposable get() = LocalKometaTypography.current
+    public val strings: KometaStrings @Composable @ReadOnlyComposable get() = LocalKometaStrings.current
 }
 
 /** Mixes [this] toward black, like CSS `color-mix(in srgb, c p%, black)`. */

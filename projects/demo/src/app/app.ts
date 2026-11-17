@@ -236,22 +236,16 @@ export class App {
   /** The Compose showcase, built to WebAssembly into public/compose by the Pages workflow (npm run compose:web locally). */
   protected readonly composeSrc = computed(() => this.sanitizer.bypassSecurityTrustResourceUrl(`compose/index.html?theme=${this.theme.resolved()}`));
   private readonly sanitizer = inject(DomSanitizer);
-  protected readonly composeInstall = `// settings.gradle.kts: GitHub Packages wants a token with read:packages, even to download
+  protected readonly composeInstall = `// settings.gradle.kts: Maven Central, no token needed
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.pkg.github.com/InomjonIsmaylov/kometa-ui-kit") {
-            credentials {
-                username = providers.gradleProperty("gpr.user").get()
-                password = providers.gradleProperty("gpr.key").get()
-            }
-        }
     }
 }
 
 // build.gradle.kts
-dependencies { implementation("uz.kometa:kometa-ui:0.3.0") }`;
+dependencies { implementation("io.github.inomjonismaylov:kometa-ui:0.4.0") }`;
   protected readonly composeUse = `import uz.kometa.ui.*
 
 setContent {

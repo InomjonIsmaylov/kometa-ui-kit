@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 
 /** The plus that loses its vertical bar when open (`k-fold-mark`). */
 @Composable
-fun KometaFoldMark(open: Boolean, modifier: Modifier = Modifier) {
+public fun KometaFoldMark(open: Boolean, modifier: Modifier = Modifier) {
     val c = Kometa.colors
     val ink by animateColorAsState(if (open) c.displayInk else c.muted, tween(280))
     val bar by animateFloatAsState(if (open) 0f else 1f, tween(280, easing = SpringEase))
@@ -50,7 +50,7 @@ fun KometaFoldMark(open: Boolean, modifier: Modifier = Modifier) {
  * composed only while open. [aside] sits between the title and the mark.
  */
 @Composable
-fun KometaFold(
+public fun KometaFold(
     title: String,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,

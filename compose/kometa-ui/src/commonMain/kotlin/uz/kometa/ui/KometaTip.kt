@@ -91,7 +91,7 @@ private class TipPosition(val side: Int, val gap: Int, val pad: Int) : PopupPosi
  * or above, inside the window. It does not name the content: an icon-only control still needs its own label.
  */
 @Composable
-fun KometaTip(text: String?, modifier: Modifier = Modifier, sub: String? = null, delayMs: Long = 380, content: @Composable () -> Unit) {
+public fun KometaTip(text: String?, modifier: Modifier = Modifier, sub: String? = null, delayMs: Long = 380, content: @Composable () -> Unit) {
     val c = Kometa.colors
     var hover by remember { mutableStateOf(false) }
     var focused by remember { mutableStateOf(false) }

@@ -58,7 +58,7 @@ internal fun inplaceSave(old: String, typed: String): String? = typed.trim().tak
  * [placeholder] shows, muted, while the value is empty; [label] names it, read as "label: value".
  */
 @Composable
-fun KometaInplace(
+public fun KometaInplace(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,

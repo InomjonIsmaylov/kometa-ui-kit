@@ -40,7 +40,7 @@ internal fun notesStretch(left: Int): Int? = if (left > 30) null else listOf(0, 
  * draws its own counter passes [showCount] = false. [label] is the accessible name.
  */
 @Composable
-fun KometaNotes(
+public fun KometaNotes(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,

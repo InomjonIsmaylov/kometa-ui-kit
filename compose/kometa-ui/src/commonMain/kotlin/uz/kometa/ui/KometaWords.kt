@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /** One word for [KometaWords]. [count] follows it, muted; [hot] (something to do) makes it an amber superscript. */
-data class KometaWordOption(val value: String, val label: String, val count: String = "", val hot: Boolean = false)
+public data class KometaWordOption(val value: String, val label: String, val count: String = "", val hot: Boolean = false)
 
 /**
  * A handful of words with a cream line under the chosen one (`k-words`); the line slides to a newly
@@ -46,7 +46,7 @@ data class KometaWordOption(val value: String, val label: String, val count: Str
  * and never wraps. [tabs] reads the words as tabs (they switch panels) instead of a choice.
  */
 @Composable
-fun KometaWords(
+public fun KometaWords(
     options: List<KometaWordOption>,
     value: String,
     onValueChange: (String) -> Unit,

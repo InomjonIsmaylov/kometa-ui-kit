@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
  * (its [busyLabel] is read out). [arrow] = false drops the arrow. Never destructive: that is [KometaErase].
  */
 @Composable
-fun KometaWord(
+public fun KometaWord(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

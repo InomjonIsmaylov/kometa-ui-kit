@@ -48,14 +48,14 @@ internal fun revealSnap(p: Float): Int = (p.coerceIn(0f, 100f) / 5f).roundToInt(
  * Screen readers get a slider ([description], "Before 40%, After 60%"). [aspectRatio] is width / height.
  */
 @Composable
-fun KometaReveal(
+public fun KometaReveal(
     position: Int,
     onPositionChange: (Int) -> Unit,
     before: @Composable () -> Unit,
     after: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    beforeLabel: String = "Before",
-    afterLabel: String = "After",
+    beforeLabel: String = Kometa.strings.before,
+    afterLabel: String = Kometa.strings.after,
     description: String = "",
     aspectRatio: Float = 1f,
     showLabels: Boolean = true,

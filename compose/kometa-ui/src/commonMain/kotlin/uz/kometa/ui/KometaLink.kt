@@ -31,7 +31,7 @@ import kotlinx.coroutines.delay
  * ambiguous (one per table row). Ink is [LocalKometaContentColor], text colour when unset.
  */
 @Composable
-fun KometaLink(
+public fun KometaLink(
     text: String,
     copyLabel: String,
     copiedLabel: String,

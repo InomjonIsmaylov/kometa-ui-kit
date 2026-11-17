@@ -52,7 +52,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 /** One word in the [KometaFab] menu. */
-data class KometaFabAction(val label: String, val value: String = "", val disabled: Boolean = false)
+public data class KometaFabAction(val label: String, val value: String = "", val disabled: Boolean = false)
 
 /** How long the word at [index] of [count] waits before rising: the bottom one (nearest the button) first, 40ms apart. */
 internal fun fabRiseDelay(index: Int, count: Int): Int = (count - 1 - index).coerceAtLeast(0) * 40
@@ -73,13 +73,13 @@ private object OverAnchor : PopupPositionProvider {
  * button and its menu.
  */
 @Composable
-fun KometaFab(
+public fun KometaFab(
     actions: List<KometaFabAction>,
     open: Boolean,
     onOpenChange: (Boolean) -> Unit,
     onPick: (KometaFabAction) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Actions",
+    label: String = Kometa.strings.actions,
     icon: @Composable () -> Unit = { BasicText("+", style = Kometa.type.md.copy(color = LocalKometaContentColor.current, fontSize = 26.sp, fontWeight = FontWeight.SemiBold)) },
 ) {
     val c = Kometa.colors
