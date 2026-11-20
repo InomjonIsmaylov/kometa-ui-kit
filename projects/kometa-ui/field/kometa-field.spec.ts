@@ -2,6 +2,10 @@ import { Component, signal, viewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormField, form, maxLength, required } from '@angular/forms/signals';
 import { KometaField } from './kometa-field';
+// @ts-ignore: text imports have no type declarations
+import baseScss from '../styles/base.scss' with { loader: 'text' };
+// @ts-ignore: text imports have no type declarations
+import blendFieldsScss from '../styles/blend-fields.scss' with { loader: 'text' };
 
 @Component({
   imports: [KometaField],
@@ -127,11 +131,11 @@ describe('KometaField', () => {
     const alert = root.querySelector('[role="alert"]') as HTMLElement;
     expect(alert.textContent?.trim()).toBe('');
     expect(input.getAttribute('aria-invalid')).toBeNull();
-    expect(root.querySelector('.field')?.classList.contains('is-bad')).toBe(false);
+    expect(root.querySelector('.box')?.classList.contains('is-bad')).toBe(false);
     f.componentInstance.error.set('Nom kerak.');
     f.detectChanges();
     expect(alert.textContent?.trim()).toBe('Nom kerak.');
-    expect(root.querySelector('.field')?.classList.contains('is-bad')).toBe(true);
+    expect(root.querySelector('.box')?.classList.contains('is-bad')).toBe(true);
     expect(input.getAttribute('aria-invalid')).toBe('true');
     expect(input.getAttribute('aria-describedby')).toBe(alert.id);
   });
@@ -249,6 +253,38 @@ function stylesheet(component: unknown): string {
   // The compiler scopes selectors and namespaces tokens; undo that so the assertions read like the source.
   return css.replace(/%NS%/g, '').replace(/\[_ng(?:content|host)-%COMP%\]/g, '').replace(/["']/g, '').replace(/\s+/g, ' ');
 }
+
+/** The CSS with every `@layer ... { }` block cut out: what is left beats k-field's own (unlayered) styles on specificity. */
+function unlayered(css: string): string {
+  let out = '';
+  let i = 0;
+  for (let at = css.indexOf('@layer', i); at >= 0; at = css.indexOf('@layer', i)) {
+    out += css.slice(i, at);
+    let j = css.indexOf('{', at);
+    if (j < 0 || css.indexOf(';', at) < j) { i = at + 6; continue; } // `@layer a, b;` statement
+    for (let depth = 1; depth; ) depth += css[++j] === '{' ? 1 : css[j] === '}' ? -1 : 0;
+    i = j + 1;
+  }
+  return out + css.slice(i);
+}
+
+describe('k-field under the kit stylesheets', () => {
+  it('no unlayered `.field` rule in base.scss or blend-fields.scss reaches its input', () => {
+    for (const css of [baseScss as string, blendFieldsScss as string]) {
+      expect(css).toContain('.field input');
+      expect(unlayered(css.replace(/\/\*[\s\S]*?\*\//g, ''))).not.toMatch(/\.field\b/);
+    }
+  });
+
+  it('does not call its own wrapper `.field`, so the legacy `.field` box and margin stay off it', () => {
+    const css = String((KometaField as unknown as { ɵcmp: { styles: string[] } }).ɵcmp.styles).replace(/%NS%/g, '');
+    expect(css).not.toMatch(/\.field\b/);
+    const fixture = TestBed.createComponent(KometaField);
+    fixture.componentRef.setInput('label', 'Name');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.field')).toBeNull();
+  });
+});
 
 /** Colour literals that are not the fallback inside a `var(--x, ...)`. */
 function literalColours(css: string): string[] {

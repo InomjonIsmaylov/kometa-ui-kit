@@ -21,7 +21,7 @@ let nextId = 0;
   host: { '[attr.data-size]': 'size()' },
   styles: `
     :host { display: block; min-width: 0; }
-    .field { display: flex; flex-direction: column; gap: 6px; color: var(--text); }
+    .box { display: flex; flex-direction: column; gap: 6px; color: var(--text); }
     input {
       box-sizing: border-box;
       width: 100%;
@@ -61,8 +61,8 @@ let nextId = 0;
       transform-origin: left;
       transition: transform var(--drawer-dur, 680ms) var(--drawer-ease, cubic-bezier(0.22, 1.35, 0.32, 1));
     }
-    .field:focus-within .rule i { transform: scaleX(1); }
-    .field.is-bad .rule i { background: var(--error); transform: scaleX(1); }
+    .box:focus-within .rule i { transform: scaleX(1); }
+    .box.is-bad .rule i { background: var(--error); transform: scaleX(1); }
     .count {
       align-self: flex-end;
       color: var(--muted);
@@ -77,14 +77,14 @@ let nextId = 0;
       transform: translateY(-4px);
       transition: opacity 280ms ease, transform 420ms var(--ease-spring, cubic-bezier(0.22, 1.15, 0.36, 1));
     }
-    .field.is-bad .err { opacity: 1; transform: none; }
+    .box.is-bad .err { opacity: 1; transform: none; }
     @media (prefers-reduced-motion: reduce) {
       .rule i, .err { transition: none; }
     }
     @media (forced-colors: active) { input:focus-visible { outline: 2px solid Highlight; } }
   `,
   template: `
-    <div class="field" [class.is-bad]="bad()">
+    <div class="box" [class.is-bad]="bad()">
       <input
         #field
         [type]="type()"

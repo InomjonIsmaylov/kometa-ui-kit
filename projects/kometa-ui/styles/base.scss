@@ -222,45 +222,49 @@ p.hint, p.footnote, div.footnote, .page-note, .list-hint {
   .btn { min-height: 38px; }
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  margin-bottom: var(--sp-6);
-}
+/* Layered so a component's own (unlayered) styles win: k-field and k-multi draw their input themselves,
+   and these rules reached it whenever a `.field` was an ancestor. */
+@layer legacy {
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-6);
+  }
 
-.field label {
-  font-size: var(--t-sm);
-  font-weight: var(--w-semi);
-  color: var(--text2);
-}
+  .field label {
+    font-size: var(--t-sm);
+    font-weight: var(--w-semi);
+    color: var(--text2);
+  }
 
-.field input[type="text"],
-.field input[type="tel"],
-.field input[type="password"],
-.field input[type="number"],
-.field select {
-  height: 40px;
-  padding: 0 var(--sp-6);
-  background-color: var(--input);
-  border: 1px solid var(--border2);
-  border-radius: var(--r-md);
-  color: var(--text);
-  font-family: inherit;
-  font-size: var(--t-body);
-  font-weight: var(--w-semi);
-}
+  .field input[type="text"],
+  .field input[type="tel"],
+  .field input[type="password"],
+  .field input[type="number"],
+  .field select {
+    height: 40px;
+    padding: 0 var(--sp-6);
+    background-color: var(--input);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-md);
+    color: var(--text);
+    font-family: inherit;
+    font-size: var(--t-body);
+    font-weight: var(--w-semi);
+  }
 
-.field input::placeholder {
-  color: var(--muted);
-  font-weight: var(--w-semi);
-}
+  .field input::placeholder {
+    color: var(--muted);
+    font-weight: var(--w-semi);
+  }
 
-.field input:focus,
-.field select:focus {
-  outline: 2px solid var(--amber-ink);
-  outline-offset: -1px;
-  border-color: transparent;
+  .field input:focus,
+  .field select:focus {
+    outline: 2px solid var(--amber-ink);
+    outline-offset: -1px;
+    border-color: transparent;
+}
 }
 
 .table-container {

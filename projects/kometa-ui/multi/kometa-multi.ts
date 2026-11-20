@@ -32,16 +32,16 @@ let nextId = 0;
   styles: `
     :host { position: relative; display: block; min-width: 0; }
     :host(.pill) { display: inline-block; }
-    .field {
+    .box {
       position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: var(--control-h, 40px); padding: 4px 0;
       border-bottom: 1px solid var(--glass-line); cursor: text;
     }
-    .field::after {
+    .box::after {
       content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--display-ink, var(--text));
       transform: scaleX(.3); transform-origin: left; opacity: .5; transition: transform 420ms var(--ease-spring, ease), opacity 200ms ease;
     }
-    .field:hover::after, .field:focus-within::after { transform: none; opacity: 1; }
-    .field.off { opacity: .5; cursor: not-allowed; }
+    .box:hover::after, .box:focus-within::after { transform: none; opacity: 1; }
+    .box.off { opacity: .5; cursor: not-allowed; }
     .chip {
       display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 10px 0 12px; border: 1px solid var(--glass-line);
       border-radius: var(--multi-chip-radius, 999px); background: none; color: var(--display-ink, var(--text)); font: inherit; font-size: 14px; cursor: pointer;
@@ -68,7 +68,7 @@ let nextId = 0;
       color: var(--muted); transform: rotate(45deg); transition: transform 320ms var(--ease-spring, ease);
     }
     .btn[aria-expanded='true'] .chev { transform: rotate(225deg); margin-top: 4px; }
-    @media (pointer: coarse) { .field, .btn { min-height: 44px; } }
+    @media (pointer: coarse) { .box, .btn { min-height: 44px; } }
     .pop {
       inset: auto; margin: 0; padding: 6px; min-width: 180px; max-width: calc(100vw - 16px); max-height: var(--multi-pop-max-height, 300px); overflow: auto;
       border: 1px solid var(--glass-line); border-radius: var(--multi-pop-radius, 16px); color: var(--text);
@@ -84,7 +84,7 @@ let nextId = 0;
     .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; }
     .none { margin: 0; padding: 8px 12px; color: var(--muted); font-size: 13.5px; }
     @media (pointer: coarse) { .opt { padding: 12px; } }
-    @media (prefers-reduced-motion: reduce) { .field::after, .chev, .pop, .opt { transition: none; } .pop { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .box::after, .chev, .pop, .opt { transition: none; } .pop { animation: none; } }
   `,
   template: `
     @if (pill()) {
@@ -95,7 +95,7 @@ let nextId = 0;
         <i class="chev" aria-hidden="true"></i>
       </button>
     } @else {
-      <div #field class="field" [class.off]="disabled()" (click)="focusInput()">
+      <div #field class="box" [class.off]="disabled()" (click)="focusInput()">
         @for (it of chosen(); track it.i) {
           <button class="chip" type="button" tabindex="-1" [disabled]="disabled()" [attr.aria-label]="removeLabel() + ' ' + it.label" (click)="toggleItem(it, $event)">
             {{ it.label }}<span aria-hidden="true">&times;</span>
