@@ -118,6 +118,63 @@ describe('KometaWords', () => {
     expect(f.componentInstance.value()).toBe('a');
     expect(tabs.map((t) => t.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false']);
   });
+
+  it('fades the side that hides words, and only while the row scrolls', () => {
+    const { f, root } = render();
+    const box = (scrollWidth: number, clientWidth: number, scrollLeft: number) => {
+      Object.defineProperty(root, 'scrollWidth', { configurable: true, value: scrollWidth });
+      Object.defineProperty(root, 'clientWidth', { configurable: true, value: clientWidth });
+      root.scrollLeft = scrollLeft;
+      Object.defineProperty(root, 'scrollLeft', { configurable: true, writable: true, value: scrollLeft });
+      root.dispatchEvent(new Event('scroll'));
+    };
+    box(300, 300, 0);
+    expect([root.classList.contains('more-start'), root.classList.contains('more-end')]).toEqual([false, false]);
+    box(500, 300, 0);
+    expect([root.classList.contains('more-start'), root.classList.contains('more-end')]).toEqual([false, true]);
+    box(500, 300, 100);
+    expect([root.classList.contains('more-start'), root.classList.contains('more-end')]).toEqual([true, true]);
+    box(500, 300, 200);
+    expect([root.classList.contains('more-start'), root.classList.contains('more-end')]).toEqual([true, false]);
+    f.destroy();
+  });
+
+  it('scrolls a newly pressed word into view, once', () => {
+    const { f, root, buttons } = render();
+    Object.defineProperty(root, 'scrollWidth', { configurable: true, value: 500 });
+    Object.defineProperty(root, 'clientWidth', { configurable: true, value: 200 });
+    stubBox(buttons[2], 400, 80);
+    f.componentInstance.value.set('en');
+    f.detectChanges();
+    expect(root.scrollLeft).toBe(400 + 80 + 28 - 200);
+    root.scrollLeft = 0;
+    f.componentInstance.options.set([...f.componentInstance.options()]);
+    f.detectChanges();
+    expect(root.scrollLeft).toBe(0);
+  });
+
+  it('wraps instead of scrolling with wrap, and never fades', () => {
+    @Component({
+      imports: [KometaWords],
+      template: `<k-words wrap [options]="[{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }]" value="b" />`,
+    })
+    class Wrapped {}
+    const f = TestBed.createComponent(Wrapped);
+    f.detectChanges();
+    const root = f.nativeElement.querySelector('k-words') as HTMLElement;
+    expect(root.classList.contains('wrap')).toBe(true);
+    Object.defineProperty(root, 'scrollWidth', { configurable: true, value: 500 });
+    Object.defineProperty(root, 'clientWidth', { configurable: true, value: 200 });
+    root.dispatchEvent(new Event('scroll'));
+    expect(root.classList.contains('more-end')).toBe(false);
+    const b = root.querySelectorAll('button')[1] as HTMLElement;
+    stubBox(b, 10, 30);
+    Object.defineProperty(b, 'offsetTop', { configurable: true, value: 40 });
+    Object.defineProperty(b, 'offsetHeight', { configurable: true, value: 30 });
+    f.detectChanges();
+    b.click();
+    expect((root.querySelector('.line') as HTMLElement).style.transform).toBe('translate(10px, 70px)');
+  });
 });
 
 function stubBox(el: HTMLElement, left: number, width: number) {

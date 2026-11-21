@@ -99,6 +99,20 @@ describe('KometaFold', () => {
   });
 });
 
+@Component({
+  imports: [KometaFold],
+  template: `<div><k-fold divided><span fold-title>A</span></k-fold><k-fold divided><span fold-title>B</span></k-fold></div>`,
+})
+class Stack {}
+
+describe('KometaFold divided', () => {
+  it('marks the host and draws a hairline above every fold but the first', () => {
+    const folds = setup(Stack).nativeElement.querySelectorAll('k-fold') as NodeListOf<HTMLElement>;
+    expect([...folds].every((el) => el.classList.contains('divided'))).toBe(true);
+    expect(stylesheet()).toMatch(/\.divided[^{]*:not\(:first-child\)[^{]*\{[^}]*border-top: 1px solid var\(--fold-line, var\(--border\)\)/);
+  });
+});
+
 describe('the parts on their own', () => {
   it('draws the mark with two hairlines and no chevron: the vertical one scales away when open', () => {
     const f = setup(Bare);

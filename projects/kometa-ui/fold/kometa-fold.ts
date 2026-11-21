@@ -145,14 +145,17 @@ let nextId = 0;
  * A disclosure: a real `<button aria-expanded aria-controls>` header (project the title as
  * `<span fold-title>`, any sibling controls as `[fold-aside]`) and a `role="region"` body (an
  * `<ng-template>` child, created only while open). `open` is a model: `[(open)]` or `[open]` and
- * `(openChange)`. The trigger's padding is `--fold-pad`, its hover fill `--fold-hover`.
+ * `(openChange)`. The trigger's padding is `--fold-pad`, its hover fill `--fold-hover`. In a list of folds, `divided`
+ * draws a hairline (`--fold-line`) above each one but the first.
  */
 @Component({
   selector: 'k-fold',
   imports: [KometaFoldMark, KometaFoldBody],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.divided]': 'divided()' },
   styles: `
     :host { display: block; }
+    :host(.divided:not(:first-child)) { border-top: 1px solid var(--fold-line, var(--border)); }
     .head { display: flex; align-items: center; }
     .trigger {
       flex: 1;
@@ -193,5 +196,7 @@ export class KometaFold {
   protected readonly id = `kometa-fold-${nextId++}`;
   readonly open = model(false);
   readonly disabled = input(false, { transform: booleanAttribute });
+  /** A hairline above this fold unless it is the first child: set it on every fold of a list. */
+  readonly divided = input(false, { transform: booleanAttribute });
   protected readonly body = contentChild(TemplateRef);
 }

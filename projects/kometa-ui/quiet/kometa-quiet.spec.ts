@@ -42,7 +42,28 @@ describe('KometaQuiet', () => {
     expect(hint.textContent).toContain('Birinchi yozuv shu yerda chiqadi.');
     expect(stylesheet(KometaQuiet)).toContain('var(--muted)');
   });
+
+  it('puts an [art] picture above the title and leaves other content under the hint', () => {
+    const f = TestBed.createComponent(WithArt);
+    f.detectChanges();
+    const el = f.nativeElement.querySelector('k-quiet') as HTMLElement;
+    const kids = Array.from(el.children).map((c) => (c.getAttribute('class') || c.tagName).toLowerCase());
+    expect(kids).toEqual(['art', 'title', 'hint', 'button']);
+    expect(el.querySelector('.art svg')).not.toBeNull();
+  });
+
+  it('collapses the picture box when there is no picture', () => {
+    const f = render();
+    expect((f.nativeElement.querySelector('.art') as HTMLElement).childElementCount).toBe(0);
+    expect(stylesheet(KometaQuiet)).toMatch(/\.art[^{,]*:empty[^{]*\{[^}]*display: none/);
+  });
 });
+
+@Component({
+  imports: [KometaQuiet],
+  template: `<k-quiet title="No classes" hint="Pick another coach."><button type="button">Clear</button><svg art viewBox="0 0 10 10"></svg></k-quiet>`,
+})
+class WithArt {}
 
 function stylesheet(component: unknown): string {
   const def = (component as { ɵcmp?: { styles?: string[] | string } }).ɵcmp;

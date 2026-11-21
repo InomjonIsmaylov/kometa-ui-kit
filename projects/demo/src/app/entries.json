@@ -6,6 +6,7 @@
  "KometaAccordion": "kometa-ui/accordion",
  "KometaMotion": "kometa-ui/motion",
  "KometaAnimate": "kometa-ui/motion",
+ "KometaInView": "kometa-ui/motion",
  "KometaActions": "kometa-ui/actions",
  "KometaPerson": "kometa-ui/person",
  "KometaAvatars": "kometa-ui/avatars",
@@ -91,5 +92,13 @@
  "KometaUpload": "kometa-ui/upload",
  "KometaWait": "kometa-ui/wait",
  "ProviderLogo": "kometa-ui/provider-logo",
- "ThemeService": "kometa-ui/theme"
+ "ThemeService": "kometa-ui/theme",
+ "KometaChart": "kometa-ui/chart",
+ "KometaBars": "kometa-ui/bars",
+ "KometaDonut": "kometa-ui/donut",
+ "KometaSpark": "kometa-ui/spark",
+ "KometaGauge": "kometa-ui/gauge",
+ "KometaHeat": "kometa-ui/heat",
+ "KometaStat": "kometa-ui/stat",
+ "KometaTiles": "kometa-ui/tiles"
 }

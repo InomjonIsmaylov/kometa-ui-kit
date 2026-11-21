@@ -12,6 +12,7 @@ import {
   KometaStepper, KometaSteps, KometaSuggest, KometaSuggestion, KometaTab, KometaTabbar, KometaTable, KometaTag, KometaTagTone, KometaTick,
   KometaTime, KometaTip, KometaToast, KometaToastItem, KometaToggle, KometaTrail, KometaTray, KometaUpload, KometaWait,
   KometaWord, KometaWordOption, KometaWords, ProviderLogo, ThemePreference, ThemeService, dateAt,
+  KometaInView, KometaBars, KometaChart, KometaDonut, KometaGauge, KometaHeat, KometaSpark, KometaStat, KometaTiles,
 } from 'kometa-ui';
 import { Cosmos } from './cosmos/cosmos';
 import { DocSection, Docs } from './docs';
@@ -54,6 +55,7 @@ function picture(from: string, to: string, text: string): string {
     KometaSkeleton, KometaSlots, KometaSort, KometaSortHeader, KometaSplit, KometaStars, KometaStep, KometaStepper,
     KometaSteps, KometaSuggest, KometaTabbar, KometaTable, KometaTag, KometaTick, KometaTime, KometaTip, KometaToast,
     KometaToggle, KometaTrail, KometaTray, KometaUpload, KometaWait, KometaWord, KometaWords, ProviderLogo,
+    KometaBars, KometaChart, KometaDonut, KometaGauge, KometaHeat, KometaSpark, KometaStat, KometaTiles,
   ],
   selector: 'app-root',
   styleUrl: './app.scss',
@@ -170,6 +172,16 @@ export class App {
       { id: 'avatars', label: 'Avatars', about: 'A few people as overlapping discs.' },
       { id: 'logo', label: 'Provider logo', about: 'Payment provider marks.' },
     ] },
+    { label: 'Charts', items: [
+      { id: 'chart', label: 'Chart', about: 'A line or area chart over time, with stacking, a band, a limit line, a now marker and a hover readout.' },
+      { id: 'bars', label: 'Bars', about: 'A vertical bar chart: single or grouped, with round gridlines and a pinned bar.' },
+      { id: 'donut', label: 'Donut', about: 'Shares of a whole as a ring with a legend.' },
+      { id: 'spark', label: 'Spark', about: 'A small trend line beside a figure.' },
+      { id: 'gauge', label: 'Gauge', about: 'A ring that fills toward a limit.' },
+      { id: 'heat', label: 'Heatmap', about: 'Cells shaded by value: rows by columns, or a calendar of days.' },
+      { id: 'stat', label: 'Stat', about: 'A KPI tile: eyebrow, counting figure, trend and sub line.' },
+      { id: 'tiles', label: 'Tiles', about: 'A grid that never leaves one tile alone on a row.' },
+    ] },
     { label: 'Misc', items: [
       { id: 'meter', label: 'Meter', about: 'Progress toward a limit.' },
       { id: 'stars', label: 'Stars', about: 'A read-only score.' },
@@ -185,7 +197,8 @@ export class App {
   ];
   /** What each page documents: the import line and the API tables are made from these. */
   private readonly apis: Record<string, Record<string, Type<unknown>>> = {
-    motion: { KometaAnimate },
+    motion: { KometaAnimate, KometaInView },
+    chart: { KometaChart }, bars: { KometaBars }, donut: { KometaDonut }, spark: { KometaSpark }, gauge: { KometaGauge }, heat: { KometaHeat }, stat: { KometaStat }, tiles: { KometaTiles },
     field: { KometaField }, search: { KometaSearch }, notes: { KometaNotes }, code: { KometaCode }, digits: { KometaDigits },
     number: { KometaNumber }, stepper: { KometaStepper }, slider: { KometaSlider }, hue: { KometaHue }, rules: { KometaRules }, inplace: { KometaInplace }, badge: { KometaBadge }, panes: { KometaPanes }, context: { KometaContext }, select: { KometaSelect }, multi: { KometaMulti }, menu: { KometaMenu },
     suggest: { KometaSuggest },
@@ -537,6 +550,14 @@ export const appConfig: ApplicationConfig = {
   protected readonly words: KometaWordOption[] = [
     { value: 'day', label: 'Day' }, { value: 'week', label: 'Week', count: 12 }, { value: 'month', label: 'Month', count: 3, hot: true },
   ];
+  // #endregion
+  // #region donut/in-context
+  protected readonly mln = (v: number) => (v / 1e6).toLocaleString('en', { maximumFractionDigits: 1 }) + 'M';
+  // #endregion
+  // #region words/many words/wrap
+  protected readonly wordService = signal('colour');
+  protected readonly wordServices: KometaWordOption[] = ['All', 'Haircut', 'Beard', 'Colour', 'Styling', 'Kids', 'Manicure', 'Pedicure', 'Brows', 'Massage']
+    .map((label) => ({ value: label.toLowerCase(), label }));
   // #endregion
   // #region suggest/basic
   protected readonly client = signal('');

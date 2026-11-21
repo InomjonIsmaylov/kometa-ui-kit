@@ -600,6 +600,9 @@
           <div class="field"><k-suggest value="" [suggestions]="suggestions()" [optionTemplate]="aOpt" (query)="query($event)" placeholder="Type “az”" ariaLabel="Client with template" /></div>
           <div class="field"><k-suggest value="Read only" [suggestions]="[]" readonly ariaLabel="Read only client" /></div>
         </app-doc>
+        <app-doc id="line" heading="Line" about="line draws the input itself: an underline that lights up on focus, for a form with no field boxes. --suggest-line, --suggest-line-focus and --suggest-font-size tune it.">
+          <k-suggest line value="" [suggestions]="suggestions()" (query)="query($event)" placeholder="Type “az”" ariaLabel="Client, line" />
+        </app-doc>
         <app-doc id="customizing" heading="Customizing" about="--suggest-radius, --suggest-max-height and --suggest-row-height shape the list.">
           <div class="field"><k-suggest value="" [suggestions]="suggestions()" (query)="query($event)" placeholder="Type “az”" ariaLabel="Custom client"
                           style="--suggest-radius: 6px; --suggest-row-height: 40px; --suggest-max-height: 200px" /></div>
@@ -720,6 +723,12 @@
         </app-doc>
         <app-doc id="tabs" heading="Tabs" about="The same choice drawn as underlined tabs.">
           <k-words [options]="words" [(value)]="view" tabs ariaLabel="View tabs" />
+        </app-doc>
+        <app-doc id="many" heading="Many options" about="More options than fit scroll sideways: the cut edge fades (--words-fade), and the picked word scrolls into view.">
+          <div style="max-width: 320px"><k-words [options]="wordServices" [(value)]="wordService" tabs ariaLabel="Service" /></div>
+        </app-doc>
+        <app-doc id="wrap" heading="Wrap" about="wrap breaks the options onto more lines instead; --words-row-gap spaces them.">
+          <div style="max-width: 320px"><k-words [options]="wordServices" [(value)]="wordService" wrap ariaLabel="Service, wrapped" /></div>
         </app-doc>
         <app-doc id="customizing" heading="Customizing" about="--words-gap, --words-pad, --words-ink-on, --words-line and --words-line-height.">
           <k-words [options]="words" [(value)]="view" tabs ariaLabel="Custom tabs" style="--words-gap: 28px; --words-line: var(--amber); --words-line-height: 3px" />
@@ -1446,6 +1455,13 @@
             </k-fold>
           </div>
         </app-doc>
+        <app-doc id="divided" heading="Divided" about="divided on every fold of a list draws a hairline (--fold-line) between them.">
+          <div>
+            <k-fold divided><span fold-title>Monday</span><span fold-aside class="aside muted">9–18</span><ng-template><p>Two masters on shift.</p></ng-template></k-fold>
+            <k-fold divided><span fold-title>Tuesday</span><span fold-aside class="aside muted">9–18</span><ng-template><p>One master on shift.</p></ng-template></k-fold>
+            <k-fold divided><span fold-title>Wednesday</span><span fold-aside class="aside muted">Closed</span><ng-template><p>Day off.</p></ng-template></k-fold>
+          </div>
+        </app-doc>
         <app-doc id="disabled" heading="Disabled" about="The trigger cannot be pressed.">
           <k-fold disabled>
             <span fold-title>Locked section</span>
@@ -1475,6 +1491,9 @@
             <div class="ic-today-row"><b>13:00</b><k-person name="Malika Yusupova" meta="Colour" size="sm" /><k-tag tone="book">Booked</k-tag></div>
             <k-heading title="Tomorrow" [level]="4" [rule]="false"><button k-word quiet action>9 visits</button></k-heading>
           </div>
+        </app-doc>
+        <app-doc id="wrap" heading="Long title" about="When the action does not fit beside the title, it drops to its own line instead of being clipped; --heading-row-gap spaces the lines.">
+          <div style="max-width: 300px"><k-heading title="Visits waiting for a deposit" [level]="3"><button k-button size="small" severity="secondary" action>Send reminders</button></k-heading></div>
         </app-doc>
         <app-doc id="no-rule" heading="Without rule" about="rule false draws no hairline, so the action sits next to the title.">
           <k-heading title="Today's visits" [level]="3" [rule]="false"><button k-word action>See all</button></k-heading>
@@ -1986,6 +2005,345 @@
         </app-doc>
       }
 
+      <!-- ============================================================ Charts -->
+      @case ('chart') {
+        <app-doc id="basic" heading="Basic" about="One series: an amber line over its area, from 0 to a round top. Hover it, or focus it and use the arrow keys.">
+          <k-chart label="Takings per day, last two weeks" unit=" so‘m"
+                   [labels]="['1 Nov', '2 Nov', '3 Nov', '4 Nov', '5 Nov', '6 Nov', '7 Nov', '8 Nov', '9 Nov', '10 Nov', '11 Nov', '12 Nov', '13 Nov', '14 Nov']"
+                   [series]="[{ name: 'Takings', values: [1200000, 1450000, 980000, 1610000, 1880000, 2340000, 2100000, 1320000, 1500000, 1190000, 1740000, 1960000, 2480000, 2260000] }]" />
+        </app-doc>
+        <app-doc id="stacked" heading="Stacked" about="stacked puts each series on top of the one before it; the readout still gives each one's own value.">
+          <k-chart label="Revenue by plan, this year, in millions" stacked
+                   [labels]="['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']"
+                   [series]="[
+                     { name: 'Basic', values: [42, 44, 45, 47, 46, 48, 50, 51, 53, 54, 56, 58] },
+                     { name: 'Pro', values: [28, 30, 33, 35, 38, 40, 41, 44, 47, 49, 52, 55] },
+                     { name: 'Coach', values: [12, 13, 15, 16, 18, 21, 22, 24, 25, 27, 29, 31] }
+                   ]" />
+        </app-doc>
+        <app-doc id="band" heading="Band" about="band shades a low–high range per point (a normal range or a target) and fits the axis to it instead of starting at 0.">
+          <k-chart label="Weight at each visit against the expected range" unit=" kg"
+                   [labels]="['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov']"
+                   [series]="[{ name: 'Weight', values: [14.2, 14.9, 15.1, 15.8, 16.4, 16.9] }]"
+                   [band]="[[13, 16], [13.4, 16.5], [13.8, 17], [14.2, 17.4], [14.6, 17.9], [15, 18.3]]" />
+        </app-doc>
+        <app-doc id="limit" heading="Limit" about="limit draws a dashed line with its label, such as a capacity; the axis rises to fit it.">
+          <k-chart label="People in the club through the day, of 140 the floor holds"
+                   [labels]="['6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00']"
+                   [series]="[{ name: 'In the club', values: [18, 64, 52, 71, 48, 83, 132, 118, 36] }]"
+                   [limit]="{ value: 140, label: 'Capacity 140' }" />
+        </app-doc>
+        <app-doc id="now" heading="Now" about="now marks a point with a vertical line, a pulsing dot on the first series and a label; a series shorter than the labels stops there.">
+          <k-chart label="Orders today, 46 so far at 15:00, against last Friday"
+                   [labels]="['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00']"
+                   [series]="[
+                     { name: 'Today', values: [2, 6, 14, 25, 37, 46], area: true },
+                     { name: 'Last Friday', values: [3, 7, 12, 21, 30, 38, 45, 53, 64, 78, 89, 95], dashed: true }
+                   ]"
+                   [now]="{ index: 5, label: '46 now' }" />
+        </app-doc>
+        <app-doc id="series" heading="Series" about="Several series take the chart palette in turn and get a legend; color, area and dashed set each one. legend=false hides it.">
+          <k-chart label="Average wait in minutes, by branch, this week" unit=" min" [min]="0"
+                   [labels]="['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+                   [series]="[
+                     { name: 'Chilonzor', values: [12, 15, 11, 18, 22, 26, 14] },
+                     { name: 'Yunusobod', values: [9, 10, 13, 12, 16, 19, 11] },
+                     { name: 'Sergeli', values: [17, 14, 16, 21, 19, 24, 20] },
+                     { name: 'Target', values: [15, 15, 15, 15, 15, 15, 15], dashed: true, color: 'var(--muted)' }
+                   ]" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A dashboard card: a heading with a tag over a month of takings.">
+          <div style="display: grid; gap: 12px; padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--card)">
+            <k-heading title="November takings" [level]="3"><k-tag action tone="done">+12% on October</k-tag></k-heading>
+            <k-chart label="Takings per open day in November, highest 2.5M on 13 Nov" unit=" so‘m" style="--chart-height: 160px"
+                     [labels]="['1 Nov', '2 Nov', '4 Nov', '5 Nov', '6 Nov', '7 Nov', '8 Nov', '9 Nov', '11 Nov', '12 Nov', '13 Nov', '14 Nov', '15 Nov', '16 Nov', '18 Nov', '19 Nov', '20 Nov']"
+                     [series]="[{ name: 'Takings', values: [1200000, 1450000, 980000, 1610000, 1880000, 2340000, 2100000, 1320000, 1500000, 1190000, 2480000, 2260000, 1740000, 1960000, 1410000, 1670000, 2020000] }]"
+                     [now]="{ index: 16, label: 'Today' }" />
+          </div>
+        </app-doc>
+        <app-doc id="chart-custom" heading="Customizing" about="--chart-height, --chart-color, --chart-axis, --chart-band, --chart-limit and --chart-area-opacity.">
+          <k-chart label="Sessions per week, custom look"
+                   style="--chart-height: 140px; --chart-color: var(--viz-2); --chart-axis: 28px; --chart-band: var(--viz-1); --chart-limit: var(--amber); --chart-area-opacity: .3"
+                   [labels]="['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8']"
+                   [series]="[{ name: 'Sessions', values: [8, 11, 9, 14, 16, 13, 18, 21] }]"
+                   [band]="[[10, 14], [10, 14], [11, 15], [11, 15], [12, 16], [12, 16], [13, 17], [13, 17]]"
+                   [limit]="{ value: 20, label: 'Goal' }" />
+        </app-doc>
+      }
+      @case ('bars') {
+<app-doc id="basic" heading="Basic" about="One bar per item, scaled to a round top over the tallest one. Hover a column for its figure.">
+  <k-bars label="Visits per day this week"
+          [items]="[{ label: 'Mon', value: 12 }, { label: 'Tue', value: 18 }, { label: 'Wed', value: 9 }, { label: 'Thu', value: 22 }, { label: 'Fri', value: 26 }, { label: 'Sat', value: 31 }, { label: 'Sun', value: 4 }]" />
+</app-doc>
+<app-doc id="bars-grouped" heading="Grouped" about="An array value draws one bar per series; series names the legend and sets colours (the chart palette when unset). A negative figure hangs below the zero line.">
+  <k-bars label="Joins and cancellations by month"
+          [series]="[{ name: 'Joined' }, { name: 'Cancelled', color: 'var(--red)' }]"
+          [items]="[{ label: 'Jan', value: [34, -6] }, { label: 'Feb', value: [28, -4] }, { label: 'Mar', value: [41, -9] }, { label: 'Apr', value: [37, -5] }, { label: 'May', value: [45, -7] }, { label: 'Jun', value: [39, -3] }]" />
+</app-doc>
+<app-doc id="bars-values" heading="Values" about="showValues prints each figure over its bar; good for a handful of bars.">
+  <k-bars label="Members by visits per week" [showValues]="true"
+          [items]="[{ label: '0', value: 18 }, { label: '1', value: 42 }, { label: '2', value: 65 }, { label: '3', value: 37 }, { label: '4+', value: 21 }]" />
+</app-doc>
+<app-doc id="bars-mark" heading="Mark" about="mark highlights one bar and dims the rest; markLabel pins a small label over it. max fixes the top of the scale.">
+  <k-bars label="Doctors with a patient each half hour" [max]="6" [mark]="5" markLabel="Now"
+          [items]="[{ label: '09:00', value: 3 }, { label: '09:30', value: 5 }, { label: '10:00', value: 6 }, { label: '10:30', value: 6 }, { label: '11:00', value: 4 }, { label: '11:30', value: 5 }, { label: '12:00', value: 2 }, { label: '12:30', value: 1 }, { label: '13:00', value: 3 }, { label: '13:30', value: 4 }]" />
+</app-doc>
+<app-doc id="bars-axis" heading="No axis" about="axis false drops the gridlines and tick labels for a quiet sparkline-like strip; note gives a longer name to the tooltip and the table.">
+  <k-bars label="Tickets per quarter hour since 17:00" [axis]="false" style="--bars-height: 72px"
+          [items]="[{ label: '17:00', note: '17:00 – 17:15', value: 4 }, { label: '', note: '17:15 – 17:30', value: 7 }, { label: '17:30', note: '17:30 – 17:45', value: 11 }, { label: '', note: '17:45 – 18:00', value: 9 }, { label: '18:00', note: '18:00 – 18:15', value: 14 }, { label: '', note: '18:15 – 18:30', value: 12, color: 'var(--viz-2)' }]" />
+</app-doc>
+<app-doc id="in-context" heading="In context" about="A dashboard card: today's visits by starting hour, with the current hour pinned.">
+  <div class="ic-card ic-wide">
+    <p class="ic-card-title">Today</p>
+    <div class="row"><b style="font-size: 28px">64</b><span class="muted">visits, 9 more than last Tuesday</span></div>
+    <k-bars label="Today's visits by starting hour" [mark]="6" markLabel="Now"
+            [items]="[{ label: '9', value: 3 }, { label: '10', value: 6 }, { label: '11', value: 8 }, { label: '12', value: 5 }, { label: '13', value: 4 }, { label: '14', value: 7 }, { label: '15', value: 9 }, { label: '16', value: 8 }, { label: '17', value: 6 }, { label: '18', value: 5 }, { label: '19', value: 3 }]" />
+  </div>
+</app-doc>
+<app-doc id="bars-custom" heading="Customizing" about="--bars-height, --bars-color, --bars-gap, --bars-radius, --bars-max-width and --bars-axis-width.">
+  <k-bars label="Orders per hour" style="--bars-height: 120px; --bars-color: var(--viz-1); --bars-gap: 10px; --bars-radius: 8px; --bars-max-width: 28px; --bars-axis-width: 24px"
+          [items]="[{ label: '12', value: 14 }, { label: '13', value: 23 }, { label: '14', value: 17 }, { label: '15', value: 8 }, { label: '16', value: 11 }]" />
+</app-doc>
+      }
+      @case ('donut') {
+        <app-doc id="basic" heading="Basic" about="One arc per item, coloured from the chart palette, the total and caption in the middle. Point at a slice or legend row to read it.">
+          <k-donut [items]="[{ label: 'Haircut', value: 42 }, { label: 'Beard', value: 21 }, { label: 'Colour', value: 12 }, { label: 'Kids', value: 7 }]"
+                   label="Visits this week by service" caption="visits this week" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Revenue by service on a dashboard card, with money formatted for the middle and the legend.">
+          <div class="ic-card" style="max-width: 520px">
+            <p class="ic-card-title">Revenue by service</p>
+            <k-donut [items]="[{ label: 'Haircut', value: 3360000 }, { label: 'Colour', value: 3000000 }, { label: 'Beard', value: 840000 }]"
+                     label="Revenue this month by service" caption="so'm this month" [format]="mln" />
+          </div>
+        </app-doc>
+        <app-doc id="donut-middle" heading="Own middle, no legend" about="Projected content replaces the total; legend false hides the key, so name the colours elsewhere.">
+          <k-donut [items]="[{ label: 'Returning', value: 68, color: 'var(--green)' }, { label: 'First time', value: 32, color: 'var(--border2)' }]"
+                   label="68% of visits from returning clients" [legend]="false"><b style="font: 700 22px/1 var(--font-display)">68%</b></k-donut>
+        </app-doc>
+        <app-doc id="donut-custom" heading="Customizing" about="--donut-size, --donut-stroke, --donut-gap and --donut-total-size.">
+          <k-donut [items]="[{ label: 'Cash', value: 30 }, { label: 'Card', value: 55 }, { label: 'Click', value: 15 }]" label="Payments by method"
+                   caption="payments" style="--donut-size: 120px; --donut-stroke: 8; --donut-gap: 32px; --donut-total-size: 20px" />
+        </app-doc>
+      }
+      @case ('spark') {
+        <app-doc id="basic" heading="Basic" about="A trend from a zero baseline, a soft fill and a dot on the latest value. It wipes in the first time it is on screen.">
+          <div style="max-width: 240px"><k-spark [values]="[3, 5, 4, 8, 7, 11, 10]" label="Visits per day this week, from 3 to 10" /></div>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Beside the figure it explains: the line needs no label of its own, so it stays hidden from screen readers.">
+          <div class="ic-card" style="max-width: 280px">
+            <span class="muted">Takings this week</span>
+            <b style="font: 700 28px/1.1 var(--font-display)">4.8M so'm</b>
+            <k-spark [values]="[0.5, 0.6, 0.55, 0.7, 0.8, 0.75, 0.9]" />
+          </div>
+        </app-doc>
+        <app-doc id="spark-color" heading="Colour, line only" about="color sets the line; fill false leaves out the area and dot false the latest-value dot.">
+          <div class="row" style="max-width: 520px">
+            <k-spark style="flex: 1" [values]="[9, 7, 8, 5, 4, 3]" color="var(--red)" label="No-shows, falling from 9 to 3" />
+            <k-spark style="flex: 1" [values]="[2, 4, 3, 6, 5, 8]" color="var(--viz-3)" [fill]="false" [dot]="false" label="Queue length, from 2 to 8" />
+          </div>
+        </app-doc>
+        <app-doc id="spark-custom" heading="Customizing" about="--spark-height, --spark-color, --spark-fill-opacity and --spark-dot-ring.">
+          <div style="max-width: 240px"><k-spark [values]="[3, 5, 4, 8, 7, 11, 10]" style="--spark-height: 56px; --spark-color: var(--green); --spark-fill-opacity: .24" /></div>
+        </app-doc>
+      }
+      @case ('gauge') {
+        <app-doc id="basic" heading="Basic" about="A three-quarter ring filled to value / max with the percentage inside; label says what it means.">
+          <k-gauge [value]="7" [max]="9" label="7 of 9 slots booked" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="Each master's day as a ring: how full the book is at a glance, the name beside it.">
+          <div class="ic-card" style="display: grid; gap: 12px; max-width: 320px">
+            <div class="row"><k-gauge [value]="8" [max]="9" label="Aziz, 8 of 9 slots booked" /><span>Aziz · 8 of 9</span></div>
+            <div class="row"><k-gauge [value]="5" [max]="9" label="Dilnoza, 5 of 9 slots booked" /><span>Dilnoza · 5 of 9</span></div>
+            <div class="row"><k-gauge [value]="2" [max]="9" label="Malika, 2 of 9 slots booked" /><span>Malika · 2 of 9</span></div>
+          </div>
+        </app-doc>
+        <app-doc id="gauge-content" heading="Own middle" about="Projected content replaces the percentage: a count, an icon, a face.">
+          <k-gauge [value]="12" [max]="20" label="12 of 20 places taken"><b style="font: 700 16px/1 var(--font-display)">12<small class="muted">/20</small></b></k-gauge>
+        </app-doc>
+        <app-doc id="gauge-custom" heading="Customizing" about="--gauge-size, --gauge-stroke, --gauge-color, --gauge-track and --gauge-font-size.">
+          <k-gauge [value]="92" label="92% of the week booked" style="--gauge-size: 140px; --gauge-stroke: 6; --gauge-color: var(--green); --gauge-font-size: 28px" />
+        </app-doc>
+      }
+      @case ('heat') {
+<app-doc id="basic" heading="Basic" about="rows × cols, shaded from an empty cell to full --heat-rgb. It is a real table, so a screen reader can walk it; hover a cell for its figure.">
+  <k-heat label="Visits this week by day and starting hour" unit="visits"
+          [cols]="['9', '10', '11', '12', '13', '14', '15', '16', '17', '18']"
+          [rows]="[
+            { label: 'Mon', values: [1, 3, 4, 2, 1, 2, 4, 5, 6, 3] },
+            { label: 'Tue', values: [0, 2, 5, 3, 2, 3, 5, 6, 7, 4] },
+            { label: 'Wed', values: [2, 4, 6, 4, 2, 3, 4, 6, 8, 5] },
+            { label: 'Thu', values: [1, 3, 5, 3, 1, 2, 5, 7, 9, 6] },
+            { label: 'Fri', values: [2, 5, 7, 5, 3, 4, 6, 8, 9, 7] },
+            { label: 'Sat', values: [4, 7, 9, 8, 6, 7, 8, 6, 4, 2] }
+          ]" />
+</app-doc>
+<app-doc id="heat-calendar" heading="Calendar" about="days draws a GitHub-style calendar: weekday rows, week columns and month labels. A day missing from the list is a gap; a hidden list reads them all.">
+  <k-heat label="Check-ins over the last weeks" unit="check-ins"
+          [days]="[
+            { date: '2026-09-21', value: 1 }, { date: '2026-09-23', value: 1 }, { date: '2026-09-25', value: 2 },
+            { date: '2026-09-28', value: 1 }, { date: '2026-09-29', value: 0 }, { date: '2026-10-01', value: 1 },
+            { date: '2026-10-03', value: 3 }, { date: '2026-10-05', value: 1 }, { date: '2026-10-07', value: 2 },
+            { date: '2026-10-09', value: 1 }, { date: '2026-10-12', value: 0 }, { date: '2026-10-14', value: 1 },
+            { date: '2026-10-16', value: 2 }, { date: '2026-10-17', value: 1 }, { date: '2026-10-19', value: 1 },
+            { date: '2026-10-21', value: 3 }, { date: '2026-10-23', value: 1 }, { date: '2026-10-26', value: 2 },
+            { date: '2026-10-28', value: 1 }, { date: '2026-10-30', value: 2 }, { date: '2026-11-02', value: 1 },
+            { date: '2026-11-04', value: 1 }, { date: '2026-11-06', value: 3 }, { date: '2026-11-09', value: 2 },
+            { date: '2026-11-11', value: 1 }, { date: '2026-11-13', value: 2 }, { date: '2026-11-16', value: 1 },
+            { date: '2026-11-18', value: 2 }, { date: '2026-11-20', value: 1 }
+          ]" />
+</app-doc>
+<app-doc id="heat-week-start" heading="Week start" about="weekStart 0 puts Sunday on the top row; max fixes the figure that gets the full colour.">
+  <k-heat label="Orders per day" unit="orders" [weekStart]="0" [max]="40"
+          [days]="[
+            { date: '2026-11-01', value: 18 }, { date: '2026-11-02', value: 22 }, { date: '2026-11-03', value: 25 },
+            { date: '2026-11-04', value: 31 }, { date: '2026-11-05', value: 28 }, { date: '2026-11-06', value: 40 },
+            { date: '2026-11-07', value: 36 }, { date: '2026-11-08', value: 14 }, { date: '2026-11-09', value: 20 },
+            { date: '2026-11-10', value: 24 }, { date: '2026-11-11', value: 0 }, { date: '2026-11-12', value: 29 },
+            { date: '2026-11-13', value: 38 }, { date: '2026-11-14', value: 33 }
+          ]" />
+</app-doc>
+<app-doc id="heat-gaps" heading="Gaps and key" about="null in a row is a gap (closed); lessLabel and moreLabel name the ends of the key.">
+  <k-heat label="Bookings per hour, Monday to Saturday" unit="bookings" lessLabel="Quiet" moreLabel="Busy"
+          [cols]="['8', '10', '12', '14', '16', '18']"
+          [rows]="[
+            { label: 'Mon', values: [2, 4, 3, 5, 6, 4] },
+            { label: 'Wed', values: [3, 5, 4, null, null, null] },
+            { label: 'Sat', values: [6, 8, 7, 5, null, null] }
+          ]" />
+</app-doc>
+<app-doc id="in-context" heading="In context" about="A member's attendance card: the streak on top, the calendar under it.">
+  <div class="ic-card ic-wide">
+    <p class="ic-card-title">Attendance</p>
+    <div class="row"><b style="font-size: 28px">3</b><span class="muted">visits a week on average, best streak 9 days</span></div>
+    <k-heat label="Aziz's check-ins since October" unit="check-ins"
+            [days]="[
+              { date: '2026-10-05', value: 1 }, { date: '2026-10-06', value: 0 }, { date: '2026-10-07', value: 1 },
+              { date: '2026-10-09', value: 2 }, { date: '2026-10-12', value: 1 }, { date: '2026-10-14', value: 1 },
+              { date: '2026-10-15', value: 1 }, { date: '2026-10-16', value: 3 }, { date: '2026-10-19', value: 1 },
+              { date: '2026-10-21', value: 2 }, { date: '2026-10-23', value: 1 }, { date: '2026-10-26', value: 1 },
+              { date: '2026-10-28', value: 2 }, { date: '2026-11-02', value: 1 }, { date: '2026-11-04', value: 1 },
+              { date: '2026-11-06', value: 2 }, { date: '2026-11-09', value: 1 }, { date: '2026-11-11', value: 3 },
+              { date: '2026-11-13', value: 1 }, { date: '2026-11-16', value: 2 }, { date: '2026-11-18', value: 1 },
+              { date: '2026-11-20', value: 1 }
+            ]" />
+  </div>
+</app-doc>
+<app-doc id="heat-custom" heading="Customizing" about="--heat-rgb (an RGB triple), --heat-empty, --heat-cell-height, --heat-cell-min, --heat-label-width and --heat-radius.">
+  <k-heat label="Tables taken by hour" unit="tables"
+          style="--heat-rgb: 60, 198, 180; --heat-empty: var(--card); --heat-cell-height: 34px; --heat-cell-min: 40px; --heat-label-width: 36px; --heat-radius: 10px"
+          [cols]="['18', '19', '20', '21', '22']"
+          [rows]="[{ label: 'Fri', values: [4, 9, 12, 10, 5] }, { label: 'Sat', values: [6, 11, 14, 13, 8] }]" />
+</app-doc>
+      }
+      @case ('stat') {
+        <app-doc id="stat" heading="Stat" about="A label, a number that counts up and a muted line, on a card.">
+          <k-stat label="Visits today" [value]="412" sub="38 still to come" />
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A dashboard KPI row: five stats in k-tiles, a note on Revenue, sparklines under the figures.">
+          <k-tiles>
+            <k-stat label="Revenue" [value]="48200000" unit="so'm" locale="ru-RU" [trend]="12" trendLabel="vs last week" sub="214 paid visits">
+              <k-note k-stat-note label="About revenue">Closed checks since 12:00, after discounts, before the service charge.</k-note>
+              <k-spark [values]="[31, 34, 29, 40, 38, 44, 48]" label="Revenue, last 7 days" />
+            </k-stat>
+            <k-stat label="Visits" [value]="412" [trend]="6" trendLabel="vs last week" sub="38 still to come">
+              <k-spark [values]="[360, 372, 380, 391, 388, 402, 412]" label="Visits, last 7 days" />
+            </k-stat>
+            <k-stat label="Average wait" [value]="14" unit="min" [trend]="-9" trendGood="down" trendLabel="vs yesterday" sub="Longest 31 min" />
+            <k-stat label="No-shows" [value]="7" [trend]="3" trendUnit="" trendGood="down" trendLabel="vs last week" sub="3% of bookings" />
+            <k-stat label="Rating" value="4.8" unit="of 5" sub="1,204 reviews" />
+          </k-tiles>
+        </app-doc>
+        <app-doc id="stat-trend" heading="Trend" about="trend is a percent change, green when it goes the good way; trendGood down flips that, and an empty trendUnit shows a plain count.">
+          <div class="row">
+            <k-stat label="Check-ins" [value]="1280" [trend]="12" trendLabel="vs last week" />
+            <k-stat label="Churn" value="2.4" unit="%" [trend]="-0.6" trendGood="down" trendLabel="this month" />
+            <k-stat label="Members" [value]="842" [trend]="18" trendUnit="" trendLabel="joined this month" />
+          </div>
+        </app-doc>
+        <app-doc id="stat-string" heading="Text figure" about="A string shows as is, without counting: a formatted price, a rating, a dash for no data.">
+          <div class="row">
+            <k-stat label="MRR" value="12.4M" unit="so'm" />
+            <k-stat label="Average wait" value="—" sub="Nobody waiting" />
+          </div>
+        </app-doc>
+        <app-doc id="stat-slot" heading="Other content" about="With no value, the default slot takes the figure's place: a k-meter, a k-split.">
+          <k-stat label="Chair load">
+            <k-meter [value]="17" [max]="25" label="slots booked" />
+          </k-stat>
+        </app-doc>
+        <app-doc id="stat-loading" heading="Loading" about="loading holds the figure's place with a k-skeleton hairline and sets aria-busy.">
+          <k-stat label="Revenue" loading sub="Counting today's checks" />
+        </app-doc>
+        <app-doc id="stat-bare" heading="Bare" about="bare drops the card surface, for figures inside a card of your own.">
+          <div class="row">
+            <k-stat bare label="MRR at these prices" value="12.4M" unit="so'm" />
+            <k-stat bare label="Members on a plan" [value]="842" />
+            <k-stat bare label="Average a member" value="147K" unit="so'm" />
+          </div>
+        </app-doc>
+        <app-doc id="stat-custom" heading="Customizing" about="--stat-bg, --stat-border, --stat-radius, --stat-pad, --stat-gap, --stat-label-color, --stat-figure-size, --stat-up and --stat-down.">
+          <k-stat style="--stat-bg: transparent; --stat-border: var(--amber); --stat-radius: 4px; --stat-pad: 14px; --stat-figure-size: 48px; --stat-label-color: var(--amber); --stat-up: var(--amber)"
+                  label="Check-ins today" [value]="1280" [trend]="12" trendLabel="vs last week" />
+        </app-doc>
+      }
+      @case ('tiles') {
+        <app-doc id="tiles" heading="Tiles" about="Resize the preview: five tiles go 5, then 3+2, then 2+2+1 with the last spanning, then one column.">
+          <k-tiles>
+            <k-stat label="Revenue" value="48.2M" unit="so'm" />
+            <k-stat label="Visits" [value]="412" />
+            <k-stat label="Average wait" [value]="14" unit="min" />
+            <k-stat label="No-shows" [value]="7" />
+            <k-stat label="Rating" value="4.8" unit="of 5" />
+          </k-tiles>
+        </app-doc>
+        <app-doc id="in-context" heading="In context" about="A dashboard KPI row: k-stats with a note and sparklines, kept in balanced rows at any width.">
+          <k-tiles [gap]="12">
+            <k-stat label="Covers" [value]="186" [trend]="8" trendLabel="vs last Friday">
+              <k-spark [values]="[12, 30, 44, 58, 96, 150, 186]" label="Covers since noon" />
+            </k-stat>
+            <k-stat label="Revenue" value="21.6M" unit="so'm" [trend]="5" trendLabel="vs last Friday">
+              <k-note k-stat-note label="About revenue">Closed checks since 12:00, after discounts, before the 10% service charge.</k-note>
+              <k-spark [values]="[1.2, 3.4, 5.1, 7.9, 12.2, 17.5, 21.6]" label="Revenue since noon, M so'm" />
+            </k-stat>
+            <k-stat label="Average check" value="116K" unit="so'm" sub="186 checks closed" />
+            <k-stat label="Tables occupied">
+              <k-meter [value]="14" [max]="22" label="tables seated now" />
+            </k-stat>
+            <k-stat label="In the kitchen" [value]="9" [trend]="2" trendUnit="" trendGood="down" sub="2 late" />
+          </k-tiles>
+        </app-doc>
+        <app-doc id="tiles-seven" heading="Seven tiles" about="4+3 when four fit, 3+2+2 when three do, 2+2+2+1 at two columns.">
+          <k-tiles [min]="140">
+            @for (d of ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; track d) {
+              <k-stat [label]="d" [value]="40 + $index * 7" sub="visits" />
+            }
+          </k-tiles>
+        </app-doc>
+        <app-doc id="tiles-max" heading="Max" about="max caps the tiles on one row: with max 2, four tiles stay 2+2 at any width.">
+          <k-tiles [max]="2">
+            <k-stat label="Cash" value="8.1M" unit="so'm" />
+            <k-stat label="Card" value="13.5M" unit="so'm" />
+            <k-stat label="Transfers" value="2.0M" unit="so'm" />
+            <k-stat label="Refunds" value="0.3M" unit="so'm" />
+          </k-tiles>
+        </app-doc>
+        <app-doc id="tiles-min" heading="Min and gap" about="min is the narrowest a tile may get and gap the space between them, both in px.">
+          <k-tiles [min]="240" [gap]="24">
+            <k-stat label="Members" [value]="842" />
+            <k-stat label="Active" [value]="611" />
+            <k-stat label="Frozen" [value]="38" />
+          </k-tiles>
+        </app-doc>
+        <app-doc id="tiles-custom" heading="Customizing" about="k-tiles has no CSS vars: its tiles are any elements, styled as you like, and it only sets their grid-column.">
+          <k-tiles [min]="120" [gap]="8">
+            @for (n of [1, 2, 3, 4, 5]; track n) {
+              <div style="padding: 16px; border: 1px dashed var(--border); border-radius: 8px; background: var(--card); text-align: center">Tile {{ n }}</div>
+            }
+          </k-tiles>
+        </app-doc>
+      }
+
       <!-- ============================================================ Misc -->
       @case ('meter') {
         <app-doc id="meter" heading="Meter" about="Progress toward a limit.">
@@ -2269,6 +2627,14 @@
               </k-quiet>
             }
           </div>
+        </app-doc>
+        <app-doc id="art" heading="With a picture" about="An element with the art attribute goes above the title, at most --quiet-art-size wide.">
+          <k-quiet title="No visits yet" hint="Book the first one and it shows up here.">
+            <svg art viewBox="0 0 120 80" width="120" height="80" aria-hidden="true" fill="none" stroke="var(--border2)" stroke-width="2">
+              <rect x="14" y="14" width="92" height="56" rx="10" /><path d="M14 30h92M38 8v12M82 8v12" />
+              <circle cx="60" cy="50" r="9" stroke="var(--amber)" />
+            </svg>
+          </k-quiet>
         </app-doc>
         <app-doc id="quiet-custom" heading="Customizing" about="--quiet-padding, --quiet-title-size and --quiet-hint-width.">
           <k-quiet style="--quiet-padding: 8px 0; --quiet-title-size: 16px; --quiet-hint-width: 16rem" title="No visits yet" hint="Book the first one and it shows up here." />

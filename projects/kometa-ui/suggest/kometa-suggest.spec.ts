@@ -70,4 +70,15 @@ describe('KometaSuggest', () => {
     expect(el.querySelectorAll('.opt').length).toBe(0);
     fixture.destroy();
   });
+
+  it('draws its own underline only with line', () => {
+    const plain = TestBed.createComponent(KometaSuggest);
+    plain.detectChanges();
+    expect((plain.nativeElement as HTMLElement).classList.contains('line')).toBe(false);
+    plain.componentRef.setInput('line', '');
+    plain.detectChanges();
+    expect((plain.nativeElement as HTMLElement).classList.contains('line')).toBe(true);
+    const css = ((KometaSuggest as unknown as { ɵcmp: { styles: string[] } }).ɵcmp.styles ?? []).join('').replaceAll('%NS%', '');
+    expect(css).toMatch(/\.line[^{]*input[^{]*\{[^}]*border-bottom/);
+  });
 });

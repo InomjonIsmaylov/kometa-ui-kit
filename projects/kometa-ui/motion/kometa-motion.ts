@@ -1,4 +1,4 @@
-import { CSP_NONCE, Directive, DOCUMENT, ElementRef, OnDestroy, afterNextRender, computed, inject, input, numberAttribute } from '@angular/core';
+import { CSP_NONCE, Directive, DOCUMENT, ElementRef, OnDestroy, afterNextRender, computed, inject, input, numberAttribute, output, signal } from '@angular/core';
 
 /** The built-in motions. Each is one `@keyframes k-m-<name>` that describes the hidden state, so it plays in forwards and out in reverse. */
 export const KOMETA_ANIMATIONS = ['none', 'fade', 'rise', 'drop', 'left', 'right', 'scale', 'zoom', 'spring', 'flip', 'blur'] as const;
@@ -117,6 +117,48 @@ export class KometaAnimate implements OnDestroy {
 
   replay(): void {
     for (const a of this.el.getAnimations?.() ?? []) if (a instanceof CSSAnimation) { a.cancel(); a.play(); }
+  }
+
+  ngOnDestroy(): void {
+    this.io?.disconnect();
+  }
+}
+
+/**
+ * Marks an element as seen the first time `kInViewThreshold` of it (a share, 0.25 by default) is on screen: it gets the
+ * `k-seen` class, `seen()` turns true and `(kInView)` fires once. For an entrance with several parts, such as a chart
+ * whose bars grow one after another: keep the hidden state in CSS under `:not(.k-seen)` (inside
+ * `prefers-reduced-motion: no-preference`) and let `.k-seen` play it. The kit's charts use it as a host directive.
+ * Without IntersectionObserver (server, old browsers) the element counts as seen at once.
+ *
+ *     <figure kInView (kInView)="load()">…</figure>
+ */
+@Directive({ selector: '[kInView]', exportAs: 'kInView', host: { '[class.k-seen]': 'seen()' } })
+export class KometaInView implements OnDestroy {
+  readonly kInViewThreshold = input(0.25, { transform: numberAttribute });
+  /** Fires once, when the element is first seen. */
+  readonly kInView = output<void>();
+  private readonly shown = signal(false);
+  /** True from the moment the element was first seen. */
+  readonly seen = this.shown.asReadonly();
+  private readonly el = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+  private io?: IntersectionObserver;
+
+  constructor() {
+    afterNextRender(() => {
+      if (typeof IntersectionObserver === 'undefined') return this.mark();
+      this.io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) this.mark();
+      }, { threshold: this.kInViewThreshold() });
+      this.io.observe(this.el);
+    });
+  }
+
+  private mark(): void {
+    this.io?.disconnect();
+    if (this.shown()) return;
+    this.shown.set(true);
+    this.kInView.emit();
   }
 
   ngOnDestroy(): void {

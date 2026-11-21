@@ -58,6 +58,11 @@ Tailwind v4: also `@import 'kometa-ui/styles/kometa-theme.css';` to map the toke
 - Theme: `inject(ThemeService).set('light' | 'dark' | 'system')`; it writes `data-theme` on `<html>`. Without it the
   system preference wins, dark when the system says nothing.
 - `k-tabbar` tabs with `link` and `k-row` with `link` use the router, so the app needs `provideRouter(...)`.
+- Charts (`k-chart`, `k-bars`, `k-donut`, `k-spark`, `k-gauge`, `k-heat`) take plain data and a required `label`
+  for screen readers, colour series from `--viz-1`…`--viz-5` (`chartColor(i)`), and play their entrance once
+  when first on screen (`KometaInView`, `[kInView]`, which you can use on your own elements). Lay KPI tiles
+  (`k-stat`) out in `k-tiles`, which never leaves one tile alone on a row. For a chart the kit lacks, draw it
+  with the same maths from `kometa-ui/scale` (`niceScale`, `spread`, `linePath`, `areaPath`, `arcs`, `compactNumber`).
 
 ## Styling and theming
 

@@ -25,12 +25,13 @@ The content half: rows animate 0fr to 1fr (420ms spring, the content fading up 4
 
 ## `k-fold` — KometaFold
 
-A disclosure: a real `<button aria-expanded aria-controls>` header (project the title as `<span fold-title>`, any sibling controls as `[fold-aside]`) and a `role="region"` body (an `<ng-template>` child, created only while open). `open` is a model: `[(open)]` or `[open]` and `(openChange)`. The trigger's padding is `--fold-pad`, its hover fill `--fold-hover`.
+A disclosure: a real `<button aria-expanded aria-controls>` header (project the title as `<span fold-title>`, any sibling controls as `[fold-aside]`) and a `role="region"` body (an `<ng-template>` child, created only while open). `open` is a model: `[(open)]` or `[open]` and `(openChange)`. The trigger's padding is `--fold-pad`, its hover fill `--fold-hover`. In a list of folds, `divided` draws a hairline (`--fold-line`) above each one but the first.
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
 | `open` | model (two-way `[( )]`) | `boolean` | `false` |  |
 | `disabled` | input | `boolean` | `false` |  |
+| `divided` | input | `boolean` | `false` | A hairline above this fold unless it is the first child: set it on every fold of a list. |
 
 ## `k-accordion-item` — KometaAccordionItem
 
@@ -69,6 +70,15 @@ Plays a motion on any element, once: as it renders (`kAnimateOn="enter"`, the de
 | `kAnimateOn` | input | `"enter" \| "view"` | `'enter'` |  |
 | `kAnimateDelay` | input | `number` | `0` |  |
 | `kAnimateDuration` | input | `number` | `600` |  |
+
+## `[kInView]` — KometaInView
+
+Marks an element as seen the first time `kInViewThreshold` of it (a share, 0.25 by default) is on screen: it gets the `k-seen` class, `seen()` turns true and `(kInView)` fires once. For an entrance with several parts, such as a chart whose bars grow one after another: keep the hidden state in CSS under `:not(.k-seen)` (inside `prefers-reduced-motion: no-preference`) and let `.k-seen` play it. The kit's charts use it as a host directive. Without IntersectionObserver (server, old browsers) the element counts as seen at once. <figure kInView (kInView)="load()">…</figure>
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `kInViewThreshold` | input | `number` | `0.25` |  |
+| `kInView` | output | `void` |  | Fires once, when the element is first seen. |
 
 ## `k-actions` — KometaActions
 
@@ -397,7 +407,7 @@ An icon-only button with no drawn box: 44px, muted glyph, and a disc of light th
 
 ## `k-heading` — KometaHeading
 
-A Syne title and a hairline that runs out to the action, which is any element with an `action` attribute projected into it. With no action the hairline runs out to the edge. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Heading: rule".
+A Syne title and a hairline that runs out to the action, which is any element with an `action` attribute projected into it. With no action the hairline runs out to the edge. When the action does not fit beside the title (a long name, a phone), it drops to its own line instead of being clipped; `--heading-row-gap` spaces the two lines. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Heading: rule".
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -477,7 +487,7 @@ A week of marks. A null mark is a muted day with a dash under the label. Spec: d
 
 ## `k-words` — KometaWords
 
-A handful of words with a cream line under the pressed one. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
+A handful of words with a cream line under the pressed one. A row too long for its box scrolls sideways, and the side with hidden words fades out (`--words-fade`) so it reads as more, not as clipped; the pressed word is scrolled into view. `wrap` lets the words break onto further lines instead. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -487,6 +497,7 @@ A handful of words with a cream line under the pressed one. Spec: docs/superpowe
 | `disabled` | input | `boolean` | `false` |  |
 | `tabs` | input | `boolean` | `false` | A real tab strip (its words switch panels): tablist/tab roles, aria-selected, one tab stop, arrow keys. |
 | `optionTemplate` | input | `TemplateRef<{ $implicit: KometaWordOption; }> \| null` | `null` |  |
+| `wrap` | input | `boolean` | `false` | Lets the words break onto more lines when they do not fit, instead of scrolling sideways. |
 
 ## `k-menu` — KometaMenu
 
@@ -677,7 +688,7 @@ A small panel hung off a button: a glass card in the browser's top layer (so a d
 
 ## `k-quiet` — KometaQuiet
 
-Empty state: a Syne title and one muted sentence. No picture. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
+Empty state: a Syne title and one muted sentence. A picture, if any, is an element with the `art` attribute: it sits above the title in a box at most `--quiet-art-size` wide (160px) and sizes itself; anything else projected goes under the hint, e.g. a button. Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -945,7 +956,7 @@ A vertical rail of named steps with one cream bead that travels down to the curr
 
 ## `k-suggest` — KometaSuggest
 
-A text field that offers people while you type. The field is a plain `<input>` (the console's underlined field draws it), free text always: a word nobody has is simply what was typed. From `minLength` letters, after `delay` ms of quiet, `(query)` fires with the text and the page answers by setting `suggestions`; the list is a glass panel in the browser's top layer under the field (so a sheet cannot clip it), flips above when there is no room, and the field keeps focus (`aria-activedescendant`): Arrow keys move over the rows, Enter picks, Escape or a click outside closes. `(picked)` carries the chosen row; the field then holds its label. Spec: kometa-suggest.spec.ts.
+A text field that offers people while you type. The field is a plain `<input>` (the console's underlined field draws it), free text always: a word nobody has is simply what was typed. From `minLength` letters, after `delay` ms of quiet, `(query)` fires with the text and the page answers by setting `suggestions`; the list is a glass panel in the browser's top layer under the field (so a sheet cannot clip it), flips above when there is no room, and the field keeps focus (`aria-activedescendant`): Arrow keys move over the rows, Enter picks, Escape or a click outside closes. `(picked)` carries the chosen row; the field then holds its label. With no field around it, `line` draws its own underline (`--suggest-line`, `--suggest-line-focus`). Spec: kometa-suggest.spec.ts.
 
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
@@ -958,6 +969,7 @@ A text field that offers people while you type. The field is a plain `<input>` (
 | `delay` | input | `number` | `300` | Milliseconds of quiet before `(query)` fires. |
 | `disabled` | input | `boolean` | `false` |  |
 | `readonly` | input | `boolean` | `false` |  |
+| `line` | input | `boolean` | `false` | Draws the field's own underline, for a k-suggest standing alone rather than inside a styled field. |
 | `optionTemplate` | input | `TemplateRef<{ $implicit: KometaSuggestion; }> \| null` | `null` | Draws a row itself; the context's `$implicit` is the suggestion. |
 | `query` | output | `string` |  |  |
 | `picked` | output | `KometaSuggestion<unknown>` |  |  |
@@ -1157,4 +1169,119 @@ Click's or Payme's own mark, verbatim from the vendor's brand kit — never redr
 | Name | Binding | Type | Default | Notes |
 |---|---|---|---|---|
 | `provider` | input | `string` | **required** |  |
+
+## `k-chart` — KometaChart
+
+A line or area chart over labelled points (days, hours, months): one series or several, optionally stacked, with a shaded `band` (a normal range or a target), a dashed `limit` line (a capacity) and a pulsing `now` marker. It fills its container's width and is `--chart-height` tall; the marks stretch, while the axis text, markers and readout are HTML laid over them, so text never squashes. The line draws in and the areas rise the first time it is on screen. Hovering, or the arrow keys (Home / End) once it has focus, move a crosshair whose readout gives the label and every series' value. Screen readers get `label` and a hidden table of every value. CSS custom properties: `--chart-height` (220px), `--chart-color` (a lone series' colour, `--amber`), `--chart-axis` (the y label gutter, 40px), `--chart-band` (`--green`), `--chart-limit` (`--red`), `--chart-area-opacity` (.16). <k-chart label="Takings, last 7 days" [labels]="days" [series]="[{ name: 'Takings', values: takings }]" [format]="som" />
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `series` | input | `readonly KometaSeries[]` | **required** | The lines to draw, bottom layer first when `stacked`. |
+| `labels` | input | `readonly string[]` | `[]` | One per point: the x axis (thinned so they never collide), the readout and the hidden table. |
+| `label` | input | `string` | **required** | What the chart shows, read by a screen reader in place of the drawing and used as the hidden table's caption. |
+| `stacked` | input | `boolean` | `false` | Stacks the series as areas, each on top of the one before it; the readout still gives each series' own value. |
+| `min` | input | `number \| null` | `null` | The y axis bottom; 0 (or the lowest value when one is negative, or the data when there is a `band`) when null. |
+| `max` | input | `number \| null` | `null` | The y axis top; a round number above the data, the band and the limit when null. |
+| `band` | input | `readonly (readonly [number, number])[] \| null` | `null` | A shaded `[low, high]` per point: a normal range or a target, which may change from point to point. |
+| `limit` | input | `{ value: number; label: string; } \| null` | `null` | A dashed horizontal line with its label, such as a capacity. |
+| `now` | input | `{ index: number; label: string; } \| null` | `null` | A vertical marker at a point index, with a pulsing dot on the first series and a label above it. |
+| `legend` | input | `boolean \| null` | `null` | Shows the series names under the chart; by default only when there are two or more series. |
+| `format` | input | `(v: number) => string` | `compactNumber` | How values print on the y axis, in the readout and in the table (`compactNumber` by default). |
+| `unit` | input | `string` | `''` | Added after each value in the readout and the table, as is: `' kg'`, `' min'`. |
+
+## `k-bars` — KometaBars
+
+A vertical bar chart in plain HTML boxes, so it fills any width: one bar per item, or a group per item when `value` is an array. Bars grow from the baseline in turn the first time the chart is on screen. Round gridlines (`axis`), the figure over each bar (`showValues`), a pinned "now" bar (`mark`, `markLabel`) and negative figures under a zero line. Each column has a tooltip; the drawing is hidden from screen readers, which read a visually hidden table instead. CSS custom properties: `--bars-height` (plot height, 160px), `--bars-color` (single-series fill, `--amber`), `--bars-gap` (between columns, 6px), `--bars-axis-width` (room for tick labels, 32px), `--bars-radius` (3px). <k-bars [items]="[{ label: 'Mon', value: 12 }, { label: 'Tue', value: 18 }]" label="Visits per day" />
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `items` | input | `readonly KometaBar[]` | **required** | The bars, left to right. |
+| `series` | input | `readonly KometaBarSeries[]` | `[]` | Names and colours for grouped bars (items whose `value` is an array), in the order of the figures. Shows a legend when there are two or more. |
+| `label` | input | `string` | **required** | What the chart shows: the hidden table's caption, read by a screen reader in place of the drawing. |
+| `max` | input | `number \| null` | `null` | The top of the scale; a round number above the tallest bar when null. A bar over it is cut at the top. |
+| `showValues` | input | `boolean` | `false` | Prints each figure over its bar (for a few bars; the tooltip has them otherwise). |
+| `mark` | input | `number` | `-1` | The index of a bar to highlight ("now"), or -1. The other bars turn dimmer. |
+| `markLabel` | input | `string` | `''` | A small pin over the marked bar, e.g. "Now". |
+| `format` | input | `(v: number) => string` | `(v) => compactNumber(v)` | Writes a figure for the axis, the bars, the tooltip and the table. Compact numbers ("1.2K") by default. |
+| `axis` | input | `boolean` | `true` | Gridlines at round values with their labels on the left; false keeps only the baseline. |
+
+## `k-donut` — KometaDonut
+
+A ring of shares with a legend that names every slice, so colour is never the only key. The middle shows the total and `caption`, or whatever you project there; pointing at a slice or its legend row puts that slice's figure and share in the middle and dims the rest. The arcs sweep in one after another the first time it is on screen. Under 400px of width the legend moves under the ring. CSS custom properties: `--donut-size` (the ring's largest width, 168px), `--donut-stroke` (14, in a 120-unit box), `--donut-gap` (between ring and legend, 20px), `--donut-total-size` (15px). <k-donut [items]="[{ label: 'Haircut', value: 42 }, { label: 'Colour', value: 18 }]" label="Visits by service" caption="visits" />
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `items` | input | `readonly KometaDonutItem[]` | **required** |  |
+| `label` | input | `string` | **required** | Names the chart for a screen reader ("Visits by service"); the legend gives the figures. |
+| `caption` | input | `string` | `''` | Under the total in the middle ("visits this week"). |
+| `format` | input | `(v: number) => string` | `(v) => compactNumber(v)` | Turns a figure into text, for the middle and the legend. |
+| `legend` | input | `boolean` | `true` | False hides the legend; then put the key somewhere else, as the colours alone name nothing. |
+
+## `k-spark` — KometaSpark
+
+A small trend line with a soft fill and a dot on the latest value, drawn from a zero baseline; it wipes in from the left the first time it is on screen. It fills the width it is given. With a `label` it is an image a screen reader names; without one it is decoration beside a figure that already says it. CSS custom properties: `--spark-height` (34px), `--spark-color` (`--amber`, also the `color` input), `--spark-fill-opacity` (.12), `--spark-dot-ring` (the ring round the dot, `--card`). <k-spark [values]="[3, 5, 4, 8, 7, 11]" label="Visits per day this week, from 3 to 11" />
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `values` | input | `readonly number[]` | **required** |  |
+| `label` | input | `string` | `''` | A sentence for a screen reader ("Visits per day, from 3 to 11"); empty hides the line from it. |
+| `color` | input | `string` | `''` | The line colour, in place of `--spark-color`. |
+| `fill` | input | `boolean` | `true` | False draws the line alone, with no fill under it. |
+| `dot` | input | `boolean` | `true` | False leaves out the dot on the latest value. |
+
+## `k-gauge` — KometaGauge
+
+A three-quarter ring that fills to `value / max`, with the percentage in its middle, or whatever you project there instead (a figure, a face). It fills the first time it is on screen and glides when the value changes. It is an image named by `label`, so say what it means: "7 of 9 slots booked". CSS custom properties: `--gauge-size` (84px), `--gauge-stroke` (9, in a 100-unit box), `--gauge-color` (`--amber`), `--gauge-track` (`--input`), `--gauge-font-size` (18px, the percentage). <k-gauge [value]="7" [max]="9" label="7 of 9 slots booked" />
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `value` | input | `number` | **required** |  |
+| `max` | input | `number` | `100` | The value of a full ring. |
+| `label` | input | `string` | **required** | What the ring means, read by a screen reader in place of it: "7 of 9 slots booked". |
+
+## `k-heat` — KometaHeat
+
+A heatmap: cells shaded by value in one hue, from a faint empty cell to full `--heat-rgb`. Two layouts: `rows` × `cols` (a real table a screen reader can walk, e.g. bookings per weekday and hour), or `days`, a GitHub-style calendar of weekday rows × week columns with month labels (a hidden list reads it). Each cell has a tooltip with its row, column and figure; a small less → more key sits under it. Wider than its box, it scrolls sideways inside it instead of shrinking the cells. The cells fade in as a wave the first time it is on screen. CSS custom properties: `--heat-rgb` (an RGB triple, `--viz-heat`), `--heat-empty` (a zero cell, `--input`), `--heat-cell-height` (matrix cell, 26px), `--heat-cell-min` (narrowest matrix cell before it scrolls, 28px), `--heat-label-width` (row labels, 48px), `--heat-day` (narrowest calendar day, 11px), `--heat-radius` (5px). <k-heat [rows]="[{ label: 'Mon', values: [2, 5, 0] }]" [cols]="['9', '10', '11']" unit="visits" label="Visits by hour" /> <k-heat [days]="[{ date: '2026-03-02', value: 1 }]" unit="check-ins" label="Check-ins this year" />
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `rows` | input | `readonly KometaHeatRow[]` | `[]` | Matrix mode: one row per entry, one figure per column of `cols`. |
+| `cols` | input | `readonly string[]` | `[]` | Matrix mode: the column headings, e.g. hours. |
+| `days` | input | `readonly KometaHeatDay[]` | `[]` | Calendar mode, used when not empty: the days to shade, in any order; the calendar spans the first to the last. |
+| `weekStart` | input | `0 \| 1` | `1` | Calendar mode: the weekday on the top row, 1 for Monday or 0 for Sunday. |
+| `label` | input | `string` | **required** | What the heatmap shows: the table's caption and the scroll region's name. |
+| `max` | input | `number \| null` | `null` | The figure that gets the full colour; the largest one when null. |
+| `unit` | input | `string` | `''` | Words after each figure in its tooltip and for a screen reader, e.g. "visits". |
+| `format` | input | `(v: number) => string` | `(v) => compactNumber(v)` | Writes a figure. Compact numbers ("1.2K") by default. |
+| `lessLabel` | input | `string` | `'Less'` | The key's low end, e.g. "Quiet". |
+| `moreLabel` | input | `string` | `'More'` | The key's high end, e.g. "Busy". |
+
+## `k-stat` — KometaStat
+
+A KPI tile: an uppercase muted eyebrow, a big figure with its unit, an optional trend ("▲ 12% vs last week", green when it moves the good way) and a muted sub line, on a card surface. A number counts up through `k-tally`; a string shows as is; null shows no figure (put a `k-meter` or `k-split` in the content instead). An element with the `k-stat-note` attribute (a `<k-note>`) sits beside the eyebrow; anything else (a `k-spark`) goes under the sub line. `loading` holds the figure's place with a `k-skeleton`. A screen reader hears the figure, its unit, then the trend as "+12% vs last week" (the arrow glyph is hidden). <k-stat label="Revenue" [value]="48200000" unit="so'm" [trend]="12" trendLabel="vs last week" locale="ru-RU"> <k-note k-stat-note label="About revenue">Closed checks, after discounts.</k-note> <k-spark [values]="run" label="Revenue, last 14 days" /> </k-stat> CSS vars: `--stat-bg`, `--stat-border`, `--stat-radius`, `--stat-pad`, `--stat-gap`, `--stat-label-color`, `--stat-figure-size`, `--stat-up` / `--stat-down` (the good and bad trend colours). Tests in kometa-stat.spec.ts.
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `label` | input | `string` | **required** | The eyebrow over the figure, shown uppercase ("Revenue"). |
+| `value` | input | `string \| number \| null` | `null` | The figure: a number counts up through k-tally, a string (`"4.8"`, `"—"`) shows as is, null shows none. |
+| `unit` | input | `string` | `''` | Words after the figure (`so'm`, `min`, `of 25`). |
+| `sub` | input | `string` | `''` | The muted line under the figure ("12 checks closed"). |
+| `trend` | input | `number \| null` | `null` | The change, shown as "▲ 12%" / "▼ 4%" and read as "+12%" / "−4%"; null hides it, 0 shows "0%" uncoloured. |
+| `trendGood` | input | `"up" \| "down"` | `'up'` | Which way is good, and so green: `down` for no-shows, churn or wait time. |
+| `trendUnit` | input | `string` | `'%'` | What the trend is after: `%` (the default), `''` for a plain count ("▲ 18"), or a word (" pts"). |
+| `trendLabel` | input | `string` | `''` | Words after the trend ("vs last week"), shown and read aloud. |
+| `locale` | input | `string \| undefined` | `undefined` | The locale for grouping digits in the figure and trend (`ru-RU` writes 12 480); the browser's own when unset. |
+| `duration` | input | `number` | `900` | How long a number takes to count up, in ms (k-tally's `duration`); 0 jumps. |
+| `loading` | input | `boolean` | `false` | Holds the figure's place with a k-skeleton hairline and sets `aria-busy`. |
+| `bare` | input | `boolean` | `false` | Drops the card surface (border, background, padding), for a tile inside another card. |
+
+## `k-tiles` — KometaTiles
+
+A grid of projected tiles (KPI rows, cards) that never leaves one tile alone on a row: five tiles show as 5, 3+2 or 2+2+1 (the last spanning both columns) as the width shrinks, and the last row's tiles stretch to fill it. Measures its own width (ResizeObserver) and follows tiles being added or removed; the rule is `kometaTileColumns`. Before the first measure (server render) it is a plain `repeat(auto-fit, minmax(min, 1fr))` grid. It sets `grid-column` on each child, so do not set your own. <k-tiles [min]="200"><k-stat label="Visits" [value]="412" /> … </k-tiles> Tests in kometa-tiles.spec.ts.
+
+| Name | Binding | Type | Default | Notes |
+|---|---|---|---|---|
+| `min` | input | `number` | `180` | The narrowest a tile may get, in px. |
+| `gap` | input | `number` | `16` | The space between tiles, in px. |
+| `max` | input | `number \| null` | `null` | The most tiles on one row; null for as many as fit. |
 

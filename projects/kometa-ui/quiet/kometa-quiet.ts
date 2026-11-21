@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Empty state: a Syne title and one muted sentence. No picture.
+ * Empty state: a Syne title and one muted sentence. A picture, if any, is an element with the `art` attribute: it sits
+ * above the title in a box at most `--quiet-art-size` wide (160px) and sizes itself; anything else projected goes under the hint, e.g. a button.
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
@@ -30,9 +31,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       color: var(--muted);
       font-size: 13px;
     }
+    .art { display: grid; place-items: center; max-width: var(--quiet-art-size, 160px); margin-bottom: 4px; }
+    .art:empty { display: none; }
     :host(:focus-visible) { outline: 2px solid var(--amber); }
   `,
   template: `
+    <div class="art"><ng-content select="[art]" /></div>
     <p class="title">{{ title() }}</p>
     @if (hint()) {
       <p class="hint">{{ hint() }}</p>

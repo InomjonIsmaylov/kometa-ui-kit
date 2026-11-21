@@ -2,14 +2,16 @@ import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@an
 
 /**
  * A Syne title and a hairline that runs out to the action, which is any element with an `action`
- * attribute projected into it. With no action the hairline runs out to the edge.
+ * attribute projected into it. With no action the hairline runs out to the edge. When the action does not fit
+ * beside the title (a long name, a phone), it drops to its own line instead of being clipped; `--heading-row-gap`
+ * spaces the two lines.
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md, "Heading: rule".
  */
 @Component({
   selector: 'k-heading',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
-    :host { display: flex; align-items: center; gap: var(--heading-gap, 12px); }
+    :host { display: flex; flex-wrap: wrap; align-items: center; gap: var(--heading-row-gap, 8px) var(--heading-gap, 12px); }
     .t {
       margin: 0;
       color: var(--heading-color, var(--text, inherit));

@@ -27,6 +27,10 @@
   "disabled": {
    "type": "boolean",
    "default": "false"
+  },
+  "divided": {
+   "type": "boolean",
+   "default": "false"
   }
  },
  "KometaAccordionItem": {
@@ -75,6 +79,15 @@
   "kAnimateDuration": {
    "type": "number",
    "default": "600"
+  }
+ },
+ "KometaInView": {
+  "kInViewThreshold": {
+   "type": "number",
+   "default": "0.25"
+  },
+  "kInView": {
+   "type": "void"
   }
  },
  "KometaActions": {
@@ -863,6 +876,10 @@
   "optionTemplate": {
    "type": "TemplateRef<{ $implicit: KometaWordOption; }> | null",
    "default": "null"
+  },
+  "wrap": {
+   "type": "boolean",
+   "default": "false"
   }
  },
  "KometaMenu": {
@@ -1904,6 +1921,10 @@
    "type": "boolean",
    "default": "false"
   },
+  "line": {
+   "type": "boolean",
+   "default": "false"
+  },
   "optionTemplate": {
    "type": "TemplateRef<{ $implicit: KometaSuggestion; }> | null",
    "default": "null"
@@ -2252,6 +2273,258 @@
   "provider": {
    "type": "string",
    "required": true
+  }
+ },
+ "KometaChart": {
+  "series": {
+   "type": "readonly KometaSeries[]",
+   "required": true
+  },
+  "labels": {
+   "type": "readonly string[]",
+   "default": "[]"
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "stacked": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "min": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "max": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "band": {
+   "type": "readonly (readonly [number, number])[] | null",
+   "default": "null"
+  },
+  "limit": {
+   "type": "{ value: number; label: string; } | null",
+   "default": "null"
+  },
+  "now": {
+   "type": "{ index: number; label: string; } | null",
+   "default": "null"
+  },
+  "legend": {
+   "type": "boolean | null",
+   "default": "null"
+  },
+  "format": {
+   "type": "(v: number) => string",
+   "default": "compactNumber"
+  },
+  "unit": {
+   "type": "string",
+   "default": "''"
+  }
+ },
+ "KometaBars": {
+  "items": {
+   "type": "readonly KometaBar[]",
+   "required": true
+  },
+  "series": {
+   "type": "readonly KometaBarSeries[]",
+   "default": "[]"
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "max": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "showValues": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "mark": {
+   "type": "number",
+   "default": "-1"
+  },
+  "markLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "format": {
+   "type": "(v: number) => string",
+   "default": "(v) => compactNumber(v)"
+  },
+  "axis": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaDonut": {
+  "items": {
+   "type": "readonly KometaDonutItem[]",
+   "required": true
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "caption": {
+   "type": "string",
+   "default": "''"
+  },
+  "format": {
+   "type": "(v: number) => string",
+   "default": "(v) => compactNumber(v)"
+  },
+  "legend": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaSpark": {
+  "values": {
+   "type": "readonly number[]",
+   "required": true
+  },
+  "label": {
+   "type": "string",
+   "default": "''"
+  },
+  "color": {
+   "type": "string",
+   "default": "''"
+  },
+  "fill": {
+   "type": "boolean",
+   "default": "true"
+  },
+  "dot": {
+   "type": "boolean",
+   "default": "true"
+  }
+ },
+ "KometaGauge": {
+  "value": {
+   "type": "number",
+   "required": true
+  },
+  "max": {
+   "type": "number",
+   "default": "100"
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  }
+ },
+ "KometaHeat": {
+  "rows": {
+   "type": "readonly KometaHeatRow[]",
+   "default": "[]"
+  },
+  "cols": {
+   "type": "readonly string[]",
+   "default": "[]"
+  },
+  "days": {
+   "type": "readonly KometaHeatDay[]",
+   "default": "[]"
+  },
+  "weekStart": {
+   "type": "0 | 1",
+   "default": "1"
+  },
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "max": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "unit": {
+   "type": "string",
+   "default": "''"
+  },
+  "format": {
+   "type": "(v: number) => string",
+   "default": "(v) => compactNumber(v)"
+  },
+  "lessLabel": {
+   "type": "string",
+   "default": "'Less'"
+  },
+  "moreLabel": {
+   "type": "string",
+   "default": "'More'"
+  }
+ },
+ "KometaStat": {
+  "label": {
+   "type": "string",
+   "required": true
+  },
+  "value": {
+   "type": "string | number | null",
+   "default": "null"
+  },
+  "unit": {
+   "type": "string",
+   "default": "''"
+  },
+  "sub": {
+   "type": "string",
+   "default": "''"
+  },
+  "trend": {
+   "type": "number | null",
+   "default": "null"
+  },
+  "trendGood": {
+   "type": "\"up\" | \"down\"",
+   "default": "'up'"
+  },
+  "trendUnit": {
+   "type": "string",
+   "default": "'%'"
+  },
+  "trendLabel": {
+   "type": "string",
+   "default": "''"
+  },
+  "locale": {
+   "type": "string | undefined",
+   "default": "undefined"
+  },
+  "duration": {
+   "type": "number",
+   "default": "900"
+  },
+  "loading": {
+   "type": "boolean",
+   "default": "false"
+  },
+  "bare": {
+   "type": "boolean",
+   "default": "false"
+  }
+ },
+ "KometaTiles": {
+  "min": {
+   "type": "number",
+   "default": "180"
+  },
+  "gap": {
+   "type": "number",
+   "default": "16"
+  },
+  "max": {
+   "type": "number | null",
+   "default": "null"
   }
  }
 }

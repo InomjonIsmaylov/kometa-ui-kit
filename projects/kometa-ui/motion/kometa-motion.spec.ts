@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { KometaAnimate, kometaAnimationName, kometaMotionVars } from './kometa-motion';
+import { KometaAnimate, KometaInView, kometaAnimationName, kometaMotionVars } from './kometa-motion';
 import { KometaPop } from 'kometa-ui/pop';
 
 @Component({
@@ -51,5 +51,48 @@ describe('Kometa motion', () => {
     expect(a.style.animationDelay).toBe('120ms');
     expect(a.style.animationDuration).toBe('300ms');
     expect(((f.nativeElement as HTMLElement).querySelector('.b') as HTMLElement).style.animationName).toBe('k-m-rise');
+  });
+});
+
+@Component({
+  imports: [KometaInView],
+  template: `<figure kInView #v="kInView" (kInView)="count = count + 1"></figure>`,
+})
+class InViewHost {
+  count = 0;
+}
+
+describe('KometaInView', () => {
+  afterEach(() => { delete (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver; });
+
+  it('counts as seen at once without IntersectionObserver, and fires once', async () => {
+    const f = TestBed.createComponent(InViewHost);
+    f.detectChanges();
+    await f.whenStable();
+    f.detectChanges();
+    expect((f.nativeElement as HTMLElement).querySelector('figure')!.classList.contains('k-seen')).toBe(true);
+    expect(f.componentInstance.count).toBe(1);
+  });
+
+  it('waits for the element to scroll into view', async () => {
+    let fire: (hit: boolean) => void = () => {};
+    (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver = class {
+      constructor(cb: (e: { isIntersecting: boolean }[]) => void) { fire = (hit) => cb([{ isIntersecting: hit }]); }
+      observe() {}
+      disconnect() {}
+    };
+    const f = TestBed.createComponent(InViewHost);
+    f.detectChanges();
+    await f.whenStable();
+    const fig = (f.nativeElement as HTMLElement).querySelector('figure')!;
+    expect(fig.classList.contains('k-seen')).toBe(false);
+    fire(false);
+    f.detectChanges();
+    expect(fig.classList.contains('k-seen')).toBe(false);
+    fire(true);
+    fire(true);
+    f.detectChanges();
+    expect(fig.classList.contains('k-seen')).toBe(true);
+    expect(f.componentInstance.count).toBe(1);
   });
 });

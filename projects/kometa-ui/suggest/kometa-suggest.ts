@@ -21,7 +21,8 @@ let nextId = 0;
  * `(query)` fires with the text and the page answers by setting `suggestions`; the list is a glass panel in the browser's
  * top layer under the field (so a sheet cannot clip it), flips above when there is no room, and the field keeps focus
  * (`aria-activedescendant`): Arrow keys move over the rows, Enter picks, Escape or a click outside closes. `(picked)` carries the
- * chosen row; the field then holds its label.
+ * chosen row; the field then holds its label. With no field around it, `line` draws its own underline (`--suggest-line`,
+ * `--suggest-line-focus`).
  * Spec: kometa-suggest.spec.ts.
  */
 @Component({
@@ -33,10 +34,16 @@ let nextId = 0;
     '(window:resize)': 'close()',
     '(window:scroll)': 'close()',
     '(document:pointerdown)': 'onOutside($event)',
+    '[class.line]': 'line()',
   },
   styles: `
     :host { display: block; position: relative; }
     input { width: 100%; }
+    :host(.line) :where(input) {
+      box-sizing: border-box; padding: 6px 0 8px; border: 0; border-bottom: 1px solid var(--suggest-line, var(--border2));
+      background: transparent; color: var(--text); font: inherit; font-size: var(--suggest-font-size, 16px); outline: none;
+    }
+    :host(.line) :where(input:focus) { border-bottom-color: var(--suggest-line-focus, var(--text)); }
     .pop {
       inset: auto; margin: 0; padding: 6px; overflow-y: auto; overscroll-behavior: contain;
       min-width: 240px; max-width: calc(100vw - 16px); max-height: min(var(--suggest-max-height, 320px), calc(100vh - 16px));
@@ -87,6 +94,8 @@ export class KometaSuggest {
   readonly delay = input(300);
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly readonly = input(false, { transform: booleanAttribute });
+  /** Draws the field's own underline, for a k-suggest standing alone rather than inside a styled field. */
+  readonly line = input(false, { transform: booleanAttribute });
   /** Draws a row itself; the context's `$implicit` is the suggestion. */
   readonly optionTemplate = input<TemplateRef<{ $implicit: KometaSuggestion }> | null>(null);
   readonly query = output<string>();

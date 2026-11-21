@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   TemplateRef,
+  inject,
   input,
   model,
   viewChild,
@@ -21,7 +22,9 @@ export interface KometaWordOption {
 }
 
 /**
- * A handful of words with a cream line under the pressed one.
+ * A handful of words with a cream line under the pressed one. A row too long for its box scrolls sideways, and the
+ * side with hidden words fades out (`--words-fade`) so it reads as more, not as clipped; the pressed word is scrolled
+ * into view. `wrap` lets the words break onto further lines instead.
  * Spec: docs/superpowers/specs/2026-10-12-blend-shared-ui-design.md §4.
  */
 @Component({
@@ -32,11 +35,21 @@ export interface KometaWordOption {
     '[attr.role]': "tabs() ? 'tablist' : 'group'",
     '[attr.aria-label]': 'ariaLabel() || null',
     '(keydown)': 'onKey($event)',
+    '(scroll)': 'edges()',
+    '(window:resize)': 'edges()',
+    '[class.wrap]': 'wrap()',
   },
   styles: `
     /* A long Russian or Uzbek row scrolls sideways inside its own box; it never wraps or widens the page. */
     :host { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
     :host::-webkit-scrollbar { display: none; }
+    :host(.more-end) { mask-image: linear-gradient(to right, #000 calc(100% - var(--words-fade, 28px)), transparent); }
+    :host(.more-start) { mask-image: linear-gradient(to left, #000 calc(100% - var(--words-fade, 28px)), transparent); }
+    :host(.more-start.more-end) {
+      mask-image: linear-gradient(to right, transparent, #000 var(--words-fade, 28px), #000 calc(100% - var(--words-fade, 28px)), transparent);
+    }
+    :host(.wrap) { display: block; overflow: visible; }
+    :host(.wrap) .row { flex-wrap: wrap; row-gap: var(--words-row-gap, 4px); width: auto; }
     .row {
       position: relative;
       display: flex;
@@ -67,7 +80,7 @@ export interface KometaWordOption {
     .line {
       position: absolute;
       left: 0;
-      bottom: 0;
+      top: 0;
       height: var(--words-line-height, 2px);
       background: var(--words-line, var(--display-ink, #f4efe6));
       pointer-events: none;
@@ -105,15 +118,42 @@ export class KometaWords implements AfterViewChecked {
   /** A real tab strip (its words switch panels): tablist/tab roles, aria-selected, one tab stop, arrow keys. */
   readonly tabs = input(false, { transform: booleanAttribute });
   readonly optionTemplate = input<TemplateRef<{ $implicit: KometaWordOption }> | null>(null);
+  /** Lets the words break onto more lines when they do not fit, instead of scrolling sideways. */
+  readonly wrap = input(false, { transform: booleanAttribute });
 
   private readonly words = viewChildren<ElementRef<HTMLButtonElement>>('word');
   private readonly line = viewChild<ElementRef<HTMLElement>>('line');
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private shown: string | undefined;
 
   ngAfterViewChecked(): void {
     const selected = this.value();
     const index = this.options().findIndex((option) => option.value === selected);
     const word = this.words()[index]?.nativeElement;
-    if (word) this.moveLine(word);
+    if (word) {
+      this.moveLine(word);
+      // Only when the pressed word changes, so a person scrolling the row is never pulled back.
+      if (selected !== this.shown) this.reveal(word);
+    }
+    this.shown = selected;
+    this.edges();
+  }
+
+  /** Marks which sides hide words (classes, not signals: it runs after every check and must not start another). */
+  protected edges(): void {
+    const h = this.host;
+    const scrolls = !this.wrap() && h.scrollWidth > h.clientWidth + 1;
+    h.classList.toggle('more-start', scrolls && h.scrollLeft > 1);
+    h.classList.toggle('more-end', scrolls && h.scrollLeft + h.clientWidth < h.scrollWidth - 1);
+  }
+
+  /** Scrolls the row just enough to show the whole word. */
+  private reveal(word: HTMLElement): void {
+    const h = this.host;
+    if (h.scrollWidth <= h.clientWidth) return;
+    const pad = 28;
+    if (word.offsetLeft - pad < h.scrollLeft) h.scrollLeft = Math.max(0, word.offsetLeft - pad);
+    else if (word.offsetLeft + word.offsetWidth + pad > h.scrollLeft + h.clientWidth) h.scrollLeft = word.offsetLeft + word.offsetWidth + pad - h.clientWidth;
   }
 
   protected onKey(event: KeyboardEvent): void {
@@ -142,7 +182,8 @@ export class KometaWords implements AfterViewChecked {
   private moveLine(word: HTMLElement): void {
     const line = this.line()?.nativeElement;
     if (!line) return;
-    line.style.transform = `translateX(${word.offsetLeft}px)`;
+    // Under the word, on whichever line it sits (with wrap the words can take several).
+    line.style.transform = `translate(${word.offsetLeft}px, ${word.offsetTop + word.offsetHeight - line.offsetHeight}px)`;
     line.style.width = `${word.offsetWidth}px`;
   }
 }
